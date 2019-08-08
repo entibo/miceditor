@@ -2,8 +2,6 @@
 <script>
 
   import CodeMirror from "codemirror"
-  import "codemirror/lib/codemirror.css"
-  import "codemirror/theme/lucario.css"
   import "codemirror/mode/xml/xml.js"
 
   import beautify from "xml-beautifier"
