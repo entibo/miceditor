@@ -30,7 +30,7 @@
 
   {#if spriteData && spriteData.spritesheet}
 
-  <foreignObject class="pointer-events-none" class:opacity-50={shamanObject._ghost}
+  <foreignObject class="pointer-events-none" class:opacity50={shamanObject._ghost}
     x={-spriteData.width/2} y={-spriteData.height/2}
     width={spriteData.width} height={spriteData.height}
   >
@@ -48,7 +48,7 @@
 
   {:else if spriteData && spriteData.sprite}
 
-  <image class="selectable" class:opacity-50={shamanObject._ghost}
+  <image class="selectable" class:opacity50={shamanObject._ghost}
     x={-spriteData.width/2} y={-spriteData.height/2}
     width={spriteData.width} height={spriteData.height}
     href="dist/shamanObjects/{spriteData.sprite}"
@@ -57,7 +57,7 @@
 
   {:else}
 
-  <rect class="selectable" class:opacity-50={shamanObject._ghost}
+  <rect class="selectable" class:opacity50={shamanObject._ghost}
     x={-20} y={-20}
     width={40} height={40}
     fill="red"
@@ -73,6 +73,9 @@
 
 
 <style lang="text/postcss">
+  .opacity50 {
+    opacity: 0.5;
+  }
 
   .selectable {
     transition: fill 100ms, outline-color 50ms;

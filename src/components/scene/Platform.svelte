@@ -101,7 +101,7 @@
   <g class="platform"
     on:mousedown on:mousemove on:mouseleave
   >
-    <g class:opacity-0={platform._invisible}>
+    <g class:opacity0={platform._invisible}>
 
       {#if platform._groundImageEnabled}
         <image 
@@ -175,6 +175,10 @@
 
 
 <style lang="text/postcss">
+
+  .opacity0 {
+    opacity: 0;
+  }
 
   .resize-knobs {
     visibility: hidden;
