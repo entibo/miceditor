@@ -13,6 +13,8 @@
   import ShamanObject from "/components/scene/ShamanObject.svelte"
   import Footer from "/components/scene/Footer.svelte"
 
+  import SvgImage from "/components/common/SvgImage.svelte"
+
 
   $: visiblePlatforms = $visibility.grounds ? $platforms : []
   $: visibleShamanObjects = $visibility.objects ? $shamanObjects : []
@@ -342,15 +344,17 @@
     <g transform="translate({pan.x}, {pan.y}) scale({$zoom})">
       
       {#each visibleBackgroundImages as {fullUrl,x,y}}
-      <image x={x} y={y}
-            href={fullUrl}
+      <SvgImage 
+        x={x} y={y}
+        href={fullUrl}
       />
       {/each}
 
       {#if $settings._backgroundImageId >= 0}
       <image x="0" y="0" 
             width={$settings._width} height={$settings._height}
-            href="backgrounds/{$settings._backgroundImageId}.svg"
+            href="dist/backgrounds/{$settings._backgroundImageId}.svg"
+            on:mousedown|preventDefault
       />
       {/if}
 
@@ -381,7 +385,7 @@
       {/each}
 
       {#each visibleForegroundImages as {fullUrl,x,y}}
-      <image class="pointer-events-none"
+      <SvgImage class="pointer-events-none"
         x={x} y={y}
         href={fullUrl}
       />
@@ -389,7 +393,7 @@
 
       {#each visibleDisappearingImages as data}
       <g class="pointer-events-none">
-        <image 
+        <SvgImage 
           x={data.x} y={data.y}
           href={data.fullUrl}
         />

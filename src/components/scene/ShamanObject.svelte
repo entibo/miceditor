@@ -33,14 +33,17 @@
   <foreignObject class="pointer-events-none" class:opacity-50={shamanObject._ghost}
     x={-spriteData.width/2} y={-spriteData.height/2}
     width={spriteData.width} height={spriteData.height}
-    style="background-image: url(shamanObjects/{spriteData.spritesheet}); 
-          background-position: {-spriteData.offset.x}px {-spriteData.offset.y}px;
-          background-repeat: no-repeat;"
-  />
+  >
+    <div style="background-image: url(dist/shamanObjects/{spriteData.spritesheet}); 
+                background-position: {-spriteData.offset.x}px {-spriteData.offset.y}px;
+                background-repeat: no-repeat;"
+      class="w-full h-full"
+    ></div>
+  </foreignObject>
 
-  <foreignObject class="selectable" 
+  <rect fill="transparent" class="selectable" 
     x={-spriteData.boundingWidth/2} y={-spriteData.boundingHeight/2}
-    style="width: {spriteData.boundingWidth}px; height: {spriteData.boundingHeight}px"
+    width={spriteData.boundingWidth} height={spriteData.boundingHeight}
   />
 
   {:else if spriteData && spriteData.sprite}
@@ -48,7 +51,8 @@
   <image class="selectable" class:opacity-50={shamanObject._ghost}
     x={-spriteData.width/2} y={-spriteData.height/2}
     width={spriteData.width} height={spriteData.height}
-    href="shamanObjects/{spriteData.sprite}"
+    href="dist/shamanObjects/{spriteData.sprite}"
+    on:mousedown|preventDefault
   />
 
   {:else}

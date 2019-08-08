@@ -177,10 +177,10 @@
 
   {:else if currentMenu === "zoom"}
 
-  <div class="lower-panel w-64 p-2 xl:p-4" transition:slide={{duration: 100}}>
+  <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
     
     <section>
-      <label>
+      <label class="w-24">
         <span>Zoom</span>
         <TextInput number bind:value={$zoom} />
       </label>

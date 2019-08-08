@@ -5,6 +5,8 @@
   import { getUniqueId } from "/utils.js"
   import decorationMetadata from "/decorationMetadata.js"
 
+  import SvgImage from "/components/common/SvgImage.svelte"
+
   export let decoration
   export let active
 
@@ -50,7 +52,7 @@
   
   let promise
   $: if(filtersLength)
-      promise = fetch(`decorations/${decorationType}.svg`).then(r => r.text()).then(withInstancedFilterIds)
+      promise = fetch(`dist/decorations/${decorationType}.svg`).then(r => r.text()).then(withInstancedFilterIds)
 
   function getColorMatrix(hex) {
     let [r,g,b] = cc.hex.rgb(hex).map(x => x/255)
@@ -86,7 +88,7 @@
 
     {:else}
 
-      <image href="decorations/{decoration._type}.png"/>
+      <SvgImage href="dist/decorations/{decoration._type}.png"/>
 
     {/if}
 
@@ -94,18 +96,18 @@
 </g>
 
 <style lang="text/postcss">
-  .decoration * {
+  :global(.decoration > g > *) {
     transition: fill 100ms, outline-color 50ms;
     outline-width: 4px;
     outline-offset: -4px;
     outline-style: dashed;
     outline-color: rgba(255,255,255,0.0);
   }
-  .decoration *:hover {
+  :global(.decoration > g > *:hover) {
     cursor: pointer;
     outline-color: rgba(255,255,255,0.5);
   }
-  .decoration.active * {
+  :global(.decoration.active > g > *) {
     outline-color: rgba(255,255,255,0.95);
   }
 

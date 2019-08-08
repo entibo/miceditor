@@ -3,8 +3,8 @@
    "scripts": {
       "build": "rollup -c",
       "build:auto": "rollup -c -w",
-      "serve": "sirv dist",
-      "serve:dev": "sirv dist --dev",
+      "serve": "sirv .",
+      "serve:dev": "sirv . --dev",
       "dev": "run-p build:auto serve:dev"
    },
    "devDependencies": {

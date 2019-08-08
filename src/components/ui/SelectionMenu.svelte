@@ -1,5 +1,6 @@
 
 <script>
+  import { tick } from "svelte"
   import { slide, fly } from "svelte/transition"
 
   import Icon from "fa-svelte"
@@ -54,7 +55,8 @@
   // $: console.log(multi)
 
 
-  function updateObjects() {
+  async function updateObjects() {
+    await tick()
     for(let object of $selection) {
       for(let prop in multi) {
         if(object[prop] !== undefined && multi[prop] !== "") {

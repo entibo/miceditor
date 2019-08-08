@@ -1,5 +1,6 @@
 
 <script>
+  import { tick } from "svelte"
   import { slide, fly } from "svelte/transition"
 
   import Icon from "fa-svelte"
@@ -26,7 +27,8 @@
 
   $: data = $settings
 
-  function updateSettings() {
+  async function updateSettings() {
+    await tick()
     encodeMapData(data)
     buildXML()
     settings.update(v => v)

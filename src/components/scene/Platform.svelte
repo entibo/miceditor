@@ -108,6 +108,7 @@
           x={-platform._width/2 + platform._groundImageX} 
           y={-platform._height/2 + platform._groundImageY}
           href={platform._groundImageFullUrl}
+          on:mousedown|preventDefault
         />}
         <rect
           x={-platform._width/2} y={-platform._height/2}
@@ -132,7 +133,8 @@
           x={-platform._width/2} y={-platform._height/2}
           width={platform._width} height={platform._height} 
           preserveAspectRatio="none" 
-          href="grounds/{ platform._typeName }{ $highQuality? "-high" : "" }.png"
+          href="dist/grounds/{ platform._typeName }{ $highQuality? "-high" : "" }.png"
+          on:mousedown|preventDefault
         />
       {:else}
         <g class="selectable" class:active >

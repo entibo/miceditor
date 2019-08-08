@@ -94,7 +94,7 @@
         <div class="tile" class:active={$creation && $creation.objectType === "decoration" && $creation.type == type}
           on:click={() => onTileClick("decoration", type)}
         >
-          <img class="dim-max-40" src={`decorations/${type}.png`} alt={type}/>
+          <img class="dim-max-40" src={`dist/decorations/${type}.png`} alt={type}/>
         </div>
       {/each}
 
@@ -102,21 +102,21 @@
         class:disabled={dsDisabled}
         on:click={() => onTileClick("decoration", "DS")}
       >
-        <img class="dim-max-40" src="decorations/DS.png" alt="DS"/>
+        <img class="dim-max-40" src="dist/decorations/DS.png" alt="DS"/>
       </div>
 
       <div class="tile" class:active={$creation && $creation.objectType === "decoration" && $creation.type == "DC"}
         class:disabled={dcCount > 0}
         on:click={() => onTileClick("decoration", "DC")}
       >
-        <img class="dim-max-40" src="decorations/DC.png" alt="DC"/>
+        <img class="dim-max-40" src="dist/decorations/DC.png" alt="DC"/>
       </div>
 
       <div class="tile" class:active={$creation && $creation.objectType === "decoration" && $creation.type == "DC2"}
         class:disabled={dcCount < 1 || dc2Count > 0}
         on:click={() => onTileClick("decoration", "DC2")}
       >
-        <img class="dim-max-40" src="decorations/DC2.png" alt="DC2"/>
+        <img class="dim-max-40" src="dist/decorations/DC2.png" alt="DC2"/>
       </div>
     </div>
   </ObjectPaletteMenu>
@@ -131,7 +131,7 @@
           
           on:click={() => onTileClick("platform", type)}
         >
-          <img class="rounded-sm" src="grounds/{ground}.png" alt={ground}/>
+          <img class="rounded-sm" src="dist/grounds/{ground}.png" alt={ground}/>
         </div>
       {/each}
     </div>
@@ -144,7 +144,7 @@
           <div class="tile dim-40" class:active={$creation && $creation.objectType === "decoration" && $creation.type == type}
             on:click={() => onTileClick("decoration", type)}
           >
-            <img class="dim-max-40" src={`decorations/${type}.png`} alt={type}/>
+            <img class="dim-max-40" src={`dist/decorations/${type}.png`} alt={type}/>
           </div>
         {/each}
       </div>
@@ -162,7 +162,7 @@
           <div class="tile" class:active={$creation && $creation.objectType === "shamanObject" && $creation.type == type}
             on:click={() => onTileClick("shamanObject", type)}
           >
-            <img src="shamanObjects/{data.defilanteVariant.sprite}" alt={data.defilanteVariant.sprite}/>
+            <img src="dist/shamanObjects/{data.defilanteVariant.sprite}" alt={data.defilanteVariant.sprite}/>
           </div>
           {/each}
         </div>
@@ -173,9 +173,9 @@
           on:click={() => onTileClick("shamanObject", type)}
         >
           {#if data.sprite}
-          <img src="shamanObjects/{data.sprite}" alt={data.sprite}/>
+          <img src="dist/shamanObjects/{data.sprite}" alt={data.sprite}/>
           {:else}
-          <img src="shamanObjects/{data.spritesheet}" alt={data.sprite}
+          <img src="dist/shamanObjects/{data.spritesheet}" alt={data.sprite}
             style=" object-fit: none;
                     object-position:  {-data.offset.x-(data.width-data.boundingWidth)/2 + (data.spritesheet.includes('anvils') ? 10 : 0)}px 
                                       {-data.offset.y-(data.height-data.boundingHeight)/2}px;
@@ -202,9 +202,9 @@
             on:click={() => onTileClick("shamanObject", type)}
           >
             {#if data.sprite}
-            <img src="shamanObjects/{data.sprite}" alt={data.sprite}/>
+            <img src="dist/shamanObjects/{data.sprite}" alt={data.sprite}/>
             {:else}
-            <img src="shamanObjects/{data.spritesheet}" alt={data.sprite}
+            <img src="dist/shamanObjects/{data.spritesheet}" alt={data.sprite}
               style=" object-fit: none;
                       object-position:  {-data.offset.x-(data.width-data.boundingWidth)/2 + (data.spritesheet.includes('anvils') ? 10 : 0)}px 
                                         {-data.offset.y-(data.height-data.boundingHeight)/2}px;
@@ -235,6 +235,9 @@
 </div>
 
 <style lang="text/postcss">
+  img {
+    pointer-events: none;
+  }
 
   .panel {
     
