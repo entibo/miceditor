@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="120.0px" width="210.0px" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1.0, 0.0, 0.0, 1.0, 105.0, 60.0)">
+    <use height="270.0" id="decoration90-Couleur0_FDFDFD" filter="url(#decoration90-filter0)" transform="matrix(0.4286, 0.0, 0.0, 0.4286, -102.85, -57.85)" width="479.95" xlink:href="#decoration90-sprite0"/>
+    <use height="120.0" transform="matrix(1.0, 0.0, 0.0, 1.0, -105.0, -60.0)" width="210.0" xlink:href="#decoration90-shape1"/>
+  </g>
+  <defs>
+    <g id="decoration90-sprite0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
+      <use height="270.0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="479.95" xlink:href="#decoration90-shape0"/>
+    </g>
+    <g id="decoration90-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
+      <path d="M479.95 270.0 L0.0 270.0 0.0 0.0 479.95 0.0 479.95 270.0" fill="url(#decoration90-gradient0)" fill-rule="evenodd" stroke="none"/>
+    </g>
+    <linearGradient gradientTransform="matrix(0.2298, 0.1887, -0.1044, 0.1272, 230.75, 125.75)" gradientUnits="userSpaceOnUse" id="decoration90-gradient0" spreadMethod="pad" x1="-819.2" x2="819.2">
+      <stop offset="0.0" stop-color="#808080"/>
+      <stop offset="0.2823529411764706" stop-color="#706d6d"/>
+      <stop offset="0.5843137254901961" stop-color="#808080"/>
+      <stop offset="1.0" stop-color="#747474"/>
+    </linearGradient>
+    <g id="decoration90-shape1" transform="matrix(1.0, 0.0, 0.0, 1.0, 105.0, 60.0)">
+      <path d="M100.0 -55.0 L-100.0 -55.0 -100.0 55.0 100.0 55.0 100.0 -55.0 M105.0 -60.0 L105.0 60.0 -105.0 60.0 -105.0 -60.0 105.0 -60.0" fill="#2a1811" fill-rule="evenodd" stroke="none"/>
+    </g>
+  </defs>
+</svg>
