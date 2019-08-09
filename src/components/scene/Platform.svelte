@@ -59,7 +59,10 @@
 <script>
 
   import { encodePlatformData } from "/xml-utils.js"
-  import { highQuality, platforms, selection, buildXML } from "/stores/stores.js"
+  import { 
+    highQuality, showInvisibleGrounds,
+    platforms, selection, buildXML 
+  } from "/stores/stores.js"
 
   import SvgImage from "/components/common/SvgImage.svelte"
 
@@ -78,12 +81,9 @@
   }
 
   $: rs = 6
-  // $: rw = rs/2 + platform._width/2
-  // $: rh = rs/2 + platform._height/2
   $: rw = rs/2 + (isCircle ? platform._width : platform._width/2)
   $: rh = rs/2 + (isCircle ? platform._width : platform._height/2)
 
-  // Clockwise from top left
   function resizeStart(e, k) {
     resizeInfo = { 
       k,
@@ -93,6 +93,10 @@
     }
   }
 
+  $: isInvisible = platform._invisible || platform._typeName === "invisible"
+  $: invisibilityClass = isInvisible ?
+    ($showInvisibleGrounds ? "half-opacity" : "zero-opacity") :
+    ""
 
 </script>
 
@@ -103,42 +107,51 @@
   <g class="platform"
     on:mousedown on:mousemove on:mouseleave
   >
-    <g class:opacity0={platform._invisible}>
 
-      {#if platform._groundImageEnabled}
-        <SvgImage 
-          x={-platform._width/2 + platform._groundImageX} 
-          y={-platform._height/2 + platform._groundImageY}
-          href={platform._groundImageFullUrl}
-        />}
-        <rect
-          x={-platform._width/2} y={-platform._height/2}
-          width={platform._width} height={platform._height}
-          fill="transparent"
-          class="selectable"
-          class:active
-        />
-      {:else if platform._typeName === "circle"}
-        <circle class="selectable" class:active
-          r={platform._radius}
-          fill={platform._displayColor}
-        />
-      {:else if platform._typeName === "rectangle"}
-        <rect class="selectable" class:active
-          x={-platform._width/2} y={-platform._height/2}
-          width={platform._width} height={platform._height}
-          fill={platform._displayColor}
-        />
-      {:else if ["wood", "ice", "trampoline", "chocolate", "cloud"].includes(platform._typeName)}
-        <image class="selectable" class:active
-          x={-platform._width/2} y={-platform._height/2}
-          width={platform._width} height={platform._height} 
-          preserveAspectRatio="none" 
-          href="dist/grounds/{ platform._typeName }{ $highQuality? "-high" : "" }.png"
-          on:mousedown|preventDefault
-        />
-      {:else}
-        <g class="selectable" class:active >
+    {#if platform._groundImageEnabled}
+    <SvgImage class="pointer-events-none"
+      x={-platform._width/2 + platform._groundImageX} 
+      y={-platform._height/2 + platform._groundImageY}
+      href={platform._groundImageFullUrl}
+    />}
+    <rect
+      x={-platform._width/2} y={-platform._height/2}
+      width={platform._width} height={platform._height}
+      fill="transparent"
+      class="selectable"
+      class:active
+    />
+    {:else}
+
+    <g class="selectable" class:active >
+      <g class={invisibilityClass} >
+
+        {#if platform._typeName === "circle"}
+          <circle
+            r={platform._radius}
+            fill={platform._displayColor}
+          />
+        {:else if platform._typeName === "rectangle"}
+          <rect
+            x={-platform._width/2} y={-platform._height/2}
+            width={platform._width} height={platform._height}
+            fill={platform._displayColor}
+          />
+        {:else if ["wood", "ice", "trampoline", "chocolate", "cloud"].includes(platform._typeName)}
+          <image 
+            x={-platform._width/2} y={-platform._height/2}
+            width={platform._width} height={platform._height} 
+            preserveAspectRatio="none" 
+            href="dist/grounds/{ platform._typeName }{ $highQuality? "-high" : "" }.png"
+            on:mousedown|preventDefault
+          />
+        {:else if platform._typeName === "invisible"}
+          <rect
+            x={-platform._width/2} y={-platform._height/2}
+            width={platform._width} height={platform._height}
+            fill="white"
+          />
+        {:else}
           <foreignObject
             x={-platform._width/2} y={-platform._height/2}
             width={platform._width} height={platform._height} 
@@ -150,10 +163,13 @@
             >
             </div>
           </foreignObject>
-        </g>
-      {/if}
+        {/if}
 
+      </g>
     </g>
+
+    {/if}
+
   </g>
 
   <g transform="translate({-rs/2}, {-rs/2})" 
@@ -177,7 +193,10 @@
 
 <style lang="text/postcss">
 
-  .opacity0 {
+  .half-opacity {
+    opacity: 0.4;
+  }
+  .zero-opacity {
     opacity: 0;
   }
 

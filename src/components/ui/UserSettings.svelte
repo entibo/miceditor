@@ -8,7 +8,7 @@
 
   import { 
     
-    highQuality, parkour, showGameGUI, showMapBorder, gridSettings
+    highQuality, parkour, showGameGUI, showMapBorder, showInvisibleGrounds, gridSettings
   } from "/stores/stores.js"
 
 </script>
@@ -37,6 +37,12 @@
       <label class="flex items-center">
         <input type="checkbox" bind:checked={$showMapBorder}/>
         <span class="text-sm gray-200 ml-2">Show map border</span>
+      </label>
+    </section>
+    <section>
+      <label class="flex items-center">
+        <input type="checkbox" bind:checked={$showInvisibleGrounds}/>
+        <span class="text-sm gray-200 ml-2">Show invisible grounds</span>
       </label>
     </section>
 

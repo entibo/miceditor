@@ -18,6 +18,7 @@ export function persistentWritable(name, defaultValue, listen=false) {
 export const highQuality = persistentWritable("highQuality", true)
 export const showGameGUI = persistentWritable("showGameGUI", true)
 export const showMapBorder = persistentWritable("showMapBorder", true)
+export const showInvisibleGrounds = persistentWritable("showInvisibleGrounds", true)
 
 export const gridSettings = persistentWritable("gridSettings", {
   enabled: false,
