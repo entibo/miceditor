@@ -3,6 +3,8 @@
   import { onMount, tick } from "svelte"
   import { fade } from "svelte/transition"
 
+  import { randInt } from "/utils.js"
+
   import { encodeObjectData, rotate } from "/xml-utils.js"
   import { 
     platforms, decorations, shamanObjects, 
@@ -350,10 +352,14 @@
       />
       {/each}
 
-      {#if $settings._backgroundImageId >= 0}
+      {#if $settings._backgroundImageId != -1}
       <image x="0" y="0" 
             width={$settings._width} height={$settings._height}
-            href="dist/backgrounds/{$settings._backgroundImageId}.svg"
+            href="dist/backgrounds/{
+              $settings._backgroundImageId == -2 ?
+                [0,1,2,3,7,8][randInt(0,5)] :
+                $settings._backgroundImageId
+            }.svg"
             on:mousedown|preventDefault
       />
       {/if}

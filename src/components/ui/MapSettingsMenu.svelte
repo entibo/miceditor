@@ -99,6 +99,7 @@
       <div class="material-input">
         <select bind:value={data._backgroundImageId} on:change={updateSettings}>
           <option value="-1">None</option>
+          <option value="-2">Random</option>
           <option value="0">Daylight</option>
           <option value="1">Dawn</option>
           <option value="2">Twilight</option>

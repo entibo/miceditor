@@ -16,3 +16,9 @@ export function debounce(fn, ms) {
   }, ms)
   fnToTimeout.set(fn, timeout)
 }
+
+export function randInt(min,max) {
+  let range = max - min
+  let rand = Math.floor(Math.random() * (range + 1))
+  return min + rand
+}

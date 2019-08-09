@@ -206,15 +206,7 @@ export function decodeMapData(object) {
 
   object._backgroundImageId = "-1"
   if(object.F !== undefined) {
-    let backgroundId = parseInt(object.F)
-    if(!isNaN(backgroundId)) {
-      if(backgroundId < 0 || backgroundId > 8) {
-        object._backgroundImageId = "-1"
-      }
-      else {
-        object._backgroundImageId = object.F
-      }
-    }
+    object._backgroundImageId = object.F
   }
 
   for(let {xmlName,name} of mapBooleanProps) {
