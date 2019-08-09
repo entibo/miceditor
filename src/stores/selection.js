@@ -95,18 +95,27 @@ function paste() {
   let newSelection = storeGet(clipboard).map(object => Object.assign({}, object))
   let stores = new Set([...newSelection].map(o => o._store))
   for(let store of stores) {
-    let newObjects = newSelection.filter(o => o._store === store)
-    if(!newObjects.length) continue
-    store.update(list => [...list, ...newObjects])
+    let objects = newSelection.filter(o => o._store === store)
+    if(!objects.length) continue
+    store.update(list => {
+      objects = objects.filter(o => {
+        if(o._unique) {
+          return !list.find(({_type}) => _type === o._type)
+        }
+        return true
+      })
+      return [...list, ...objects]
+    })
   }
   set(newSelection)
   buildXML()
 }
 
 function duplicate() {
+  let toBeDuplicated = $selection.filter(o => !o._unique)
   let newSelection = []
   for(let store of stores) {
-    let objects = $selection.filter(o => o._store === store)
+    let objects = toBeDuplicated.filter(o => o._store === store)
     for(let object of objects) {
       let copy = Object.assign({}, object)
       copy._x += 40

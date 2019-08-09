@@ -652,6 +652,9 @@ export function decodeDecorationData(decoration, index) {
   }
   else {
     decoration._type = decoration.name
+    if(["DS", "DC", "DC2"].includes(decoration._type)) {
+      decoration._unique = true
+    }
   }
 
   if(decoration.name === "T" || decoration.name === "F") {
