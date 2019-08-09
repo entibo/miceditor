@@ -61,6 +61,8 @@
   import { encodePlatformData } from "/xml-utils.js"
   import { highQuality, platforms, selection, buildXML } from "/stores/stores.js"
 
+  import SvgImage from "/components/common/SvgImage.svelte"
+
   export let platform
   export let active = false
 
@@ -104,17 +106,16 @@
     <g class:opacity0={platform._invisible}>
 
       {#if platform._groundImageEnabled}
-        <image 
+        <SvgImage 
           x={-platform._width/2 + platform._groundImageX} 
           y={-platform._height/2 + platform._groundImageY}
           href={platform._groundImageFullUrl}
-          on:mousedown|preventDefault
         />}
         <rect
           x={-platform._width/2} y={-platform._height/2}
           width={platform._width} height={platform._height}
-          fill="none"
-          class="selectable pointer-events-none"
+          fill="transparent"
+          class="selectable"
           class:active
         />
       {:else if platform._typeName === "circle"}
