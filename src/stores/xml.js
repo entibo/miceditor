@@ -42,6 +42,21 @@ export const xml = (() => {
   }
 })()
 
+export const hasChanged = (() => {
+  let { subscribe, set, update } = writable(false)
+  let initXML = null
+  let xmlUnsubscribe = xml.subscribe(v => {
+    if(initXML === null) {
+      initXML = v
+    }
+    else if(v !== initXML) {
+      set(true)
+      xmlUnsubscribe()
+    }
+  })
+  return { subscribe }
+})()
+
 let $settings, $platforms, $decorations, $shamanObjects
 
 settings.subscribe(o => {

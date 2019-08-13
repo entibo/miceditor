@@ -5,7 +5,7 @@
   import MainPanel from "/components/ui/MainPanel.svelte"
   import Scene from "/components/scene/Scene.svelte"
 
-  import { undo, redo } from "/stores/stores.js"
+  import { undo, redo, hasChanged } from "/stores/stores.js"
 
   function onKeydown({ctrlKey, shiftKey, key}) {
     if(ctrlKey) {
@@ -16,6 +16,12 @@
       if(key.toLowerCase() === "y") redo()
     }
   }
+
+  function unloadConfirmation() {
+    if(!confirm("Exit ?")) return false
+    return true
+  }
+  $: window.onbeforeunload = $hasChanged ? unloadConfirmation : null
 </script>
 
 <svelte:window 
