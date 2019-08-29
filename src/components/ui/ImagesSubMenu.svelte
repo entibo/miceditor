@@ -10,7 +10,7 @@
   import TextInput from "/components/common/TextInput.svelte"
   import Tooltip from "/components/common/Tooltip.svelte"
 
-  import { settings, visibility, buildXML, highlightedObject } from "/stores/stores.js"
+  import { settings, visibility, buildXML, highlightedObject, _ } from "/stores/stores.js"
   import { encodeMapData } from "/xml-utils.js"
 
   export let which
@@ -29,8 +29,8 @@
 
 <section class="flex-col">
   <div class="text-sm text-gray-100 w-full flex justify-between">
-    <span>{title} images</span>
-    <Tooltip inline title="Add">
+    <span>{title}</span>
+    <Tooltip inline title={$_("button-add")}>
       <div class="cursor-pointer text-green-500"
         on:click={() => {
           $settings["_"+which].push({url:"",x:0,y:0})
@@ -38,7 +38,7 @@
         }}
       >
         <Icon icon={faPlus} /></div></Tooltip>
-    <Tooltip inline bottom end title="Toggle visibility">
+    <Tooltip inline bottom end title={$_("toggle-visibility")}>
       <div class="cursor-pointer" class:text-red-500={!$visibility[which]}
         on:click={() => visibility.toggle(which)}
       >
@@ -57,7 +57,7 @@
           <span>Y</span>
           <TextInput number value={data.y} on:input={e => { data.y = e.target.value, updateSettings()}} />
         </label>
-        <Tooltip inline bottom end title="Remove">
+        <Tooltip inline bottom end title={$_("button-delete")}>
           <div class="cursor-pointer text-red-500 text-sm"
             on:click|stopPropagation={() => {
               $settings["_"+which].splice(index, 1)
@@ -84,14 +84,14 @@
         on:mouseenter={() => $highlightedObject = data.index}
         on:mouseleave={() => $highlightedObject = null}
       >
-        <div class="text-xs text-gray-300">Disappearing rectangle</div>
+        <div class="text-xs text-gray-300">{$_("disappearing-rectangle")}</div>
         <div class="flex">
           <label>
-            <span class="text-xs">Left</span>
+            <span class="text-xs">{$_("left")}</span>
             <TextInput number value={data.rx} on:input={e => { data.rx = e.target.value, updateSettings()}} />
           </label>
           <label>
-            <span class="text-xs">Top</span>
+            <span class="text-xs">{$_("top")}</span>
             <TextInput number value={data.ry} on:input={e => { data.ry = e.target.value, updateSettings()}} />
           </label>
         </div>

@@ -22,7 +22,7 @@
 
   import { 
     platforms, decorations, shamanObjects, settings, 
-    visibility, selection, creation, highlightedObject, buildXML } from "/stores/stores.js"
+    visibility, selection, creation, highlightedObject, buildXML, _ } from "/stores/stores.js"
   import { encodeMapData, mapBooleanProps } from "/xml-utils.js"
 
   $: data = $settings
@@ -79,14 +79,14 @@
 
   <section>
     <label>
-      <span>Gravity</span>
+      <span>{$_("gravity")}</span>
       <TextInput number bind:value={data._gravity} on:input={updateSettings} />
     </label>
   </section>
   <div class="mb-1"></div>
   <section>
     <label>
-      <span>Wind</span>
+      <span>{$_("wind")}</span>
       <TextInput number bind:value={data._wind} on:input={updateSettings} />
     </label>
   </section>
@@ -95,20 +95,20 @@
 
   <section>
     <label>
-      <span>Background</span>
+      <span>{$_("background")}</span>
       <div class="material-input">
         <select bind:value={data._backgroundImageId} on:change={updateSettings}>
-          <option value="-1">None</option>
-          <option value="-2">Random</option>
-          <option value="0">Daylight</option>
-          <option value="1">Dawn</option>
-          <option value="2">Twilight</option>
-          <option value="3">Full moon</option>
-          <option value="4">Halloween</option>
-          <option value="5">Christmas</option>
-          <option value="6">Valentine</option>
-          <option value="7">Storm clouds</option>
-          <option value="8">Storm clouds 2</option>
+          <option value="-1">{$_("none")}</option>
+          <option value="-2">{$_("random")}</option>
+          <option value="0">{$_("background0")}</option>
+          <option value="1">{$_("background1")}</option>
+          <option value="2">{$_("background2")}</option>
+          <option value="3">{$_("background3")}</option>
+          <option value="4">{$_("background4")}</option>
+          <option value="5">{$_("background5")}</option>
+          <option value="6">{$_("background6")}</option>
+          <option value="7">{$_("background7")}</option>
+          <option value="8">{$_("background8")}</option>
         </select>
       </div>
     </label>
@@ -117,18 +117,18 @@
   <div class="mb-2"></div>
 
   <section>
-    <label>
-      <span>Mass of shaman objects</span>
+    <label style="display: block;">
+      <span class="block">{$_("shaman_objects")}: {$_("mass")}</span>
       <TextInput number bind:value={data._shamanObjectsMass} on:input={updateSettings} />
     </label>
   </section>
 
   <div class="mb-2"></div>
 
-  {#each mapBooleanProps as {name, title}}
+  {#each mapBooleanProps as {name, titleKey}}
   <section>
     <label>
-      <span>{title}</span>
+      <span>{$_(titleKey)}</span>
       <input class="" type="checkbox" checked={data[name]} 
         on:change={e => { data[name] = !!e.target.checked, updateSettings()}} />
     </label>
@@ -139,7 +139,7 @@
 
   <section>
     <label>
-      <span>Defilante mode...</span>
+      <span>{$_("defilante-mode")}...</span>
       <input class="" type="checkbox" checked={data._defilanteEnabled} 
         on:change={e => { data._defilanteEnabled = !!e.target.checked, updateSettings()}} />
     </label>
@@ -149,7 +149,7 @@
   <div transition:fly={{duration: 80, x:50}} class="border-l-2 pl-3 border-white">
     <section>
       <label>
-        <span>Starting speed</span>
+        <span>{$_("defilante-start-speed")}</span>
         <span class="w-1/3">
           <TextInput number bind:value={data._defilanteStartSpeed} on:input={updateSettings} />
         </span>
@@ -157,7 +157,7 @@
     </section>
     <section>
       <label>
-        <span>Acceleration</span>
+        <span>{$_("defilante-acceleration")}</span>
         <span class="w-1/3">
           <TextInput number bind:value={data._defilanteAcceleration} on:input={updateSettings} />
         </span>
@@ -165,7 +165,7 @@
     </section>
     <section>
       <label>
-        <span>Maximum speed</span>
+        <span>{$_("defilante-maximum-speed")}</span>
         <span class="w-1/3">
           <TextInput number bind:value={data._defilanteMaxSpeed} on:input={updateSettings} />
         </span>
@@ -173,7 +173,7 @@
     </section>
     <section>
       <label>
-        <span>Free scroll</span>
+        <span>{$_("defilante-free-scroll")}</span>
         <input class="" type="checkbox" checked={data._defilanteFreeScroll} 
           on:change={e => { data._defilanteFreeScroll = !!e.target.checked, updateSettings()}} />
       </label>
@@ -189,12 +189,12 @@
   >
     <section>
       <label>
-        <span>Mice spawn</span>
+        <span>{$_("mice-spawn")}</span>
         <div class="material-input">
           <select bind:value={data._miceSpawn.type} on:change={updateMiceSpawn}>
-            <option value="normal">Normal</option>
-            <option value="multiple">Multiple</option>
-            <option value="random">Random</option>
+            <option value="normal">{$_("mice-spawn-normal")}</option>
+            <option value="multiple">{$_("mice-spawn-multiple")}</option>
+            <option value="random">{$_("random")}</option>
           </select>
         </div>
       </label>
@@ -208,10 +208,10 @@
     <section class="flex-col border-l-2 pl-3 border-white mt-1" transition:fly={{duration: 80, x:50}}>
       <div class="flex w-full">
         <label class="w-1/2">
-          <span>Axis</span>
+          <span>{$_("axis")}</span>
         </label>
         <label class="w-1/2">
-          <span>Random</span>
+          <span>{$_("random")}</span>
         </label>
       </div>
       <div class="flex w-full">
@@ -242,9 +242,9 @@
 
   <div class="mb-4"></div>
 
-  <ImagesSubMenu which="backgroundImages" title="Background"/>
-  <ImagesSubMenu which="foregroundImages" title="Foreground"/>
-  <ImagesSubMenu which="disappearingImages" title="Disappearing"/>
+  <ImagesSubMenu which="backgroundImages" title={$_("background")}/>
+  <ImagesSubMenu which="foregroundImages" title={$_("foreground")}/>
+  <ImagesSubMenu which="disappearingImages" title={$_("disappearing-images")}/>
 
 </div>
 

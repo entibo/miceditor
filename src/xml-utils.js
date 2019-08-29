@@ -179,13 +179,13 @@ function getFullTransformiceImageUrl(path) {
 
 
 export const mapBooleanProps = [
-  { xmlName: "P", name: "_portals", title: "Allow portals"},
-  { xmlName: "C", name: "_collisions", title: "Enable mouse collisions"},
-  { xmlName: "A", name: "_soulmate", title: "Soulmate mode"},
-  { xmlName: "N", name: "_night", title: "Night mode"},
-  { xmlName: "Ca", name: "_hideOffscreen", title: "Hide offscreen"},
-  { xmlName: "mc", name: "_hideNails", title: "Hide nails"},
-  { xmlName: "bh", name: "_upwardsCannonballs", title: "Allow cannonballs to shoot up"},
+  { xmlName: "P", name: "_portals", titleKey: "allow-portals"},
+  { xmlName: "C", name: "_collisions", titleKey: "enable-mouse-collisions"},
+  { xmlName: "A", name: "_soulmate", titleKey: "soulmate-mode"},
+  { xmlName: "N", name: "_night", titleKey: "night-mode"},
+  { xmlName: "Ca", name: "_hideOffscreen", titleKey: "hide-offscreen"},
+  { xmlName: "mc", name: "_hideNails", titleKey: "hide-anchors"},
+  { xmlName: "bh", name: "_upwardsCannonballs", titleKey: "cannonballs-up"},
 ]
 export function decodeMapData(object) {
 

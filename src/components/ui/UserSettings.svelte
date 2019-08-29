@@ -7,8 +7,7 @@
   import ColorTextInput from "/components/common/ColorTextInput.svelte"
 
   import { 
-    
-    highQuality, parkour, showGameGUI, showMapBorder, showInvisibleGrounds, gridSettings
+    highQuality, parkour, showGameGUI, showMapBorder, showInvisibleGrounds, gridSettings, _
   } from "/stores/stores.js"
 
 </script>
@@ -21,7 +20,7 @@
     <section>
       <label class="flex items-center">
         <input type="checkbox" bind:checked={$highQuality}/>
-        <span class="text-sm gray-200 ml-2">High resolution textures</span>
+        <span class="text-sm gray-200 ml-2">{$_("high-resolution")}</span>
       </label>
     </section>
 
@@ -30,19 +29,19 @@
     <section>
       <label class="flex items-center">
         <input type="checkbox" bind:checked={$showGameGUI}/>
-        <span class="text-sm gray-200 ml-2">Show game GUI</span>
+        <span class="text-sm gray-200 ml-2">{$_("show-game-gui")}</span>
       </label>
     </section>
     <section>
       <label class="flex items-center">
         <input type="checkbox" bind:checked={$showMapBorder}/>
-        <span class="text-sm gray-200 ml-2">Show map border</span>
+        <span class="text-sm gray-200 ml-2">{$_("show-map-border")}</span>
       </label>
     </section>
     <section>
       <label class="flex items-center">
         <input type="checkbox" bind:checked={$showInvisibleGrounds}/>
-        <span class="text-sm gray-200 ml-2">Show invisible grounds</span>
+        <span class="text-sm gray-200 ml-2">{$_("show-invisible-grounds")}</span>
       </label>
     </section>
 
@@ -51,24 +50,24 @@
     <section>
       <label class="flex items-center">
         <input type="checkbox" bind:checked={$gridSettings.enabled}/>
-        <span class="text-sm gray-200 ml-2">Show grid...</span>
+        <span class="text-sm gray-200 ml-2">{$_("show-grid")}...</span>
       </label>
     </section>
     {#if $gridSettings.enabled}
     <div transition:fly={{y:-10, duration: 60}} class="border-l-2 pl-3 border-white">
       <section>
-        <label>
+        <label class="w-1/3">
           <span>L</span>
           <TextInput number bind:value={$gridSettings.width} />
         </label>
-        <label>
+        <label class="w-1/3">
           <span>H</span>
           <TextInput number bind:value={$gridSettings.height} />
         </label>
       </section>
       <section>
         <label class="">
-          <span>Grid color</span>
+          <span>{$_("grid-color")}</span>
           <div class="color-tile cursor-pointer" style="background: #{$gridSettings.color}"></div>
           <ColorTextInput bind:value={$gridSettings.color} />
         </label>
@@ -81,7 +80,7 @@
     <section>
       <label class="flex items-center">
         <input type="checkbox" bind:checked={$parkour}/>
-        <span class="text-sm gray-200 ml-2">Show #parkour checkpoints</span>
+        <span class="text-sm gray-200 ml-2">{$_("show-parkour-checkpoints")}</span>
       </label>
     </section>
 

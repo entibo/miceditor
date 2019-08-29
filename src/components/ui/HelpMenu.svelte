@@ -3,49 +3,51 @@
   import TextInput from "/components/common/TextInput.svelte"
   import Button from "/components/common/Button.svelte"
 
+  import { _ } from "/stores/stores.js"
+
   let data = [
     {
       context: "Global",
       rows: [
         {
           inputs: ["Space", "Drag"],
-          description: "Move the camera",
+          description: $_("move-camera"),
         },
         {
           inputs: ["Ctrl", "Scroll"],
-          description: "Zoom in/out",
+          description: $_("button-zoom"),
         },
         {
           inputs: ["Click/Drag"],
-          description: "Select objects",
+          description: $_("select-unselect"),
         },
         {
           inputs: ["Shift", "Click/Drag"],
-          description: "Select/unselect objects",
+          description: $_("select-unselect"),
         },
         {
           inputs: ["Ctrl", "A"],
-          description: "Select all",
+          description: $_("select-all"),
         },
         {
           inputs: ["Ctrl", "Shift", "A"],
-          description: "Unselect all",
+          description: $_("unselect-all"),
         },
         {
           inputs: ["Escape"],
-          description: "Cancel, unselect, reset camera",
+          description: $_("reset-camera"),
         },
         {
           inputs: ["Ctrl", "Z"],
-          description: "Undo last action",
+          description: $_("button-undo"),
         },
         {
           inputs: ["Ctrl", "Y"],
-          description: "Redo",
+          description: $_("button-redo"),
         },
         {
           inputs: ["Ctrl", "Shift", "Z"],
-          description: "Redo",
+          description: $_("button-redo"),
         },
       ],
     },
@@ -55,51 +57,51 @@
       rows: [
         {
           inputs: ["Drag"],
-          description: "Move selection",
+          description: $_("move-selection"),
         },
         {
           inputs: ["Arrows"],
-          description: "Move selection",
+          description: $_("move-selection"),
         },
         {
           inputs: ["Shift", "Arrows"],
-          description: "Move selection (±10)",
+          description: $_("move-selection") + " (±10)",
         },
         {
           inputs: ["Ctrl", "Arrows"],
-          description: "Move selection (±100)",
+          description: $_("move-selection") + " (±100)",
         },
         {
           inputs: ["Scroll"],
-          description: "Rotate",
+          description: $_("rotate"),
         },
         {
           inputs: ["Shift", "Scroll"],
-          description: "Rotate around cursor",
+          description: $_("rotate-around-cursor"),
         },
         {
           inputs: ["Alt", "Scroll"],
-          description: "Rotate slower",
+          description: $_("rotate-slower"),
         },
         {
           inputs: ["Delete"],
-          description: "Delete",
+          description: $_("button-delete"),
         },
         {
           inputs: ["D"],
-          description: "Duplicate",
+          description: $_("button-duplicate"),
         },
         {
           inputs: ["Ctrl", "C"],
-          description: "Copy",
+          description: $_("button-copy"),
         },
         {
           inputs: ["Ctrl", "X"],
-          description: "Cut",
+          description: $_("cut"),
         },
         {
           inputs: ["Ctrl", "V"],
-          description: "Paste",
+          description: $_("paste"),
         },
       ],
     },

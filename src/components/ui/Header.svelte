@@ -20,7 +20,8 @@
   import { 
     xml, settings, 
     undo, redo, canUndo, canRedo,
-    highQuality, parkour, showGameGUI, showMapBorder, zoom, firstVisit
+    highQuality, parkour, showGameGUI, showMapBorder, zoom, firstVisit,
+    language, _, localeFlag
   } from "/stores/stores.js"
 
   import TextInput from "/components/common/TextInput.svelte"
@@ -29,6 +30,7 @@
   import UserSettings from "/components/ui/UserSettings.svelte"
   import XmlEditor from "/components/ui/XmlEditor.svelte"
   import HelpMenu from "/components/ui/HelpMenu.svelte"
+  import LanguageMenu from "/components/ui/LanguageMenu.svelte"
 
   let copyIconActive = false
   function removeCopyIconActive() {
@@ -70,26 +72,36 @@
 <header class="relative flex justify-between items-center px-4 py-2 bg-gray-800 shadow-lg text-white z-10">
 
   <div class="flex items-center">
+
+    <Button class="text-sm" on:click={selectMenu.bind(null, "language")}>
+      <div class="flex justify-center items-center">
+        <span class="icon" class:active={currentMenu === "language"}>
+          <span class="m-1 flag flag-{localeFlag[$language]}"></span>
+      </div>
+    </Button>
+
+    <div class="mr-2"></div>
+
     <Tooltip inline bottom title="H" >
       <Button class="text-sm" on:click={selectMenu.bind(null, "help")}>
         <div class="flex justify-center items-center">
           <span class="icon" class:active={currentMenu === "help"}>
             <Icon icon={faQuestion}/> 
               </span>
-            <span class="ml-2 hidden xl:inline">Help</span>
+            <span class="ml-2 hidden xl:inline">{$_("button-help")}</span>
         </div>
       </Button>
     </Tooltip>
 
     <div class="mr-2"></div>
 
-    <Tooltip inline bottom title="Editor settings" >
+    <Tooltip inline bottom title={$_("editor-settings")} >
       <Button class="text-sm" on:click={selectMenu.bind(null, "settings")}>
         <div class="flex justify-center items-center">
           <span class="icon" class:active={currentMenu === "settings"}>
             <Icon icon={faCog}/> 
               </span>
-          <span class="ml-2 hidden xl:inline">Settings</span>
+          <span class="ml-2 hidden xl:inline">{$_("button-settings")}</span>
         </div>
       </Button>
     </Tooltip>
@@ -102,7 +114,7 @@
           <span class="icon" class:active={currentMenu === "zoom"}>
             <Icon icon={faSearchPlus}/> 
               </span>
-            <span class="ml-2 hidden xl:inline">Zoom</span>
+            <span class="ml-2 hidden xl:inline">{$_("button-zoom")}</span>
         </div>
       </Button>
     </Tooltip>
@@ -114,13 +126,13 @@
 
 
   <div class="flex items-center">
-    <Tooltip inline bottom title="Large XML editor" >
+    <Tooltip inline bottom title={$_("large-xml-editor")} >
       <Button class="text-sm" on:click={selectMenu.bind(null, "xmlEditor")}>
         <div class="flex justify-center items-center" >
           <span class="icon" class:active={currentMenu === "xmlEditor"}>
             <Icon icon={faEdit}/> 
               </span>
-          <span class="ml-2 hidden xl:inline">Edit</span>
+          <span class="ml-2 hidden xl:inline">{$_("button-edit")}</span>
         </div>
       </Button>
     </Tooltip>
@@ -131,13 +143,13 @@
 
     <div class="mr-2"></div>
 
-    <Tooltip inline bottom title="Copy XML to clipboard" >
+    <Tooltip inline bottom title={$_("copy-map-to-clipboard")} >
       <Button class="text-sm" on:click={copyXML}>
         <div class="flex justify-center items-center" >
           <span class="icon" class:active={copyIconActive}>
             <Icon icon={faCopy}/> 
           </span>
-          <span class="ml-2 hidden xl:inline">Copy</span>
+          <span class="ml-2 hidden xl:inline">{$_("button-copy")}</span>
         </div>
       </Button>
     </Tooltip>
@@ -151,7 +163,7 @@
     <Tooltip inline bottom title="Ctrl+Z" >
       <Button class="text-sm" disabled={!$canUndo} on:click={undo}>
         <div class="flex justify-center items-center">
-          <Icon icon={faUndo}/> <span class="ml-2 hidden xl:inline">Undo</span>
+          <Icon icon={faUndo}/> <span class="ml-2 hidden xl:inline">{$_("button-undo")}</span>
         </div>
       </Button>
     </Tooltip>
@@ -159,7 +171,7 @@
     <Tooltip inline bottom end title="Ctrl+Shift+Z / Ctrl+Y" >
       <Button class="text-sm" disabled={!$canRedo} on:click={redo}>
         <div class="flex justify-center items-center">
-          <Icon icon={faRedo}/> <span class="ml-2 hidden xl:inline">Redo</span>
+          <Icon icon={faRedo}/> <span class="ml-2 hidden xl:inline">{$_("button-redo")}</span>
         </div>
       </Button>
     </Tooltip>
@@ -181,7 +193,7 @@
     
     <section>
       <label class="w-24">
-        <span>Zoom</span>
+        <span>{$_("button-zoom")}</span>
         <TextInput number bind:value={$zoom} />
       </label>
       <input type=range bind:value={$zoom} min=0.1 max=5 step=0.1 />
@@ -202,6 +214,14 @@
   <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
     
     <HelpMenu />
+
+  </div>
+
+  {:else if currentMenu === "language"}
+
+  <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
+    
+    <LanguageMenu />
 
   </div>
 

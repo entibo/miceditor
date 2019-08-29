@@ -10,6 +10,7 @@
   import { 
     selection, visibility,
     platforms, decorations, shamanObjects,
+    _
   } from "/stores/stores.js"
 
   import Tooltip from "/components/common/Tooltip.svelte"
@@ -47,7 +48,7 @@
   >
     <div class="flex-grow flex justify-between px-1 flex-wrap">
       <div class="flex text-sm">
-        <Tooltip bottom start title={collapsed ? "Expand" : "Collapse"}>
+        <Tooltip bottom start title={collapsed ? $_("expand") : $_("collapse")}>
           <div class="icon mr-3" class:flipped={collapsed}>
             <Icon icon={faChevronUp} />
           </div>
@@ -60,19 +61,19 @@
           {count}/{max}
         </div>
         <div class="mr-3"></div>
-        <Tooltip title="Unselect all">
+        <Tooltip title={$_("unselect-all")}>
           <div class="icon" on:click|stopPropagation={() => selection.unselectGroup(which)}>
             <Icon icon={faSquareOutline} />
           </div>
         </Tooltip>
         <div class="mr-1"></div>
-        <Tooltip title="Select all">
+        <Tooltip title={$_("select-all")}>
           <div class="icon" on:click|stopPropagation={() => selection.selectGroup(which)}>
             <Icon icon={faSquare} />
           </div>
         </Tooltip>
         <div class="mr-3"></div>
-        <Tooltip title="Toggle visibility">
+        <Tooltip title={$_("toggle-visibility")}>
           <div class="icon" class:text-red-500={!$visibility[which]}
             on:click|stopPropagation={() => visibility.toggle(which)}
           >

@@ -5,7 +5,8 @@
       "build:auto": "rollup -c -w",
       "serve": "sirv .",
       "serve:dev": "sirv . --dev",
-      "dev": "run-p build:auto serve:dev"
+      "dev": "run-p build:auto serve:dev",
+      "translations": "curl 'https://localise.biz/api/export/all.json?format=multi&key=_KwQn345xaZK8iQ3yj3JkzfGbzjIWAgk' -o ./src/languages.json"
    },
    "devDependencies": {
       "@fullhuman/postcss-purgecss": "^1.2.0",
@@ -44,6 +45,7 @@
       "codemirror": "^5.48.2",
       "color-convert": "^2.0.0",
       "fa-svelte": "^3.0.0",
+      "svelte-i18n": "^1.1.2-beta",
       "xml-beautifier": "^0.4.2"
    }
 }

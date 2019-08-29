@@ -12,6 +12,7 @@
   import { 
     selection, creation, groundTypePicker, visibility,
     settings, platforms, decorations, shamanObjects,
+    _
   } from "/stores/stores.js"
 
   import shamanObjectMetadata from "/shamanObjectMetadata.js"
@@ -88,7 +89,7 @@
     class:thin={isThin}
 > 
 
-  <ObjectPaletteMenu which="basic" title="Basic" bind:collapsed={collapsed.basic} max="40" count={$decorations.length}>
+  <ObjectPaletteMenu which="basic" title={$_("mice-stuff")} bind:collapsed={collapsed.basic} max="40" count={$decorations.length}>
     <div class="flex flex-wrap justify-center py-1">
       {#each ["F", "T"] as type}
         <div class="tile" class:active={$creation && $creation.objectType === "decoration" && $creation.type == type}
@@ -121,7 +122,7 @@
     </div>
   </ObjectPaletteMenu>
 
-  <ObjectPaletteMenu which="grounds" title="Grounds" bind:collapsed={collapsed.grounds} 
+  <ObjectPaletteMenu which="grounds" title={$_("category-grounds")} bind:collapsed={collapsed.grounds} 
     active={$groundTypePicker} max="50" count={$platforms.length}
   >
     <div class="flex flex-wrap justify-center content-center">
@@ -137,7 +138,7 @@
     </div>
   </ObjectPaletteMenu>
 
-  <ObjectPaletteMenu which="decorations" title="Decorations" bind:collapsed={collapsed.decorations} grow max="40" count={$decorations.length}>
+  <ObjectPaletteMenu which="decorations" title={$_("category-decorations")} bind:collapsed={collapsed.decorations} grow max="40" count={$decorations.length}>
     <div class="scrollbox-container">
       <div class="flex flex-wrap justify-center scrollbox">
         {#each Array(133) as _, type}
@@ -152,7 +153,7 @@
   </ObjectPaletteMenu>
 
 
-  <ObjectPaletteMenu which="objects" title="Objects" bind:collapsed={collapsed.objects} grow max={objectMaxCount} count={$shamanObjects.length}>
+  <ObjectPaletteMenu which="objects" title={$_("shaman_objects")} bind:collapsed={collapsed.objects} grow max={objectMaxCount} count={$shamanObjects.length}>
     <div class="scrollbox-container">
       <div class="flex flex-wrap justify-center scrollbox">
 
@@ -192,7 +193,7 @@
 
   {#if !collapsed.objects && $creation && $creation.objectType === "shamanObject" && shamanObjectMetadata[$creation.type].variants}
   <!-- <div  class="flex flex-grow"> -->
-    <ObjectPaletteMenu title="Variants" noActions grow>
+    <ObjectPaletteMenu title={$_("variants")} noActions grow>
       <div transition:fly={{duration:100, y: 50}} class="scrollbox-container">
         <div class="block text-center scrollbox">
 

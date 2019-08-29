@@ -10,7 +10,7 @@
   import TextInput from "/components/common/TextInput.svelte"
   import Tooltip from "/components/common/Tooltip.svelte"
 
-  import { settings, visibility, buildXML } from "/stores/stores.js"
+  import { settings, visibility, buildXML, _ } from "/stores/stores.js"
   import { encodeMapData } from "/xml-utils.js"
 
   function updateSettings() {
@@ -25,8 +25,8 @@
 
 <section class="flex-col">
   <div class="text-sm text-gray-100 w-full flex justify-between">
-    <span>Positions</span>
-    <Tooltip inline title="Add">
+    <span>{$_("positions")}</span>
+    <Tooltip inline title={$_("button-add")}>
       <div class="cursor-pointer text-green-500"
         on:click={() => {
           $settings._miceSpawn.positions.push({x:400,y:200})
@@ -34,7 +34,7 @@
         }}
       >
         <Icon icon={faPlus} /></div></Tooltip>
-    <Tooltip inline bottom end title="Toggle visibility">
+    <Tooltip inline bottom end title={$_("toggle-visibility")}>
       <div class="cursor-pointer" class:text-red-500={!$visibility.basic}
         on:click={() => visibility.toggle("basic")}
       >
@@ -51,7 +51,7 @@
         <span>Y</span>
         <TextInput number value={pos.y} on:input={e => { pos.y = e.target.value, updateSettings()}} />
       </label>
-      <Tooltip inline bottom end title="Remove">
+      <Tooltip inline bottom end title={$_("button-delete")}>
         <div class="cursor-pointer text-red-500 text-sm"
           on:click|stopPropagation={() => {
             $settings._miceSpawn.positions.splice(index, 1)

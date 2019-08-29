@@ -13,7 +13,7 @@
   import Button from "/components/common/Button.svelte"
   import Tooltip from "/components/common/Tooltip.svelte"
 
-  import { platforms, decorations, shamanObjects, settings, selection, creation, groundTypePicker, buildXML } from "/stores/stores.js"
+  import { platforms, decorations, shamanObjects, settings, selection, creation, groundTypePicker, buildXML, _} from "/stores/stores.js"
   import { encodeObjectData } from "/xml-utils.js"
 
   let stores = [platforms, decorations, shamanObjects]
@@ -156,11 +156,11 @@
 
 <section class="text-sm flex justify-between">
   <Tooltip inline title="Delete" bottom>
-    <Button on:click={selection.remove}>Delete</Button></Tooltip>
+    <Button on:click={selection.remove}>{$_("button-delete")}</Button></Tooltip>
   <Tooltip inline title="D" bottom>
-    <Button on:click={selection.duplicate}>Duplicate</Button></Tooltip>
+    <Button on:click={selection.duplicate}>{$_("button-duplicate")}</Button></Tooltip>
   <Tooltip inline title="Ctrl+C" bottom>
-    <Button on:click={selection.copy}>Copy</Button></Tooltip>
+    <Button on:click={selection.copy}>{$_("button-copy")}</Button></Tooltip>
 </section>
 
 <section>
@@ -175,7 +175,7 @@
   </label>
   {#if multi._foreground !== undefined}
   <label transition:fly={flyRight}>
-    <span>Foreground</span>
+    <span>{$_("foreground")}</span>
     <input class="" type="checkbox" bind:checked={multi._foreground} on:change={updateObjects} />
   </label>
   {/if}
@@ -216,7 +216,7 @@
 {#if objectTypes.length === 1 && objectTypes[0] === "platform"}
 <section>
   <label>
-    <span class="input-text text-sm">Ground type</span>
+    <span class="input-text text-sm">{$_("ground-type")}</span>
     <TextInput number bind:value={multi._type} on:input={updateObjects} 
       on:blur={cancelGroundTypeRequest} on:focus={clearGroundTypeRequestTimeout}
     />
@@ -231,7 +231,7 @@
 <div class="mb-2"></div>
 <section transition:fly={flyRight}>
   <label class="">
-    <span>Platform color</span>
+    <span>{$_("ground-color")}</span>
     <div class="color-tile cursor-pointer" style="background: {multi._displayColor}"></div>
     <ColorTextInput bind:value={multi._color} on:input={updateObjects} />
   </label>
@@ -243,7 +243,7 @@
 {#if multi._friction !== undefined}
 <section>
   <label>
-    <span>Friction</span>
+    <span>{$_("friction")}</span>
     <TextInput number bind:value={multi._friction} on:input={updateObjects} />
     <div class="icon ml-3" 
       class:disabled={multi._friction_default === "" || multi._friction === multi._friction_default}
@@ -253,7 +253,7 @@
 </section>
 <section>
   <label>
-    <span>Restitution</span>
+    <span>{$_("restitution")}</span>
     <TextInput number bind:value={multi._restitution} on:input={updateObjects} />
     <div class="icon ml-3" 
       class:disabled={multi._restitution_default === "" || multi._restitution === multi._restitution_default}
@@ -267,20 +267,22 @@
 {#if multi._rotation !== undefined}
 <section transition:fly={flyRight}>
   <label>
-    <span class="input-text text-sm">Rotation</span>
+    <span class="input-text text-sm">{$_("rotation")}</span>
     <TextInput number bind:value={multi._rotation} on:input={updateObjects} />
     <div class="icon ml-3" 
       class:disabled={multi._rotation_default === "" || multi._rotation === multi._rotation_default}
       on:click={() => resetProperty("rotation")}
     ><Icon icon={faUndo} /></div>
   </label>
-  {#if multi._dynamic}
+</section>
+{#if multi._dynamic}
+<section transition:fly={flyRight}>
   <label transition:fly={flyRight}>
-    <span class="input-text text-sm">Fixed</span>
+    <span class="input-text text-sm">{$_("fixed-rotation")}</span>
     <input class="" type="checkbox" bind:checked={multi._fixedRotation} on:change={updateObjects} />
   </label>
-  {/if}
 </section>
+{/if}
 {/if}
 
 {#if multi._friction !== undefined}
@@ -288,13 +290,13 @@
 
 <section>
   <label>
-    <span>Collision with mice</span>
+    <span>{$_("mice-collision")}</span>
     <input class="" type="checkbox" bind:checked={multi._miceCollision} on:change={updateObjects} />
   </label>
 </section>
 <section>
   <label>
-    <span>Collision with grounds</span>
+    <span>{$_("ground-collision")}</span>
     <input class="" type="checkbox" bind:checked={multi._groundCollision} on:change={updateObjects} />
   </label>
 </section>
@@ -303,7 +305,7 @@
 
 <section>
   <label>
-    <span>Dynamic...</span>
+    <span>{$_("dynamic")}...</span>
     <input class="" type="checkbox" bind:checked={multi._dynamic} on:change={updateObjects} />
   </label>
 </section>
@@ -311,19 +313,19 @@
 <div transition:fly={flyRight} class="border-l-2 pl-3 border-white">
   <section>
     <label>
-      <span>Mass</span>
+      <span>{$_("mass")}</span>
       <TextInput number bind:value={multi._mass} on:input={updateObjects} />
     </label>
   </section>
   <section>
     <label>
-      <span>Linear damping</span>
+      <span>{$_("linear-damping")}</span>
       <TextInput number bind:value={multi._linearDamping} on:input={updateObjects} />
     </label>
   </section>
   <section>
     <label>
-      <span>Angular damping</span>
+      <span>{$_("angular-damping")}</span>
       <TextInput number bind:value={multi._angularDamping} on:input={updateObjects} />
     </label>
   </section>
@@ -335,7 +337,7 @@
 <div class="mb-2"></div>
 <section transition:fly={flyRight}>
   <label>
-    <span class="input-text text-sm">Invisible</span>
+    <span class="input-text text-sm">{$_("invisible")}</span>
     <input class="" type="checkbox" bind:checked={multi._invisible} on:change={updateObjects} />
   </label>
 </section>
@@ -345,7 +347,7 @@
 <div class="mb-2"></div>
 <section transition:fly={flyRight}>
   <label>
-    <span>Vanish (milliseconds)</span>
+    <span>{$_("vanish")}</span>
     <TextInput number bind:value={multi._vanish} on:input={updateObjects} />
   </label>
 </section>
@@ -375,7 +377,7 @@
 <div class="mb-2"></div>
 <section transition:fly={flyRight}>
   <label>
-    <span class="input-text text-sm">Use ground image...</span>
+    <span class="input-text text-sm">{$_("ground-image")}...</span>
     <input class="" type="checkbox" bind:checked={multi._groundImageEnabled} on:change={updateObjects} />
   </label>
 </section>
@@ -410,7 +412,7 @@
 
 <section transition:fly={flyRight}>
   <label>
-    <span class="input-text text-sm">Flip horizontally</span>
+    <span class="input-text text-sm">{$_("flip-horizontally")}</span>
     <input class="" type="checkbox" bind:checked={multi._reverse} on:change={updateObjects} />
   </label>
 </section>
@@ -421,7 +423,7 @@
 
 <section transition:fly={flyRight} class="flex-wrap">
   <label>
-    <span>Decoration colors</span>
+    <span>{$_("decoration-colors")}</span>
   </label>
   {#each [0,1,2,3,4,5] as i}
   {#if multi["_color"+i] !== undefined}
@@ -441,7 +443,7 @@
 
 <section transition:fly={flyRight}>
   <label>
-    <span class="input-text text-sm">Ghost object</span>
+    <span class="input-text text-sm">{$_("ghost")}</span>
     <input class="" type="checkbox" bind:checked={multi._ghost} on:change={updateObjects} />
   </label>
 </section>
@@ -452,13 +454,13 @@
 
 <section transition:fly={flyRight}>
   <label>
-    <span class="input-text text-sm">Nail rotation power</span>
+    <span class="input-text text-sm">{$_("power")}</span>
     <TextInput number bind:value={multi._nailPower} on:input={updateObjects} />
   </label>
 </section>
 <section transition:fly={flyRight}>
   <label>
-    <span class="input-text text-sm">Nail rotation speed</span>
+    <span class="input-text text-sm">{$_("speed")}</span>
     <TextInput number bind:value={multi._nailSpeed} on:input={updateObjects} />
   </label>
 </section>
