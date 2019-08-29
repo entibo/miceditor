@@ -3,6 +3,7 @@
   import { fly } from "svelte/transition"
 
   import { selection } from "/stores/stores.js"
+  import Tooltip from "/components/common/Tooltip.svelte"
 
   export let position
   export let selectionArea
@@ -43,7 +44,7 @@
 
 </div>
 
-<div class="right-0 absolute z-40 bottom-0 px-4 flex">
+<div class="right-0 absolute z-30 bottom-0 px-4 flex">
 
   <div class="section">
     <span class="text-gray-100">Miceditor</span>
@@ -52,10 +53,29 @@
     <span class="text-gray-100 ml-1">entibo</span>
   </div>
 
+  <div class="ml-2 section">
+    <Tooltip top title="Github">
+      <a href="https://github.com/entibo/miceditor" target="_blank">
+        <img src="dist/github.png" alt="Github" style="width: 24px" />
+      </a>
+    </Tooltip>
+  </div>
+
+  <div class="ml-2 section flex items-center">
+    <Tooltip top title="Atelier801">
+      <a href="https://atelier801.com/topic?f=6&t=884238" target="_blank">
+          <img src="dist/atelier801.png" alt="Atelier801" />
+      </a>  
+    </Tooltip>
+  </div>
+
 </div>
 
 <style lang="text/postcss">
   .section {
     @apply bg-gray-800 rounded-t px-3 py-1;
+  }
+  a {
+    text-decoration: none;
   }
 </style>
