@@ -154,7 +154,7 @@
 {#if $selection.length} <!-- Global if -->
 
 
-<section class="text-sm flex justify-between">
+<section class="text-sm flex justify-between action-buttons">
   <Tooltip inline title="Delete" bottom>
     <Button on:click={selection.remove}>{$_("button-delete")}</Button></Tooltip>
   <Tooltip inline title="D" bottom>
@@ -471,6 +471,15 @@
 
 
 <style lang="text/postcss">
+  :global(.action-buttons > div) {
+    display: flex;
+    flex-grow: 1;
+  }
+  :global(.action-buttons > div > button) {
+    flex-grow: 1;
+    padding: 0.25rem 0 !important;
+    margin: 0 0.1rem !important;
+  }
   .rtl-input {
     direction: rtl;
   }

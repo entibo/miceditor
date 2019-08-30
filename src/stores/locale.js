@@ -13,6 +13,9 @@ export const localeFlag = {
   "hu": "hu",
   "br": "br",
 }
+export const localeTranslators = {
+  "hu": ["Lemax#7166"],
+}
 
 for(let cc of Object.keys(languages).filter(s => s != "en")) {
   for(let k of Object.keys(languages.en)) {
