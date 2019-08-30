@@ -12,9 +12,11 @@ export const localeFlag = {
   "fr": "fr",
   "hu": "hu",
   "br": "br",
+  "lv": "lv",
 }
 export const localeTranslators = {
   "hu": ["Lemax#7166"],
+  "lv": ["Syrius#8114"],
 }
 
 for(let cc of Object.keys(languages).filter(s => s != "en")) {
