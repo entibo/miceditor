@@ -71,7 +71,7 @@
 
 <header class="relative flex justify-between items-center px-4 py-2 bg-gray-800 shadow-lg text-white z-10">
 
-  <div class="flex items-center">
+  <div class="flex flex-wrap items-center">
 
     <Button class="text-sm" on:click={selectMenu.bind(null, "language")}>
       <div class="flex justify-center items-center">
@@ -125,7 +125,7 @@
   <div class="mr-4"></div>
 
 
-  <div class="flex items-center">
+  <div class="flex justify-center flex-wrap items-center">
     <Tooltip inline bottom title={$_("large-xml-editor")} >
       <Button class="text-sm" on:click={selectMenu.bind(null, "xmlEditor")}>
         <div class="flex justify-center items-center" >
@@ -159,7 +159,7 @@
   <div class="mr-4"></div>
 
 
-  <div class="flex">
+  <div class="flex flex-wrap">
     <Tooltip inline bottom title="Ctrl+Z" >
       <Button class="text-sm" disabled={!$canUndo} on:click={undo}>
         <div class="flex justify-center items-center">
@@ -181,7 +181,7 @@
 
   {#if currentMenu === "settings"}
 
-  <div class="lower-panel w-64 p-2 xl:p-4" transition:slide={{duration: 100}}>
+  <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
 
     <UserSettings />
 
@@ -192,9 +192,11 @@
   <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
     
     <section>
-      <label class="w-24">
+      <label>
         <span>{$_("button-zoom")}</span>
-        <TextInput number bind:value={$zoom} />
+        <span class="w-12">
+          <TextInput number bind:value={$zoom} />
+        </span>
       </label>
       <input type=range bind:value={$zoom} min=0.1 max=5 step=0.1 />
     </section>

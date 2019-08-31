@@ -30,19 +30,22 @@
 <section class="flex-col">
   <div class="text-sm text-gray-100 w-full flex justify-between">
     <span>{title}</span>
-    <Tooltip inline title={$_("button-add")}>
-      <div class="cursor-pointer text-green-500"
-        on:click={() => {
-          $settings["_"+which].push({url:"",x:0,y:0})
-          updateSettings()
-        }}
-      >
-        <Icon icon={faPlus} /></div></Tooltip>
-    <Tooltip inline bottom end title={$_("toggle-visibility")}>
-      <div class="cursor-pointer" class:text-red-500={!$visibility[which]}
-        on:click={() => visibility.toggle(which)}
-      >
-        <Icon icon={$visibility[which] ? faEye : faEyeSlash} /></div></Tooltip>
+    <div class="flex">
+      <Tooltip inline title={$_("button-add")}>
+        <div class="cursor-pointer text-green-500"
+          on:click={() => {
+            $settings["_"+which].push({url:"",x:0,y:0})
+            updateSettings()
+          }}
+        >
+          <Icon icon={faPlus} /></div></Tooltip>
+      <div class="mr-2"></div>
+      <Tooltip inline bottom end title={$_("toggle-visibility")}>
+        <div class="cursor-pointer" class:text-red-500={!$visibility[which]}
+          on:click={() => visibility.toggle(which)}
+        >
+          <Icon icon={$visibility[which] ? faEye : faEyeSlash} /></div></Tooltip>
+    </div>
   </div>
   <div class="flex flex-col">
     {#each $settings["_"+which] as data, index}

@@ -194,7 +194,7 @@
           <select bind:value={data._miceSpawn.type} on:change={updateMiceSpawn}>
             <option value="normal">{$_("mice-spawn-normal")}</option>
             <option value="multiple">{$_("mice-spawn-multiple")}</option>
-            <option value="random">{$_("random")}</option>
+            <option value="random">{$_("random-spawn")}</option>
           </select>
         </div>
       </label>
@@ -211,7 +211,7 @@
           <span>{$_("axis")}</span>
         </label>
         <label class="w-1/2">
-          <span>{$_("random")}</span>
+          <span>{$_("random-spawn")}</span>
         </label>
       </div>
       <div class="flex w-full">

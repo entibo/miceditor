@@ -103,7 +103,8 @@
         "top": "Top",
         "none": "None",
         "power": "Power",
-        "speed": "Speed"
+        "speed": "Speed",
+        "random-spawn": "Random"
     },
     "hu": {
         "category-decorations": "Kellékek",
@@ -209,7 +210,8 @@
         "top": "Felső",
         "none": "Semelyik",
         "power": "Erő",
-        "speed": "Gyorsaság"
+        "speed": "Gyorsaság",
+        "random-spawn": "Véletlenszerű"
     },
     "fr": {
         "category-decorations": "Décorations",
@@ -315,7 +317,8 @@
         "top": "Haut",
         "none": "Aucun",
         "power": "Puissance",
-        "speed": "Vitesse"
+        "speed": "Vitesse",
+        "random-spawn": "Aléatoire"
     },
     "br": {
         "category-decorations": "",
@@ -421,7 +424,8 @@
         "top": "",
         "none": "",
         "power": "",
-        "speed": ""
+        "speed": "",
+        "random-spawn": "Aleatório"
     },
     "lv": {
         "category-decorations": "Dekorācijas",
@@ -482,7 +486,7 @@
         "defilante-free-scroll": "Brīva ritināšana",
         "mice-spawn-normal": "Normāla",
         "mice-spawn-multiple": "Vairākās vietās",
-        "random": "Nejaušās vietās",
+        "random": "Nejaušība",
         "positions": "Pozīcijas",
         "axis": "Asis",
         "disappearing-images": "Izgaistošie attēli",
@@ -527,6 +531,7 @@
         "top": "Augša",
         "none": "Nav",
         "power": "Spēks",
-        "speed": "Ātrums"
+        "speed": "Ātrums",
+        "random-spawn": "Nejaušās vietās"
     }
 }

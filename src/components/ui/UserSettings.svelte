@@ -56,20 +56,26 @@
     {#if $gridSettings.enabled}
     <div transition:fly={{y:-10, duration: 60}} class="border-l-2 pl-3 border-white">
       <section>
-        <label class="w-1/3">
+        <label>
           <span>L</span>
-          <TextInput number bind:value={$gridSettings.width} />
+          <span class="w-12">
+            <TextInput number bind:value={$gridSettings.width} />
+          </span>
         </label>
-        <label class="w-1/3">
+        <label>
           <span>H</span>
-          <TextInput number bind:value={$gridSettings.height} />
+          <span class="w-12">
+            <TextInput number bind:value={$gridSettings.height} />
+          </span>
         </label>
       </section>
       <section>
         <label class="">
           <span>{$_("grid-color")}</span>
           <div class="color-tile cursor-pointer" style="background: #{$gridSettings.color}"></div>
-          <ColorTextInput bind:value={$gridSettings.color} />
+          <span class="w-24">
+            <ColorTextInput bind:value={$gridSettings.color} />
+          </span>
         </label>
       </section>
     </div>

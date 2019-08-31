@@ -26,19 +26,22 @@
 <section class="flex-col">
   <div class="text-sm text-gray-100 w-full flex justify-between">
     <span>{$_("positions")}</span>
-    <Tooltip inline title={$_("button-add")}>
-      <div class="cursor-pointer text-green-500"
-        on:click={() => {
-          $settings._miceSpawn.positions.push({x:400,y:200})
-          updateSettings()
-        }}
-      >
-        <Icon icon={faPlus} /></div></Tooltip>
-    <Tooltip inline bottom end title={$_("toggle-visibility")}>
-      <div class="cursor-pointer" class:text-red-500={!$visibility.basic}
-        on:click={() => visibility.toggle("basic")}
-      >
-        <Icon icon={$visibility.basic ? faEye : faEyeSlash} /></div></Tooltip>
+    <div class="flex">
+      <Tooltip inline title={$_("button-add")}>
+        <div class="cursor-pointer text-green-500"
+          on:click={() => {
+            $settings._miceSpawn.positions.push({x:400,y:200})
+            updateSettings()
+          }}
+        >
+          <Icon icon={faPlus} /></div></Tooltip>
+      <div class="mr-2"></div>
+      <Tooltip inline bottom end title={$_("toggle-visibility")}>
+        <div class="cursor-pointer" class:text-red-500={!$visibility.basic}
+          on:click={() => visibility.toggle("basic")}
+        >
+          <Icon icon={$visibility.basic ? faEye : faEyeSlash} /></div></Tooltip>
+    </div>
   </div>
   <div class="flex flex-col">
     {#each $settings._miceSpawn.positions as pos, index}
