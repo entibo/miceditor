@@ -6,6 +6,8 @@
   import decorationMetadata from "/decorationMetadata.js"
 
   import SvgImage from "/components/common/SvgImage.svelte"
+  
+  import { settings } from "/stores/stores.js"
 
   export let decoration
   export let active
@@ -16,18 +18,29 @@
   const specialMetadataOffset = {
     T: { x: 21, y: 31 },
     F: { x: 23, y: 21 },
+    "F-triple": { x: 23+12, y: 21+7 },
+    "F-candy": { x: 23+12, y: 21+7 },
     DS: { x: 26, y: 43 },
     DC: { x: 26, y: 43 },
     DC2: { x: 26, y: 43 },
   }
   function getDecorationMetadata(decoration) {
+	let type = decoration._type
     if(decoration.name === "P") {
-      return decorationMetadata[decoration._type]
+      return decorationMetadata[type]
     }
+	else if(decoration.name === "F") {
+	  if($settings._dodue) {
+		type = "F-triple"
+		if($settings._theme === "halloween") {
+		  type = "F-candy"
+		}
+	  }
+	}
     return { 
-      type: decoration._type, 
+      type, 
       filters: [],
-      offset: specialMetadataOffset[decoration._type],
+      offset: specialMetadataOffset[type],
     }
   }
 
@@ -48,11 +61,10 @@
   }
 
   $: filtersLength = filters.length
-  $: decorationType = decoration._type
   
   let promise
   $: if(filtersLength)
-      promise = fetch(`dist/decorations/${decorationType}.svg`).then(r => r.text()).then(withInstancedFilterIds)
+      promise = fetch(`dist/decorations/${decoration._type}.svg`).then(r => r.text()).then(withInstancedFilterIds)
 
   function getColorMatrix(hex) {
     let [r,g,b] = cc.hex.rgb(hex).map(x => x/255)
@@ -88,7 +100,7 @@
 
     {:else}
 
-      <SvgImage href="dist/decorations/{decoration._type}.png"/>
+      <SvgImage href="dist/decorations/{metadata.type}.png"/>
 
     {/if}
 

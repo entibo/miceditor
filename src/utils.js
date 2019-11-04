@@ -22,3 +22,7 @@ export function randInt(min,max) {
   let rand = Math.floor(Math.random() * (range + 1))
   return min + rand
 }
+
+Array.prototype.move = function(from, to) {
+    this.splice(to, 0, this.splice(from, 1)[0]);
+};

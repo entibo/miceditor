@@ -23,6 +23,54 @@
     buildXML()
     settings.update(v => v)
   }
+  
+  let imageIndexToBeMoved = -1
+  const defaultImageTargetPosition = { index: -1, after: true }
+  let imageTargetPosition = defaultImageTargetPosition
+
+  function mouseMove(e, index) {
+	if(imageIndexToBeMoved < 0) return
+	
+	imageTargetPosition.index = index
+	
+	let elem = e.target
+	while(!elem.classList.contains("indented") && elem.parentElement) {
+		elem = elem.parentElement
+	}
+	if(!elem) return
+	
+	let {y,height} = elem.getBoundingClientRect()
+	let dy = (e.y-y)/height
+	if(dy >= 0.5) imageTargetPosition.after = true
+	else imageTargetPosition.after = false
+	
+	console.log(y,height, e.y, dy)
+  }
+
+  window.addEventListener("mouseup", () => {
+	if(imageIndexToBeMoved < 0) return
+	console.log(imageTargetPosition)
+	
+	let list = data["_"+which]
+	
+	let src = list[imageIndexToBeMoved]
+	
+	let offset = imageTargetPosition.after ? 1 : 0
+	let k = imageTargetPosition.index + offset
+	
+	list.splice(k, 0, Object.assign({}, src))
+	list.splice(list.indexOf(src), 1)
+
+	updateSettings()
+	
+	imageTargetPosition = defaultImageTargetPosition
+	imageIndexToBeMoved = -1
+  })
+  window.addEventListener("mouseleave", () => {
+    imageTargetPosition = defaultImageTargetPosition
+	imageIndexToBeMoved = -1
+  })
+
 
 </script>
 
@@ -48,17 +96,34 @@
     </div>
   </div>
   <div class="flex flex-col">
-    {#each $settings["_"+which] as data, index}
-    <div class="indented">
+    {#each data["_"+which] as image, index}
+	
+	{#if imageTargetPosition.index === index && !imageTargetPosition.after} 
+		<div class="rect-target-separator"></div> 
+	{/if}
+    <div class="indented"
+		on:mousemove={e => mouseMove(e, index)}
+	>
+	
+	  <div class="
+			move-rect
+			{ imageIndexToBeMoved < 0 || imageIndexToBeMoved == index ? "blue-rect" : "bg-gray-600" }
+		   "
+		on:mousedown={() => {
+		  imageIndexToBeMoved = index
+		  imageTargetPosition = { index, after: true }
+		}}
+	  >
+	  </div>
 
       <div class="flex my-1">
         <label>
           <span>X</span>
-          <TextInput number value={data.x} on:input={e => { data.x = e.target.value, updateSettings()}} />
+          <TextInput number value={image.x} on:input={e => { image.x = e.target.value, updateSettings()}} />
         </label>
         <label>
           <span>Y</span>
-          <TextInput number value={data.y} on:input={e => { data.y = e.target.value, updateSettings()}} />
+          <TextInput number value={image.y} on:input={e => { image.y = e.target.value, updateSettings()}} />
         </label>
         <Tooltip inline bottom end title={$_("button-delete")}>
           <div class="cursor-pointer text-red-500 text-sm"
@@ -77,41 +142,45 @@
           <span>Url</span>
           <div class="rtl-input">
             <TextInput placeholder="x_transformice/x_evt/x_evt_19/svtrixcv/bateau.png"
-              value={data.url} on:input={e => { data.url = e.target.value, updateSettings()}} />
+              value={image.url} on:input={e => { image.url = e.target.value, updateSettings()}} />
           </div>
         </label>
       </div>
 
       {#if which === "disappearingImages"}
       <div class="indented mt-1"
-        on:mouseenter={() => $highlightedObject = data.index}
+        on:mouseenter={() => $highlightedObject = image.index}
         on:mouseleave={() => $highlightedObject = null}
       >
         <div class="text-xs text-gray-300">{$_("disappearing-rectangle")}</div>
         <div class="flex">
           <label>
             <span class="text-xs">{$_("left")}</span>
-            <TextInput number value={data.rx} on:input={e => { data.rx = e.target.value, updateSettings()}} />
+            <TextInput number value={image.rx} on:input={e => { image.rx = e.target.value, updateSettings()}} />
           </label>
           <label>
             <span class="text-xs">{$_("top")}</span>
-            <TextInput number value={data.ry} on:input={e => { data.ry = e.target.value, updateSettings()}} />
+            <TextInput number value={image.ry} on:input={e => { image.ry = e.target.value, updateSettings()}} />
           </label>
         </div>
         <div class="flex">
           <label>
             <span>L</span>
-            <TextInput number value={data.rw} on:input={e => { data.rw = e.target.value, updateSettings()}} />
+            <TextInput number value={image.rw} on:input={e => { image.rw = e.target.value, updateSettings()}} />
           </label>
           <label>
             <span>H</span>
-            <TextInput number value={data.rh} on:input={e => { data.rh = e.target.value, updateSettings()}} />
+            <TextInput number value={image.rh} on:input={e => { image.rh = e.target.value, updateSettings()}} />
           </label>
         </div>
       </div>
       {/if}
 
     </div>
+	{#if imageTargetPosition.index === index && imageTargetPosition.after} 
+		<div class="rect-target-separator"></div> 
+	{/if}
+	
     {/each}
   </div>
 </section>
@@ -124,7 +193,21 @@
     direction: initial;
   }
   .indented {
-    @apply border-l-2 border-white pl-3 mb-2
+    background: rgba(255,255,255,0.1);
+    @apply border-l-2 border-white pl-5 pr-3 mb-2;
+	position: relative;
+  }
+  .move-rect {
+    @apply absolute left-0 top-0 w-3 h-full cursor-pointer;
+  }
+  .blue-rect {
+	@apply bg-blue-600;
+  }
+  .blue-rect:hover {
+	@apply bg-blue-400 ;
+  }
+  .rect-target-separator {
+	@apply bg-blue-600 mb-2 h-2;
   }
   section {
     @apply flex items-center mb-1;

@@ -57,6 +57,11 @@
     buildXML()
     settings.update(v => v)
   }
+  
+  function updateDecorations() {
+  console.log("updateDecorations()")
+	decorations.update(v => v)
+  }
 
 </script>
 
@@ -117,6 +122,24 @@
   <div class="mb-2"></div>
 
   <section>
+    <label>
+      <span>{$_("theme")}</span>
+      <div class="material-input">
+        <select bind:value={data._theme} 
+		  on:change={() => {
+		    updateSettings()
+			updateDecorations()
+	      }}>
+          <option value=""> </option>
+          <option value="halloween">{$_("background4")}</option>
+        </select>
+      </div>
+    </label>
+  </section>
+
+  <div class="mb-2"></div>
+
+  <section>
     <label style="display: block;">
       <span class="block">{$_("shaman_objects")}: {$_("mass")}</span>
       <TextInput number bind:value={data._shamanObjectsMass} on:input={updateSettings} />
@@ -125,12 +148,16 @@
 
   <div class="mb-2"></div>
 
-  {#each mapBooleanProps as {name, titleKey}}
+  {#each mapBooleanProps as prop}
   <section>
     <label>
-      <span>{$_(titleKey)}</span>
-      <input class="" type="checkbox" checked={data[name]} 
-        on:change={e => { data[name] = !!e.target.checked, updateSettings()}} />
+      <span>{$_(prop.titleKey)}</span>
+      <input class="" type="checkbox" checked={data[prop.name]} 
+        on:change={e => { 
+		  data[prop.name] = !!e.target.checked
+		  updateSettings()
+		  if(prop.updateDecorations) updateDecorations()
+		 }} />
     </label>
   </section>
   {/each}

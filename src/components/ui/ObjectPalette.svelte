@@ -141,7 +141,7 @@
   <ObjectPaletteMenu which="decorations" title={$_("category-decorations")} bind:collapsed={collapsed.decorations} grow max="40" count={$decorations.length}>
     <div class="scrollbox-container">
       <div class="flex flex-wrap justify-center scrollbox">
-        {#each Array(133) as _, type}
+        {#each Array(138) as _, type}
           <div class="tile dim-40" class:active={$creation && $creation.objectType === "decoration" && $creation.type == type}
             on:click={() => onTileClick("decoration", type)}
           >

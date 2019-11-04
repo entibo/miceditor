@@ -104,7 +104,9 @@
         "none": "None",
         "power": "Power",
         "speed": "Speed",
-        "random-spawn": "Random"
+        "random-spawn": "Random",
+        "dodue": "Dodue (triple cheese)",
+        "theme": "Theme"
     },
     "hu": {
         "category-decorations": "Kellékek",
@@ -211,7 +213,9 @@
         "none": "Semelyik",
         "power": "Erő",
         "speed": "Gyorsaság",
-        "random-spawn": "Véletlenszerű"
+        "random-spawn": "Véletlenszerű",
+        "dodue": "",
+        "theme": ""
     },
     "fr": {
         "category-decorations": "Décorations",
@@ -318,7 +322,9 @@
         "none": "Aucun",
         "power": "Puissance",
         "speed": "Vitesse",
-        "random-spawn": "Aléatoire"
+        "random-spawn": "Aléatoire",
+        "dodue": "Dodue (triple fromage)",
+        "theme": "Theme"
     },
     "br": {
         "category-decorations": "",
@@ -425,7 +431,9 @@
         "none": "",
         "power": "",
         "speed": "",
-        "random-spawn": "Aleatório"
+        "random-spawn": "Aleatório",
+        "dodue": "",
+        "theme": ""
     },
     "lv": {
         "category-decorations": "Dekorācijas",
@@ -532,7 +540,9 @@
         "none": "Nav",
         "power": "Spēks",
         "speed": "Ātrums",
-        "random-spawn": "Nejaušās vietās"
+        "random-spawn": "Nejaušās vietās",
+        "dodue": "Dodue (trīskāršs siers)",
+        "theme": "Stils"
     },
     "pl": {
         "category-decorations": "Mysie obiekty",
@@ -639,6 +649,8 @@
         "none": "Brak",
         "power": "Siła",
         "speed": "Szybkość",
-        "random-spawn": "Losowy"
+        "random-spawn": "Losowy",
+        "dodue": "",
+        "theme": ""
     }
 }

@@ -186,9 +186,9 @@ export const mapBooleanProps = [
   { xmlName: "Ca", name: "_hideOffscreen", titleKey: "hide-offscreen"},
   { xmlName: "mc", name: "_hideNails", titleKey: "hide-anchors"},
   { xmlName: "bh", name: "_upwardsCannonballs", titleKey: "cannonballs-up"},
+  { xmlName: "dodue", name: "_dodue", titleKey: "dodue", updateDecorations: true},
 ]
 export function decodeMapData(object) {
-
   object._defilanteEnabled = object.defilante !== undefined
   let defilanteProps = (object.defilante || "").split(",")
   object._defilanteStartSpeed = parseFloat(defilanteProps[0] || 0)
@@ -294,11 +294,12 @@ export function decodeMapData(object) {
     catch(e) {}
   }
 
+  object._theme = object.theme || ""
+
 
 }
 
 export function encodeMapData(object) {
-
   // let [maxWidth, maxHeight] = object.
   object.L = object._width.toString()
   if(object.L === "800") delete object.L
@@ -360,6 +361,10 @@ export function encodeMapData(object) {
     ].join(",")
   } else delete object.defilante
 
+  if(object._theme) {
+    object.theme = object._theme
+  } else delete object.theme
+
 }
 
 
@@ -387,6 +392,7 @@ export const groundTypes = [
   "stone", "snow", 
   "rectangle", "circle",
   "invisible", "cobweb",
+  "wood", "grass2",
 ]
 
 export const platformDefaults  = (() => {
@@ -650,7 +656,7 @@ export function decodeDecorationData(decoration, index) {
   }
 
   if(decoration.name === "T" || decoration.name === "F") {
-    decoration._foreground = decoration.N !== undefined
+    decoration._foreground = decoration.D !== undefined
   }
 
   decoration._boundingBox = {

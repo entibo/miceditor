@@ -243,6 +243,40 @@
 
   .earth { background: url(grounds/earth.png); }
   .highQuality.earth { background: url(grounds/earth-high.png); }
+  
+  .grass2 {
+    background: 
+      url(grounds/grass2-top.png) repeat-x, 
+      url(grounds/earth.png);
+  }
+  .grass2.sides {
+    background: 
+      url(grounds/grass2-corner.png) no-repeat,
+      url(grounds/grass2-corner-flipped.png) no-repeat right top,
+      url(grounds/grass2-top.png) repeat-x, 
+      url(grounds/earth.png);
+  }
+  .highQuality.grass2 {
+    background: 
+      url(grounds/grass2-top.png) repeat-x, 
+      url(grounds/earth-high.png);
+  }
+  .highQuality.grass2.sides {
+    background: 
+      url(grounds/grass2-corner.png) no-repeat,
+      url(grounds/grass2-corner-flipped.png) no-repeat right top,
+      url(grounds/grass2-top.png) repeat-x, 
+      url(grounds/earth-high.png);
+  }
+  .grass2.sides:before {
+    content: "";
+    /* z-index: -1; */
+    @apply absolute w-full h-full top-0 right-0 bottom-0 left-0;
+    top: 8px;
+    background: 
+      url(grounds/grass2-side.png) repeat-y,
+      url(grounds/grass2-side-flipped.png) repeat-y right top;
+  }
 
   .grass {
     background: 
