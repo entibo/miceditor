@@ -171,7 +171,7 @@ function parseXMLColorHex(str) {
 }
 
 function getFullTransformiceImageUrl(path) {
-  if(path.match(/^http:/i))
+  if(path.match(/^https?:/i))
     return path
   let m 
   if(m = path.match(/^\/?([a-z0-9]+.png)/i))
