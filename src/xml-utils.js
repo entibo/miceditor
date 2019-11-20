@@ -689,8 +689,8 @@ export function encodeDecorationData(decoration) {
 
   if(decoration.name === "T" || decoration.name === "F") {
     if(decoration._foreground) {
-      decoration.N = ""
-    } else delete decoration.N
+      decoration.D = ""
+    } else delete decoration.D
   }
 
 }
