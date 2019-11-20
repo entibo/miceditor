@@ -171,6 +171,8 @@ function parseXMLColorHex(str) {
 }
 
 function getFullTransformiceImageUrl(path) {
+  if(path.match(/^http:/i))
+    return path
   let m 
   if(m = path.match(/^\/?([a-z0-9]+.png)/i))
     return "http://images.atelier801.com/"+m[1]
@@ -236,6 +238,10 @@ export function decodeMapData(object) {
           }
         })
         .reverse()
+      object[name] = object[name].map((x, index) => {
+        x.index = index
+        return x
+      })
     }
   }
 
@@ -244,7 +250,7 @@ export function decodeMapData(object) {
     object._disappearingImages =
       object.APS.split(";")
       .filter(s => s.trim().length)
-      .map((s, index) => {
+      .map(s => {
         let [url,something,rx,ry,rw,rh,x,y] = s.split(",")
         rx = parseInt(rx || "0")
         ry = parseInt(ry || "0")
@@ -258,10 +264,13 @@ export function decodeMapData(object) {
           fullUrl: getFullTransformiceImageUrl(url),
           x, y,  
           rx, ry, rw, rh,
-          index
         }
       })
       .reverse()
+    object._disappearingImages = object._disappearingImages.map((x, index) => {
+        x.index = index
+        return x
+      })
   }
 
   // normal | multiple | random

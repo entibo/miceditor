@@ -5,7 +5,7 @@
 
   import { randInt } from "/utils.js"
 
-  import { encodeObjectData, rotate } from "/xml-utils.js"
+  import { encodeObjectData, encodeMapData, rotate } from "/xml-utils.js"
   import { 
     platforms, decorations, shamanObjects, 
     settings, selection, creation, visibility, highlightedObject, buildXML,
@@ -105,7 +105,7 @@
   }
 
   function onKeydown(e) {
-    let {shiftKey, ctrlKey, key} = e
+    let {shiftKey, ctrlKey, altKey, key} = e
     key = key.toLowerCase()
 
     // console.log("onKeyDown", e.key, e)
@@ -121,7 +121,13 @@
         dx *= 100
         dy *= 100
       }
-      selection.move(dx, dy)
+      if(altKey) {
+        e.preventDefault()
+        selection.resize(dx, -dy)
+      }
+      else {
+        selection.move(dx, dy)
+      }
     }
     else if(key === "delete" && $selection.length) {
       selection.remove()
@@ -145,6 +151,9 @@
     else if(key === "v" && ctrlKey) {
       selection.paste()
       e.preventDefault()
+    }
+    else if(key === "g" && $selection.length) {
+      selection.snapToGrid()
     }
   }
 
@@ -217,6 +226,19 @@
     
   }
 
+  function onImageMousedown(e, imgInfo) {
+    if(spaceKeyDown) return
+
+    e.stopPropagation()
+
+    mousedownInfo = {}
+    mousedownInfo.start = getSceneCoordinates(e)
+    mousedownInfo.last = mousedownInfo.start
+    mousedownInfo.type = "move"
+    mousedownInfo.imgInfo = imgInfo
+    
+  }
+
   function onWindowMousemove(e) {
     mouse = getSceneCoordinates(e)
 
@@ -229,7 +251,17 @@
     else if(mousedownInfo.type === "move") {
       let dx = (1/$zoom)*(mouse.x - mousedownInfo.last.x)
       let dy = (1/$zoom)*(mouse.y - mousedownInfo.last.y)
-      selection.move(dx, dy)
+      if(mousedownInfo.imgInfo) {
+        let img = $settings[mousedownInfo.imgInfo.which][mousedownInfo.imgInfo.index]
+        img.x += dx
+        img.y += dy
+        encodeMapData($settings)
+        buildXML()
+        settings.update(v => v)
+      }
+      else {
+        selection.move(dx, dy)
+      }
     }
     else if(mousedownInfo.type === "select" && !$creation) {
       let { x1, y1, x2, y2 } = selectionArea
@@ -344,11 +376,12 @@
 
 
     <g transform="translate({pan.x}, {pan.y}) scale({$zoom})">
-      
-      {#each visibleBackgroundImages as {fullUrl,x,y}}
-      <SvgImage 
+
+      {#each visibleBackgroundImages as {x,y,fullUrl,index}}}
+      <SvgImage class="cursor-pointer"
         x={x} y={y}
         href={fullUrl}
+        on:mousedown={e => onImageMousedown(e, { which: "_backgroundImages", index })}
       />
       {/each}
 
@@ -390,18 +423,20 @@
         />
       {/each}
 
-      {#each visibleForegroundImages as {fullUrl,x,y}}
-      <SvgImage class="pointer-events-none"
+      {#each visibleForegroundImages as {x,y,fullUrl,index}}}
+      <SvgImage class="cursor-pointer"
         x={x} y={y}
         href={fullUrl}
+        on:mousedown={e => onImageMousedown(e, { which: "_foregroundImages", index })}
       />
       {/each}
 
       {#each visibleDisappearingImages as data}
-      <g class="pointer-events-none">
-        <SvgImage 
+      <g>
+        <SvgImage class="cursor-pointer"
           x={data.x} y={data.y}
           href={data.fullUrl}
+          on:mousedown={e => onImageMousedown(e, { which: "_disappearingImages", index: data.index })}
         />
         {#if $highlightedObject === data.index}
         <rect class="selectionArea" fill="none" 

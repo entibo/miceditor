@@ -21,7 +21,10 @@
     if(!confirm("Exit ?")) return false
     return true
   }
-  $: onbeforeunload = $hasChanged ? unloadConfirmation : null
+  $: hasChangedChanged($hasChanged)
+  function hasChangedChanged(v) {
+    window.onbeforeunload = v ? unloadConfirmation : null
+  }
 </script>
 
 <svelte:window 

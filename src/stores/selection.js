@@ -6,6 +6,8 @@ import { encodePlatformData, encodeDecorationData, encodeObjectData,
 import { platforms, decorations, shamanObjects, settings, buildXML } from "./xml.js"
 import { persistentWritable } from "./user.js"
 
+import { gridSettings } from "/stores/stores.js"
+
 
 export const clipboard = persistentWritable("clipboard", [], true)
 
@@ -44,20 +46,39 @@ function remove() {
   buildXML()
 }
 
-function move(dx,dy) {
+function move(dx, dy) {
   if(!$selection.length) return
-  let objectTypes = new Set()
+
   for(let object of $selection) {
     object._x += dx
     object._y += dy
     encodeObjectData(object)
-    objectTypes.add(object._objectType)
   }
+
   for(let store of stores) {
     store.update(v => v)
   }
   update(v => v)
   buildXML()
+}
+
+function resize(dx, dy) {
+  if(!$selection.length) return
+
+  for(let object of $selection) {
+    if(object._width === undefined) {
+      continue
+    }
+    object._width = Math.max(10, object._width+dx)
+    object._height = Math.max(10, object._height+dy)
+    encodeObjectData(object)
+  }
+
+  for(let store of stores) {
+    store.update(v => v)
+  }
+  update(v => v)
+  buildXML()  
 }
 
 function rotate(da, cx, cy) {
@@ -71,6 +92,33 @@ function rotate(da, cx, cy) {
   for(let object of $selection) {
     if(object._rotation !== undefined) {
       object._rotation += da
+    }
+    encodeObjectData(object)
+  }
+  for(let store of stores) {
+    store.update(v => v)
+  }
+  update(v => v)
+  buildXML()
+}
+
+function snapToGrid() {
+  let grid = storeGet(gridSettings)
+  let [gw, gh] = [grid.width, grid.height]
+  for(let object of $selection) {
+    let dx = object._x % gw
+    let dy = object._y % gh
+    if( (object._x%gw) > gw/2 ) {
+      object._x += (gw-dx)
+    }
+    else {
+      object._x -= dx
+    }
+    if( (object._y%gh) > gh/2 ) {
+      object._y += (gh-dy)
+    }
+    else {
+      object._y -= dy
     }
     encodeObjectData(object)
   }
@@ -158,7 +206,9 @@ function unselectGroup(which) {
 
 export const selection = {
   subscribe, set, update,
-  clear, remove, move, rotate, copy, cut, paste, duplicate,
+  clear, remove, 
+  move, resize, rotate, snapToGrid,
+  copy, cut, paste, duplicate,
   selectGroup, unselectGroup,
 }
 

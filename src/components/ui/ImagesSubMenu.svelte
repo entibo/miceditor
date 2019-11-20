@@ -29,42 +29,39 @@
   let imageTargetPosition = defaultImageTargetPosition
 
   function mouseMove(e, index) {
-	if(imageIndexToBeMoved < 0) return
-	
-	imageTargetPosition.index = index
-	
-	let elem = e.target
-	while(!elem.classList.contains("indented") && elem.parentElement) {
-		elem = elem.parentElement
-	}
-	if(!elem) return
-	
-	let {y,height} = elem.getBoundingClientRect()
-	let dy = (e.y-y)/height
-	if(dy >= 0.5) imageTargetPosition.after = true
-	else imageTargetPosition.after = false
-	
-	console.log(y,height, e.y, dy)
+    if(imageIndexToBeMoved < 0) return
+    
+    imageTargetPosition.index = index
+    
+    let elem = e.target
+    while(!elem.classList.contains("indented") && elem.parentElement) {
+      elem = elem.parentElement
+    }
+    if(!elem) return
+    
+    let {y,height} = elem.getBoundingClientRect()
+    let dy = (e.y-y)/height
+    if(dy >= 0.5) imageTargetPosition.after = true
+    else imageTargetPosition.after = false
   }
 
   window.addEventListener("mouseup", () => {
-	if(imageIndexToBeMoved < 0) return
-	console.log(imageTargetPosition)
-	
-	let list = data["_"+which]
-	
-	let src = list[imageIndexToBeMoved]
-	
-	let offset = imageTargetPosition.after ? 1 : 0
-	let k = imageTargetPosition.index + offset
-	
-	list.splice(k, 0, Object.assign({}, src))
-	list.splice(list.indexOf(src), 1)
+    if(imageIndexToBeMoved < 0) return
+    
+    let list = data["_"+which]
+    
+    let src = list[imageIndexToBeMoved]
+    
+    let offset = imageTargetPosition.after ? 1 : 0
+    let k = imageTargetPosition.index + offset
+    
+    list.splice(k, 0, Object.assign({}, src))
+    list.splice(list.indexOf(src), 1)
 
-	updateSettings()
-	
-	imageTargetPosition = defaultImageTargetPosition
-	imageIndexToBeMoved = -1
+    updateSettings()
+    
+    imageTargetPosition = defaultImageTargetPosition
+    imageIndexToBeMoved = -1
   })
   window.addEventListener("mouseleave", () => {
     imageTargetPosition = defaultImageTargetPosition
@@ -106,7 +103,7 @@
 	>
 	
 	  <div class="
-			move-rect
+			{ "move-rect" }
 			{ imageIndexToBeMoved < 0 || imageIndexToBeMoved == index ? "blue-rect" : "bg-gray-600" }
 		   "
 		on:mousedown={() => {
