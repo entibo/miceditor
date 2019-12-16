@@ -26,10 +26,10 @@ setData(0, {
   sprite: "arrow.png",
   width: 27, height: 31,
 })
-setData([1, ...range(101,113)], type => {
+setData([1, ...range(101,114)], type => {
   let variant = type === 1 ? 0 : type - 100
   return {
-    variants: range(101,113),
+    variants: range(101,114),
     isVariant: type !== 1,
     spritesheet: "small-boxes.png",
     width: 68, height: 68,
@@ -38,10 +38,10 @@ setData([1, ...range(101,113)], type => {
     boundingHeight: 30,
   }
 })
-setData([2, ...range(201, 216)], type => {
+setData([2, ...range(201, 217)], type => {
   let variant = type === 2 ? 0 : type - 200
   return {
-    variants: range(201,216),
+    variants: range(201,217),
     isVariant: type !== 2,
     spritesheet: "big-boxes.png",
     width: 118, height: 118,
