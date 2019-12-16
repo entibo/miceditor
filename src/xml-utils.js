@@ -668,6 +668,10 @@ export function decodeDecorationData(decoration, index) {
     decoration._foreground = decoration.D !== undefined
   }
 
+  if(decoration.name === "T") {
+    decoration._holeColor = decoration.CT || ""
+  }
+
   decoration._boundingBox = {
     x1: 0, 
     y1: 0, 
@@ -700,6 +704,12 @@ export function encodeDecorationData(decoration) {
     if(decoration._foreground) {
       decoration.D = ""
     } else delete decoration.D
+  }
+
+  if(decoration.name === "T") {
+    if(decoration._holeColor) {
+      decoration.CT = decoration._holeColor
+    } else delete decoration.CT
   }
 
 }

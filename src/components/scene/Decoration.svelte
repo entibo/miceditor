@@ -17,6 +17,8 @@
   $: metadata = getDecorationMetadata(decoration)
   const specialMetadataOffset = {
     T: { x: 21, y: 31 },
+    "T-1": { x: 25, y: 35 },
+    "T-2": { x: 25, y: 35 },
     F: { x: 23, y: 21 },
     "F-triple": { x: 23+12, y: 21+7 },
     "F-candy": { x: 23+12, y: 21+7 },
@@ -25,18 +27,26 @@
     DC2: { x: 26, y: 43 },
   }
   function getDecorationMetadata(decoration) {
-	let type = decoration._type
+  	let type = decoration._type
     if(decoration.name === "P") {
       return decorationMetadata[type]
     }
-	else if(decoration.name === "F") {
-	  if($settings._dodue) {
-		type = "F-triple"
-		if($settings._theme === "halloween") {
-		  type = "F-candy"
-		}
-	  }
-	}
+    else if(decoration.name === "F") {
+      if($settings._dodue) {
+        type = "F-triple"
+        if($settings._theme === "halloween") {
+          type = "F-candy"
+        }
+      }
+    }
+    else if(decoration.name === "T") {
+      if(decoration._holeColor) {
+        let newType = "T-" + decoration._holeColor
+        if(specialMetadataOffset[newType]) {
+          type = newType
+        }
+      }
+    }
     return { 
       type, 
       filters: [],

@@ -407,6 +407,23 @@
 {/if}
 {/if}
 
+{#if multi._holeColor !== undefined}
+<div class="mb-2"></div>
+
+<section transition:fly={flyRight}>
+  <label>
+    <span>{$_("hole")}</span>
+    <div class="material-input">
+      <select bind:value={multi._holeColor} on:change={updateObjects} >
+        <option value=""> </option>
+        <option value="1" style="color:#7DB8BF;">1</option>
+        <option value="2" style="color:#DDA3E5;">2</option>
+      </select>
+    </div>
+  </label>
+</section>
+{/if}
+
 {#if multi._reverse !== undefined}
 <div class="mb-2"></div>
 
