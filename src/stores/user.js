@@ -43,5 +43,14 @@ export const zoom = (() => {
   }
 })()
 
+export const jointPalette = persistentWritable("jointPalette", [
+  { 
+    color: "000000",
+    thickness: 20,
+    opacity: 0.8,
+    foreground: false,
+  },
+])
+
 export const firstVisit = false === Boolean(localStorage.getItem("firstVisit"))
 localStorage.setItem("firstVisit", "firstVisit")

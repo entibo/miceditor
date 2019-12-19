@@ -8,6 +8,7 @@ const { subscribe, set, update } = writable({
   grounds: true,
   decorations: true,
   objects: true,
+  joints: true,
   backgroundImages: true,
   foregroundImages: true,
   disappearingImages: true,

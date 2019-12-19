@@ -5,7 +5,7 @@ import { writable } from "svelte/store"
 import { 
   parseXMLData, xmlDataToString, 
   decodeMapData,
-  decodePlatformData, decodeDecorationData, decodeShamanObjectData,
+  decodePlatformData, decodeDecorationData, decodeShamanObjectData, decodeJointData
 } from "/xml-utils.js"
 
 import { selection } from "./selection.js"
@@ -26,6 +26,7 @@ export const settings = writable(null)
 export const platforms = writable(null)
 export const decorations = writable(null)
 export const shamanObjects = writable(null)
+export const joints = writable(null)
 
 export const xml = (() => {
   let { subscribe, set, update } = writable(initXML)
@@ -57,7 +58,7 @@ export const hasChanged = (() => {
   return { subscribe }
 })()
 
-let $settings, $platforms, $decorations, $shamanObjects
+let $settings, $platforms, $decorations, $shamanObjects, $joints
 
 settings.subscribe(o => {
   decodeMapData(o)
@@ -94,6 +95,15 @@ shamanObjects.subscribe(list => {
     = $shamanObjects
 })
 
+joints.subscribe(list => {
+  for(let [index, o] of list.entries()) {
+    decodeJointData(o, index)
+  }
+  $joints = list
+  $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "L")[0].children
+    = $joints
+})
+
 
 function validateMiceSpawnSettings() {
   if($settings._miceSpawn.type === "normal") return
@@ -128,6 +138,12 @@ function parseXML(v) {
   )
   for(let o of $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "O")[0].children)
     o._store = shamanObjects
+
+  joints.set(
+    $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "L")[0].children
+  )
+  for(let o of $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "L")[0].children)
+    o._store = joints
 
   settings.set(
     $data.children.filter(x => x.name === "P")[0]

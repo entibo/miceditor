@@ -788,6 +788,83 @@ export function encodeShamanObjectData(object) {
   } else delete object.Mv
 }
 
+export function decodeJointData(joint, index) {
+  joint._objectType = "joint"
+  joint._z = index
+
+  joint._type = joint.name
+
+  if(!["JD","JP","JPL","JR"].includes(joint._type)) {
+    return
+  }
+
+  joint._x = 0
+  joint._y = 0
+
+  joint._points = []
+  joint._point_indices = {}
+  for(let k of ["P1","P3","P4","P2"]) {
+    if(joint[k] !== undefined) {
+      let pp = joint[k].split(",")
+      let idx = joint._points.length
+      joint._point_indices[k] = idx
+      joint._points.push({ 
+        x: parseFloat(pp[0] || 0),
+        y: parseFloat(pp[1] || 0),
+        name: k,
+      })
+    }
+  }
+
+  if(joint._points.length) {
+    let xs = joint._points.map(p => p.x)
+    let ys = joint._points.map(p => p.y)
+    joint._boundingBox = {
+      x1: Math.min(...xs), 
+      y1: Math.min(...ys), 
+      x2: Math.max(...xs), 
+      y2: Math.max(...ys),
+    }
+  }
+
+  if(joint.c && joint.c.length) {
+
+    let props = joint.c.split(",")
+
+    joint._color = parseXMLColorHex(props[0])
+    joint._displayColor = "#" + joint._color
+  
+    joint._thickness = Math.max(1, Math.min(260, parseFloat(props[1] || 1)))
+    joint._opacity = Math.max(0, Math.min(1, parseFloat(props[2] || 1)))
+    joint._foreground = props[3] === "1"
+  }
+
+}
+
+export function encodeJointData(joint) {
+
+  let cx = joint._x
+  let cy = joint._y
+
+  for(let k of ["P1","P3","P4","P2"]) {
+    if(joint[k] !== undefined) {
+      let {x,y} = joint._points[joint._point_indices[k]]
+      joint[k] = (x+cx)+","+(y+cy)
+    }
+  }
+
+  if(joint.c && joint.c.length) {
+    console.log("encoding joint.c:", JSON.stringify(joint.c))
+    joint.c = [
+      joint._color,
+      joint._thickness,
+      joint._opacity,
+      joint._foreground ? 1 : 0,
+    ].join(",")
+  }
+
+}
+
 
 export function decodeObjectData(object, index=0) {
   switch(object.name) {
@@ -797,6 +874,8 @@ export function decodeObjectData(object, index=0) {
       return decodeDecorationData(object, index)
     case "O":
       return decodeShamanObjectData(object, index)
+    case "JD": case "JR": case "JPL": case "JP":
+      return decodeJointData(object, index)
   }
   throw "Unknown object type, couldn't decode: "+JSON.stringify(object)
 }
@@ -809,6 +888,8 @@ export function encodeObjectData(object) {
       return encodeDecorationData(object)
     case "shamanObject":
       return encodeShamanObjectData(object)
+    case "joint":
+      return encodeJointData(object)
   }
   throw "Unknown object type, couldn't encode: "+object
 }

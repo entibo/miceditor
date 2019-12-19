@@ -1,9 +1,9 @@
 
 import { writable, derived, get as storeGet } from "svelte/store"
 
-import { encodePlatformData, encodeDecorationData, encodeObjectData,
+import { encodePlatformData, encodeDecorationData, encodeJointData, encodeObjectData,
   platformProperties, groundTypes, rotate as rotatePoint } from "../xml-utils.js"
-import { platforms, decorations, shamanObjects, settings, buildXML } from "./xml.js"
+import { platforms, decorations, shamanObjects, joints, settings, buildXML } from "./xml.js"
 import { persistentWritable } from "./user.js"
 
 import { gridSettings } from "/stores/stores.js"
@@ -29,6 +29,8 @@ function filterByStore(list, store) {
       return list.filter(o => o._objectType === "decoration")
     case shamanObjects:
       return list.filter(o => o._objectType === "shamanObject")
+    case joints:
+      return list.filter(o => o._objectType === "joint")
   }
 }
 
@@ -50,8 +52,15 @@ function move(dx, dy) {
   if(!$selection.length) return
 
   for(let object of $selection) {
-    object._x += dx
-    object._y += dy
+    if(object._objectType === "joint") {
+      for(let p of object._points) {
+        p.x += dx
+        p.y += dy
+      }
+    } else {
+      object._x += dx
+      object._y += dy
+    }
     encodeObjectData(object)
   }
 
@@ -84,9 +93,17 @@ function resize(dx, dy) {
 function rotate(da, cx, cy) {
   if(arguments.length >= 3) {
     for(let object of $selection) {
-      let [x, y] = rotatePoint(object._x, object._y, -da, cx, cy)
-      object._x = x
-      object._y = y
+      if(object._objectType === "joint") {
+        for(let p of object._points) {
+          let [x, y] = rotatePoint(p.x, p.y, -da, cx, cy)
+          p.x = x
+          p.y = y
+        }
+      } else {
+        let [x, y] = rotatePoint(object._x, object._y, -da, cx, cy)
+        object._x = x
+        object._y = y
+      }
      }
   }
   for(let object of $selection) {
@@ -189,6 +206,8 @@ function selectGroup(which) {
     addToSelection(storeGet(platforms))
   else if(which === "objects")
     addToSelection(storeGet(shamanObjects))
+  else if(which === "joints")
+    addToSelection(storeGet(joints))
   else if(which === "basic")
     addToSelection(storeGet(decorations).filter(o => o.name !== "P"))
   else if(which === "decorations")

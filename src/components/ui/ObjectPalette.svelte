@@ -6,12 +6,14 @@
   import { faSquare } from "@fortawesome/free-solid-svg-icons/faSquare"
   import { faEye } from "@fortawesome/free-solid-svg-icons/faEye"
   import { faEyeSlash } from "@fortawesome/free-solid-svg-icons/faEyeSlash"
+  import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
+  import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes"
 
   import { fly } from "svelte/transition"
 
   import { 
-    selection, creation, groundTypePicker, visibility,
-    settings, platforms, decorations, shamanObjects,
+    selection, creation, groundTypePicker, visibility, jointPalette,
+    settings, platforms, decorations, shamanObjects, joints,
     _
   } from "/stores/stores.js"
 
@@ -20,6 +22,8 @@
 
   import Tooltip from "/components/common/Tooltip.svelte"
   import ObjectPaletteMenu from "/components/ui/ObjectPaletteMenu.svelte"
+  import TextInput from "/components/common/TextInput.svelte"
+  import ColorTextInput from "/components/common/ColorTextInput.svelte"
 
   let isThin = false
 
@@ -28,6 +32,7 @@
     basic: false,
     decorations: false,
     objects: false,
+    joints: false,
   }
 
   $: tryCancelCreation(collapsed)
@@ -38,6 +43,8 @@
     if(collapsed.grounds && $creation.objectType === "platform")
       $creation = null
     else if(collapsed.objects && $creation.objectType === "shamanObject")
+      $creation = null
+    else if(collapsed.joints && $creation.objectType === "joint")
       $creation = null
     else if($creation.objectType === "decoration") {
       let isCreationBasic = ["T","F","DS","DC","DC2"].includes($creation.type)
@@ -82,6 +89,19 @@
   $: dc2Count = $decorations.filter(({name}) => name === "DC2").length
 
   $: objectMaxCount = $settings._defilanteEnabled ? 200 : 30
+
+  $: currentJointBrushIndex =
+      $creation && $creation.objectType === "joint"
+      ? $creation.type
+      : 0
+
+  function removeJointBrush(idx) {
+    $jointPalette.splice(idx,1)
+    $jointPalette = $jointPalette
+    if($creation && $creation.objectType === "joint" && $creation.type == idx) {
+      $creation = null
+    }
+  }
 
 </script>
 
@@ -222,6 +242,60 @@
   <!-- </div> -->
   {/if}
 
+  <ObjectPaletteMenu which="joints" title={$_("category-lines")} bind:collapsed={collapsed.joints} max="500" count={$joints.length}>
+    <div class="flex flex-wrap justify-center">
+
+      <div class="w-full py-2">
+        <div class="flex flex-no-wrap">
+          <label class="flex flex-no-wrap justify-between items-center">
+            <span class="whitespace-no-wrap text-xs pr-2">{$_("line-width")}</span>
+            <TextInput number bind:value={$jointPalette[currentJointBrushIndex].thickness} />
+          </label>
+          <div class="mr-2"></div>
+          <label class="flex flex-no-wrap justify-between items-center">
+            <span class="whitespace-no-wrap text-xs pr-2">{$_("color")}</span>
+            <!--<div class="p-2 mr-2 shadow rounded cursor-pointer" style="background: #{$jointPalette[currentJointBrushIndex].color}"></div>-->
+            <ColorTextInput bind:value={$jointPalette[currentJointBrushIndex].color} />
+          </label>
+        </div>
+        <div class="flex flex-no-wrap">
+          <label class="flex flex-no-wrap items-center">
+            <span class="whitespace-no-wrap text-xs pr-2">{$_("foreground")}</span>
+            <input type="checkbox" bind:checked={$jointPalette[currentJointBrushIndex].foreground} />
+          </label>
+          <div class="mr-3"></div>
+          <label class="flex flex-no-wrap justify-between items-center">
+            <span class="whitespace-no-wrap text-xs pr-2">{$_("opacity")}</span>
+            <TextInput number bind:value={$jointPalette[currentJointBrushIndex].opacity} />
+          </label>
+        </div>
+      </div>
+
+      {#each $jointPalette as jointStyle, idx}
+        <div class="tile dim-40 checkered rounded-sm overflow-hidden relative" 
+          class:active={$creation && $creation.objectType === "joint" && $creation.type == idx}
+          on:click={() => onTileClick("joint", idx)}
+        >
+          <div class="brush-preview" 
+            style="background: #{jointStyle.color}; opacity: {jointStyle.opacity}; width: {jointStyle.thickness}px; height: {jointStyle.thickness}px;"
+          ></div>
+          {#if idx > 0}
+          <div class="brush-remove"
+            on:click|preventDefault|stopPropagation={() => removeJointBrush(idx)}
+          ><Icon icon={faTimes} />
+          </div>
+          {/if}
+        </div>
+      {/each}
+      <div class="tile dim-40 rounded-sm active opacity-75"
+        on:click={() => $jointPalette = [...$jointPalette, {...$jointPalette[currentJointBrushIndex]}]}
+      >
+        <Icon icon={faPlus} />
+      </div>
+
+    </div>
+  </ObjectPaletteMenu>
+
   <div class="thinButton"
     on:click={() => isThin = !isThin}
   >
@@ -317,4 +391,29 @@
   .chevron.flipped > * {
     transform: rotate(-90deg) rotateX(180deg);
   }
+
+  .checkered {
+    background-color: #f5f5f5;
+    background-image: linear-gradient(45deg, #808080 25%, transparent 25%), linear-gradient(-45deg, #808080 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #808080 75%), linear-gradient(-45deg, transparent 75%, #808080 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+
+  .brush-preview {
+    @apply rounded-full absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .brush-remove {
+    @apply absolute text-red-600 text-sm;
+    top: -6px;
+    right: 0;
+    transition: opacity 70ms;
+    opacity: 0;
+  }
+  .checkered:hover .brush-remove {
+    opacity: 1;
+  }
+
 </style>

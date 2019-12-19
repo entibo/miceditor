@@ -7,12 +7,13 @@
 
   import { encodeObjectData, encodeMapData, rotate } from "/xml-utils.js"
   import { 
-    platforms, decorations, shamanObjects, 
+    platforms, decorations, shamanObjects, joints,
     settings, selection, creation, visibility, highlightedObject, buildXML,
     showGameGUI, showMapBorder, gridSettings, zoom } from "/stores/stores.js"
   import Platform from "/components/scene/Platform.svelte"
   import Decoration from "/components/scene/Decoration.svelte"
   import ShamanObject from "/components/scene/ShamanObject.svelte"
+  import Joint from "/components/scene/Joint.svelte"
   import Footer from "/components/scene/Footer.svelte"
 
   import SvgImage from "/components/common/SvgImage.svelte"
@@ -21,18 +22,25 @@
   $: visiblePlatforms = $visibility.grounds ? $platforms : []
   $: visibleShamanObjects = $visibility.objects ? $shamanObjects : []
   $: visibleDecorations = computeVisibleDecorations($decorations, $visibility)
+  $: visibleJoints = computeVisibleJoints($joints, $visibility)
   function computeVisibleDecorations(list, {decorations, basic}) {
     let r = list
     if(!decorations) r = r.filter(o => o.name !== "P")
     if(!basic) r = r.filter(o => o.name === "P")
     return r
   }
+  function computeVisibleJoints(list, {joints}) {
+    if(joints) {
+      return list.filter(o => o._color !== undefined)
+    }
+    return []
+  }
 
   $: visibleBackgroundImages = $visibility.backgroundImages ? $settings._backgroundImages : []
   $: visibleForegroundImages = $visibility.foregroundImages ? $settings._foregroundImages : []
   $: visibleDisappearingImages = $visibility.disappearingImages ? $settings._disappearingImages : []
 
-  $: objects = [...visiblePlatforms, ...visibleDecorations, ...visibleShamanObjects]
+  $: objects = [...visiblePlatforms, ...visibleDecorations, ...visibleShamanObjects, ...visibleJoints]
 
   let containerElement
 
@@ -186,7 +194,7 @@
       mousedownInfo.type = "pan"
     }
     else if($creation && $creation.objectType !== "platform") {
-      creation.create(mouseGame)
+      creation.create(mouseGame, mouse)
     }
     else {
       if(!e.shiftKey) {
@@ -286,7 +294,7 @@
         x: selectionArea.x1 + width/2,
         y: selectionArea.y1 + height/2,
         width, height,
-      })
+      }, mouse)
     }
 
     mousedownInfo = null
@@ -411,6 +419,12 @@
         />
       {/each}
 
+      {#each visibleJoints.filter(o => !o._foreground) as joint}
+        <Joint joint={joint} active={$selection.includes(joint)}
+          on:mousedown={e => onObjectMousedown(e, joint)}
+        />
+      {/each}
+
       {#each visiblePlatforms.filter(o => !o._foreground) as platform}
         <Platform platform={platform} active={$selection.includes(platform)} 
           on:mousedown={e => onObjectMousedown(e, platform)}
@@ -451,6 +465,12 @@
       {#each visibleDecorations.filter(o => o._foreground) as decoration}
         <Decoration decoration={decoration} active={$selection.includes(decoration)}
           on:mousedown={e => onObjectMousedown(e, decoration)}
+        />
+      {/each}
+
+      {#each visibleJoints.filter(o => o._foreground) as joint}
+        <Joint joint={joint} active={$selection.includes(joint)}
+          on:mousedown={e => onObjectMousedown(e, joint)}
         />
       {/each}
 
@@ -502,6 +522,8 @@
           <Decoration decoration={$creation.object}/>
         {:else if $creation.objectType === "shamanObject"}
           <ShamanObject shamanObject={$creation.object}/>
+        {:else if $creation.objectType === "joint"}
+          <Joint joint={$creation.object}/>
         {/if}
       </g>
       {/if}

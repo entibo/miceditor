@@ -13,10 +13,10 @@
   import Button from "/components/common/Button.svelte"
   import Tooltip from "/components/common/Tooltip.svelte"
 
-  import { platforms, decorations, shamanObjects, settings, selection, creation, groundTypePicker, buildXML, _} from "/stores/stores.js"
+  import { platforms, decorations, shamanObjects, joints, settings, selection, creation, groundTypePicker, buildXML, _} from "/stores/stores.js"
   import { encodeObjectData } from "/xml-utils.js"
 
-  let stores = [platforms, decorations, shamanObjects]
+  let stores = [platforms, decorations, shamanObjects, joints]
 
 
   $: objectTypes = [...new Set($selection.map(o => o._objectType))]
@@ -93,11 +93,15 @@
     let factor = shiftKey ? 10 : ctrlKey ? 100 : 1
     let deltaZ = sign*factor
 
-    for(let [store,storeList,objectType] of [[platforms,$platforms,"platform"],[decorations,$decorations,"decoration"],[shamanObjects,$shamanObjects,"shamanObject"]]) {
+    for(let [store,storeList,objectType] of [
+      [platforms,$platforms,"platform"],
+      [decorations,$decorations,"decoration"],
+      [shamanObjects,$shamanObjects,"shamanObject"],
+      [joints,$joints,"joint"],
+    ]) {
       if(!objectTypes.includes(objectType)) continue
       let objects = $selection.filter(({_objectType}) => _objectType === objectType)
       let newOrder = storeList
-      console.log(objects, storeList)
       if(deltaZ < 0) {
         let pp = objects.sort((a,b) => a._z - b._z)
         let currentZ = -1
@@ -110,11 +114,8 @@
       else {
         let pp = objects.sort((a,b) => b._z - a._z)
         let currentZ = storeList.length
-        console.log("max insertion index ", currentZ)
         for(let object of pp) {
           currentZ = Math.min(currentZ-1, object._z + deltaZ)
-          console.log("actual index ", object._z)
-          console.log("will insert at index ", currentZ)
           newOrder.splice(object._z, 1)
           newOrder = [...newOrder.slice(0,currentZ), object, ...newOrder.slice(currentZ)]
         }
@@ -227,6 +228,8 @@
 </section>
 {/if}
 
+{/if}
+
 {#if multi._color !== undefined}
 <div class="mb-2"></div>
 <section transition:fly={flyRight}>
@@ -237,6 +240,8 @@
   </label>
 </section>
 {/if}
+
+{#if objectTypes.includes("platform")}
 
 <div class="mb-2"></div>
 
@@ -481,6 +486,47 @@
     <TextInput number bind:value={multi._nailSpeed} on:input={updateObjects} />
   </label>
 </section>
+{/if}
+
+
+{#if multi._thickness !== undefined}
+<div class="mb-2"></div>
+<section transition:fly={flyRight}>
+  <label>
+    <span>{$_("line-width")}</span>
+    <TextInput number bind:value={multi._thickness} on:input={updateObjects} />
+  </label>
+</section>
+{/if}
+
+{#if multi._opacity !== undefined}
+<div class="mb-2"></div>
+<section transition:fly={flyRight}>
+  <label>
+    <span>{$_("opacity")}</span>
+    <TextInput number bind:value={multi._opacity} on:input={updateObjects} />
+  </label>
+</section>
+{/if}
+
+{#if multi._points instanceof Array}
+<div class="mb-2"></div>
+
+{#each multi._points as p, pointIndex}
+<section transition:fly={flyRight}>
+  <label>
+    <span class="input-text text-sm">{p.name}</span>
+  </label>
+  <label>
+    <span>X</span>
+    <TextInput number bind:value={multi._points[pointIndex].x} on:input={updateObjects} />
+  </label>
+  <label>
+    <span>Y</span>
+    <TextInput number bind:value={multi._points[pointIndex].y} on:input={updateObjects} />
+  </label>
+</section>
+{/each}
 {/if}
 
 

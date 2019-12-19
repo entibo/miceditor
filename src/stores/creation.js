@@ -2,7 +2,8 @@
 import { writable, get as storeGet } from "svelte/store"
 
 import { selection } from "./selection.js"
-import { settings, platforms, decorations, shamanObjects, buildXML } from "./xml.js"
+import { settings, platforms, decorations, shamanObjects, joints, buildXML } from "./xml.js"
+import { jointPalette } from "/stores/stores.js"
 
 import { decodeObjectData, encodeObjectData } from "../xml-utils.js"
 
@@ -51,6 +52,21 @@ export const creation = {
       }
       object.P = ","
     }
+    else if(objectType === "joint") {
+      let data = {...storeGet(jointPalette)[type]}
+      delete object.X
+      delete object.Y
+      object.name = "JD"
+      object.c = "..."
+      object._objectType = "joint"
+      object._color = data.color
+      object._thickness = data.thickness
+      object._opacity = data.opacity
+      object._foreground = data.foreground
+      encodeObjectData(object)
+      object.P1 = "0,0"
+      object.P2 = "0,0"
+    }
     else {
       throw "Cannot create unknown object type: "+objectType+" / "+type
     }
@@ -65,8 +81,9 @@ export const creation = {
     $creation.object._rotation += da
     update(v => v)
   },
-  create({ x, y, width, height }) {
+  create({ x, y, width, height }, mousePosition) {
     let object = Object.assign({}, $creation.object)
+    object.__isNew = true
     object._x = Math.round(x)
     object._y = Math.round(y)
     if($creation.objectType === "platform") {
@@ -78,7 +95,7 @@ export const creation = {
       object._height = Math.round(height)
     }
     encodeObjectData(object)
-    let store = [platforms, decorations, shamanObjects][["platform","decoration","shamanObject"].indexOf($creation.objectType)]
+    let store = [platforms, decorations, shamanObjects, joints][["platform","decoration","shamanObject","joint"].indexOf($creation.objectType)]
     object._store = store
     if(object.name === "DS" && storeGet(settings)._miceSpawn.type !== "multiple") {
       store.update(list => list.filter(({name}) => name !== "DS"))
