@@ -21,6 +21,7 @@ export const localeTranslators = {
   "lv": ["Syrius#8114"],
   "pl": ["Lament"],
   "bg": ["Silence#5339"],
+  "br": ["Ikke"],
 }
 
 for(let cc of Object.keys(languages)) {
