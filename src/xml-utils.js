@@ -854,7 +854,6 @@ export function encodeJointData(joint) {
   }
 
   if(joint.c && joint.c.length) {
-    console.log("encoding joint.c:", JSON.stringify(joint.c))
     joint.c = [
       joint._color,
       joint._thickness,

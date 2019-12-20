@@ -1,6 +1,9 @@
 
 <script context="module">
 
+  import { get as storeGet } from "svelte/store"
+  import { zoom } from "/stores/stores.js"
+
   let resizeInfo = null
 
   window.addEventListener("mousemove", resizeMove)
@@ -18,8 +21,9 @@
 
     let isCircle = platform._typeName === "circle"
 
-    let dx = e.clientX - start.x
-    let dy = e.clientY - start.y
+    let scale = 1 / storeGet(zoom)
+    let dx = scale * (e.clientX - start.x)
+    let dy = scale * (e.clientY - start.y)
 
     let [rdx,rdy] = rotate(dx, dy, -rotation)
     if([1,5].includes(k)) rdx = 0

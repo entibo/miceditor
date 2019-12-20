@@ -1,6 +1,9 @@
 
 <script context="module">
 
+  import { get as storeGet } from "svelte/store"
+  import { zoom } from "/stores/stores.js"
+
   let resizeInfo = null
 
   window.addEventListener("mousemove", onMouseMove)
@@ -19,8 +22,9 @@
 
     let {joint, pointIndex, originalPoint, start} = resizeInfo
 
-    let dx = e.clientX - start.x
-    let dy = e.clientY - start.y
+    let scale = 1 / storeGet(zoom)
+    let dx = scale * (e.clientX - start.x)
+    let dy = scale * (e.clientY - start.y)
 
     joint._points[pointIndex].x = originalPoint.x + dx
     joint._points[pointIndex].y = originalPoint.y + dy
@@ -41,7 +45,7 @@
 
   import { encodeJointData } from "/xml-utils.js"
   import {
-    joints, selection, buildXML 
+    joints, selection, buildXML, creation
   } from "/stores/stores.js"
 
   export let joint
@@ -92,9 +96,10 @@
       >
     </g>
   </g>
+  {#if !$creation || $creation.objectType !== "joint"  }
   <g class="point-crosshairs" class:active >
     {#each joint._points as p, pointIndex}
-    <g fill="none" stroke="white" stroke-width="2" stroke-linecap="butt" 
+    <g fill="none" stroke="white" opacity="0.6" stroke-width="2" stroke-linecap="butt" 
       transform="translate({p.x},{p.y})"
     >
       <line 
@@ -113,6 +118,7 @@
     </g>
     {/each}
   </g>
+  {/if}
 </g>
 
 

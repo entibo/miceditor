@@ -103,6 +103,12 @@
     }
   }
 
+  function updateBrushCreation() {
+    if($creation && $creation.objectType === "joint") {
+      creation.setFromType("joint", currentJointBrushIndex)
+    }
+  }
+
 </script>
 
 <div class="panel relative w-64 p-2 xl:p-4 bg-gray-700 shadow-lg text-white z-10 flex-shrink-0 flex flex-col"
@@ -249,24 +255,24 @@
         <div class="flex flex-no-wrap">
           <label class="flex flex-no-wrap justify-between items-center">
             <span class="whitespace-no-wrap text-xs pr-2">{$_("line-width")}</span>
-            <TextInput number bind:value={$jointPalette[currentJointBrushIndex].thickness} />
+            <TextInput number bind:value={$jointPalette[currentJointBrushIndex].thickness} on:input={updateBrushCreation} />
           </label>
           <div class="mr-2"></div>
           <label class="flex flex-no-wrap justify-between items-center">
             <span class="whitespace-no-wrap text-xs pr-2">{$_("color")}</span>
             <!--<div class="p-2 mr-2 shadow rounded cursor-pointer" style="background: #{$jointPalette[currentJointBrushIndex].color}"></div>-->
-            <ColorTextInput bind:value={$jointPalette[currentJointBrushIndex].color} />
+            <ColorTextInput bind:value={$jointPalette[currentJointBrushIndex].color} on:input={updateBrushCreation} />
           </label>
         </div>
         <div class="flex flex-no-wrap">
           <label class="flex flex-no-wrap items-center">
             <span class="whitespace-no-wrap text-xs pr-2">{$_("foreground")}</span>
-            <input type="checkbox" bind:checked={$jointPalette[currentJointBrushIndex].foreground} />
+            <input type="checkbox" bind:checked={$jointPalette[currentJointBrushIndex].foreground} on:change={updateBrushCreation} />
           </label>
           <div class="mr-3"></div>
           <label class="flex flex-no-wrap justify-between items-center">
             <span class="whitespace-no-wrap text-xs pr-2">{$_("opacity")}</span>
-            <TextInput number bind:value={$jointPalette[currentJointBrushIndex].opacity} />
+            <TextInput number bind:value={$jointPalette[currentJointBrushIndex].opacity} on:input={updateBrushCreation} />
           </label>
         </div>
       </div>

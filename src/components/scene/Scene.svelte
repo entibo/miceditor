@@ -7,7 +7,7 @@
 
   import { encodeObjectData, encodeMapData, rotate } from "/xml-utils.js"
   import { 
-    platforms, decorations, shamanObjects, joints,
+    platforms, decorations, shamanObjects, joints, jointPalette,
     settings, selection, creation, visibility, highlightedObject, buildXML,
     showGameGUI, showMapBorder, gridSettings, zoom } from "/stores/stores.js"
   import Platform from "/components/scene/Platform.svelte"
@@ -328,6 +328,12 @@
       let da = Math.sign(e.deltaY) * factor
       if($creation && $creation.objectType === "shamanObject") {
         creation.rotate(da)
+      }
+      else if($creation && $creation.objectType === "joint") {
+        let brushIdx = $creation.type
+        let thicknessDelta = -Math.sign(e.deltaY)
+        $jointPalette[brushIdx].thickness = Math.max(1, Math.min(260, $jointPalette[brushIdx].thickness + thicknessDelta))
+        creation.setFromType("joint", brushIdx)
       }
       else if($selection.length) {
         if(e.shiftKey) {

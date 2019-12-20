@@ -23,6 +23,13 @@ export const localeTranslators = {
   "bg": ["Silence#5339"],
 }
 
+for(let cc of Object.keys(languages)) {
+  if(cc.length > 2) {
+    languages[cc.slice(0,2)] = languages[cc]
+    delete languages[cc]
+  }
+}
+
 for(let cc of Object.keys(languages).filter(s => s != "en")) {
   for(let k of Object.keys(languages.en)) {
     languages[cc][k] = languages[cc][k] || languages.en[k]
