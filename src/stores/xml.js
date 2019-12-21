@@ -69,6 +69,7 @@ settings.subscribe(o => {
 
 platforms.subscribe(list => {
   for(let [index, o] of list.entries()) {
+    o._store = platforms
     decodePlatformData(o, index)
   }
   $platforms = list
@@ -78,6 +79,7 @@ platforms.subscribe(list => {
 
 decorations.subscribe(list => {
   for(let [index, o] of list.entries()) {
+    o._store = decorations
     decodeDecorationData(o, index)
   }
   $decorations = list
@@ -88,6 +90,7 @@ decorations.subscribe(list => {
 
 shamanObjects.subscribe(list => {
   for(let [index, o] of list.entries()) {
+    o._store = shamanObjects
     decodeShamanObjectData(o, index)
   }
   $shamanObjects = list
@@ -97,6 +100,7 @@ shamanObjects.subscribe(list => {
 
 joints.subscribe(list => {
   for(let [index, o] of list.entries()) {
+    o._store = joints
     decodeJointData(o, index)
   }
   $joints = list
@@ -113,7 +117,6 @@ function validateMiceSpawnSettings() {
     decorations.set(withMiceSpawnsRemoved)
   }
   
-
 }
 
 
@@ -121,33 +124,36 @@ function parseXML(v) {
   // console.log("parseXML")
   $data = parseXMLData(v)
 
-  platforms.set(
-    $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "S")[0].children
-  )
-  for(let o of $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "S")[0].children)
-    o._store = platforms
+  let C = $data
+  let P, Z
+  let S, D, O, L
 
-  decorations.set(
-    $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "D")[0].children
-  )
-  for(let o of $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "D")[0].children)
-    o._store = decorations
+  for(let e of C.children) {
+    if(e.name === "P") P = e
+    else if(e.name === "Z") Z = e
+  }
+  if(!P) C.children.push(P = { name: "P", children: [] })
+  if(!Z) C.children.push(Z = { name: "Z", children: [] })
 
-  shamanObjects.set(
-    $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "O")[0].children
-  )
-  for(let o of $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "O")[0].children)
-    o._store = shamanObjects
+  settings.set(P)
 
-  joints.set(
-    $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "L")[0].children
-  )
-  for(let o of $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "L")[0].children)
-    o._store = joints
+  for(let e of Z.children) {
+    if(e.name === "S") S = e
+    else if(e.name === "D") D = e
+    else if(e.name === "O") O = e
+    else if(e.name === "L") L = e
+  }
 
-  settings.set(
-    $data.children.filter(x => x.name === "P")[0]
-  )
+  if(!S) Z.children.push(S = { name: "S", children: [] })
+  if(!D) Z.children.push(D = { name: "D", children: [] })
+  if(!O) Z.children.push(O = { name: "O", children: [] })
+  if(!L) Z.children.push(L = { name: "L", children: [] })
+
+  platforms.set(S.children)
+  decorations.set(D.children)
+  shamanObjects.set(O.children)
+  joints.set(L.children)
+
 
   selection.set([])
 }
