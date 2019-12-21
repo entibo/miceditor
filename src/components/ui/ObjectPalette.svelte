@@ -96,11 +96,16 @@
       : 0
 
   function removeJointBrush(idx) {
+    if($creation && $creation.objectType === "joint") {
+      if(idx == currentJointBrushIndex) {
+        $creation = null
+      }
+      else if(idx < currentJointBrushIndex) {
+        creation.setFromType("joint", currentJointBrushIndex-1)
+      }
+    }
     $jointPalette.splice(idx,1)
     $jointPalette = $jointPalette
-    if($creation && $creation.objectType === "joint" && $creation.type == idx) {
-      $creation = null
-    }
   }
 
   function updateBrushCreation() {
