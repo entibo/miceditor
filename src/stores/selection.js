@@ -158,7 +158,16 @@ function cut() {
 
 function paste() {
   let newSelection = storeGet(clipboard).map(object => Object.assign({}, object))
-  let stores = new Set([...newSelection].map(o => o._store))
+  let stores = new Set()
+  for(let obj of newSelection) {
+    obj._store = {
+      "platform": platforms, 
+      "decoration": decorations, 
+      "shamanObject": shamanObjects, 
+      "joint": joints,
+    } [obj._objectType]
+    stores.add(obj._store)
+  }
   for(let store of stores) {
     let objects = newSelection.filter(o => o._store === store)
     if(!objects.length) continue

@@ -167,7 +167,9 @@ function parseXMLColorHex(str) {
     return ""
   if(str.length === 6)
     return str
-  return "0".repeat(6-str.length) + str
+  if(str.length < 6)
+    return "0".repeat(6-str.length) + str
+  return str.slice(0,6)
 }
 
 function getFullTransformiceImageUrl(path) {
