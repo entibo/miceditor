@@ -12,7 +12,17 @@ import { selection } from "./selection.js"
 
 
 const emptyMap = `<C><P /><Z><S /><D /><O /><L /></Z></C>`
-const initXML = emptyMap
+
+let initXML = emptyMap
+try {
+  let hashContent = decodeURIComponent(location.hash.slice(1))
+  if(hashContent.startsWith("<C")) {
+    initXML = hashContent
+  }
+}
+catch(e) {
+  console.error("Problem parsing the map from the url:", e)
+}
 
 
 function hasXMLNodeChanged(node) {
