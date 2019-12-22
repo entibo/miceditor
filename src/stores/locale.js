@@ -15,6 +15,7 @@ export const localeFlag = {
   "lv": "lv",
   "pl": "pl",
   "bg": "bg",
+  "ro": "ro",
 }
 export const localeTranslators = {
   "hu": ["Lemax#7166"],
@@ -22,6 +23,7 @@ export const localeTranslators = {
   "pl": ["Lament"],
   "bg": ["Silence#5339"],
   "br": ["Ikke"],
+  "ro": ["Narcis"],
 }
 
 for(let cc of Object.keys(languages)) {
