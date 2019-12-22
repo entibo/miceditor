@@ -8,11 +8,12 @@
   import { faEyeSlash } from "@fortawesome/free-solid-svg-icons/faEyeSlash"
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
   import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes"
+  import { faPenNib } from "@fortawesome/free-solid-svg-icons/faPenNib"
 
   import { fly } from "svelte/transition"
 
   import { 
-    selection, creation, groundTypePicker, visibility, jointPalette,
+    selection, creation, groundTypePicker, visibility, jointPalette, drawingData,
     settings, platforms, decorations, shamanObjects, joints,
     _
   } from "/stores/stores.js"
@@ -89,6 +90,10 @@
   $: dc2Count = $decorations.filter(({name}) => name === "DC2").length
 
   $: objectMaxCount = $settings._defilanteEnabled ? 200 : 30
+
+  $: jointCount = $joints
+                    .map(joint => (joint._type === "VC" && !joint._invalid) ? joint._fineness : 1)
+                    .reduce((a,b) => a+b, 0)
 
   $: currentJointBrushIndex =
       $creation && $creation.objectType === "joint"
@@ -253,8 +258,26 @@
   <!-- </div> -->
   {/if}
 
-  <ObjectPaletteMenu which="joints" title={$_("category-lines")} bind:collapsed={collapsed.joints} max="500" count={$joints.length}>
+  <ObjectPaletteMenu which="joints" title={$_("category-lines")} bind:collapsed={collapsed.joints} max="500" count={jointCount}>
     <div class="flex flex-wrap justify-center">
+
+      <div class="w-full pt-2">
+        <div class="flex flex-no-wrap">
+          <label class="flex flex-no-wrap justify-between items-center">
+            <span class="pen-nib" class:pen-nib-active={$drawingData.curveToolEnabled} > 
+              <Icon icon={faPenNib} /> 
+            </span>
+            <div class="hidden">
+              <input type="checkbox" bind:checked={$drawingData.curveToolEnabled} on:change={updateBrushCreation} />
+            </div>
+          </label>
+          <div class="mr-2"></div>
+          <label class="flex flex-no-wrap justify-between items-center" class:opacity-75={!$drawingData.curveToolEnabled} >
+            <span class="whitespace-no-wrap text-xs pr-2">Fineness</span>
+            <TextInput number bind:value={$drawingData.curveToolFineness} on:input={updateBrushCreation} />
+          </label>
+        </div>
+      </div>
 
       <div class="w-full py-2">
         <div class="flex flex-no-wrap">
@@ -283,7 +306,7 @@
       </div>
 
       {#each $jointPalette as jointStyle, idx}
-        <div class="tile dim-40 checkered rounded-sm overflow-hidden relative" 
+        <div class="tile outline-outside dim-40 checkered rounded-sm overflow-hidden relative" 
           class:active={$creation && $creation.objectType === "joint" && $creation.type == idx}
           on:click={() => onTileClick("joint", idx)}
         >
@@ -374,6 +397,9 @@
     pointer-events: none;
     opacity: 0.5;
   }
+  .tile.outline-outside {
+    outline-offset: -1px;
+  }
 
   .thinButton {
     @apply absolute right-0;
@@ -404,10 +430,11 @@
   }
 
   .checkered {
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5;
     background-image: linear-gradient(45deg, #808080 25%, transparent 25%), linear-gradient(-45deg, #808080 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #808080 75%), linear-gradient(-45deg, transparent 75%, #808080 75%);
     background-size: 20px 20px;
-    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px; */
+    background-color: #6a7495;
   }
 
   .brush-preview {
@@ -425,6 +452,23 @@
   }
   .checkered:hover .brush-remove {
     opacity: 1;
+  }
+
+  .pen-nib {
+    @apply text-lg text-gray-200 flex justify-center items-center;
+    opacity: 0.8;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .pen-nib:hover {
+    opacity: 1;
+  }
+  .pen-nib-active {
+    @apply text-green-400;
+    outline-color: white;
+    outline-style: dashed;
   }
 
 </style>

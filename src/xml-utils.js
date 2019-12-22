@@ -796,8 +796,29 @@ export function decodeJointData(joint, index) {
 
   joint._type = joint.name
 
-  if(!["JD","JP","JPL","JR"].includes(joint._type)) {
+  if(!["JD","JP","JPL","JR","VC"].includes(joint._type)) {
     return
+  }
+
+  if(joint._type === "VC") {
+    if(joint._invalid) return
+
+    joint.c = joint.c || joint.C
+    delete joint.C
+
+    joint._controlPoints = []
+    for(let k of ["C1","C2"]) {
+      if(joint[k] !== undefined) {
+        let pp = joint[k].split(",")
+        joint._controlPoints.push({ 
+          x: parseInt(pp[0] || 0),
+          y: parseInt(pp[1] || 0),
+          name: k,
+        })
+      }
+    }
+
+    joint._fineness = Math.min(100, Math.max(1, parseInt(joint.f) || 1))
   }
 
   joint._x = 0
@@ -811,8 +832,8 @@ export function decodeJointData(joint, index) {
       let idx = joint._points.length
       joint._point_indices[k] = idx
       joint._points.push({ 
-        x: parseFloat(pp[0] || 0),
-        y: parseFloat(pp[1] || 0),
+        x: parseInt(pp[0] || 0),
+        y: parseInt(pp[1] || 0),
         name: k,
       })
     }
@@ -848,6 +869,19 @@ export function encodeJointData(joint) {
   let cx = joint._x
   let cy = joint._y
 
+  if(joint._type === "VC") {
+    if(joint._invalid) return
+
+    for(let [k,i] of [["C1",0], ["C2",1]]) {
+      if(joint[k] !== undefined) {
+        let {x,y} = joint._controlPoints[i]
+        joint[k] = (x+cx)+","+(y+cy)
+      }
+    }
+
+    joint.f = joint._fineness.toString()
+  }
+
   for(let k of ["P1","P3","P4","P2"]) {
     if(joint[k] !== undefined) {
       let {x,y} = joint._points[joint._point_indices[k]]
@@ -875,7 +909,7 @@ export function decodeObjectData(object, index=0) {
       return decodeDecorationData(object, index)
     case "O":
       return decodeShamanObjectData(object, index)
-    case "JD": case "JR": case "JPL": case "JP":
+    case "JD": case "JR": case "JPL": case "JP": case "VC":
       return decodeJointData(object, index)
   }
   throw "Unknown object type, couldn't decode: "+JSON.stringify(object)

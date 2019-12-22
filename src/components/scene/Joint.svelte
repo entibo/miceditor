@@ -2,7 +2,7 @@
 <script context="module">
 
   import { get as storeGet } from "svelte/store"
-  import { zoom } from "/stores/stores.js"
+  import { zoom, drawingData } from "/stores/stores.js"
 
   let resizeInfo = null
 
@@ -20,14 +20,14 @@
 
     if(!resizeInfo) return
 
-    let {joint, pointIndex, originalPoint, start} = resizeInfo
+    let {joint, listKey, pointIndex, originalPoint, start} = resizeInfo
 
     let scale = 1 / storeGet(zoom)
     let dx = scale * (e.clientX - start.x)
     let dy = scale * (e.clientY - start.y)
 
-    joint._points[pointIndex].x = originalPoint.x + dx
-    joint._points[pointIndex].y = originalPoint.y + dy
+    joint[listKey][pointIndex].x = originalPoint.x + dx
+    joint[listKey][pointIndex].y = originalPoint.y + dy
 
     encodeJointData(joint)
     joints.update(v => v)
@@ -45,13 +45,24 @@
 
   import { encodeJointData } from "/xml-utils.js"
   import {
-    joints, selection, buildXML, creation
+    joints, selection, buildXML, creation, bezier
   } from "/stores/stores.js"
 
   export let joint
   export let active = false
 
-  $: polylinePoints = joint._points.map(p => [p.x,p.y].join(",")).join(" ")
+  $: isHardToSee = ( joint._opacity < 0.1 ) || 
+                   ( isNaN(parseInt(joint._color, 16)) ) ||
+                   [joint._color.substring(0,2), joint._color.substring(2,4), joint._color.substring(4,6)]
+                      .map(s => parseInt(s, 16))
+                      .every((x,i) => Math.abs([0x6a,0x74,0x95][i] - x) < 10)
+
+  $: polylinePoints = 
+      ( joint.name === "VC" 
+        ? Array(joint._fineness+1).fill()
+            .map((_,i) => bezier(i/joint._fineness, joint._points[0], joint._points[1], joint._controlPoints[0], joint._controlPoints[1]))
+        : joint._points )
+      .map(p => [p.x,p.y].join(",")).join(" ")
 
   function rotate(x, y, angle, cx=0, cy=0) {
     var radians = (Math.PI / 180) * angle,
@@ -62,24 +73,39 @@
     return [nx, ny];
   }
 
-  $: if(joint.__isNew) {
-    resizeInfo = { 
-      joint,
-      pointIndex: 1,
-      originalPoint: {...joint._points[1]},
-    }
-    delete joint.__isNew
+  $: if(joint.__delegateAction) {
+        if(joint.name === "VC") {
+          let cp = joint._points[0].x == joint._points[1].x
+                && joint._points[0].y == joint._points[1].y ? 0 : 1
+          resizeInfo = { 
+            joint,
+            listKey: "_controlPoints",
+            pointIndex: cp,
+            originalPoint: {...joint._controlPoints[cp]},
+          }
+        }
+        else {
+          resizeInfo = { 
+            joint,
+            listKey: "_points",
+            pointIndex: 1,
+            originalPoint: {...joint._points[1]},
+          }
+        }
+        joint.__delegateAction = false
   }
-  function pointMoveStart(e, pointIndex) {
+  function pointMoveStart(e, listKey, pointIndex) {
     resizeInfo = { 
       joint,
+      listKey,
       pointIndex,
-      originalPoint: {...joint._points[pointIndex]},
+      originalPoint: {...joint[listKey][pointIndex]},
       start: { x: e.clientX, y: e.clientY },
     }
   }
 
-  let crosshairRadius = 8
+  let crosshairRadius = 6
+  let crosshairThickness = 2
 
 </script>
 
@@ -87,7 +113,7 @@
   <g class="joint" 
     on:mousedown on:mousemove on:mouseleave
   >
-    <g class="selectable" class:active >
+    <g class="selectable" class:active class:hard-to-see={isHardToSee} >
       <polyline points={polylinePoints}
         stroke-width="{joint._thickness}" 
         stroke="{joint._displayColor}" 
@@ -96,27 +122,49 @@
       >
     </g>
   </g>
-  {#if !$creation || $creation.objectType !== "joint"  }
+  {#if !$creation || $creation.objectType !== "joint" || $drawingData.curveToolEnabled  }
   <g class="point-crosshairs" class:active >
+
     {#each joint._points as p, pointIndex}
-    <g fill="none" stroke="white" opacity="0.6" stroke-width="2" stroke-linecap="butt" 
+    <g fill="none" stroke="yellow" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
       transform="translate({p.x},{p.y})"
     >
-      <line 
-        x1={0-crosshairRadius} x2={0+crosshairRadius}
-        y1={0} y2={0} 
-      />
-      <line 
-        x1={0} x2={0}
-        y1={0-crosshairRadius} y2={0+crosshairRadius} 
-      />
+      <line x1={0-crosshairRadius} x2={0+crosshairRadius}
+            y1={0} y2={0}  />
+      <line x1={0} x2={0}
+            y1={0-crosshairRadius} y2={0+crosshairRadius}  />
       <circle fill="transparent" stroke="none"
         x={0} y={0}
         r={crosshairRadius}
-        on:mousedown|stopPropagation|preventDefault={e => pointMoveStart(e, pointIndex)}
+        on:mousedown|stopPropagation|preventDefault={e => pointMoveStart(e, "_points", pointIndex)}
       />
     </g>
     {/each}
+
+    {#if joint._controlPoints}
+    <line fill="none" stroke="yellow" opacity="0.8" stroke-width="0.5"
+          x1={joint._points[0].x} x2={joint._points[1].x}
+          y1={joint._points[0].y} y2={joint._points[1].y}  />
+    {#each joint._controlPoints as p, pointIndex}
+    <g fill="none" stroke="#33ff44" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
+      transform="translate({p.x},{p.y})"
+    >
+      <line x1={0-crosshairRadius} x2={0+crosshairRadius}
+            y1={0} y2={0}  />
+      <line x1={0} x2={0}
+            y1={0-crosshairRadius} y2={0+crosshairRadius}  />
+      <circle fill="transparent" stroke="none"
+        x={0} y={0}
+        r={crosshairRadius}
+        on:mousedown|stopPropagation|preventDefault={e => pointMoveStart(e, "_controlPoints", pointIndex)}
+      />
+    </g>
+    <line fill="none" stroke="#33ff44" opacity="0.8" stroke-width="0.5"
+          x1={p.x} x2={joint._points[pointIndex].x}
+          y1={p.y} y2={joint._points[pointIndex].y}  />
+    {/each}
+    {/if}
+
   </g>
   {/if}
 </g>
@@ -141,12 +189,12 @@
     stroke-linejoin: round;
   }
 
-  .selectable {
-    /* transition: outline-color 50ms; */
-    /* outline-width: 4px;
+  .selectable.hard-to-see {
+    transition: outline-color 50ms;
+    outline-width: 4px;
     outline-offset: -4px;
     outline-style: dashed;
-    outline-color: rgba(255,255,255,0.0); */
+    outline-color: rgba(255,255,255,0.0);
   }
   .selectable:hover {
     cursor: pointer;

@@ -162,14 +162,83 @@ function parseXML(v) {
   platforms.set(S.children)
   decorations.set(D.children)
   shamanObjects.set(O.children)
+
+  for(let i=L.children.length-1; i >= 0; i--) {
+    if(L.children[i].name === "VC") {
+      let P1 = L.children[i].P1
+      let f = L.children[i].f
+      if(!P1 || !f) {
+        L.children[i]._invalid = true
+        continue
+      }
+      let jplCount = Math.ceil(f/3)
+      let startIdx = i - jplCount
+      if(startIdx < 0 || L.children[startIdx].name !== "JPL" || L.children[startIdx].P1 !== P1) {
+        L.children[i]._invalid = true
+        continue
+      }
+      L.children.splice(startIdx, jplCount)
+      i -= jplCount
+    }
+  }
   joints.set(L.children)
 
 
   selection.set([])
 }
 
+export function _bezier(t, a, b, c, d) {
+  let v = a * ((1-t)**3) + 
+          c * 3*((1-t)**2)*t +
+          d * 3*(1-t)*(t**2) +
+          b * (t**3)
+  return Math.round(v)
+}
+export function bezier(t, p1, p2, c1, c2) {
+  return {
+    x: _bezier(t, p1.x, p2.x, c1.x, c2.x),
+    y: _bezier(t, p1.y, p2.y, c1.y, c2.y),
+  }
+}
+function generateCurveSegments() {
+  let L = $data.children.filter(x => x.name === "Z")[0].children.filter(x => x.name === "L")[0]
+  let list = []
+  for(let obj of L.children) {
+    if(obj.name !== "VC" || obj._invalid) {
+      list.push(obj)
+      continue
+    }
+
+    let jplCount = Math.ceil(obj._fineness/3)
+    let [p1,p2] = obj._points
+    let [c1,c2] = obj._controlPoints
+
+    let pp = []
+    for(let i=0; i < obj._fineness+1; i++) {
+      let t = i * (1/obj._fineness)
+      let p = bezier(t, p1, p2, c1, c2)
+      pp.push( [p.x,p.y].join(",") )
+    }
+
+    for(let i=0; i < jplCount; i++) {
+      let startPoint = pp[i*3]
+      list.push({
+        name: "JPL", children: [],
+        c: obj.c,
+        P1: pp[i*3],
+        P3: pp[1+i*3],
+        P4: pp[2+i*3] || pp[i*3],
+        P2: pp[3+i*3] || pp[i*3],
+      })
+    }
+
+    list.push(obj)
+  }
+  L.children = list
+}
+
 export function buildXML() {
-  // console.log("buildXML")
+  generateCurveSegments()
   let v = xmlDataToString($data)
   if(hasXMLNodeChanged($data)) {
     xml.setFromData(v)

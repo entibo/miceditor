@@ -511,7 +511,6 @@
 
 {#if multi._points instanceof Array}
 <div class="mb-2"></div>
-
 {#each multi._points as p, pointIndex}
 <section transition:fly={flyRight}>
   <label>
@@ -527,6 +526,31 @@
   </label>
 </section>
 {/each}
+{/if}
+{#if multi._controlPoints instanceof Array}
+{#each multi._controlPoints as p, pointIndex}
+<section transition:fly={flyRight}>
+  <label>
+    <span class="input-text text-sm">{p.name}</span>
+  </label>
+  <label>
+    <span>X</span>
+    <TextInput number bind:value={multi._controlPoints[pointIndex].x} on:input={updateObjects} />
+  </label>
+  <label>
+    <span>Y</span>
+    <TextInput number bind:value={multi._controlPoints[pointIndex].y} on:input={updateObjects} />
+  </label>
+</section>
+{/each}
+{/if}
+{#if multi._fineness}
+<section transition:fly={flyRight}>
+  <label>
+    <span>Fineness</span>
+    <TextInput number bind:value={multi._fineness} on:input={updateObjects} />
+  </label>
+</section>
 {/if}
 
 

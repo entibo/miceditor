@@ -53,7 +53,7 @@ function move(dx, dy) {
 
   for(let object of $selection) {
     if(object._objectType === "joint") {
-      for(let p of object._points) {
+      for(let p of [...object._points, ...(object._controlPoints||[])]) {
         p.x += dx
         p.y += dy
       }
@@ -94,7 +94,7 @@ function rotate(da, cx, cy) {
   if(arguments.length >= 3) {
     for(let object of $selection) {
       if(object._objectType === "joint") {
-        for(let p of object._points) {
+        for(let p of [...object._points, ...(object._controlPoints||[])]) {
           let [x, y] = rotatePoint(p.x, p.y, -da, cx, cy)
           p.x = x
           p.y = y
@@ -226,6 +226,7 @@ function unselectGroup(which) {
   update(list => {
     if(which === "grounds") return list.filter(({_objectType}) => _objectType !== "platform")
     if(which === "objects") return list.filter(({_objectType}) => _objectType !== "shamanObject")
+    if(which === "joints") return list.filter(({_objectType}) => _objectType !== "joint")
     if(which === "decorations") return list.filter(({name}) => name !== "P")
     if(which === "basic") return list.filter(({name}) => !["T","F","DS","DC","DC2"].includes(name))
     return list

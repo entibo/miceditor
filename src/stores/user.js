@@ -52,5 +52,10 @@ export const jointPalette = persistentWritable("jointPalette", [
   },
 ])
 
+export const drawingData = writable({
+  curveToolEnabled: false,
+  curveToolFineness: 10,
+})
+
 export const firstVisit = false === Boolean(localStorage.getItem("firstVisit"))
 localStorage.setItem("firstVisit", "firstVisit")

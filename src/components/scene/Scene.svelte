@@ -194,7 +194,12 @@
       mousedownInfo.type = "pan"
     }
     else if($creation && $creation.objectType !== "platform") {
-      creation.create(mouseGame, mouse)
+      if($creation.objectType === "joint") {
+        creation.handleJointCreation(mouseGame)
+      }
+      else {
+        creation.create(mouseGame)
+      }
     }
     else {
       if(!e.shiftKey) {
