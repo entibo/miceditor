@@ -25,9 +25,35 @@
     let scale = 1 / storeGet(zoom)
     let dx = scale * (e.clientX - start.x)
     let dy = scale * (e.clientY - start.y)
+    
+    let nx = originalPoint.x + dx
+    let ny = originalPoint.y + dy
 
-    joint[listKey][pointIndex].x = originalPoint.x + dx
-    joint[listKey][pointIndex].y = originalPoint.y + dy
+    if(e.ctrlKey || e.shiftKey) {
+
+      let relativePoint
+      if(listKey === "_points") {
+        relativePoint = joint._points[pointIndex - 1] || joint._points[pointIndex + 1]
+      }
+      else {
+        relativePoint = joint._points[pointIndex]
+      }
+      let cx = relativePoint.x
+      let cy = relativePoint.y
+
+      let dist = Math.sqrt((cx-nx)**2 + (cy-ny)**2)
+
+      let angleIncrement = 15 * Math.PI/180
+      let angle = ( Math.atan2(ny-cy, nx-cx) + Math.PI*2 ) % (Math.PI*2)
+      let newAngle = angleIncrement * Math.round(angle/angleIncrement)
+
+      nx = cx + Math.round( dist * Math.cos(newAngle) )
+      ny = cy + Math.round( dist * Math.sin(newAngle) )
+
+    }
+
+    joint[listKey][pointIndex].x = nx
+    joint[listKey][pointIndex].y = ny
 
     encodeJointData(joint)
     joints.update(v => v)
