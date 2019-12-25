@@ -165,7 +165,7 @@ function parseXML(v) {
 
   for(let i=L.children.length-1; i >= 0; i--) {
     if(L.children[i].name === "VC") {
-      let P1 = L.children[i].P1
+      let P1 = parseInt(L.children[i].P1)
       let f = L.children[i].f
       if(!P1 || !f) {
         L.children[i]._invalid = true
@@ -173,7 +173,7 @@ function parseXML(v) {
       }
       let jplCount = Math.ceil(f/3)
       let startIdx = i - jplCount
-      if(startIdx < 0 || L.children[startIdx].name !== "JPL" || L.children[startIdx].P1 !== P1) {
+      if(startIdx < 0 || L.children[startIdx].name !== "JPL" || parseInt(L.children[startIdx].P1) !== P1) {
         L.children[i]._invalid = true
         continue
       }

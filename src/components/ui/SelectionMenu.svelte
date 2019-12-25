@@ -162,6 +162,8 @@
     <Button on:click={selection.duplicate}>{$_("button-duplicate")}</Button></Tooltip>
   <Tooltip inline title="Ctrl+C" bottom>
     <Button on:click={selection.copy}>{$_("button-copy")}</Button></Tooltip>
+  <Tooltip inline title="Flip" bottom>
+    <Button on:click={selection.flip}>Flip</Button></Tooltip>
 </section>
 
 <section>

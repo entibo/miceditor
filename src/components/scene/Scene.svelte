@@ -163,6 +163,9 @@
     else if(key === "g" && $selection.length) {
       selection.snapToGrid()
     }
+    else if(key === "f" && $selection.length) {
+      selection.flip()
+    }
   }
 
   function onWindowKeyup({key}) {

@@ -119,6 +119,35 @@ function rotate(da, cx, cy) {
   buildXML()
 }
 
+function flip() {
+  if(!$selection.length) return
+
+  let x1 = Math.min( ...$selection.map(object => object._boundingBox.x1 + object._x) )
+  let x2 = Math.max( ...$selection.map(object => object._boundingBox.x2 + object._x) )
+
+  let cx = x1 + (x2-x1)/2
+
+  for(let object of $selection) {
+    if(object._reverse !== undefined) object._reverse = !object._reverse
+    if(object._rotation !== undefined) object._rotation = -object._rotation
+    if(object._objectType === "joint") {
+      for(let p of [...object._points, ...(object._controlPoints||[])]) {
+          p.x = Math.round( cx - (p.x - cx) )
+        }
+    }
+    else {
+      object._x = Math.round( cx - (object._x - cx) )
+    }
+    encodeObjectData(object)
+  }
+
+  for(let store of stores) {
+    store.update(v => v)
+  }
+  update(v => v)
+  buildXML()  
+}
+
 function snapToGrid() {
   let grid = storeGet(gridSettings)
   let [gw, gh] = [grid.width, grid.height]
@@ -236,7 +265,7 @@ function unselectGroup(which) {
 export const selection = {
   subscribe, set, update,
   clear, remove, 
-  move, resize, rotate, snapToGrid,
+  move, resize, rotate, flip, snapToGrid,
   copy, cut, paste, duplicate,
   selectGroup, unselectGroup,
 }

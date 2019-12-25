@@ -869,6 +869,9 @@ export function encodeJointData(joint) {
   let cx = joint._x
   let cy = joint._y
 
+  joint._x = 0
+  joint._y = 0
+
   if(joint._type === "VC") {
     if(joint._invalid) return
 
