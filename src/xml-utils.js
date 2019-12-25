@@ -204,9 +204,9 @@ export function decodeMapData(object) {
   object._height_max = 800
 
   object._width = parseInt(object.L) || 800
-  object._width = Math.max(800, Math.min(object._width_max, object._width))
+  object._width = Math.max(800, object._width)
   object._height = parseInt(object.H) || 400
-  object._height = Math.max(400, Math.min(object._height_max, object._height))
+  object._height = Math.max(400, object._height)
 
   object._backgroundImageId = "-1"
   if(object.F !== undefined) {
