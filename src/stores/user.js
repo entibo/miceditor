@@ -33,7 +33,7 @@ export const zoom = (() => {
   let {subscribe, set, update} = writable(1)
   let clamp = v => {
     v = Math.round(100*v)/100
-    v = Math.max(0.1, Math.min(5, v))
+    v = Math.max(0.1, Math.min(500, v))
     return v
   }
   return { 
