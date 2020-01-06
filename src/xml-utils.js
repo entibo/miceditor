@@ -176,7 +176,7 @@ function getFullTransformiceImageUrl(path) {
   if(path.match(/^https?:/i))
     return path
   let m 
-  if(m = path.match(/^\/?([a-z0-9]+.png)/i))
+  if(m = path.match(/^\/?([a-z0-9]+.(?:png|jpg))/i))
     return "http://images.atelier801.com/"+m[1]
   return "http://transformice.com/images/"+path
 }
