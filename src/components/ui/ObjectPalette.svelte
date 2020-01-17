@@ -19,7 +19,7 @@
   } from "/stores/stores.js"
 
   import shamanObjectMetadata from "/shamanObjectMetadata.js"
-  import { groundTypes } from "/xml-utils.js"
+  import { groundTypes } from "/xml-utils.ts"
 
   import Tooltip from "/components/common/Tooltip.svelte"
   import ObjectPaletteMenu from "/components/ui/ObjectPaletteMenu.svelte"

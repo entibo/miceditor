@@ -14,7 +14,7 @@
   import Tooltip from "/components/common/Tooltip.svelte"
 
   import { platforms, decorations, shamanObjects, joints, settings, selection, creation, groundTypePicker, buildXML, _} from "/stores/stores.js"
-  import { encodeObjectData } from "/xml-utils.js"
+  import { encodeObjectData } from "/xml-utils.ts"
 
   let stores = [platforms, decorations, shamanObjects, joints]
 

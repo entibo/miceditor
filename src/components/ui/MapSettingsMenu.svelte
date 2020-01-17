@@ -23,7 +23,7 @@
   import { 
     platforms, decorations, shamanObjects, settings, 
     visibility, selection, creation, highlightedObject, buildXML, _ } from "/stores/stores.js"
-  import { encodeMapData, mapBooleanProps } from "/xml-utils.js"
+  import { encodeMapData, mapBooleanProps } from "/xml-utils.ts"
 
   $: data = $settings
 

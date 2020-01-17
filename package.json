@@ -1,17 +1,21 @@
 {
    "name": "miceditor",
    "scripts": {
+      "test": "jest",
       "build": "rollup -c",
       "build:auto": "rollup -c -w",
-      "serve": "sirv .",
-      "serve:dev": "sirv . --dev",
       "dev": "run-p build:auto serve:dev",
+      "serve": "http-server",
       "translations": "curl 'https://localise.biz/api/export/all.json?format=multi&key=_KwQn345xaZK8iQ3yj3JkzfGbzjIWAgk' -o ./src/languages.json"
    },
    "devDependencies": {
       "@fullhuman/postcss-purgecss": "^1.2.0",
+      "@pyoner/svelte-ts-preprocess": "^1.2.1",
+      "@types/jest": "^24.0.25",
       "chokidar": "^3.0.0",
       "cssnano": "^4.1.10",
+      "http-server": "^0.12.1",
+      "jest": "^24.9.0",
       "npm-run-all": "^4.1.5",
       "postcss": "^7.0.17",
       "postcss-color-mod-function": "^3.0.3",
@@ -30,12 +34,14 @@
       "rollup-plugin-root-import": "^0.2.4",
       "rollup-plugin-svelte": "^5.0.3",
       "rollup-plugin-terser": "^4.0.4",
+      "rollup-plugin-typescript2": "^0.25.3",
       "rollup-plugin-url": "^2.2.2",
-      "sirv-cli": "^0.4.2",
       "svelte": "^3.4.0",
       "svelte-preprocess": "^2.9.0",
       "svelte-preprocess-postcss": "^1.0.0",
       "tailwindcss": "^1.0.1",
+      "ts-jest": "^24.3.0",
+      "typescript": "^3.7.4",
       "ws": ">=3.3.1"
    },
    "dependencies": {

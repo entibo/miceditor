@@ -5,7 +5,7 @@
 
   import { randInt } from "/utils.js"
 
-  import { encodeObjectData, encodeMapData, rotate } from "/xml-utils.js"
+  import { encodeObjectData, encodeMapData, rotate } from "/xml-utils.ts"
   import { 
     platforms, decorations, shamanObjects, joints, jointPalette,
     settings, selection, creation, visibility, highlightedObject, buildXML,

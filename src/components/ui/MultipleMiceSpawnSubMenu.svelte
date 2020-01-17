@@ -11,7 +11,7 @@
   import Tooltip from "/components/common/Tooltip.svelte"
 
   import { settings, visibility, buildXML, _ } from "/stores/stores.js"
-  import { encodeMapData } from "/xml-utils.js"
+  import { encodeMapData } from "/xml-utils.ts"
 
   function updateSettings() {
     encodeMapData($settings)

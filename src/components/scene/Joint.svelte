@@ -69,7 +69,7 @@
 
 <script>
 
-  import { encodeJointData } from "/xml-utils.js"
+  import { encodeJointData } from "/xml-utils.ts"
   import {
     joints, selection, buildXML, creation, bezier
   } from "/stores/stores.js"

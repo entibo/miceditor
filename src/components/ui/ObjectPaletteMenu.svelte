@@ -1,5 +1,5 @@
 
-<script>
+<script lang="ts">
   import Icon from "fa-svelte"
   import { faEye } from "@fortawesome/free-solid-svg-icons/faEye"
   import { faEyeSlash } from "@fortawesome/free-solid-svg-icons/faEyeSlash"

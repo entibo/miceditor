@@ -62,7 +62,7 @@
 
 <script>
 
-  import { encodePlatformData } from "/xml-utils.js"
+  import { encodePlatformData } from "/xml-utils.ts"
   import { 
     highQuality, showInvisibleGrounds,
     platforms, selection, buildXML 

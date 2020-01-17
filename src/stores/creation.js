@@ -5,7 +5,7 @@ import { selection } from "./selection.js"
 import { settings, platforms, decorations, shamanObjects, joints, buildXML } from "./xml.js"
 import { jointPalette, drawingData } from "/stores/stores.js"
 
-import { decodeObjectData, encodeObjectData } from "../xml-utils.js"
+import { decodeObjectData, encodeObjectData } from "/xml-utils.ts"
 
 
 let { subscribe, set, update } = writable(null)

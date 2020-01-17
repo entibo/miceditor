@@ -2,7 +2,7 @@
 import { writable, derived, get as storeGet } from "svelte/store"
 
 import { encodePlatformData, encodeDecorationData, encodeJointData, encodeObjectData,
-  platformProperties, groundTypes, rotate as rotatePoint } from "../xml-utils.js"
+  platformProperties, groundTypes, rotate as rotatePoint } from "/xml-utils.ts"
 import { platforms, decorations, shamanObjects, joints, settings, buildXML } from "./xml.js"
 import { persistentWritable } from "./user.js"
 
