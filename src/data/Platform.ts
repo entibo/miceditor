@@ -19,7 +19,7 @@ export interface Node extends XML.Node {
   attributes: Partial<Record<typeof attributes[number], string>>
 }
 
-enum Type {
+export enum Type {
   Wood =       0,      Stone =      10,
   Ice =        1,      Snow =       11,
   Trampoline = 2,      Rectangle =  12,
@@ -33,17 +33,16 @@ enum Type {
 }
 
 interface Base extends Common.UnknownAttributes {
+  //objectType: "Platform"
   x: number
   y: number
   invisible: boolean
   lua: string
   nosync: boolean
-  image: {
-    enabled: boolean
-    imageUrl: util.ImageUrl
-    x: number
-    y: number
-  }
+  image: 
+    { enabled: false }
+    |  
+    { enabled: true } & Common.Image
 }
 interface NonStatic {
   dynamic: boolean
@@ -92,11 +91,12 @@ export type Platform
   | { type: Type.Water }
     & Base & Rectangle
 
-type PlatformProps 
+export type PlatformProps 
   = { type: Type } & Base & Rectangle & Circle & Rotatable & NonStatic & Colored
 
 
 const baseDefaults: () => Base = () => ({
+  //objectType: "Platform",
   unknownAttributes: {},
   x: 0,
   y: 0,
@@ -105,12 +105,6 @@ const baseDefaults: () => Base = () => ({
   nosync: false,
   image: {
     enabled: false,
-    x: 0,
-    y: 0,
-    imageUrl: {
-      value: "",
-      url: "",
-    }
   }
 })
 const nonStaticDefaults: () => NonStatic = () => ({
@@ -201,24 +195,6 @@ export function defaults(type: Type): Platform {
   return data
 }
 
-/* not needed no more
-export function defaultsFromNode(node: Node) {
-  let type = M.withDefault 
-    (Type.Wood) 
-    (M.andThen(node.attributes.T, M.iffDefined, readType))
-  return defaults(type)
-} */
-
-/* export function withNewType(data: Platform, newType: number): Platform {
-  let newData = defaults(newType)
-  for(let k of Object.keys(newData)) {
-    if(k in data) {
-      (<any>newData)[k] = (<any>data)[k]
-    }
-  }
-  return newData
-} */
-
 
 export function decode(xmlNode: XML.Node): Platform {
   let node = xmlNode as Node
@@ -250,7 +226,7 @@ export function decode(xmlNode: XML.Node): Platform {
   setProp ("vanish") (getAttr ("v") (util.readInt))
   setProp ("lua")    (getAttr ("lua") ())
 
-  setProp ("image") (getAttr ("i") (readImage, pImage => M.merge(data.image, pImage)))
+  setProp ("image") (getAttr ("i") (readImage))
 
   getAttr ("c") (readCollision, c => {
     setProp ("miceCollision")   (c.miceCollision)
@@ -368,14 +344,15 @@ export function writeDynamicValues(dynamicValues: DynamicValues): string {
   .join(",")
 }
 
-export function readImage(str: string): M.Partial<Base["image"]> {
+// Format: "x,y,url"
+export function readImage(str: string): Base["image"] {
+  let image = Common.imageDefaults()
+  let set = util.makeSetter(image)
   let parts = str.split(",")
-  return {
-    enabled: true,
-    x: M.andThen(parts.shift(), M.iffDefined, util.readInt),
-    y: M.andThen(parts.shift(), M.iffDefined, util.readInt),
-    imageUrl: M.andThen(parts.shift(), M.iffDefined, util.getImageUrl),
-  }
+  set ("x") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
+  set ("y") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
+  set ("imageUrl") (M.andThen(parts.shift(), M.iffDefined, Common.getImageUrl))
+  return { enabled: true, ...image }
 }
 export function writeImage(image: Base["image"]): M.Maybe<string> {
   if(!image.enabled) return M.None
@@ -409,4 +386,11 @@ export function readCollision(str: string): M.Maybe<{ miceCollision: boolean, ob
 export function writeCollision(miceCollision: boolean, objectCollision: boolean): string {
   let n = 4 - (miceCollision?1:0) + (objectCollision?2:0)
   return n.toString()
+}
+
+
+export function isForeground(data: Platform): boolean {
+  return data.type === Type.Water
+      || data.type === Type.Cobweb
+      || data.foreground
 }

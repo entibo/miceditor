@@ -19,6 +19,11 @@
   import SvgImage from "/components/common/SvgImage.svelte"
 
 
+  import { platforms } from "stores/sceneObjects"
+
+  
+
+
   $: visiblePlatforms = $visibility.grounds ? $platforms : []
   $: visibleShamanObjects = $visibility.objects ? $shamanObjects : []
   $: visibleDecorations = computeVisibleDecorations($decorations, $visibility)

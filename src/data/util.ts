@@ -3,7 +3,11 @@ import * as M from "util/Maybe"
 import * as XML from "data/XML"
 
 
-
+export function makeChecker <T extends object, S extends T> (key: keyof S) {
+  return function(obj: T): obj is S {
+    return key in obj
+  }
+}
 
 type F<A,B> = (a: A) => M.Maybe<B>
 
@@ -96,15 +100,6 @@ export function readColor(str: string): M.Maybe<string> {
     ? str.padStart(6, "0").slice(-6)
     : M.None
 }
-
-export type ImageUrl
-  = { value: string
-      url: string }
-    
-export function getImageUrl(str: string): ImageUrl {
-  return { value: "", url: "" } // TODO
-}
-
 
 
 

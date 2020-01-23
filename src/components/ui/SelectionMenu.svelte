@@ -1,5 +1,5 @@
 
-<script>
+<script lang="ts">
   import { tick } from "svelte"
   import { slide, fly } from "svelte/transition"
 
@@ -15,6 +15,20 @@
 
   import { platforms, decorations, shamanObjects, joints, settings, selection, creation, groundTypePicker, buildXML, _} from "/stores/stores.js"
   import { encodeObjectData } from "/xml-utils.ts"
+
+
+
+
+  import { properties, move } from "stores/selection"
+
+
+
+  let x: number = $properties.color
+
+  
+  let foo: string = "hello"
+  foo + 1 . bar **** z
+
 
   let stores = [platforms, decorations, shamanObjects, joints]
 

@@ -7,45 +7,54 @@ import * as Platform from "data/Platform"
 import * as Decoration from "data/Decoration"
 import * as ShamanObject from "data/ShamanObject"
 import * as Joint from "data/Joint"
+import * as SceneObject from "data/SceneObject"
 
-
-export const sMapSettings   = writable(MapSettings.defaults())
-export const sPlatforms     = writable([] as Platform.Platform[])
-export const sDecorations   = writable([] as Decoration.Decoration[])
-export const sShamanObjects = writable([] as ShamanObject.ShamanObject[])
-export const sJoints        = writable([] as Joint.Joint[])
-
-export const sXml = writable(1)
+import * as sceneObjects from "stores/sceneObjects"
+import * as util from "stores/util"
 
 
 
 
-
-
-
-export const sVisiblePlatforms
-  = derived([sPlatformList, visibility.sPlatform], (sPlatforms, visible) => {
-      let r = { background: [], foreground: [] }
-      if(!visible) return r
-      for(let sPlatform of sPlatforms) {
-        if(Platform.isForeground(storeGet(sPlatform))) {
-          r.foreground.push(sPlatform)
-        } else {
-          r.background.push(sPlatform)
-        }
-      }
-    })
-
-
-
+export const mapSettings = util.customStore(MapSettings.defaults())
 
 
 function importXML(str: string) {
   let map = Map.parse(str)
 
+  mapSettings.set(map.mapSettings)
+
+  for(let image of map.mapSettings.backgroundImages)
+    sceneObjects.add(image)
+  for(let image of map.mapSettings.foregroundImages)
+    sceneObjects.add(image)
+  for(let image of map.mapSettings.disappearingImages)
+    sceneObjects.add(image)
+
+  for(let [index,platform] of map.platforms.entries()) {
+    sceneObjects.add(platform)
+  }
 
 }
 
-function exportXML() {
+function exportXML(): string {
+
+  mapSettings.disappearingImages = []
+  mapSettings.foregroundImages = []
+  mapSettings.backgroundImages = []
+  for(let image of sceneObjects.groups.images) {
+    if(image.APS) 
+      mapSettings.disappearingImages.push(image)
+    else if(image.foreground) 
+      mapSettings.foregroundImages.push(image)
+    else
+      mapSettings.backgroundImages.push(image)
+  }
+
+  let map: Map.Map = {
+    mapSettings,
+    platforms: sceneObjects.groups.platforms,
+  }
+
+  return Map.serialize(map)
 
 }

@@ -1,4 +1,5 @@
 
+import * as util from "data/util"
 import * as MapSettings from "data/MapSettings"
 import * as Platform from "data/Platform"
 import * as Decoration from "data/Decoration"
@@ -8,9 +9,19 @@ import * as Joint from "data/Joint"
 export type SceneObject
   = MapSettings.Image
   | Platform.Platform
-/*   | Decoration.Decoration
-  | ShamanObject.ShamanObject
-  | Joint.Joint */
+
+
+export const isPlatform
+  = util.makeChecker <SO, Platform.Platform> ("invisible")
+
+export const isImage
+  = util.makeChecker <SceneObject, MapSettings.Image> ("imageUrl")
+
+/* export function isPlatform_Simple(obj: SceneObject): obj is Platform.Platform {
+  let key: keyof Platform.Platform = "invisible"
+  return key in obj
+} */
+
 
 interface BoundingBox {
   x1: number

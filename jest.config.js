@@ -3,6 +3,6 @@ module.exports = {
   testEnvironment: 'node',
 
   moduleNameMapper: {
-    "(data|util)/(.*)": "<rootDir>/src/$1/$2",
+    "(data|util|stores)/(.*)": "<rootDir>/src/$1/$2",
   },
 };
