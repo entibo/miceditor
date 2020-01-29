@@ -73,6 +73,8 @@ export function shiftIndex(dz: number) {
 }
 
 
+export const store = derived(blank, getAll)
+
 
 
 
@@ -84,6 +86,9 @@ export const properties = derived(blank, () => {
   for(let item of selection.keys()) {
     for(let [_k,v] of Object.entries(item)) {
       let k = _k as keyof Properties
+      if(typeof v === "object") {
+
+      }
       if(!(k in props)) 
         props[k] = v as any
       else if(props[k] !== v) 
@@ -101,4 +106,46 @@ export const properties = derived(blank, () => {
       return true
     }
   })
+})
+
+properties.subscribe(v => {
+  v.invisibe
+})
+
+
+
+export const pso = derived(blank, () => {
+  let pps = [] as sceneObjects.SO<Data.Platform>[]
+  for(let item of selection.keys()) {
+    if("invisible" in item) pps.push(item)
+  }
+
+  let auto = (k: string) => ({
+    get [k]() {
+      let value = undefined
+      for(let item of selection.keys()) {
+        if(!(k in item)) continue
+        if(value === undefined) {
+          value = (item as any)[k]
+          continue
+        }
+        if(value !== (item as any)[k])
+          return null
+      }
+      return value
+    },
+    set [k](v: any) {
+      for(let item of selection.keys()) {
+        if(!(k in item)) continue
+        (item as any)[k] = v
+        item.invalidate()
+      }
+    },
+  })
+
+  return {
+    ...auto("invisible"),
+    
+  }
+
 })

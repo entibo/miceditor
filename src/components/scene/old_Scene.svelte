@@ -394,7 +394,7 @@
 <div class="flex-grow bg-tfm-blue outline-none" 
   bind:this={containerElement}
   bind:clientWidth={svgWidth} bind:clientHeight={svgHeight}
-  on:wheel={interaction.wheel}
+  on:wheel={onWheel}
   on:mousedown={interaction.backgroundMouseDown}  
   on:blur={interaction.windowMouseLeave}
   on:keydown={interaction.keyDown} tabindex="-1"
@@ -417,10 +417,13 @@
 
     <g transform="translate({$pan.x}, {$pan.y}) scale({$zoom})">
 
-      {#each images.background as obj}
-      <SceneObject {obj}> <Image {obj}/> </SceneObject>
+      {#each visibleBackgroundImages as {x,y,fullUrl,index}}}
+      <SvgImage class="cursor-pointer"
+        x={x} y={y}
+        href={fullUrl}
+        on:mousedown={e => onImageMousedown(e, { which: "_backgroundImages", index })}
+      />
       {/each}
-
 
       {#if $mapSettings.backgroundImageId != -1}
       <image x="0" y="0" 
@@ -442,46 +445,85 @@
       {/if}
 
 
-      {#each decorations.background as obj}
-      <SceneObject {obj}> <Decoration {obj}/> </SceneObject>
+      {#each visibleDecorations.filter(o => !o._foreground) as decoration}
+        <Decoration decoration={decoration} active={$selection.includes(decoration)}
+          on:mousedown={e => onObjectMousedown(e, decoration)}
+        />
       {/each}
 
-      {#each joints.background as obj}
-      <SceneObject {obj}> <Joint {obj}/> </SceneObject>
+      {#each visibleJoints.filter(o => !o._foreground) as joint}
+        <Joint joint={joint} active={$selection.includes(joint)}
+          on:mousedown={e => onObjectMousedown(e, joint)}
+        />
       {/each}
 
-      {#each platforms.background as obj}
-      <SceneObject {obj}> <Platform {obj}/> </SceneObject>
+      {#each visiblePlatforms.filter(o => !o._foreground) as platform}
+        <Platform platform={platform} active={$selection.includes(platform)} 
+          on:mousedown={e => onObjectMousedown(e, platform)}
+        />
       {/each}
 
-      {#each shamanObjects.background as obj}
-      <SceneObject {obj}> <ShamanObject {obj}/> </SceneObject>
+      {#each visibleShamanObjects.filter(o => !o._isNail) as shamanObject}
+        <ShamanObject shamanObject={shamanObject} active={$selection.includes(shamanObject)}
+          on:mousedown={e => onObjectMousedown(e, shamanObject)}
+        />
+      {/each}
+
+      {#each visibleForegroundImages as {x,y,fullUrl,index}}}
+      <SvgImage class="cursor-pointer"
+        x={x} y={y}
+        href={fullUrl}
+        on:mousedown={e => onImageMousedown(e, { which: "_foregroundImages", index })}
+      />
+      {/each}
+
+      {#each visibleDisappearingImages as data}
+      <g>
+        <SvgImage class="cursor-pointer"
+          x={data.x} y={data.y}
+          href={data.fullUrl}
+          on:mousedown={e => onImageMousedown(e, { which: "_disappearingImages", index: data.index })}
+        />
+        {#if $highlightedObject === data.index}
+        <rect class="selectionArea" fill="none" 
+          x={data.rx} y={data.ry}
+          width={data.rw} height={data.rh}
+        />
+        {/if}
+      </g>
       {/each}
 
 
-      {#each images.foreground as obj}
-      <SceneObject {obj}> <Image {obj}/> </SceneObject>
+      {#each visibleDecorations.filter(o => o._foreground) as decoration}
+        <Decoration decoration={decoration} active={$selection.includes(decoration)}
+          on:mousedown={e => onObjectMousedown(e, decoration)}
+        />
       {/each}
 
-      {#each images.disappearing as obj}
-      <SceneObject {obj}> <Image {obj}/> </SceneObject>
+      {#each visibleJoints.filter(o => o._foreground) as joint}
+        <Joint joint={joint} active={$selection.includes(joint)}
+          on:mousedown={e => onObjectMousedown(e, joint)}
+        />
       {/each}
 
+      {#if $settings._miceSpawn.type === "multiple" && $visibility.basic}
+      <g class="pointer-events-none">
+        {#each $settings._miceSpawn.positions as {x,y}}
+        <Decoration decoration={{ name: "DS", _type: "DS", _x:x, _y:y, }} />
+        {/each}
+      </g>
+      {/if}
 
-      {#each decorations.foreground as obj}
-      <SceneObject {obj}> <Decoration {obj}/> </SceneObject>
+      {#each visiblePlatforms.filter(o => o._foreground) as platform}
+        <Platform platform={platform} active={$selection.includes(platform)} 
+          on:mousedown={e => onObjectMousedown(e, platform)}
+        />
       {/each}
 
-      {#each joints.foreground as obj}
-      <SceneObject {obj}> <Joint {obj}/> </SceneObject>
-      {/each}
-
-      {#each platforms.foreground as obj}
-      <SceneObject {obj}> <Platform {obj}/> </SceneObject>
-      {/each}
-
-      {#each shamanObjects.foreground as obj}
-      <SceneObject {obj}> <ShamanObject {obj}/> </SceneObject>
+      {#each visibleShamanObjects.filter(o => o._isNail) as shamanObject}
+        <ShamanObject shamanObject={shamanObject} active={$selection.includes(shamanObject)}
+          on:mousedown={e => onObjectMousedown(e, shamanObject)}
+        />
       {/each}
 
 
@@ -492,13 +534,13 @@
       </g>
       {/if}
 
-      {#if selectionBox.box}
-      <g>
+      {#if selectionArea}
+      <g >
         <rect
-          class="selectionBox"
-          x={selectionBox.box.p1.x} y={selectionBox.box.p1.y}
-          width= {selectionBox.box.p2.x - selectionBox.box.p1.x} 
-          height={selectionBox.box.p2.y - selectionBox.box.p1.y} />
+          class="selectionArea"
+          x={selectionArea.x1} y={selectionArea.y1}
+          width={selectionArea.x2 - selectionArea.x1} 
+          height={selectionArea.y2 - selectionArea.y1} />
       </g>
       {/if}
 
@@ -525,6 +567,24 @@
       >
         <line x1="-20" y1="0" x2="20" y2="0"/>
         <line y1="-20" x1="0" y2="20" x2="0"/>
+      </g>
+      {/if}
+      
+      {#if $highlightedObject === "miceSpawn" && $settings._miceSpawn.type === "random"}          
+      <g class="pointer-events-none"
+        stroke="white" stroke-width="4" stroke-dasharray="8"
+      >
+        {#if $settings._miceSpawn.axis === "x"}
+          <line 
+            x1={0} y1={$settings._miceSpawn.value}
+            x2={$settings._width} y2={$settings._miceSpawn.value}
+          />
+        {:else}
+          <line 
+            x1={$settings._miceSpawn.value} y1={0} 
+            x2={$settings._miceSpawn.value} y2={$settings._height} 
+          />
+        {/if}
       </g>
       {/if}
 
@@ -558,7 +618,7 @@
     outline: 4px solid rgba(0, 0, 0, 0.2);
   }
 
-  .selectionBox {
+  .selectionArea {
     fill: none;
     stroke: none;
     outline-offset: -4px;

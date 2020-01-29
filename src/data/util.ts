@@ -43,6 +43,20 @@ export function makeSetter <T> (obj: Partial<T>) {
 }
 
 
+export function clone<T>(obj: T): T {
+  if(typeof obj !== "object")
+    return obj
+
+  if(obj instanceof Array)
+    return [...obj].map(clone) as any
+
+  let r = {} as any
+  for(let k in obj) {
+    r[k] = clone(obj[k])
+  }
+  return r
+}
+
 export function eq <T> (a: T) {
   return (b: T) => {
     if(typeof a !== typeof b) return false

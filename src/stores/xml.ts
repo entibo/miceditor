@@ -50,6 +50,14 @@ function exportXML(): string {
       mapSettings.backgroundImages.push(image)
   }
 
+  let joints = sceneObjects.groups.joints
+  for(let platform of sceneObjects.groups.platforms) {
+    if("booster" in platform) {
+      // Create joints
+      // joints.push()
+    }
+  }
+
   let map: Map.Map = {
     mapSettings,
     platforms: sceneObjects.groups.platforms,

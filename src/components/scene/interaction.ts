@@ -1,24 +1,36 @@
 
+import { get } from "svelte/store"
+
 import * as Data from "data/Data"
 
 import * as util from "stores/util"
 
 import * as selection from "stores/selection"
 
+import { mapSettings } from "stores/xml"
 import * as sceneObjects from "stores/sceneObjects"
 import { SceneObject } from "stores/sceneObjects"
 
+import { zoom } from "stores/user"
 
+
+export const svgContainer = util.customStore({
+  el: null as HTMLElement | null,
+  width: 1,
+  height: 1,
+})
+
+export const pan = util.customStore<Point>({ x: 0, y: 0 })
 
 function cancel() {
   if(1/* creation */) 
     1
   else if(selection.size() > 0)
     selection.clear()
-  else if(1/* zoom */) 
-    1
-  else /* pan */ 
-    1
+  else if(get(zoom) !== 1) 
+    zoom.set(1)
+  else 
+    resetPan()
 }
 
 
@@ -99,8 +111,8 @@ class MouseMovement {
   }
   deltaStart(): Point {
     return {
-      x: this.last.x - this.start.x,
-      y: this.last.y - this.start.y,
+      x: this.current.x - this.start.x,
+      y: this.current.y - this.start.y,
     }
   }
   deltaLast(): Point {
@@ -113,9 +125,20 @@ class MouseMovement {
     this.last = this.current
     this.current = getSceneCoordinates(e)
   }
+  end(e: MouseEvent) {}
 }
 
-export const pan = util.customStore<Point>({ x: 0, y: 0 })
+export function resetPan() {
+  pan.x = Math.round( svgContainer.width/2  - mapSettings.width/2 )
+  pan.y = Math.round( svgContainer.height/2 - mapSettings.height/2 )
+  pan.invalidate()
+}
+export function centerPan(e: MouseEvent) {
+  let {x,y} = getSceneCoordinates(e)
+  // ???
+  pan.invalidate()
+}
+
 class Pan extends MouseMovement {
   update(e: MouseEvent) {
     super.update(e)
@@ -176,7 +199,9 @@ let currentMouseMovement: MouseMovement | null = null
 export function backgroundMouseDown(e: MouseEvent) {
   if(isKeyDown.space)
     currentMouseMovement = new Pan(e)
-  else if(1/* creation */) 1
+  else if(1/* creation */) {
+
+  }
   else {
     /* selection */
     if(!isKeyDown.shift)
@@ -204,10 +229,68 @@ export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
 }
 
 let currentScenePosition: Point = { x: 0, y: 0 }
-export function mouseMove(e: MouseEvent) {
+export function windowMouseMove(e: MouseEvent) {
   currentScenePosition = getSceneCoordinates(e)
 
   if(!currentMouseMovement) return
 
+  currentMouseMovement.update(e)
 
+
+}
+
+export function windowMouseUp(e: MouseEvent) {
+  if(!currentMouseMovement) return
+  currentMouseMovement.end(e)
+  currentMouseMovement = null
+}
+
+export function windowMouseLeave(e: MouseEvent) {
+  isKeyDown.alt = false
+  isKeyDown.ctrl = false
+  isKeyDown.shift = false
+  isKeyDown.space = false
+  currentMouseMovement = null
+}
+
+export function wheel(e: WheelEvent) {
+  if(isKeyDown.ctrl) {
+    zoom.update(z => z - 0.1*Math.sign(e.deltaY))
+    centerPan(e)
+    return
+  }
+  
+  let factor = isKeyDown.alt ? 1 : 10
+  let delta = Math.sign(e.deltaY) * factor
+
+  if(/* creation */1) {
+    (e)
+    return
+  }
+  
+  if(isKeyDown.shift) {
+    let p = sceneToGameCoordinates(getSceneCoordinates(e))
+    selection.rotateAround(da, p)
+  }
+  else selection.rotate(da)
+
+}
+
+
+
+
+
+function getSceneCoordinates(e: MouseEvent) {
+  if(!svgContainer.el) return { x: 0, y: 0 }
+  return {
+    x: e.clientX - svgContainer.el.offsetLeft,
+    y: e.clientY - svgContainer.el.offsetTop,
+  }
+}
+function sceneToGameCoordinates(p: Point) {
+  let $zoom = get(zoom)
+  return {
+    x: (p.x - pan.x) / $zoom,
+    y: (p.y - pan.y) / $zoom,
+  }
 }

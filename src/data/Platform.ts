@@ -44,14 +44,17 @@ interface Base extends Common.UnknownAttributes {
     |  
     { enabled: true } & Common.Image
 }
-interface NonStatic {
-  dynamic: boolean
-  mass: number
+export interface NonStatic {
   friction: number
   restitution: number
-  fixedRotation: boolean
-  linearDamping: number
-  angularDamping: number
+  
+  dynamic: {
+    enabled: boolean
+    mass: number
+    fixedRotation: boolean
+    linearDamping: number
+    angularDamping: number
+  }
 
   foreground: boolean
   vanish: number
@@ -108,14 +111,16 @@ const baseDefaults: () => Base = () => ({
   }
 })
 const nonStaticDefaults: () => NonStatic = () => ({
-  dynamic: false,
-  mass: 0,
-  linearDamping: 0,
-  angularDamping: 0,
-  friction: 0.3,
-  restitution: 0.2,
-  fixedRotation: false,
-
+  dynamic: {
+    enabled: false,
+    mass: 0,
+    linearDamping: 0,
+    angularDamping: 0,
+    friction: 0.3,
+    restitution: 0.2,
+    fixedRotation: false,
+  },
+  
   foreground: false,
   vanish: 0,
   miceCollision: true,
@@ -204,6 +209,7 @@ export function decode(xmlNode: XML.Node): Platform {
   let data = defaults(type)
   data.unknownAttributes = Common.getUnknownAttributes(attributes, node.attributes)
   const setProp = util.makeSetter(data as PlatformProps)
+  const getProp = util.makeGetter<PlatformProps>(data)
 
   setProp ("x") (getAttr ("X") (util.readInt))
   setProp ("y") (getAttr ("Y") (util.readInt))
@@ -212,14 +218,9 @@ export function decode(xmlNode: XML.Node): Platform {
   setProp ("radius") (getAttr ("L") (readDimension))
 
   getAttr ("P") (readDynamicValues, dynamicValues => {
-    setProp ("dynamic")         (dynamicValues[0])
-    setProp ("mass")            (dynamicValues[1])
-    setProp ("friction")        (dynamicValues[2])
-    setProp ("restitution")     (dynamicValues[3])
-    setProp ("rotation")        (dynamicValues[4])
-    setProp ("fixedRotation")   (dynamicValues[5])
-    setProp ("linearDamping")   (dynamicValues[6])
-    setProp ("angularDamping")  (dynamicValues[7])
+    setProp ("rotation") (dynamicValues.rotation)
+    setProp ("dynamic") (getProp("dynamic") (defaults => 
+      M.merge(defaults, dynamicValues)))
   })
 
   setProp ("color")  (getAttr ("o") (util.readColor))
@@ -262,16 +263,20 @@ export function encode(data: Platform): Node {
   setAttr ("H") (getProp ("height") (util.writeInt))
   setAttr ("L") (getProp ("radius") (util.writeInt))
 
-  setAttr ("P") (writeDynamicValues([
-    getProp ("dynamic")        (),   
-    getProp ("mass")           (), 
-    getProp ("friction")       (),     
-    getProp ("restitution")    (),       
-    getProp ("rotation")       (),     
-    getProp ("fixedRotation")  (),         
-    getProp ("linearDamping")  (),         
-    getProp ("angularDamping") (),           
-  ]))
+  let y = {
+    enabled: M.None,
+    mass: M.None,
+    friction: M.None,
+    restitution: M.None,
+    fixedRotation: M.None,
+    linearDamping: M.None,
+    angularDamping: M.None,
+  } as M.Partial<NonStatic["dynamic"]>
+
+  setAttr ("P") (writeDynamicValues({
+    ... M.withDefault (y) (getProp ("dynamic") ()),
+    rotation: getProp ("rotation") ()
+  }))
 
   setAttr ("c") (M.map(
     (m,o) => util.omitOn ("1") (writeCollision(m,o)),
@@ -306,39 +311,30 @@ export function readDimension(str: string): M.Maybe<number> {
   )
 }
 
-type DynamicValues = [
-  M.Maybe<boolean>, // enabled
-  M.Maybe<number>, // mass
-  M.Maybe<number>, // friction
-  M.Maybe<number>, // restitution
-  M.Maybe<number>, // rotation
-  M.Maybe<boolean>, // fixedRotation
-  M.Maybe<number>, // linearDamping
-  M.Maybe<number>, // angularDamping
-]
-export function readDynamicValues(str: string): DynamicValues {
+type DynamicValues = NonStatic["dynamic"] & Rotatable
+export function readDynamicValues(str: string): M.Partial<DynamicValues> {
   let parts = str.split(",")
-  return [
-    parts.shift() === "1",
-    M.andThen(parts.shift(), M.iffDefined, util.readFloat),
-    M.andThen(parts.shift(), M.iffDefined, util.readFloat),
-    M.andThen(parts.shift(), M.iffDefined, util.readFloat),
-    M.andThen(parts.shift(), M.iffDefined, util.readFloat),
-    parts.shift() === "1",
-    M.andThen(parts.shift(), M.iffDefined, util.readFloat),
-    M.andThen(parts.shift(), M.iffDefined, util.readFloat),
-  ]
+  return {
+    enabled:        parts.shift() === "1",
+    mass:           M.andThen(parts.shift(), M.iffDefined, util.readFloat),
+    friction:       M.andThen(parts.shift(), M.iffDefined, util.readFloat),
+    restitution:    M.andThen(parts.shift(), M.iffDefined, util.readFloat),
+    rotation:       M.andThen(parts.shift(), M.iffDefined, util.readFloat),
+    fixedRotation:  parts.shift() === "1",
+    linearDamping:  M.andThen(parts.shift(), M.iffDefined, util.readFloat),
+    angularDamping: M.andThen(parts.shift(), M.iffDefined, util.readFloat),
+  }
 }
-export function writeDynamicValues(dynamicValues: DynamicValues): string {
+export function writeDynamicValues(dynamicValues: M.Partial<DynamicValues>): string {
   return [
-    M.andThen(dynamicValues[0], util.writeBool),
-    M.andThen(dynamicValues[1], util.writeFloat),
-    M.andThen(dynamicValues[2], util.writeFloat),
-    M.andThen(dynamicValues[3], util.writeFloat),
-    M.andThen(dynamicValues[4], util.writeFloat),
-    M.andThen(dynamicValues[5], util.writeBool),
-    M.andThen(dynamicValues[6], util.writeFloat),
-    M.andThen(dynamicValues[7], util.writeFloat),
+    M.andThen(dynamicValues.enabled, util.writeBool),
+    M.andThen(dynamicValues.mass, util.writeFloat),
+    M.andThen(dynamicValues.friction, util.writeFloat),
+    M.andThen(dynamicValues.restitution, util.writeFloat),
+    M.andThen(dynamicValues.rotation, util.writeFloat),
+    M.andThen(dynamicValues.fixedRotation, util.writeBool),
+    M.andThen(dynamicValues.linearDamping, util.writeFloat),
+    M.andThen(dynamicValues.angularDamping, util.writeFloat),
   ]
   .map(M.withDefault("0"))
   .join(",")

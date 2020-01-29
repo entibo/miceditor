@@ -7,7 +7,11 @@ import * as Platform from "data/Platform"
 import * as ShamanObject from "data/ShamanObject"
 import * as Joint from "data/Joint" */
 
-
+export type { Platform } from "data/Platform"
+export type { Decoration } from "data/Decoration"
+export type { ShamanObject } from "data/ShamanObject"
+export type { Joint } from "data/Joint"
+export type { Image } from "data/Common"
 
 export type Data
   = Common.Image

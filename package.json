@@ -23,6 +23,7 @@
       "postcss-preset-env": "^6.6.0",
       "postcss-url": "^8.0.0",
       "rimraf": "^2.6.3",
+      "rm": "^0.1.8",
       "rollup": "^1.12.1",
       "rollup-plugin-commonjs": "^10.0.0",
       "rollup-plugin-includepaths": "^0.2.3",
@@ -41,7 +42,7 @@
       "svelte-preprocess-postcss": "^1.0.0",
       "tailwindcss": "^1.0.1",
       "ts-jest": "^24.3.0",
-      "typescript": "^3.7.4",
+      "typescript": "^3.8.0-dev.20200124",
       "ws": ">=3.3.1"
    },
    "dependencies": {
