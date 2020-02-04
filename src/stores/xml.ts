@@ -9,6 +9,9 @@ import * as ShamanObject from "data/ShamanObject"
 import * as Joint from "data/Joint"
 import * as SceneObject from "data/SceneObject"
 
+import * as Editor from "editor/Data"
+
+
 import * as sceneObjects from "stores/sceneObjects"
 import * as util from "stores/util"
 
@@ -31,7 +34,7 @@ function importXML(str: string) {
     sceneObjects.add(image)
 
   for(let [index,platform] of map.platforms.entries()) {
-    sceneObjects.add(platform)
+    sceneObjects.add(Editor.Platform.make(platform))
   }
 
 }

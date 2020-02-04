@@ -121,7 +121,7 @@ export function serialize(map: Map): string {
   return XML.generate(tree)
 }
 
-
+/* 
 function afterParse(map: Map): Map {
   // Find <VC>s, remove appropriate <JPL>s
   // Find "booster: enabled" platforms, remove appropriate <JP>s
@@ -130,4 +130,5 @@ function afterParse(map: Map): Map {
 function beforeSerialize(map: Map): Map {
   // Find <VC>s, generate <JPL>s
   // Find "booster: enabled" platforms, generate <JP>s
-}
+} 
+*/

@@ -109,6 +109,7 @@ export function writeBool(v: boolean): string {
   return v ? "1" : "0"
 }
 
+// Format: "abcdef"
 export function readColor(str: string): M.Maybe<string> {
   return str.match(/^[a-f0-9]+$/i)
     ? str.padStart(6, "0").slice(-6)

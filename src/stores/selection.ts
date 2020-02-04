@@ -1,9 +1,9 @@
 
 import { writable, Writable, derived, get as storeGet } from "svelte/store"
 
-import * as Data from "data/Data"
+import * as Editor from "editor"
 import * as sceneObjects from "stores/sceneObjects"
-import { SceneObject, SO } from "stores/sceneObjects"
+import { SceneObject } from "stores/sceneObjects"
 import * as util from "stores/util"
 
 const blank = util.customStore({})
@@ -14,7 +14,9 @@ export function size(): number {
 }
 
 export function clear() {
-  for(let unsubscribe of selection.values()) {
+  for(let [obj,unsubscribe] of selection.entries()) {
+    obj.selected = false
+    obj.invalidate()
     unsubscribe()
   }
   selection.clear()
@@ -23,10 +25,17 @@ export function clear() {
 export function set(objs: SceneObject[]) {
   clear()
   selection = new Map(objs.map(obj => [obj, obj.subscribe(blank.invalidate)]))
+  selection = new Map()
+  for(let obj of objs) {
+    obj.selected = true
+    let unsubscribe = obj.subscribe(blank.invalidate)
+    selection.set(obj, unsubscribe)
+  }
   blank.invalidate()
 }
 export function select(obj: SceneObject) {
   if(selection.has(obj)) return
+  obj.selected = true
   selection.set(obj, obj.subscribe(blank.invalidate))
   blank.invalidate()
 }
@@ -34,6 +43,7 @@ export function unselect(obj: SceneObject) {
   let unsubscribe = selection.get(obj)
   if(!unsubscribe) return
   unsubscribe()
+  obj.selected = false
   selection.delete(obj)
   blank.invalidate()
 }
@@ -55,15 +65,18 @@ export function remove() {
 export function duplicate() {
   clear()
   for(let obj of selection.keys()) {
-    let dup = sceneObjects.add(obj, { index: obj.index + 1 })
-    select(dup)
+    let data = Editor.clone(obj)
+    data.index += 1
+    let obj2 = sceneObjects.add(data)
+    select(obj2)
   }
+  move(40, 0)
 }
 
 
 export function move(dx: number, dy: number) {
   for(let obj of selection.keys()) {
-    Data.move(obj, dx, dy)
+    Editor.move(obj, dx, dy)
     obj.invalidate()
   }
 }
@@ -75,77 +88,3 @@ export function shiftIndex(dz: number) {
 
 export const store = derived(blank, getAll)
 
-
-
-
-type Intersection = util.UnionToIntersection<SceneObject>
-export type Properties = { [K in keyof Intersection]: Intersection[K] | undefined | null }
-
-export const properties = derived(blank, () => {
-  let props = {} as Properties
-  for(let item of selection.keys()) {
-    for(let [_k,v] of Object.entries(item)) {
-      let k = _k as keyof Properties
-      if(typeof v === "object") {
-
-      }
-      if(!(k in props)) 
-        props[k] = v as any
-      else if(props[k] !== v) 
-        props[k] = null
-    }
-  }
-  return new Proxy(props, {
-    set(_, k, v) {
-      for(let item of selection.keys()) {
-        if(k in item) {
-          (item as any)[k] = v
-          item.invalidate()
-        }
-      }
-      return true
-    }
-  })
-})
-
-properties.subscribe(v => {
-  v.invisibe
-})
-
-
-
-export const pso = derived(blank, () => {
-  let pps = [] as sceneObjects.SO<Data.Platform>[]
-  for(let item of selection.keys()) {
-    if("invisible" in item) pps.push(item)
-  }
-
-  let auto = (k: string) => ({
-    get [k]() {
-      let value = undefined
-      for(let item of selection.keys()) {
-        if(!(k in item)) continue
-        if(value === undefined) {
-          value = (item as any)[k]
-          continue
-        }
-        if(value !== (item as any)[k])
-          return null
-      }
-      return value
-    },
-    set [k](v: any) {
-      for(let item of selection.keys()) {
-        if(!(k in item)) continue
-        (item as any)[k] = v
-        item.invalidate()
-      }
-    },
-  })
-
-  return {
-    ...auto("invisible"),
-    
-  }
-
-})

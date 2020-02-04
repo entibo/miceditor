@@ -7,21 +7,21 @@ import * as Platform from "data/Platform"
 import * as ShamanObject from "data/ShamanObject"
 import * as Joint from "data/Joint" */
 
-export type { Platform } from "data/Platform"
-export type { Decoration } from "data/Decoration"
-export type { ShamanObject } from "data/ShamanObject"
-export type { Joint } from "data/Joint"
-export type { Image } from "data/Common"
+export * as Platform from "data/Platform"
+export * as Decoration from "data/Decoration"
+export * as ShamanObject from "data/ShamanObject"
+export * as Joint from "data/Joint"
+export * as Image from "data/Common"
 
-export type Data
+export type Object
   = Common.Image
   | Platform.Platform
 
 export const isPlatform
-  = util.makeChecker <Data, Platform.Platform> ("invisible")
+  = util.makeChecker <Object, Platform.Platform> ("invisible")
 
 export const isImage
-  = util.makeChecker <Data, Common.Image> ("imageUrl")
+  = util.makeChecker <Object, Common.Image> ("imageUrl")
 
 /* export function isPlatform_Simple(obj: SceneObject): obj is Platform.Platform {
   let key: keyof Platform.Platform = "invisible"
@@ -30,7 +30,7 @@ export const isImage
 
 
 
-export function getBoundingBox(obj: Data): Box {
+export function getBoundingBox(obj: Object): Box {
   if(isImage(obj)) {
     return { 
       p1: { x: obj.x, y: obj.y }, 
@@ -40,6 +40,11 @@ export function getBoundingBox(obj: Data): Box {
   return { p1: {x: 0, y: 0}, p2: {x: 0, y: 0} }
 }
 
-export function move(obj: Data, dx: number, dy: number) {
+export function move(obj: Object, dx: number, dy: number) {
+  if(isJoint(obj)) {
 
+    return
+  }
+  obj.x += dx
+  obj.y += dy
 }

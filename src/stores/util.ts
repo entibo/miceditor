@@ -1,9 +1,7 @@
 
 import * as S from "svelte/store"
 
-// https://stackoverflow.com/a/50375286/1183577
-export type UnionToIntersection<U> = 
-  (U extends any ? (k: U)=>void : never) extends ((k: infer I)=>void) ? I : never
+
 
 /* export type CustomStore<T> = T & {
   subscribe <T> (run: (value: T) => void): () => void
@@ -17,9 +15,9 @@ export type UnionToIntersection<U> =
   invalidate: () => void
 } */
 
-export type CustomStore<T> = T & S.Writable<T> & { invalidate: () => void }
+export type Store<T> = T & S.Writable<T> & { invalidate: () => void }
 
-export function customStore <T extends object> (object: T): CustomStore<T> {
+export function store <T extends object> (object: T): Store<T> {
   let store = S.writable<T>(object)
   Object.defineProperties(object, {
     subscribe: {
@@ -39,7 +37,7 @@ export function customStore <T extends object> (object: T): CustomStore<T> {
       value: () => store.update(x=>x),
     },
   })
-  return object as CustomStore<T>
+  return object as Store<T>
  
 }
 

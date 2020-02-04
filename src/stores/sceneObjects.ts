@@ -5,54 +5,35 @@ import * as Platform from "data/Platform"
 /* import * as Decoration from "data/Decoration"
 import * as ShamanObject from "data/ShamanObject"
 import * as Joint from "data/Joint" */
-import * as Data from "data/Data"
+import * as Editor from "editor"
 
 import { writable, Writable, derived, readable, Readable, get } from "svelte/store"
 
-import * as util from "stores/util"
+import { store, Store } from "stores/util"
 
 import { clamp } from "data/util"
 
 
 
-type BaseMetadata = {
-  visible: boolean
-  interactive: boolean
-}
-const baseMetadataDefaults: () => BaseMetadata = () => ({
-  visible: true,
-  interactive: true,
-})
-type Indexed = {
-  index: number
-}
-type ExtraMetadata<T extends Data.Data>
-  = T extends Common.Image 
-    ? { foreground: boolean
-        APS: boolean } 
-  : {}
-type Metadata<T extends Data.Data> = BaseMetadata & Indexed & ExtraMetadata<T>
-
-type PlatformWithMetadata = Platform.Platform & Metadata<Platform.Platform>
-type ImageWithMetadata = Common.Image & Metadata<Common.Image>
-
-type PlatformSceneObject = util.CustomStore<Platform.Platform & Metadata<Platform.Platform>>
-type ImageSceneObject = util.CustomStore<Common.Image & Metadata<Common.Image>>
-
-export type SO<T extends Data.Data> = util.CustomStore<T & Metadata<T>>
-
 export type SceneObject
-  = SO<Platform.Platform>
-  | SO<Common.Image>
+  = Store<Editor.Object>
+  // |
 
 
 
 export const groups = {
-  platforms: util.customStore([] as PlatformSceneObject[]),
-  images: util.customStore([] as ImageSceneObject[]),
+  platforms: store([] as Store<Editor.Platform.Platform>[]),
+/*   platforms: util.customStore([] as util.CustomStore<Data.Platform>[]),
+  images: util.customStore([] as ImageSceneObject[]), */
 }
 
-function setIndex(group: util.CustomStore<SceneObject[]>, obj: SceneObject, target: number) {
+function getGroup(obj: Editor.Object): Store<SceneObject[]> {
+  if(Editor.isPlatform(obj)) return groups.platforms
+  if(Editor.isImage(obj)) return groups.images
+  throw "never"
+}
+
+function setIndex(obj: SceneObject, group: Store<SceneObject[]>, target: number) {
   target = clamp(target, 0, group.length-1)
   let src = obj.index
   //if(target === src) return
@@ -76,84 +57,34 @@ function setIndex(group: util.CustomStore<SceneObject[]>, obj: SceneObject, targ
   console.log("setIndex [end]", group === groups.platforms ? "groups.platforms was invalidated": "")
 }
 
-function removeFromGroup(group: util.CustomStore<SceneObject[]>, obj: SceneObject) {
+function removeFromGroup(group: Store<SceneObject[]>, obj: SceneObject) {
   for(let i=obj.index; i < group.length-1; i++) {
     group[i] = group[i+1]
+    group[i].index--
+    group[i].invalidate()
   }
   group.pop()
   group.invalidate()
 }
 
 
-export function add
-  (data: Data.Data, 
-  _base?: Partial<BaseMetadata>, 
-  _extra?: Partial<ExtraMetadata<Data.Data>>, 
-  _index?: number): SceneObject {
-
-  let base = Object.assign(_base||{}, baseMetadataDefaults())
-  let extra = _extra||{}
-  let index = _index ? _index : getGroup(data).length
-
-  return Data.isPlatform(data) ? addPlatform(data, base, index) 
-     //: Data._ ? add_(data, meta)
-       : addImage(data, base, extra, index)
-}
-
-
-function addPlatform(data: Platform.Platform, base: BaseMetadata, index: number): SceneObject {
-  console.log("addPlatform")
-  let group = groups.platforms
-  let withMeta = { ...data, ...base, index}
-
-  if("foreground" in withMeta) {
-    let [proxy, onPropertyChange] = util.setterProxy(withMeta)
-    onPropertyChange("foreground", group.invalidate)
-    withMeta = proxy
-  }
-
-  let obj = util.customStore(withMeta)
-  group.push(obj)
-  setIndex(group, obj, obj.index)
-  return obj
-}
-
-function addImage(data: Common.Image, base: BaseMetadata, _extra: any, index: number): SceneObject {
-  let group = groups.images
-  let extra: ExtraMetadata<Common.Image> 
-    = Object.assign(_extra, { foreground: false, APS: false, })
-  let withMeta = { ...data, ...base, ...extra, index}
-  
-  let [proxy, onPropertyChange] = util.setterProxy(withMeta)
-  onPropertyChange("foreground", group.invalidate)
-  onPropertyChange("APS", group.invalidate)
-  withMeta = proxy
-  
-  let obj = util.customStore(withMeta)
-  group.push(obj)
-  setIndex(group, obj, obj.index)
-  return obj
+export function add(obj: Editor.Object, index?: number): SceneObject {
+  let group = getGroup(obj)
+  let s = store(obj)
+  s.index = group.length
+  group.push(s)
+  setIndex(s, group, index ?? group.length)
+  return s
 }
 
 export function remove(obj: SceneObject) {
-  let group 
-    = Data.isPlatform(obj) ? groups.platforms
-    : Data.isImage(obj)    ? groups.images
-    : null
-  removeFromGroup(group!, obj)
+  removeFromGroup(getGroup(obj), obj)
 }
 
 export function getAll() {
-  return Object.values(groups).map(get).flat() as SceneObject[]
+  return Object.values(groups).flat() //as SceneObject[]
 }
 
-
-
-function getGroup(data: Data.Data): util.CustomStore<SceneObject[]> {
-  if(Data.isPlatform(data)) return groups.platforms
-  if(Data.isImage(data)) return groups.images
-  throw "never"
-}
 
 
 function derive <T,S> (store: Readable<T>, transform: (value: T) => NonNullable<S>): Readable<S> {
