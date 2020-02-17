@@ -4,7 +4,7 @@ import { writable, derived, get as storeGet } from "svelte/store"
 import { encodePlatformData, encodeDecorationData, encodeJointData, encodeObjectData,
   platformProperties, groundTypes, rotate as rotatePoint } from "/xml-utils.ts"
 import { platforms, decorations, shamanObjects, joints, settings, buildXML } from "./xml.js"
-import { persistentWritable } from "./user.js"
+import { persistentWritable } from "../state/user.ts"
 
 import { gridSettings } from "/stores/stores.js"
 

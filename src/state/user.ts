@@ -1,19 +1,7 @@
 
 import { writable } from "svelte/store"
 
-export function persistentWritable<T>(name: string, defaultValue: T, listen=false) {
-  let storedValue = localStorage.getItem(name)
-  let value = storedValue !== null ? JSON.parse(storedValue) as T : defaultValue
-  let store = writable(value)
-  store.subscribe(value => localStorage.setItem(name, JSON.stringify(value)))
-  if(listen) {
-    window.addEventListener("storage", ({ key, newValue }) => {
-      if(key !== name || newValue === null) return
-      store.set(JSON.parse(newValue))
-    })
-  }
-  return store
-}
+import { persistentWritable } from "stores/util"
 
 export const highQuality = persistentWritable("highQuality", true)
 export const showGameGUI = persistentWritable("showGameGUI", true)

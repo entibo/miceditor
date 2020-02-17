@@ -2,7 +2,7 @@
 import { derived } from "svelte/store"
 import * as util from "stores/util"
 
-import * as selection from "stores/selection"
+import * as selection from "@/state/selection"
 import * as Editor from "editor"
 
 

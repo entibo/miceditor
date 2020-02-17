@@ -1,7 +1,7 @@
 
 import { writable, get as storeGet } from "svelte/store"
 
-import { selection } from "./selection.js"
+import { selection } from "../state/selection.js"
 import { settings, platforms, decorations, shamanObjects, joints, buildXML } from "./xml.js"
 import { jointPalette, drawingData } from "/stores/stores.js"
 

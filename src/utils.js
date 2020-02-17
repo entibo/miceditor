@@ -24,5 +24,5 @@ export function randInt(min,max) {
 }
 
 Array.prototype.move = function(from, to) {
-    this.splice(to, 0, this.splice(from, 1)[0]);
+  this.splice(to, 0, this.splice(from, 1)[0]);
 };

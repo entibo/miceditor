@@ -1,5 +1,5 @@
 
-<script>
+<script lang="ts">
 
   import clipboardCopy from "clipboard-copy"
 
@@ -17,12 +17,12 @@
 
   import { debounce } from "/utils.js"
 
-  import { 
+/*   import { 
     xml, settings, 
     undo, redo, canUndo, canRedo,
     highQuality, parkour, showGameGUI, showMapBorder, zoom, firstVisit,
     language, _, localeFlag
-  } from "/stores/stores.js"
+  } from "/stores/stores.js" */
 
   import TextInput from "/components/common/TextInput.svelte"
   import Button from "/components/common/Button.svelte"
@@ -31,6 +31,12 @@
   import XmlEditor from "/components/ui/XmlEditor.svelte"
   import HelpMenu from "/components/ui/HelpMenu.svelte"
   import LanguageMenu from "/components/ui/LanguageMenu.svelte"
+
+
+  import { xml, importXML } from "state/map"
+  import { localeFlag, language } from "state/locale"
+  import { zoom } from "state/user"
+
 
   let copyIconActive = false
   function removeCopyIconActive() {
@@ -43,25 +49,27 @@
       debounce(removeCopyIconActive, 500)
     } catch(e) {}
   }
-  async function selectXML({target}) {
-    target.select()
+  async function selectXML(e) {
+    e.target.select()
     await tick()
-    target.select()
+    e.target.select()
   }
 
   // let currentMenu = firstVisit ? "help" : null
-  let currentMenu = null
+  let currentMenu = null // null | "help" | "language" | "settings" | "zoom" | "xmlEditor"
   function selectMenu(which) {
     if(currentMenu === which)
       currentMenu = null
     else currentMenu = which
   }
 
-  function onKeydown({key}) {
+  function onKeydown({key: string}) {
     if(key.toLowerCase() === "h") {
       selectMenu("help")
     }
   }
+
+  
 
 </script>
 
@@ -139,7 +147,7 @@
 
     <div class="mr-2"></div>
 
-    <TextInput value={$xml} on:input={e => $xml = e.target.value} on:click={selectXML} />
+    <TextInput value={$xml} on:input={e => importXML(e.target.value)} on:click={selectXML} />
 
     <div class="mr-2"></div>
 

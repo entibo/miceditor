@@ -1,26 +1,26 @@
 
 import { get } from "svelte/store"
 
-import * as Data from "data/Data"
+import * as Data from "data"
 
-import * as util from "stores/util"
+import { store } from "stores/util"
 
-import * as selection from "stores/selection"
+import * as selection from "@/state/selection"
 
 import { mapSettings } from "stores/xml"
 import * as sceneObjects from "stores/sceneObjects"
 import { SceneObject } from "stores/sceneObjects"
 
-import { zoom } from "stores/user"
+import { zoom } from "@/state/user"
 
 
-export const svgContainer = util.customStore({
+export const svgContainer = store({
   el: null as HTMLElement | null,
   width: 1,
   height: 1,
 })
 
-export const pan = util.customStore<Point>({ x: 0, y: 0 })
+export const pan = store<Point>({ x: 0, y: 0 })
 
 function cancel() {
   if(1/* creation */) 
@@ -157,7 +157,7 @@ class Move extends MouseMovement {
   }
 }
 
-export const selectionBox = util.customStore<{box: Box|null}>({box: null})
+export const selectionBox = store<{box: Box|null}>({box: null})
 class Select extends MouseMovement {
   previousSelection = selection.getAll()
   update(e: MouseEvent) {

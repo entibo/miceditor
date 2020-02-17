@@ -2,18 +2,20 @@
 import * as S from "svelte/store"
 
 
+export function persistentWritable<T>(name: string, defaultValue: T, listen=false) {
+  let storedValue = localStorage.getItem(name)
+  let value = storedValue !== null ? JSON.parse(storedValue) as T : defaultValue
+  let store = S.writable(value)
+  store.subscribe(value => localStorage.setItem(name, JSON.stringify(value)))
+  if(listen) {
+    window.addEventListener("storage", ({ key, newValue }) => {
+      if(key !== name || newValue === null) return
+      store.set(JSON.parse(newValue))
+    })
+  }
+  return store
+}
 
-/* export type CustomStore<T> = T & {
-  subscribe <T> (run: (value: T) => void): () => void
-  set <T> (value: T): void
-  update <T> (updater: (value: T) => T): void
-} */
-/* export type CustomStore<T> = T & {
-  subscribe <T> (run: (value: T) => void, invalidate?: (value?: T) => void): () => void
-  set <T> (value: T): void
-  update <T> (updater: (value: T) => T): void
-  invalidate: () => void
-} */
 
 export type Store<T> = T & S.Writable<T> & { invalidate: () => void }
 

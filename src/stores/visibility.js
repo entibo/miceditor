@@ -1,7 +1,7 @@
 
 import { writable } from "svelte/store"
 
-import { selection } from "./selection.js"
+import { selection } from "../state/selection.js"
 
 const { subscribe, set, update } = writable({
   basic: true,

@@ -44,7 +44,7 @@ export type Decoration
   | { type: "DS" | "DC" | "DC2"  }
     & Base
 
-export interface DecorationProps extends Base{
+export interface DecorationProps extends Base {
   type: Type
   foreground: boolean
   reverse: boolean

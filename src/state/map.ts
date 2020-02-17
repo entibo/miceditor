@@ -1,5 +1,5 @@
 
-import { writable, Writable, derived } from "svelte/store"
+import { writable, Writable, derived, get } from "svelte/store"
 
 import * as Map from "data/Map"
 import * as MapSettings from "data/MapSettings"
@@ -9,19 +9,20 @@ import * as ShamanObject from "data/ShamanObject"
 import * as Joint from "data/Joint"
 import * as SceneObject from "data/SceneObject"
 
-import * as Editor from "editor/Data"
+import * as Editor from "editor"
 
 
-import * as sceneObjects from "stores/sceneObjects"
+import * as sceneObjects from "state/sceneObjects"
 import * as util from "stores/util"
+import { store, persistentWritable } from "./util"
 
 
+export const xml = persistentWritable("xml", "<C></C>")
+
+export const mapSettings = store(MapSettings.defaults())
 
 
-export const mapSettings = util.customStore(MapSettings.defaults())
-
-
-function importXML(str: string) {
+export function importXML(str: string) {
   let map = Map.parse(str)
 
   mapSettings.set(map.mapSettings)
@@ -39,7 +40,7 @@ function importXML(str: string) {
 
 }
 
-function exportXML(): string {
+export function exportXML(update=true) {
 
   mapSettings.disappearingImages = []
   mapSettings.foregroundImages = []
@@ -66,6 +67,10 @@ function exportXML(): string {
     platforms: sceneObjects.groups.platforms,
   }
 
-  return Map.serialize(map)
-
+  let result = Map.serialize(map)
+  if(update) xml.set(result)
+  return result
 }
+
+
+importXML(get(xml))
