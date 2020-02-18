@@ -48,7 +48,7 @@
 
   <div class="section">
     <span class="text-gray-100">Miceditor</span>
-    <span class="text-gray-500 text-xs ml-1">v1.3.1</span>
+    <span class="text-gray-500 text-xs ml-1">v1.3.2</span>
     <span class="text-gray-500 text-xs ml-2">by</span>
     <span class="text-gray-100 ml-1">entibo</span>
   </div>

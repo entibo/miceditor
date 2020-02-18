@@ -403,7 +403,7 @@ export const groundTypes = [
   "stone", "snow", 
   "rectangle", "circle",
   "invisible", "cobweb",
-  "wood", "grass2",
+  "wood", "grass2", "grass3",
 ]
 
 export const platformDefaults  = (() => {

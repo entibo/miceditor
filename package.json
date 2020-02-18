@@ -3,15 +3,15 @@
    "scripts": {
       "build": "rollup -c",
       "build:auto": "rollup -c -w",
-      "serve": "sirv .",
-      "serve:dev": "sirv . --dev",
-      "dev": "run-p build:auto serve:dev",
+      "serve": "http-server",
+      "dev": "run-p build:auto serve",
       "translations": "curl 'https://localise.biz/api/export/all.json?format=multi&key=_KwQn345xaZK8iQ3yj3JkzfGbzjIWAgk' -o ./src/languages.json"
    },
    "devDependencies": {
       "@fullhuman/postcss-purgecss": "^1.2.0",
       "chokidar": "^3.0.0",
       "cssnano": "^4.1.10",
+      "http-server": "^0.12.1",
       "npm-run-all": "^4.1.5",
       "postcss": "^7.0.17",
       "postcss-color-mod-function": "^3.0.3",
@@ -31,6 +31,7 @@
       "rollup-plugin-svelte": "^5.0.3",
       "rollup-plugin-terser": "^4.0.4",
       "rollup-plugin-url": "^2.2.2",
+      "sirv": "^0.4.2",
       "sirv-cli": "^0.4.2",
       "svelte": "^3.4.0",
       "svelte-preprocess": "^2.9.0",
