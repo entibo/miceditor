@@ -172,6 +172,9 @@ function parseXMLColorHex(str) {
   return str.slice(0,6)
 }
 
+function cleanImageUrl(str) {
+  return str.replace(/%20/g, " ")
+}
 function getFullTransformiceImageUrl(path) {
   if(path.match(/^https?:/i))
     return path
@@ -230,7 +233,8 @@ export function decodeMapData(object) {
         object[xmlName].split(";")
         .filter(s => s.trim().length)
         .map(s => {
-          let [url,x,y] = s.split(",")
+          let [_url,x,y] = s.split(",")
+          let url = cleanImageUrl(_url)
           x = parseInt(x || "0")
           y = parseInt(y || "0")
           return { 
@@ -253,7 +257,8 @@ export function decodeMapData(object) {
       object.APS.split(";")
       .filter(s => s.trim().length)
       .map(s => {
-        let [url,something,rx,ry,rw,rh,x,y] = s.split(",")
+        let [_url,something,rx,ry,rw,rh,x,y] = s.split(",")
+        let url = cleanImageUrl(_url)
         rx = parseInt(rx || "0")
         ry = parseInt(ry || "0")
         rw = parseInt(rw || "0")
@@ -542,7 +547,7 @@ export function decodePlatformData(platform, index) {
     platform._groundImageEnabled = true
     platform._groundImageX = parseInt(props[0] || "0")
     platform._groundImageY = parseInt(props[1] || "0")
-    platform._groundImageUrl = props[2] || ""
+    platform._groundImageUrl = cleanImageUrl(props[2] || "")
     platform._groundImageFullUrl = getFullTransformiceImageUrl(platform._groundImageUrl)
   }
 
