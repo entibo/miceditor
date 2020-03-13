@@ -1,6 +1,6 @@
 
 <script>
-  import { language, _, localeFlag, localeTranslators } from "/stores/stores.js"
+  import { language, _, localeFlag, localeTranslators } from "/state/locale"
 
   import Tooltip from "/components/common/Tooltip.svelte"
 

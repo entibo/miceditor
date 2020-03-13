@@ -8,7 +8,7 @@
 
   import { tick, onMount } from "svelte"
   
-  import { xml } from "/stores/stores.js"
+  import xml from "/state/xml"
 
   let currentXML = null
   let prettyXML

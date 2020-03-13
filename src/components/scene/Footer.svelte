@@ -2,17 +2,17 @@
 <script>
   import { fly } from "svelte/transition"
 
-  import { selection } from "/stores/stores.js"
+  import { selection } from "/state/selection"
   import Tooltip from "/components/common/Tooltip.svelte"
 
   export let position
-  export let selectionArea
+  export let selectionBox
 
   $: [x,y] = [position.x, position.y].map(v => Math.round(v))
   let sw, sh
-  $: if(selectionArea) {
-    sw = Math.round(selectionArea.x2-selectionArea.x1)
-    sh = Math.round(selectionArea.y2-selectionArea.y1)
+  $: if(selectionBox.box) {
+    sw = Math.round(selectionBox.box.p2.x - selectionBox.box.p1.x)
+    sh = Math.round(selectionBox.box.p2.y - selectionBox.box.p1.y)
   }
 
 </script>
@@ -26,14 +26,14 @@
     <span class="text-gray-100 w-8 text-right inline-block">{y}</span>
   </div>
 
-  {#if $selection.length}
+  {#if $selection.length > 0}
   <div class="ml-4 section" >
     <span class="text-gray-100">{$selection.length}</span>
     <span class="text-gray-500 text-xs ml-1">selected</span>
   </div>
   {/if}
 
-  {#if selectionArea}
+  {#if selectionBox.box}
   <div class="ml-4 section" >
     <span class="text-gray-500 text-xs">L</span>
     <span class="text-gray-100 w-8 text-right inline-block">{sw}</span>
@@ -48,7 +48,7 @@
 
   <div class="section">
     <span class="text-gray-100">Miceditor</span>
-    <span class="text-gray-500 text-xs ml-1">v1.3.1</span>
+    <span class="text-gray-500 text-xs ml-1">v2.0.0</span>
     <span class="text-gray-500 text-xs ml-2">by</span>
     <span class="text-gray-100 ml-1">entibo</span>
   </div>

@@ -1,10 +1,10 @@
 
-import * as XML from "data/XML"
-import * as MapSettings from "data/MapSettings"
-import * as Platform from "data/Platform"
-import * as Decoration from "data/Decoration"
-import * as ShamanObject from "data/ShamanObject"
-import * as Joint from "data/Joint"
+import * as XML from "./XML"
+import * as MapSettings from "./MapSettings"
+import * as Platform from "./Platform"
+import * as Decoration from "./Decoration"
+import * as ShamanObject from "./ShamanObject"
+import * as Joint from "./Joint"
 
 export interface Node extends XML.Node {
   name: "C",
@@ -74,17 +74,16 @@ export function parse(str: string): Map {
   let shamanObjects   = O ? O.children.map(ShamanObject.decode) : []
   let joints          = L ? L.children.map(Joint.decode)        : []
 
-  return afterParse({
+  return {
     mapSettings,
     platforms,
     decorations,
     shamanObjects,
     joints,
-  })
+  }
 }
 
 export function serialize(map: Map): string {
-  map = beforeSerialize(map)
   let tree: Node = {
     name: "C",
     attributes: [],
@@ -120,15 +119,3 @@ export function serialize(map: Map): string {
   }
   return XML.generate(tree)
 }
-
-/* 
-function afterParse(map: Map): Map {
-  // Find <VC>s, remove appropriate <JPL>s
-  // Find "booster: enabled" platforms, remove appropriate <JP>s
-}
-
-function beforeSerialize(map: Map): Map {
-  // Find <VC>s, generate <JPL>s
-  // Find "booster: enabled" platforms, generate <JP>s
-} 
-*/

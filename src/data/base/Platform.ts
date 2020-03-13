@@ -1,8 +1,9 @@
 
 import * as M from "util/Maybe"
-import * as XML from "data/XML"
-import * as util from "data/util"
-import * as Common from "data/Common"
+import * as XML from "./XML"
+import * as util from "./util"
+import * as Common from "./Common"
+import * as Image from "./Image"
 
 const attributes = [
   "T",
@@ -39,10 +40,7 @@ interface Base extends Common.UnknownAttributes {
   invisible: boolean
   lua: string
   nosync: boolean
-  image: 
-    { enabled: false }
-    |  
-    { enabled: true } & Common.Image
+  image: { enabled: boolean } & Image.Image
 }
 export interface NonStatic {
   dynamic: boolean
@@ -104,6 +102,7 @@ const baseDefaults: () => Base = () => ({
   nosync: false,
   image: {
     enabled: false,
+    ...Image.defaults(),
   }
 })
 const nonStaticDefaults: () => NonStatic = () => ({
@@ -358,12 +357,12 @@ export function writeDynamicValues(dynamicValues: DynamicValues): string {
 
 // Format: "x,y,url"
 export function readImage(str: string): Base["image"] {
-  let image = Common.imageDefaults()
+  let image = Image.defaults()
   let set = util.makeSetter(image)
   let parts = str.split(",")
   set ("x") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
   set ("y") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
-  set ("imageUrl") (M.andThen(parts.shift(), M.iffDefined, Common.getImageUrl))
+  set ("imageUrl") (M.andThen(parts.shift(), M.iffDefined, Image.readUrl))
   return { enabled: true, ...image }
 }
 export function writeImage(image: Base["image"]): M.Maybe<string> {
@@ -396,7 +395,7 @@ export function readCollision(str: string): M.Maybe<{ miceCollision: boolean, ob
   })
 }
 export function writeCollision(miceCollision: boolean, objectCollision: boolean): string {
-  let n = 4 - (miceCollision?1:0) + (objectCollision?2:0)
+  let n = 4 - (miceCollision?1:0) - (objectCollision?2:0)
   return n.toString()
 }
 

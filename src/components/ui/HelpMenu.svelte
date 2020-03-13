@@ -3,7 +3,7 @@
   import TextInput from "/components/common/TextInput.svelte"
   import Button from "/components/common/Button.svelte"
 
-  import { _ } from "/stores/stores.js"
+  import { _ } from "/state/locale"
 
   let data = [
     {

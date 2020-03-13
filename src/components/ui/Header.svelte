@@ -15,7 +15,7 @@
   import { faSearchPlus } from "@fortawesome/free-solid-svg-icons/faSearchPlus"
   import { faQuestion } from "@fortawesome/free-solid-svg-icons/faQuestion"
 
-  import { debounce } from "/utils.js"
+  import { debounce } from "/util"
 
 /*   import { 
     xml, settings, 
@@ -33,9 +33,11 @@
   import LanguageMenu from "/components/ui/LanguageMenu.svelte"
 
 
-  import { xml, importXML } from "state/map"
-  import { localeFlag, language } from "state/locale"
-  import { zoom } from "state/user"
+  import xml from "/state/xml"
+  import { importXML, exportXML } from "/state/map"
+  import { localeFlag, language, _ } from "/state/locale"
+  import { undo, redo, canUndo, canRedo } from "/state/history"
+  import { zoom } from "/state/user"
 
 
   let copyIconActive = false
@@ -43,6 +45,7 @@
     copyIconActive = false
   }
   async function copyXML() {
+    exportXML()
     try {
       await clipboardCopy($xml)
       copyIconActive = true
@@ -50,6 +53,7 @@
     } catch(e) {}
   }
   async function selectXML(e) {
+    exportXML()
     e.target.select()
     await tick()
     e.target.select()
@@ -63,7 +67,7 @@
     else currentMenu = which
   }
 
-  function onKeydown({key: string}) {
+  function onKeydown({key}) {
     if(key.toLowerCase() === "h") {
       selectMenu("help")
     }

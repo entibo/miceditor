@@ -1,27 +1,6 @@
 
 import * as M from "util/Maybe"
-import * as XML from "data/XML"
-
-
-export interface Image {
-  x: number
-  y: number
-  imageUrl: ImageUrl
-}
-export const imageDefaults: () => Image = () => ({
-  x: 0,
-  y: 0,
-  imageUrl: { value: "", url: "" }
-})
-
-export type ImageUrl
-  = { value: string
-      url: string }
-    
-export function getImageUrl(str: string): ImageUrl {
-  return { value: "", url: "" } // TODO
-}
-
+import * as XML from "./XML"
 
 
 export interface UnknownAttributes {

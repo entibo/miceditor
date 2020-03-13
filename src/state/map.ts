@@ -1,43 +1,55 @@
 
 import { writable, Writable, derived, get } from "svelte/store"
 
-import * as Map from "data/Map"
-import * as MapSettings from "data/MapSettings"
-import * as Platform from "data/Platform"
-import * as Decoration from "data/Decoration"
-import * as ShamanObject from "data/ShamanObject"
-import * as Joint from "data/Joint"
-import * as SceneObject from "data/SceneObject"
 
-import * as Editor from "editor"
+import * as Editor from "data/editor"
 
 
 import * as sceneObjects from "state/sceneObjects"
-import * as util from "stores/util"
-import { store, persistentWritable } from "./util"
+import * as selection from "state/selection"
+import * as util from "state/util"
+import { store, persistentWritable } from "state/util"
 
 
-export const xml = persistentWritable("xml", "<C></C>")
+import * as history from "state/history"
 
-export const mapSettings = store(MapSettings.defaults())
+import xml from "state/xml"
 
+
+export const mapSettings = store(Editor.MapSettings.defaults())
+mapSettings.subscribe(history.invalidate)
+
+importXML(get(xml))
 
 export function importXML(str: string) {
-  let map = Map.parse(str)
+  let map = Editor.Map.parse(str)
 
   mapSettings.set(map.mapSettings)
 
+  selection.clear()
+  sceneObjects.clear()
+
   for(let image of map.mapSettings.backgroundImages)
-    sceneObjects.add(image)
+    sceneObjects.add(Editor.Image.make(image, false))
+
   for(let image of map.mapSettings.foregroundImages)
-    sceneObjects.add(image)
+    sceneObjects.add(Editor.Image.make(image, true))
+
   for(let image of map.mapSettings.disappearingImages)
-    sceneObjects.add(image)
+    sceneObjects.add(Editor.Image.make(image))
 
-  for(let [index,platform] of map.platforms.entries()) {
+
+  for(let [index,platform] of map.platforms.entries())
     sceneObjects.add(Editor.Platform.make(platform))
-  }
 
+  for(let [index,decoration] of map.decorations.entries())
+    sceneObjects.add(Editor.Decoration.make(decoration))
+
+  for(let [index,shamanObject] of map.shamanObjects.entries())
+    sceneObjects.add(Editor.ShamanObject.make(shamanObject))
+
+  for(let [index,joint] of map.joints.entries())
+    sceneObjects.add(Editor.Joint.make(joint))
 }
 
 export function exportXML(update=true) {
@@ -46,15 +58,14 @@ export function exportXML(update=true) {
   mapSettings.foregroundImages = []
   mapSettings.backgroundImages = []
   for(let image of sceneObjects.groups.images) {
-    if(image.APS) 
-      mapSettings.disappearingImages.push(image)
-    else if(image.foreground) 
-      mapSettings.foregroundImages.push(image)
-    else
-      mapSettings.backgroundImages.push(image)
+    Editor.Image.isDisappearing(image)
+      ? mapSettings.disappearingImages.push(image)
+    : image.foreground
+      ? mapSettings.foregroundImages.push(image)
+      : mapSettings.backgroundImages.push(image)
   }
 
-  let joints = sceneObjects.groups.joints
+  // let joints = sceneObjects.groups.joints
   for(let platform of sceneObjects.groups.platforms) {
     if("booster" in platform) {
       // Create joints
@@ -62,15 +73,16 @@ export function exportXML(update=true) {
     }
   }
 
-  let map: Map.Map = {
+  let map: Editor.Map.Map = {
     mapSettings,
     platforms: sceneObjects.groups.platforms,
+    decorations: sceneObjects.groups.decorations,
+    shamanObjects: sceneObjects.groups.shamanObjects,
+    joints: sceneObjects.groups.joints,
   }
 
-  let result = Map.serialize(map)
+  let result = Editor.Map.serialize(map)
   if(update) xml.set(result)
   return result
 }
 
-
-importXML(get(xml))

@@ -8,7 +8,7 @@
   let className = ""
   export { className as class }
 
-  function getDimensions() {
+  function getDimensions(href) {
     let img = new Image()
     img.onload = () => {
       width = img.width
@@ -16,7 +16,7 @@
     }
     img.src = href
   }
-  $: getDimensions(href)
+  $: if(width === 0 && height === 0) getDimensions(href)
 </script>
 
 <image class={className} {href} {x} {y} {width} {height} 

@@ -1,17 +1,19 @@
 
 import { get } from "svelte/store"
 
-import * as Data from "data"
+import * as Editor from "data/editor"
 
-import { store } from "stores/util"
+import { store } from "state/util"
 
 import * as selection from "@/state/selection"
 
-import { mapSettings } from "stores/xml"
-import * as sceneObjects from "stores/sceneObjects"
-import { SceneObject } from "stores/sceneObjects"
+import { mapSettings } from "state/map"
+import * as sceneObjects from "state/sceneObjects"
+import { SceneObject } from "state/sceneObjects"
 
-import { zoom } from "@/state/user"
+import { zoom } from "state/user"
+
+import { undo, redo } from "state/history"
 
 
 export const svgContainer = store({
@@ -22,8 +24,14 @@ export const svgContainer = store({
 
 export const pan = store<Point>({ x: 0, y: 0 })
 
+export const currentScenePosition = store<Point>({ x: 0, y: 0 })
+export const currentGamePosition  = store<Point>({ x: 0, y: 0 })
+currentScenePosition.subscribe(p => 
+  currentGamePosition.set(sceneToGameCoordinates(p))
+)
+
 function cancel() {
-  if(1/* creation */) 
+  if(0/* creation */) 
     1
   else if(selection.size() > 0)
     selection.clear()
@@ -35,24 +43,33 @@ function cancel() {
 
 
 
-const isKeyDown = {
+export const isKeyDown = store({
   space: false,
   shift: false,
   ctrl:  false,
   alt:   false,
-}
+})
 export function windowKeyDown(e: KeyboardEvent) {
-  if(e.shiftKey)    isKeyDown.shift = true
-  if(e.ctrlKey)     isKeyDown.ctrl = true
-  if(e.altKey)      isKeyDown.alt = true
-  if(e.key === " ") isKeyDown.space = true
-  if(e.key === "Escape") cancel()
+  let key = e.key.toLowerCase()
+  if(e.shiftKey)    isKeyDown.update(() => (isKeyDown.shift = true, isKeyDown))
+  if(e.ctrlKey)     isKeyDown.update(() => (isKeyDown.ctrl = true, isKeyDown))
+  if(e.altKey)      isKeyDown.update(() => (isKeyDown.alt = true, isKeyDown))
+  if(key === " ") isKeyDown.update(() => (isKeyDown.space = true, isKeyDown))
+  if(key === "escape") cancel()
+
+  if(isKeyDown.ctrl) {
+    if(key === "z") {
+      if(isKeyDown.shift) redo()
+      else undo()
+    }
+    else if(key === "y") redo()
+  }
 }
 export function windowKeyUp(e: KeyboardEvent) {
-  if     (e.key === "Shift")   isKeyDown.shift = false
-  else if(e.key === "Control") isKeyDown.ctrl = false
-  else if(e.key === "Alt")     isKeyDown.alt = false
-  else if(e.key === " ")       isKeyDown.space = false
+  if     (e.key === "Shift")   isKeyDown.update(() => (isKeyDown.shift = false, isKeyDown))
+  else if(e.key === "Control") isKeyDown.update(() => (isKeyDown.ctrl = false, isKeyDown))
+  else if(e.key === "Alt")     isKeyDown.update(() => (isKeyDown.alt = false, isKeyDown))
+  else if(e.key === " ")       isKeyDown.update(() => (isKeyDown.space = false, isKeyDown))
 }
 
 const keyActions: { [key: string]: (e: KeyboardEvent) => void } = {
@@ -107,6 +124,7 @@ class MouseMovement {
   last: Point
   current: Point
   constructor(e: MouseEvent) {
+    console.log("MouseMovement created", this)
     this.start = this.last = this.current = getSceneCoordinates(e)
   }
   deltaStart(): Point {
@@ -133,9 +151,20 @@ export function resetPan() {
   pan.y = Math.round( svgContainer.height/2 - mapSettings.height/2 )
   pan.invalidate()
 }
-export function centerPan(e: MouseEvent) {
-  let {x,y} = getSceneCoordinates(e)
-  // ???
+export function centerPan(e: MouseEvent, delta: number) {
+  let $zoom = get(zoom)
+  let factor = $zoom / ($zoom-delta)
+  let p1 = getSceneCoordinates(e)
+  let a = {
+    x: p1.x - pan.x,
+    y: p1.y - pan.y,
+  }
+  let b = {
+    x: a.x * (factor),
+    y: a.y * (factor),
+  }
+  pan.x = pan.x - (b.x-a.x)
+  pan.y = pan.y - (b.y-a.y)
   pan.invalidate()
 }
 
@@ -152,12 +181,13 @@ class Pan extends MouseMovement {
 class Move extends MouseMovement {
   update(e: MouseEvent) {
     super.update(e)
-    let delta = sceneToGameCoordinates(this.deltaLast())
-    selection.move(delta.x, delta.y)
+    let $zoom = get(zoom)
+    let delta = this.deltaLast()
+    selection.move(delta.x/$zoom, delta.y/$zoom)
   }
 }
 
-export const selectionBox = store<{box: Box|null}>({box: null})
+export const selectionBox = store<{box: Box|null}>({ box: null })
 class Select extends MouseMovement {
   previousSelection = selection.getAll()
   update(e: MouseEvent) {
@@ -167,7 +197,7 @@ class Select extends MouseMovement {
     let insideSelectionBox
       = sceneObjects.getAll()
         .filter(obj => {
-          let bb = Data.getBoundingBox(obj)
+          let bb = Editor.getBoundingBox(obj)
           if(bb.p1.x < p1.x || bb.p2.x > p2.x) return false
           if(bb.p1.y < p1.y || bb.p2.y > p2.y) return false
           return true
@@ -178,18 +208,16 @@ class Select extends MouseMovement {
     ])
   }
   updateSelectionBox() {
-    let [x1,x2] 
-      = [this.start.x, this.current.x]
-        .sort((a,b) => a-b)
-        .map(sceneToGameCoordinates)
-    let [y1,y2] 
-      = [this.start.y, this.current.y]
-        .sort((a,b) => a-b)
-        .map(sceneToGameCoordinates)
+    let [x1,x2] = [this.start.x, this.current.x] .sort((a,b) => a-b)
+    let [y1,y2] = [this.start.y, this.current.y] .sort((a,b) => a-b)
     selectionBox.box = {
-      p1: { x: x1, y: y1 },
-      p2: { x: x2, y: y2 },
+      p1: sceneToGameCoordinates({x: x1, y: y1}),
+      p2: sceneToGameCoordinates({x: x2, y: y2}),
     }
+    selectionBox.invalidate()
+  }
+  end() {
+    selectionBox.box = null
     selectionBox.invalidate()
   }
 }
@@ -199,7 +227,7 @@ let currentMouseMovement: MouseMovement | null = null
 export function backgroundMouseDown(e: MouseEvent) {
   if(isKeyDown.space)
     currentMouseMovement = new Pan(e)
-  else if(1/* creation */) {
+  else if(0/* creation */) {
 
   }
   else {
@@ -228,9 +256,12 @@ export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
   currentMouseMovement = new Move(e)
 }
 
-let currentScenePosition: Point = { x: 0, y: 0 }
 export function windowMouseMove(e: MouseEvent) {
-  currentScenePosition = getSceneCoordinates(e)
+  /* let {x,y} = getSceneCoordinates(e)
+  currentScenePosition.x = x
+  currentScenePosition.y = y
+  currentScenePosition.invalidate() */
+  currentScenePosition.set(getSceneCoordinates(e))
 
   if(!currentMouseMovement) return
 
@@ -240,44 +271,48 @@ export function windowMouseMove(e: MouseEvent) {
 }
 
 export function windowMouseUp(e: MouseEvent) {
-  if(!currentMouseMovement) return
-  currentMouseMovement.end(e)
-  currentMouseMovement = null
+  if(currentMouseMovement) {
+    currentMouseMovement.end(e)
+    currentMouseMovement = null
+  }
 }
 
 export function windowMouseLeave(e: MouseEvent) {
-  isKeyDown.alt = false
-  isKeyDown.ctrl = false
-  isKeyDown.shift = false
-  isKeyDown.space = false
-  currentMouseMovement = null
+  isKeyDown.set({
+    alt: false,
+    ctrl: false,
+    shift: false,
+    space: false,
+  })
+  if(currentMouseMovement) {
+    currentMouseMovement.end(e)
+    currentMouseMovement = null
+  }
 }
 
 export function wheel(e: WheelEvent) {
   if(isKeyDown.ctrl) {
-    zoom.update(z => z - 0.1*Math.sign(e.deltaY))
-    centerPan(e)
+    e.preventDefault()
+    let delta = -0.1*Math.sign(e.deltaY)
+    zoom.update(z => z + delta)
+    centerPan(e, delta)
     return
   }
   
   let factor = isKeyDown.alt ? 1 : 10
   let delta = Math.sign(e.deltaY) * factor
 
-  if(/* creation */1) {
-    (e)
+  /* if(creation) {
     return
-  }
+  } */
   
   if(isKeyDown.shift) {
     let p = sceneToGameCoordinates(getSceneCoordinates(e))
-    selection.rotateAround(da, p)
+    selection.rotateAround(delta, p)
   }
-  else selection.rotate(da)
+  else selection.rotate(delta)
 
 }
-
-
-
 
 
 function getSceneCoordinates(e: MouseEvent) {
@@ -287,10 +322,17 @@ function getSceneCoordinates(e: MouseEvent) {
     y: e.clientY - svgContainer.el.offsetTop,
   }
 }
-function sceneToGameCoordinates(p: Point) {
+export function sceneToGameCoordinates(p: Point): Point {
   let $zoom = get(zoom)
   return {
     x: (p.x - pan.x) / $zoom,
     y: (p.y - pan.y) / $zoom,
+  }
+}
+export function gameToSceneCoordinates(p: Point): Point {
+  let $zoom = get(zoom)
+  return {
+    x: p.x * $zoom + pan.x,
+    y: p.x * $zoom + pan.y,
   }
 }

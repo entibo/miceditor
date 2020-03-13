@@ -1,32 +1,27 @@
 
-import * as sceneObjects from "stores/sceneObjects"
-import { SO } from "stores/sceneObjects"
+import * as sceneObjects from "state/sceneObjects"
 
-import * as Common from "data/Common"
-import * as MapSettings from "data/MapSettings"
-import * as Platform from "data/Platform"
-/* import * as Decoration from "data/Decoration"
-import * as ShamanObject from "data/ShamanObject"
-import * as Joint from "data/Joint" */
-import * as Data from "data/Data"
+import * as Editor from "data/editor"
 
-import * as util from "stores/util"
+import { store, Store } from "state/util"
 
 type Creation = 
   { active: false }
   | 
   { active: true
-    platform: SO<Platform.Platform> }
+    platform: Store<Editor.Platform.Platform> }
   | 
   { active: true
-    image: SO<Common.Image> }
+    image: Store<Editor.Image.Image> }
   | 
   { active: true
-    decoration: SO<Decoration.Decoration> }
+    decoration: Store<Editor.Decoration.Decoration> }
   | 
   { active: true
-    shamanObject: SO<ShamanObject.ShamanObject> }
+    shamanObject: Store<Editor.ShamanObject.ShamanObject> }
   | 
   { active: true
-    joint: SO<Joint.Joint>
+    joint: Store<Editor.Joint.Joint>
     /* */ }
+
+export default store<Creation>({ active: false, })  

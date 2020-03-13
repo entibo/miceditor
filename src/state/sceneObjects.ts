@@ -1,35 +1,52 @@
 
-import * as Common from "data/Common"
-import * as MapSettings from "data/MapSettings"
-import * as Platform from "data/Platform"
-/* import * as Decoration from "data/Decoration"
-import * as ShamanObject from "data/ShamanObject"
-import * as Joint from "data/Joint" */
-import * as Editor from "editor"
+import * as Editor from "data/editor"
 
 import { writable, Writable, derived, readable, Readable, get } from "svelte/store"
 
-import { store, Store } from "stores/util"
+import { store, Store } from "state/util"
 
-import { clamp } from "data/util"
+import { clamp } from "data/base/util"
+
+import * as history from "state/history"
 
 
 
-export type SceneObject
-  = Store<Editor.Object>
-  // |
+export type SceneObject = Store<Editor.Object>
 
 
 
 export const groups = {
-  platforms: store([] as Store<Editor.Platform.Platform>[]),
-/*   platforms: util.customStore([] as util.CustomStore<Data.Platform>[]),
-  images: util.customStore([] as ImageSceneObject[]), */
+  platforms:     store([] as Store<Editor.Platform.Platform>[]),
+  decorations:   store([] as Store<Editor.Decoration.Decoration>[]),
+  shamanObjects: store([] as Store<Editor.ShamanObject.ShamanObject>[]),
+  joints:        store([] as Store<Editor.Joint.Joint>[]),
+  images:        store([] as Store<Editor.Image.Image>[]),
+}
+groups.platforms.subscribe(history.invalidate)
+groups.decorations.subscribe(history.invalidate)
+groups.shamanObjects.subscribe(history.invalidate)
+groups.joints.subscribe(history.invalidate)
+groups.images.subscribe(history.invalidate)
+
+export function clear() {
+  groups.platforms.splice(0)
+  groups.platforms.invalidate()
+  groups.decorations.splice(0)
+  groups.decorations.invalidate()
+  groups.shamanObjects.splice(0)
+  groups.shamanObjects.invalidate()
+  groups.joints.splice(0)
+  groups.joints.invalidate()
+  groups.images.splice(0)
+  groups.images.invalidate()
 }
 
 function getGroup(obj: Editor.Object): Store<SceneObject[]> {
-  if(Editor.isPlatform(obj)) return groups.platforms
-  if(Editor.isImage(obj)) return groups.images
+  if(Editor.isPlatform(obj))     return groups.platforms
+  if(Editor.isDecoration(obj))   return groups.decorations
+  if(Editor.isJoint(obj))        return groups.joints
+  if(Editor.isShamanObject(obj)) return groups.shamanObjects
+  if(Editor.isImage(obj))        return groups.images
   throw "never"
 }
 
@@ -73,7 +90,8 @@ export function add(obj: Editor.Object, index?: number): SceneObject {
   let s = store(obj)
   s.index = group.length
   group.push(s)
-  setIndex(s, group, index ?? group.length)
+  setIndex(s, group, index !== undefined ? index : group.length)
+  s.subscribe(history.invalidate)
   return s
 }
 
@@ -94,116 +112,31 @@ function derive <T,S> (store: Readable<T>, transform: (value: T) => NonNullable<
     store.subscribe(value => set(transform(value))))
 }
 
-export const platforms = derive(groups.platforms, list => {
-  let background = [] as PlatformSceneObject[], 
-      foreground = [] as PlatformSceneObject[]
-  for(let obj of list) {
-    console.log("(derived) platforms", "foreground:", (obj as any).foreground)
-    if(Platform.isForeground(obj)) {
-      foreground.push(obj)
-    } else {
-      background.push(obj)
-    }
-  }
-  return {background, foreground}
+
+
+export const platforms = derive(groups.platforms, all => {
+  let [foreground,background] = all.split(Editor.Platform.isForeground)
+  return {all,foreground,background}
 })
 
-/* export const platforms = readable({ background: [], foreground: []}, set => {
-  groups.platforms.subscribe(list => {
-    console.log("(derived) platforms")
-    let background = [] as PlatformSceneObject[], 
-        foreground = [] as PlatformSceneObject[]
-    for(let obj of list) {
-      if(Platform.isForeground(obj)) {
-        foreground.push(obj)
-      } else {
-        background.push(obj)
-      }
-    }
-    set({background, foreground})
-  })
-}) */
+export const decorations = derive(groups.decorations, all => {
+  let [foreground,background] = all.split(Editor.Decoration.isForeground)
+  return {all,foreground,background}
+})
 
-/* type PlatformWithMetadata 
-  = Platform.Platform
-  & { group: "platforms"
-      index: number }
-type ImageWithMetadata 
-  = Common.Image
-  & { group: "images", layer: "background" | "foreground" | "APS"
-      index: number } */
+export const shamanObjects = derive(groups.shamanObjects, all => {
+  let [foreground,background] = all.split(Editor.ShamanObject.isForeground)
+  return {all,foreground,background}
+})
 
-/* type DataWithMetadata
-  = ImageWithMetadata
-  | PlatformWithMetadata
-  | DecorationWithMetaData
-  | ShamanObjectWithMetaData
-  | JointWithMetaData 
-*/
+export const joints = derive(groups.joints, all => {
+  let [foreground,background] = all.filter(Editor.Joint.isRendered).split(Editor.Joint.isForeground)
+  return {all,foreground,background}
+})
 
+export const images = derive(groups.images, all => {
+  let [disappearing,rest] = all.split(Editor.Image.isDisappearing)
+  let [foreground,background] = rest.split(Editor.Image.isForeground)
+  return {all,disappearing,foreground,background}
+})
 
-
-/*
-  Store containing a list of (stores) all
-  interactive/renderable/selectable things
-
-  Updates when:
-    * an object is added/removed
-    * objects are re-ordered
-    * a property of an object that affects how it should be rendered
-      beyond the scope of its respective component is changed
-      e.g: background/foreground
-*/
-/* let $sceneObjects = [] as Array<Writable<SceneObject.SceneObject>>
-let { subscribe, set, update } = writable($sceneObjects)
-subscribe(list => $sceneObjects = list)
-
-function createStoreFromSceneObject(obj: SceneObject.SceneObject): Writable<SceneObject.SceneObject> {
-  if(SceneObject.isPlatform(obj)) {
-    if("foreground" in obj) {
-      let store = writableWithSetterProxy(obj)
-      store.onPropertyChange("foreground", () => update(x=>x))
-      return store
-    }
-  }
-  return writableWithSetterProxy(obj)
-} */
-
-/* export function add(obj: SceneObject.SceneObject) {
-  let store = createStoreFromSceneObject(obj)
-  update(list => {
-    list.push(store)
-    return list
-  })
-  //store.subscribe(() => update(x=>x)) // why ?
-}
- */
-
-// export { subscribe }
-
-/* export const platforms = derived({subscribe}, 
-  () => $sceneObjects)
-
-
-
-export const visiblePlatforms 
-  = derived([{subscribe}, visibility.platforms], ([_, visible]) => {
-    let r = { 
-      background: [] as Writable<Platform.Platform>[], 
-      foreground: [] as Writable<Platform.Platform>[],
-    }
-    if(!visible) return r
-    for(let store of $sceneObjects) {
-      let obj = getStore(store)
-      if(!SceneObject.isPlatform(obj)) continue
-      if(Platform.isForeground(obj)) {
-        r.foreground.push(store)
-      } else {
-        r.background.push(store)
-      }
-    }
-    return r
-  })
-
-
- */

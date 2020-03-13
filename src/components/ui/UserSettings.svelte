@@ -6,9 +6,8 @@
   import TextInput from "/components/common/TextInput.svelte"
   import ColorTextInput from "/components/common/ColorTextInput.svelte"
 
-  import { 
-    highQuality, parkour, showGameGUI, showMapBorder, showInvisibleGrounds, gridSettings, _
-  } from "/stores/stores.js"
+  import { parkour, showGameGUI, showMapBorder, showInvisibleGrounds, grid } from "/state/user"
+  import { _ } from "/state/locale"
 
 </script>
 
@@ -16,15 +15,6 @@
 <div class="flex">
 
   <div class="flex-grow flex flex-col">
-
-    <section>
-      <label class="flex items-center">
-        <input type="checkbox" bind:checked={$highQuality}/>
-        <span class="text-sm gray-200 ml-2">{$_("high-resolution")}</span>
-      </label>
-    </section>
-
-    <div class="mb-2"></div>
 
     <section>
       <label class="flex items-center">
@@ -49,32 +39,32 @@
 
     <section>
       <label class="flex items-center">
-        <input type="checkbox" bind:checked={$gridSettings.enabled}/>
+        <input type="checkbox" bind:checked={$grid.enabled}/>
         <span class="text-sm gray-200 ml-2">{$_("show-grid")}...</span>
       </label>
     </section>
-    {#if $gridSettings.enabled}
+    {#if $grid.enabled}
     <div transition:fly={{y:-10, duration: 60}} class="border-l-2 pl-3 border-white">
       <section>
         <label>
           <span>L</span>
           <span class="w-12">
-            <TextInput number bind:value={$gridSettings.width} />
+            <TextInput number bind:value={$grid.width} />
           </span>
         </label>
         <label>
           <span>H</span>
           <span class="w-12">
-            <TextInput number bind:value={$gridSettings.height} />
+            <TextInput number bind:value={$grid.height} />
           </span>
         </label>
       </section>
       <section>
         <label class="">
           <span>{$_("grid-color")}</span>
-          <div class="color-tile cursor-pointer" style="background: #{$gridSettings.color}"></div>
+          <div class="color-tile cursor-pointer" style="background: #{$grid.color}"></div>
           <span class="w-24">
-            <ColorTextInput bind:value={$gridSettings.color} />
+            <ColorTextInput bind:value={$grid.color} />
           </span>
         </label>
       </section>

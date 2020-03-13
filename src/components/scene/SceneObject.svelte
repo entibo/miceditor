@@ -3,7 +3,7 @@
 
   export let obj
 
-  import { objectMouseDown }
+  import { objectMouseDown } from "./interaction"
 
 </script>
 

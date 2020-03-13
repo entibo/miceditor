@@ -1,9 +1,9 @@
-
+/* 
 import { derived } from "svelte/store"
-import * as util from "stores/util"
+import * as util from "state/util"
 
-import * as selection from "@/state/selection"
-import * as Editor from "editor"
+import * as selection from "state/selection"
+import * as Editor from "data/editor"
 
 
 
@@ -238,4 +238,4 @@ function combine<T>(values: T[]): T | null | undefined {
     else if(value !== x) return null
   }
   return value
-}
+} */

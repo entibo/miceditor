@@ -1,8 +1,8 @@
 
 import * as M from "util/Maybe"
-import * as XML from "data/XML"
-import * as util from "data/util"
-import * as Common from "data/Common"
+import * as XML from "./XML"
+import * as util from "./util"
+import * as Common from "./Common"
 
 const attributes = [
   "X", "Y", 
@@ -13,9 +13,10 @@ const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 type Type = number | SpecialType
 type SpecialType = "T" | "F" | "DS" | "DC" | "DC2"
 
+
 export interface Node extends XML.Node {
-  name: "P" | SpecialType,
-  children: [],
+  name: "P" | SpecialType
+  children: []
   attributes: Partial<Record<typeof attributes[number], string>>
 }
 
@@ -59,10 +60,11 @@ const baseDefaults: () => Base = () => ({
   y: 0,
 })
 
-import metadata from "decorationMetadata"
+import metadata from "metadata/decoration"
 export const colorDefaults: (t: number) => string[] = type =>
-  metadata[type]?.filters.map(o => o.defaultColor) 
-                ?? []
+  metadata[type] !== undefined
+    ? metadata[type].filters.map(o => o.defaultColor) 
+    : []
 
 export const defaults: (t: Type) => Decoration = type =>
  ({ ...baseDefaults(),

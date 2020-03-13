@@ -7,7 +7,7 @@ import svelte from 'rollup-plugin-svelte';
 import {terser} from 'rollup-plugin-terser';
 import json from 'rollup-plugin-json';
 import rootImport from 'rollup-plugin-root-import';
-import typescript from "rollup-plugin-typescript2";
+import typescript from "@rollup/plugin-typescript";
 
 const svelteOptions = require("./svelte.config.js");
 

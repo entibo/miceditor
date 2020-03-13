@@ -2,19 +2,19 @@
 <script>
   import cc from "color-convert"
   import { onMount } from "svelte"
-  import { getUniqueId } from "/utils.js"
-  import decorationMetadata from "/decorationMetadata.js"
+  import { getUniqueId } from "/util"
+  import decorationMetadata from "/metadata/decoration/index"
 
   import SvgImage from "/components/common/SvgImage.svelte"
   
-  import { settings } from "/stores/stores.js"
+  import { mapSettings } from "/state/map"
 
-  export let decoration
-  export let active
+  export let obj
+  $: active = $obj.selected
 
   let instanceId = getUniqueId()
 
-  $: metadata = getDecorationMetadata(decoration)
+  $: metadata = getDecorationMetadata($obj)
   const specialMetadataOffset = {
     T: { x: 21, y: 31 },
     "T-1": { x: 25, y: 35 },
@@ -26,22 +26,22 @@
     DC: { x: 26, y: 43 },
     DC2: { x: 26, y: 43 },
   }
-  function getDecorationMetadata(decoration) {
-  	let type = decoration._type
-    if(decoration.name === "P") {
+  function getDecorationMetadata(obj) {
+  	let type = obj.type
+    if(typeof obj.type === "number") {
       return decorationMetadata[type]
     }
-    else if(decoration.name === "F") {
-      if($settings._dodue) {
+    else if(obj.type === "F") {
+      if($mapSettings.dodue) {
         type = "F-triple"
-        if($settings._theme === "halloween") {
+        if($mapSettings.theme === "halloween") {
           type = "F-candy"
         }
       }
     }
-    else if(decoration.name === "T") {
-      if(decoration._holeColor) {
-        let newType = "T-" + decoration._holeColor
+    else if(obj.type === "T") {
+      if(obj.holeColor !== "") {
+        let newType = "T-" + obj.holeColor
         if(specialMetadataOffset[newType]) {
           type = newType
         }
@@ -54,10 +54,10 @@
     }
   }
 
-  $: filters = getFilters(decoration)
-  function getFilters() {
+  $: filters = getFilters($obj)
+  function getFilters(obj) {
     return metadata.filters.map(({name,defaultColor}, index) => {
-      let color = decoration["_displayColor"+index]
+      let color = "#" + obj.colors[index]
       let matrix = getColorMatrix(color)
       return { name, matrix }
     })
@@ -74,7 +74,7 @@
   
   let promise
   $: if(filtersLength)
-      promise = fetch(`dist/decorations/${decoration._type}.svg`).then(r => r.text()).then(withInstancedFilterIds)
+      promise = fetch(`dist/decorations/${$obj.type}.svg`).then(r => r.text()).then(withInstancedFilterIds)
 
   function getColorMatrix(hex) {
     let [r,g,b] = cc.hex.rgb(hex).map(x => x/255)
@@ -92,7 +92,7 @@
 
 <g on:mousedown 
   class="decoration" class:active={active} 
-  transform="translate({decoration._x}, {decoration._y}) {decoration._reverse ? 'scale(-1, 1)' : ''}"
+  transform="translate({$obj.x}, {$obj.y}) {$obj.reverse ? 'scale(-1, 1)' : ''}"
 >
   <g transform="translate(-{metadata.offset.x}, -{metadata.offset.y})">
 

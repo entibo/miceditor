@@ -1,6 +1,6 @@
 
 import * as M from "util/Maybe"
-import * as XML from "data/XML"
+//import * as XML from "./XML"
 
 
 export function makeChecker <T extends object, S extends T> (key: keyof S) {

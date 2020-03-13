@@ -1,63 +1,65 @@
 
 <script>
+  import shamanObjectMetadata from "/metadata/shamanObject/index"
+  import { parkour } from "/state/user"
+  import { mapSettings } from "/state/map"
+  import { shamanObjects } from "/state/sceneObjects"
 
-  import { parkour, shamanObjects, settings } from "/stores/stores.js"
+  export let obj
 
-  export let shamanObject
-  export let active
+  $: active = $obj.selected
 
-  $: spriteData = getSpriteData(shamanObject, $settings)
-  function getSpriteData() {
-    if(!shamanObject._spriteData) return
-    if($settings._defilanteEnabled && shamanObject._spriteData.defilanteVariant) {
-      return shamanObject._spriteData.defilanteVariant
-    }
-    return shamanObject._spriteData
+  $: metadata = getMetadata($obj, $mapSettings)
+  function getMetadata(shamanObject, mapSettings) {
+    let spriteData = shamanObjectMetadata[shamanObject.type]
+    if(!spriteData) return
+    return mapSettings.defilante.enabled && spriteData.defilanteVariant
+      ? spriteData.defilanteVariant
+      : spriteData
   }
 
-  function getParkourCheckpointIndex() {
-    return $shamanObjects.filter(o => o._type == "22").indexOf(shamanObject) + 1
-  }
+  $: parkourCheckpointIndex = 
+        $shamanObjects.all.filter(o => o.type === 22).indexOf($obj) + 1
 
 </script>
 
 
 <g on:mousedown
   class="platform" class:active={active} 
-  transform="translate({shamanObject._x}, {shamanObject._y}) 
-             rotate({shamanObject._rotation || 0})"
+  transform="translate({$obj.x}, {$obj.y}) 
+             rotate({$obj.rotation || 0})"
 >
 
-  {#if spriteData && spriteData.spritesheet}
+  {#if metadata && metadata.spritesheet}
 
-  <foreignObject class="pointer-events-none" class:opacity50={shamanObject._ghost}
-    x={-spriteData.width/2} y={-spriteData.height/2}
-    width={spriteData.width} height={spriteData.height}
+  <foreignObject class="pointer-events-none" class:opacity50={$obj.ghost}
+    x={-metadata.width/2} y={-metadata.height/2}
+    width={metadata.width} height={metadata.height}
   >
-    <div style="background-image: url(dist/shamanObjects/{spriteData.spritesheet}); 
-                background-position: {-spriteData.offset.x}px {-spriteData.offset.y}px;
+    <div style="background-image: url(dist/shamanObjects/{metadata.spritesheet}); 
+                background-position: {-metadata.offset.x}px {-metadata.offset.y}px;
                 background-repeat: no-repeat;"
       class="w-full h-full"
     ></div>
   </foreignObject>
 
   <rect fill="transparent" class="selectable" 
-    x={-spriteData.boundingWidth/2} y={-spriteData.boundingHeight/2}
-    width={spriteData.boundingWidth} height={spriteData.boundingHeight}
+    x={-metadata.boundingWidth/2} y={-metadata.boundingHeight/2}
+    width={metadata.boundingWidth} height={metadata.boundingHeight}
   />
 
-  {:else if spriteData && spriteData.sprite}
+  {:else if metadata && metadata.sprite}
 
-  <image class="selectable" class:opacity50={shamanObject._ghost}
-    x={-spriteData.width/2} y={-spriteData.height/2}
-    width={spriteData.width} height={spriteData.height}
-    href="dist/shamanObjects/{spriteData.sprite}"
+  <image class="selectable" class:opacity50={$obj.ghost}
+    x={-metadata.width/2} y={-metadata.height/2}
+    width={metadata.width} height={metadata.height}
+    href="dist/shamanObjects/{metadata.sprite}"
     on:mousedown|preventDefault
   />
 
   {:else}
 
-  <rect class="selectable" class:opacity50={shamanObject._ghost}
+  <rect class="selectable" class:opacity50={$obj.ghost}
     x={-20} y={-20}
     width={40} height={40}
     fill="red"
@@ -65,8 +67,8 @@
 
   {/if}
 
-  {#if $parkour && shamanObject._type == "22"}
-  <text class="pointer-events-none" y="-8">{getParkourCheckpointIndex()}</text>
+  {#if $parkour && $obj.type === 22}
+  <text class="pointer-events-none" y="-8">{parkourCheckpointIndex}</text>
   {/if}
 
 </g>

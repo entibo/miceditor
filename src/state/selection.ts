@@ -1,10 +1,10 @@
 
 import { writable, Writable, derived, get as storeGet } from "svelte/store"
 
-import * as Editor from "editor"
-import * as sceneObjects from "stores/sceneObjects"
-import { SceneObject } from "stores/sceneObjects"
-import { store } from "stores/util"
+import * as Editor from "data/editor"
+import * as sceneObjects from "state/sceneObjects"
+import { SceneObject } from "state/sceneObjects"
+import { store } from "state/util"
 
 const blank = store({})
 let selectionMap = new Map<SceneObject, ()=>void>()
@@ -28,6 +28,7 @@ export function set(objs: SceneObject[]) {
   selectionMap = new Map()
   for(let obj of objs) {
     obj.selected = true
+    obj.invalidate()
     let unsubscribe = obj.subscribe(blank.invalidate)
     selectionMap.set(obj, unsubscribe)
   }
@@ -36,6 +37,7 @@ export function set(objs: SceneObject[]) {
 export function select(obj: SceneObject) {
   if(selectionMap.has(obj)) return
   obj.selected = true
+  obj.invalidate()
   selectionMap.set(obj, obj.subscribe(blank.invalidate))
   blank.invalidate()
 }
@@ -44,6 +46,7 @@ export function unselect(obj: SceneObject) {
   if(!unsubscribe) return
   unsubscribe()
   obj.selected = false
+  obj.invalidate()
   selectionMap.delete(obj)
   blank.invalidate()
 }
@@ -63,13 +66,16 @@ export function remove() {
   blank.invalidate()
 }
 export function duplicate() {
-  clear()
+  let duplicates = []
   for(let obj of selectionMap.keys()) {
     let data = Editor.clone(obj)
-    data.index += 1
-    let obj2 = sceneObjects.add(data)
-    select(obj2)
+    duplicates.push(
+      sceneObjects.add(data, data.index+1)
+    )
   }
+  clear()
+  for(let obj of duplicates)
+    select(obj)
   move(40, 0)
 }
 
@@ -82,6 +88,22 @@ export function move(dx: number, dy: number) {
 }
 
 export function shiftIndex(dz: number) {
+
+}
+
+export function resize(dx: number, dy: number) {
+
+}
+
+export function flip() {
+
+}
+
+export function rotate(a: number) {
+  
+}
+
+export function rotateAround(a: number, p: Point) {
 
 }
 

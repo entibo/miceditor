@@ -1,13 +1,27 @@
 
-let data = {}
-
-function range(a, b) {
-  let arr = []
-  for(let k=a; k <= b; k++)
-    arr.push(k)
-  return arr
+type Sprite = {
+  sprite: string
+  width:  number
+  height: number
 }
-function setData(types, arg) {
+type Spritesheet = {
+  spritesheet: string
+  width:  number
+  height: number
+  variants?: number[]
+  isVariant: boolean
+  offset: Point
+  boundingWidth:  number
+  boundingHeight: number
+}
+
+export type Metadata = (Sprite | Spritesheet) & { defilanteVariant?: Sprite }
+      
+
+
+let data = {} as Record<number, Metadata>
+
+function setData(types: number | number[], arg: Metadata | ((t: number) => Metadata)) {
   if(!(types instanceof Array))
     types = [types]
   if(typeof arg === "function") {
@@ -240,6 +254,8 @@ setData(24, {
 })
 setData(67, {
   spritesheet: "very-big-plank.png",
+  variants: undefined,
+  isVariant: false,
   width: 306, height: 14,
   offset: { x: 0, y: 0 },
   boundingWidth: 300,
@@ -264,3 +280,11 @@ data[16].defilanteVariant = {
 }
 
 export default data
+
+
+function range(a: number, b: number) {
+  let arr = []
+  for(let k=a; k <= b; k++)
+    arr.push(k)
+  return arr
+}

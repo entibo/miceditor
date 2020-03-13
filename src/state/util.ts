@@ -28,11 +28,17 @@ export function store <T extends object> (object: T): Store<T> {
     },
     set: {
       enumerable: false,
-      value: store.set,
+      value: (value: T) => {
+        Object.assign(object, value)
+        store.set(value)
+      },
     },
     update: {
       enumerable: false,
-      value: store.update,
+      value: (updater: Function) => {
+        store.update(updater as any)
+        Object.assign(object, S.get(store))
+      },
     },
     invalidate: {
       enumerable: false,

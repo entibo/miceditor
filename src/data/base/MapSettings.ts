@@ -1,8 +1,9 @@
 
-import * as XML from "data/XML"
-import * as Common from "data/Common"
-import * as util from "data/util"
 import * as M from "util/Maybe"
+import * as XML from "./XML"
+import * as Common from "./Common"
+import * as Image from "./Image"
+import * as util from "./util"
 
 
 const attributes = [
@@ -31,8 +32,8 @@ export interface MapSettings extends Common.UnknownAttributes {
 
   backgroundImageId: string
 
-  backgroundImages: Common.Image[]
-  foregroundImages: Common.Image[]
+  backgroundImages: Image.Image[]
+  foregroundImages: Image.Image[]
   disappearingImages: DisappearingImage[]
 
   gravity: number
@@ -72,14 +73,14 @@ export interface MapSettings extends Common.UnknownAttributes {
 
 }
 
-export interface DisappearingImage extends Common.Image {
+export interface DisappearingImage extends Image.Image {
   rx: number
   ry: number
   rw: number
   rh: number
 }
 const disappearingImageDefaults: () => DisappearingImage = () => ({
-  ...Common.imageDefaults(),
+  ...Image.defaults(),
   rx: 0,
   ry: 0,
   rw: 0,
@@ -214,24 +215,24 @@ export function encode(data: MapSettings): Node {
 
 
 // Format: "url,x,y;url,x,y;url,x,y;..."
-function readImages(str: string): Common.Image[] {
+function readImages(str: string): Image.Image[] {
   return str.split(";").map(readImage).reverse()
 }
-function writeImages(images: Common.Image[]): string {
+function writeImages(images: Image.Image[]): string {
   return images.reverse().map(writeImage).join(";")
 }
 
 // Format: "url,x,y"
-function readImage(str: string): Common.Image {
-  let image = Common.imageDefaults()
+function readImage(str: string): Image.Image {
+  let image = Image.defaults()
   let set = util.makeSetter(image)
   let parts = str.split(",")
-  set ("imageUrl") (M.andThen(parts.shift(), M.iffDefined, Common.getImageUrl))
+  set ("imageUrl") (M.andThen(parts.shift(), M.iffDefined, Image.readUrl))
   set ("x") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
   set ("y") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
   return image
 }
-function writeImage(image: Common.Image): string {
+function writeImage(image: Image.Image): string {
   return [
     image.imageUrl.value,
     util.writeInt(image.x),
@@ -252,7 +253,7 @@ function readDisappearingImage(str: string): DisappearingImage {
   let image = disappearingImageDefaults()
   let set = util.makeSetter(image)
   let parts = str.split(",")
-  set ("imageUrl") (M.andThen(parts.shift(), M.iffDefined, Common.getImageUrl))
+  set ("imageUrl") (M.andThen(parts.shift(), M.iffDefined, Image.readUrl))
   parts.shift() // ?
   set ("rx") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
   set ("ry") (M.andThen(parts.shift(), M.iffDefined, util.readInt))

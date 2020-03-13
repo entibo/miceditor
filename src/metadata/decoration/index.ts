@@ -1,4 +1,4 @@
-import { getUniqueId } from "utils.js"
+import { getUniqueId } from "@/util"
 import decorationMetadata from "./decorationMetadata.json"
 
 const defaultFilter = () => ({ 
@@ -9,5 +9,5 @@ const defaultFilter = () => ({
 export default decorationMetadata
   .map(entry => ({
     ...entry,
-    filters: entry.filters.map(x => x ?? defaultFilter())
+    filters: entry.filters.map(x => x || defaultFilter())
   }))

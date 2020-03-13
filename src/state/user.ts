@@ -1,12 +1,12 @@
 
 import { writable } from "svelte/store"
 
-import { persistentWritable } from "stores/util"
+import { persistentWritable } from "state/util"
 
-export const highQuality = persistentWritable("highQuality", true)
 export const showGameGUI = persistentWritable("showGameGUI", true)
 export const showMapBorder = persistentWritable("showMapBorder", true)
 export const showInvisibleGrounds = persistentWritable("showInvisibleGrounds", true)
+export const parkour = persistentWritable("parkour", false)
 
 export const grid = persistentWritable("grid", {
   enabled: false,
@@ -14,8 +14,6 @@ export const grid = persistentWritable("grid", {
   sticky: false,
   color: "0e0e0e",
 })
-
-export const parkour = persistentWritable("parkour", false)
 
 export const zoom = (() => {
   let {subscribe, set, update} = writable(1)

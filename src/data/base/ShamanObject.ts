@@ -1,8 +1,8 @@
 
 import * as M from "util/Maybe"
-import * as XML from "data/XML"
-import * as util from "data/util"
-import * as Common from "data/Common"
+import * as XML from "./XML"
+import * as util from "./util"
+import * as Common from "./Common"
 
 const attributes = [
   "X", "Y", 
@@ -46,6 +46,9 @@ export interface ShamanObjectProps extends Base {
   speed: number
 }
 
+export const isAnchor = (data: ShamanObject): data is Extract<ShamanObject, {type: AnchorType}> =>
+  anchorTypes.includes(data.type)
+  
 
 const baseDefaults: () => Base = () => ({
   unknownAttributes: {},

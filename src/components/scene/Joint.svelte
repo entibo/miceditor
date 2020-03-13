@@ -2,10 +2,10 @@
 <script context="module">
 
   import { get as storeGet } from "svelte/store"
-  import { zoom, drawingData } from "/stores/stores.js"
+  import { zoom, drawingData } from "/state/user"
 
   let resizeInfo = null
-
+/* 
   window.addEventListener("mousemove", onMouseMove)
   window.addEventListener("mouseup", onMouseRelease)
   window.addEventListener("mouseleave", onMouseRelease)
@@ -63,69 +63,73 @@
 
   function onMouseRelease() {
     resizeInfo = null
-  }
+  } */
 
 </script>
 
 <script>
 
-  import { encodeJointData } from "/xml-utils.ts"
-  import {
+  //import { encodeJointData } from "/xml-utils.ts"
+  /* import {
     joints, selection, buildXML, creation, bezier
-  } from "/stores/stores.js"
+  } from "/stores/stores.js" */
+  import { bezier } from "@/util"
+  import creation from "/state/creation"
 
-  export let joint
-  export let active = false
+  export let obj
 
-  $: isHardToSee = ( joint._opacity < 0.1 ) || 
-                   ( isNaN(parseInt(joint._color, 16)) ) ||
-                   [joint._color.substring(0,2), joint._color.substring(2,4), joint._color.substring(4,6)]
-                      .map(s => parseInt(s, 16))
-                      .every((x,i) => Math.abs([0x6a,0x74,0x95][i] - x) < 10)
+  $: active = $obj.selected
 
-  $: polylinePoints = 
-      ( joint.name === "VC" 
-        ? Array(joint._fineness+1).fill()
-            .map((_,i) => bezier(i/joint._fineness, joint._points[0], joint._points[1], joint._controlPoints[0], joint._controlPoints[1]))
-        : joint._points )
-      .map(p => [p.x,p.y].join(",")).join(" ")
+  $: isHardToSee 
+      =  ( $obj.opacity < 0.1 ) 
+      || ( isNaN(parseInt($obj.color, 16)) ) 
+      || [$obj.color.substring(0,2), $obj.color.substring(2,4), $obj.color.substring(4,6)]
+            .map(s => parseInt(s, 16))
+            .every((x,i) => Math.abs([0x6a,0x74,0x95][i] - x) < 10)
 
-  function rotate(x, y, angle, cx=0, cy=0) {
-    var radians = (Math.PI / 180) * angle,
-        cos = Math.cos(radians),
-        sin = -Math.sin(radians),
-        nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
-        ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
-    return [nx, ny];
+  let points
+  $: {
+    points = []
+    for(let prop of ["point1","point3","point4","point2"])
+      if($obj[prop])
+        points.push($obj[prop])
   }
 
-  $: if(joint.__delegateAction) {
-        if(joint.name === "VC") {
-          let cp = joint._points[0].x == joint._points[1].x
-                && joint._points[0].y == joint._points[1].y ? 0 : 1
+  $: polyline = 
+      ( $obj.type === "VC" 
+        ? Array($obj.fineness + 1).fill()
+            .map((_,i) => bezier(i/$obj.fineness, $obj.point1, $obj.point2, $obj.controlPoint1, $obj.controlPoint2))
+        : points )
+      .map(p => [p.x,p.y].join(",")).join(" ")
+
+
+  $: if($obj.__delegateAction) {
+        if($obj.name === "VC") {
+          let cp = $obj._points[0].x == $obj._points[1].x
+                && $obj._points[0].y == $obj._points[1].y ? 0 : 1
           resizeInfo = { 
-            joint,
+            $obj,
             listKey: "_controlPoints",
             pointIndex: cp,
-            originalPoint: {...joint._controlPoints[cp]},
+            originalPoint: {...$obj._controlPoints[cp]},
           }
         }
         else {
           resizeInfo = { 
-            joint,
+            $obj,
             listKey: "_points",
             pointIndex: 1,
-            originalPoint: {...joint._points[1]},
+            originalPoint: {...$obj._points[1]},
           }
         }
-        joint.__delegateAction = false
+        $obj.__delegateAction = false
   }
   function pointMoveStart(e, listKey, pointIndex) {
     resizeInfo = { 
-      joint,
+      $obj,
       listKey,
       pointIndex,
-      originalPoint: {...joint[listKey][pointIndex]},
+      originalPoint: {...$obj[listKey][pointIndex]},
       start: { x: e.clientX, y: e.clientY },
     }
   }
@@ -140,14 +144,15 @@
     on:mousedown on:mousemove on:mouseleave
   >
     <g class="selectable" class:active class:hard-to-see={isHardToSee} >
-      <polyline points={polylinePoints}
-        stroke-width="{joint._thickness}" 
-        stroke="{joint._displayColor}" 
+      <polyline points={polyline}
+        stroke-width={$obj.thickness}
+        stroke="#{$obj.color}" 
         fill="none"
-        opacity="{joint._opacity}"
+        opacity={$obj.opacity}
       >
     </g>
   </g>
+  <!--
   {#if !$creation || $creation.objectType !== "joint" || $drawingData.curveToolEnabled  }
   <g class="point-crosshairs" class:active >
 
@@ -193,6 +198,8 @@
 
   </g>
   {/if}
+  -->
+
 </g>
 
 
