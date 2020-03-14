@@ -74,10 +74,10 @@ setData([4, ...range(401, 414)], type => {
     boundingHeight: 10,
   }
 })
-setData([6, ...range(601, 613)], type => {
+setData([6, ...range(601, 614)], type => {
   let variant = type === 6 ? 0 : type - 600
   return {
-    variants: range(601,613),
+    variants: range(601,614),
     isVariant: type !== 6,
     spritesheet: "balls.png",
     width: 90, height: 90,
@@ -122,10 +122,10 @@ setData([17, ...range(1701, 1711)], type => {
     boundingHeight: 30,
   }
 })
-setData([...range(28,31), ...range(2801, 2820)], type => {
+setData([...range(28,31), ...range(2801, 2821)], type => {
   let variant = type >= 28 && type <= 31 ? type - 28 : type - 2801 + 4
   return {
-    variants: [...range(29,31), ...range(2801, 2820)],
+    variants: [...range(29,31), ...range(2801, 2821)],
     isVariant: type !== 28,
     spritesheet: "balloons.png",
     width: 72, height: 100,
