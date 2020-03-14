@@ -87,13 +87,12 @@
             .map(s => parseInt(s, 16))
             .every((x,i) => Math.abs([0x6a,0x74,0x95][i] - x) < 10)
 
-  let points
-  $: {
-    points = []
-    for(let prop of ["point1","point3","point4","point2"])
-      if($obj[prop])
-        points.push($obj[prop])
-  }
+  $: points = ["point1","point3","point4","point2"] 
+        .map(name => $obj[name] && { ...$obj[name], name })
+        .filter(x => x !== undefined && x.enabled)
+
+  $: controlPoints = ["controlPoint1", "controlPoint2"] 
+        .map(name => ({ ...$obj[name], name }))
 
   $: polyline = 
       ( $obj.type === "VC" 
@@ -102,7 +101,7 @@
         : points )
       .map(p => [p.x,p.y].join(",")).join(" ")
 
-
+/* 
   $: if($obj.__delegateAction) {
         if($obj.name === "VC") {
           let cp = $obj._points[0].x == $obj._points[1].x
@@ -132,7 +131,7 @@
       originalPoint: {...$obj[listKey][pointIndex]},
       start: { x: e.clientX, y: e.clientY },
     }
-  }
+  } */
 
   let crosshairRadius = 6
   let crosshairThickness = 2
@@ -152,13 +151,12 @@
       >
     </g>
   </g>
-  <!--
-  {#if !$creation || $creation.objectType !== "joint" || $drawingData.curveToolEnabled  }
+  
   <g class="point-crosshairs" class:active >
 
-    {#each joint._points as p, pointIndex}
+    {#each points as {x,y,name}}
     <g fill="none" stroke="yellow" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
-      transform="translate({p.x},{p.y})"
+      transform="translate({x},{y})"
     >
       <line x1={0-crosshairRadius} x2={0+crosshairRadius}
             y1={0} y2={0}  />
@@ -167,18 +165,18 @@
       <circle fill="transparent" stroke="none"
         x={0} y={0}
         r={crosshairRadius}
-        on:mousedown|stopPropagation|preventDefault={e => pointMoveStart(e, "_points", pointIndex)}
+        on:mousedown|stopPropagation|preventDefault={e => undefined}
       />
     </g>
     {/each}
 
-    {#if joint._controlPoints}
+    {#if $obj.type === "VC"}
     <line fill="none" stroke="yellow" opacity="0.8" stroke-width="0.5"
-          x1={joint._points[0].x} x2={joint._points[1].x}
-          y1={joint._points[0].y} y2={joint._points[1].y}  />
-    {#each joint._controlPoints as p, pointIndex}
+          x1={points[0].x} x2={points[1].x}
+          y1={points[0].y} y2={points[1].y}  />
+    {#each controlPoints as {x,y,name}, idx}
     <g fill="none" stroke="#33ff44" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
-      transform="translate({p.x},{p.y})"
+      transform="translate({x},{y})"
     >
       <line x1={0-crosshairRadius} x2={0+crosshairRadius}
             y1={0} y2={0}  />
@@ -187,18 +185,16 @@
       <circle fill="transparent" stroke="none"
         x={0} y={0}
         r={crosshairRadius}
-        on:mousedown|stopPropagation|preventDefault={e => pointMoveStart(e, "_controlPoints", pointIndex)}
+        on:mousedown|stopPropagation|preventDefault={e => undefined}
       />
     </g>
     <line fill="none" stroke="#33ff44" opacity="0.8" stroke-width="0.5"
-          x1={p.x} x2={joint._points[pointIndex].x}
-          y1={p.y} y2={joint._points[pointIndex].y}  />
+          x1={x} x2={points[idx].x}
+          y1={y} y2={points[idx].y}  />
     {/each}
     {/if}
 
   </g>
-  {/if}
-  -->
 
 </g>
 

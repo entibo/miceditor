@@ -13,3 +13,6 @@ export const make: (obj: Base.Decoration.Decoration) => Decoration = obj =>
 
 export const isForeground = (obj: Decoration) =>
   "foreground" in obj ? obj.foreground : true
+
+export const isSpawn = (obj: Decoration) =>
+  obj.type === "DS" || obj.type === "DC" || obj.type === "DC2"

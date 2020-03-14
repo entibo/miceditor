@@ -46,3 +46,19 @@ export function move(obj: Joint, dx: number, dy: number) {
     obj.controlPoint2.y += dy
   }
 }
+
+export function getBoundingBox(obj: Joint): Box {
+  let pp = []
+  if("point1" in obj) pp.push(obj.point1)
+  if("point2" in obj) pp.push(obj.point2)
+  if("point3" in obj) pp.push(obj.point3)
+  if("point4" in obj) pp.push(obj.point4)
+  let xs = pp.map(({x}) => x)
+  let ys = pp.map(({y}) => y)
+  return {
+    p1: { x: Math.min(...xs),
+          y: Math.min(...ys) },
+    p2: { x: Math.max(...xs),
+          y: Math.max(...ys) },
+  }
+}

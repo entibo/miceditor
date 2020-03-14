@@ -54,8 +54,13 @@ export function clone(obj: Object) {
 export function getBoundingBox(obj: Object): Box {
   if(isImage(obj))
     return Image.getBoundingBox(obj)
-    
-  return { p1: {x: 0, y: 0}, p2: {x: 0, y: 0} }
+  if(isPlatform(obj))
+    return Platform.getBoundingBox(obj)
+  if(isShamanObject(obj))
+    return ShamanObject.getBoundingBox(obj)
+  if(isJoint(obj))
+    return Joint.getBoundingBox(obj)
+  return { p1: {x: obj.x, y: obj.y}, p2: {x: obj.x, y: obj.y} }
 }
 
 

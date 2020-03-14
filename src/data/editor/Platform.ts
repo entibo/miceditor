@@ -48,5 +48,21 @@ export const isForeground = (p: Platform) =>
 export const isInvisible = (p: Platform) =>
   p.type === P.Type.Invisible || p.invisible
 
-export const isCircle = (p: Platform) =>
-  p.type === P.Type.Circle
+export function isCircle(p: Platform): p is Extract<Platform, {type:P.Type.Circle}> {
+  return p.type === P.Type.Circle
+}
+
+export function getBoundingBox(obj: Platform): Box {
+  if(isCircle(obj))
+    return { 
+        p1: { x: obj.x - obj.radius,
+              y: obj.y - obj.radius, },
+        p2: { x: obj.x + obj.radius,
+              y: obj.y + obj.radius, }, 
+      }
+  return Common.computeBoundingBox(
+    { x: obj.x,     y: obj.y },
+    { x: obj.width, y: obj.height },
+    "rotation" in obj ? obj.rotation : 0
+  )
+}

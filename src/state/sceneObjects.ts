@@ -120,8 +120,9 @@ export const platforms = derive(groups.platforms, all => {
 })
 
 export const decorations = derive(groups.decorations, all => {
-  let [foreground,background] = all.split(Editor.Decoration.isForeground)
-  return {all,foreground,background}
+  let [spawns,rest] = all.split(Editor.Decoration.isSpawn)
+  let [foreground,background] = rest.split(Editor.Decoration.isForeground)
+  return {all,spawns,foreground,background}
 })
 
 export const shamanObjects = derive(groups.shamanObjects, all => {

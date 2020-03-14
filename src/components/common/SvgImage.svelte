@@ -16,7 +16,7 @@
     }
     img.src = href
   }
-  $: if(width === 0 && height === 0) getDimensions(href)
+  $: getDimensions(href)
 </script>
 
 <image class={className} {href} {x} {y} {width} {height} 

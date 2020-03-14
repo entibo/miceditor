@@ -158,6 +158,11 @@
       {/each}
 
 
+      {#each $decorations.spawns as obj}
+      <SceneObject {obj}> <Decoration {obj}/> </SceneObject>
+      {/each}
+
+
       {#if $showGameGUI}
       <g class="playerView" transform="translate({playerView.x}, {playerView.y})">
         <rect width="800" height="20" />

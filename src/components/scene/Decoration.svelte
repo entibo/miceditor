@@ -56,6 +56,7 @@
 
   $: filters = getFilters($obj)
   function getFilters(obj) {
+    if(!metadata) return []
     return metadata.filters.map(({name,defaultColor}, index) => {
       let color = "#" + obj.colors[index]
       let matrix = getColorMatrix(color)
@@ -94,27 +95,37 @@
   class="decoration" class:active={active} 
   transform="translate({$obj.x}, {$obj.y}) {$obj.reverse ? 'scale(-1, 1)' : ''}"
 >
-  <g transform="translate(-{metadata.offset.x}, -{metadata.offset.y})">
+  {#if metadata}
+    <g transform="translate(-{metadata.offset.x}, -{metadata.offset.y})">
 
-    {#if filters.length}
+      {#if filters.length}
 
-      {#each filters as filter}
-      <filter id="{filter.name}-{instanceId}" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values={filter.matrix} x="0%" y="0%" width="100%" height="100%" in="colormatrix" result="colormatrix1"/>
-      </filter>
-      {/each}
+        {#each filters as filter}
+        <filter id="{filter.name}-{instanceId}" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+          <feColorMatrix type="matrix" values={filter.matrix} x="0%" y="0%" width="100%" height="100%" in="colormatrix" result="colormatrix1"/>
+        </filter>
+        {/each}
 
-      {#await promise then svg}
-        {@html svg}
-      {/await}
+        {#await promise then svg}
+          {@html svg}
+        {/await}
 
-    {:else}
+      {:else}
 
-      <SvgImage href="dist/decorations/{metadata.type}.png"/>
+        <SvgImage href="dist/decorations/{metadata.type}.png"/>
 
-    {/if}
+      {/if}
 
-  </g>
+    </g>
+  {:else}
+    <g>
+      <rect class="selectable"
+        x={-20} y={-20}
+        width={40} height={40}
+        fill="red"
+      />
+    </g>
+  {/if}
 </g>
 
 <style lang="text/postcss">

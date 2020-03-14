@@ -11,7 +11,7 @@ const attributes = [
   "F", "d", "D", "APS",
   "G", "mgoc", 
   "DS", "defilante", "theme", 
-  "P", "C", "A", "N",
+  "P", "C", "A", "N", "aie",
   "Ca", "mc", "bh", "dodue",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
@@ -70,6 +70,7 @@ export interface MapSettings extends Common.UnknownAttributes {
   hideNails: boolean
   upwardsCannonballs: boolean
   dodue: boolean
+  aie: boolean
 
 }
 
@@ -121,6 +122,7 @@ export const defaults: () => MapSettings = () => ({
   hideNails: false,
   upwardsCannonballs: false,
   dodue: false,
+  aie: false,
 })
 
 export function decode(xmlNode: XML.Node): MapSettings {
@@ -161,6 +163,7 @@ export function decode(xmlNode: XML.Node): MapSettings {
   setProp ("hideNails")          (getAttr ("mc")    (() => true))     
   setProp ("upwardsCannonballs") (getAttr ("bh")    (() => true))               
   setProp ("dodue")              (getAttr ("dodue") (() => true)) 
+  setProp ("aie")                (getAttr ("aie")   (() => true))
 
   return data
 }
@@ -209,6 +212,7 @@ export function encode(data: MapSettings): Node {
   setAttr ("mc")    (getProp ("hideNails")          (util.omitOn(false), () => ""))
   setAttr ("bh")    (getProp ("upwardsCannonballs") (util.omitOn(false), () => ""))
   setAttr ("dodue") (getProp ("dodue")              (util.omitOn(false), () => ""))
+  setAttr ("aie")   (getProp ("aie")                (util.omitOn(false), () => ""))
 
   return node
 }
