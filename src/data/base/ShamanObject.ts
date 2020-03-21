@@ -120,11 +120,12 @@ export function encode(data: ShamanObject): Node {
   setAttr ("Mp") (getProp ("power") (util.writeFloat, util.omitOn("0")))
   setAttr ("Mv") (getProp ("speed") (util.writeFloat, util.omitOn("0")))
 
-  setAttr ("P") (M.map(
-    (f,r) => util.omitOn ("0,0") (writeRotationGhost(f,r)),
-    getProp ("rotation") (),
-    getProp ("ghost") (),
-  ))
+  setAttr ("P") (M.withDefault ("0") 
+    (M.map(
+      (f,r) => util.omitOn ("0,0") (writeRotationGhost(f,r)),
+      getProp ("rotation") (),
+      getProp ("ghost") (),
+  )))
 
   return node
 }

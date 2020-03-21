@@ -24,7 +24,6 @@ export function clear() {
 }
 export function set(objs: SceneObject[]) {
   clear()
-  selectionMap = new Map(objs.map(obj => [obj, obj.subscribe(blank.invalidate)]))
   selectionMap = new Map()
   for(let obj of objs) {
     obj.selected = true
@@ -87,24 +86,44 @@ export function move(dx: number, dy: number) {
   }
 }
 
+export function resize(dx: number, dy: number) {
+  for(let obj of selectionMap.keys()) {
+    if(!Editor.isPlatform(obj)) continue
+    Editor.Platform.resize(obj, dx, dy)
+    obj.invalidate()
+  }
+}
+
 export function shiftIndex(dz: number) {
 
 }
 
-export function resize(dx: number, dy: number) {
-
-}
-
 export function flip() {
+  if(selectionMap.size <= 0) return
 
+  let x1 = Math.min( ...[...selectionMap.keys()].map(Editor.getBoundingBox).map(bb => bb.p1.x) )
+  let x2 = Math.max( ...[...selectionMap.keys()].map(Editor.getBoundingBox).map(bb => bb.p2.x) )
+
+  let cx = x1 + (x2-x1)/2
+
+  for(let obj of selectionMap.keys()) {
+    Editor.flip(obj, cx)
+    obj.invalidate()
+  }
 }
 
 export function rotate(a: number) {
-  
+  for(let obj of selectionMap.keys()) {
+    Editor.rotate(obj, a)
+    obj.invalidate()
+  }
 }
 
 export function rotateAround(a: number, p: Point) {
-
+  for(let obj of selectionMap.keys()) {
+    Editor.rotateAround(obj, a, p)
+    obj.invalidate()
+  }
 }
 
 

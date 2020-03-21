@@ -146,13 +146,13 @@ export function encode(data: Decoration): Node {
 
   typeof data.type === "number"
     ? setAttr ("P") (M.map(
-        (f,r) => util.omitOn ("0,0") (writeForegroundReverse(f,r)),
+        (f,r) => writeForegroundReverse(f,r),
         getProp ("foreground") (),
         getProp ("reverse") (),
       ))
     : setAttr ("D") (getProp ("foreground") (util.omitOn(false), () => ""))
 
-  setAttr ("C") (getProp ("colors") (cs => cs.join(",")))
+  setAttr ("C") (getProp ("colors") (cs => cs.join(","), util.omitOn("")))
 
   return node
 }

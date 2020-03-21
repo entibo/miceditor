@@ -12,27 +12,33 @@
 
   import { fly } from "svelte/transition"
 
-  import { 
+  /* import { 
     selection, creation, groundTypePicker, visibility, jointPalette, drawingData,
     settings, platforms, decorations, shamanObjects, joints,
     _
-  } from "/stores/stores.js"
+  } from "/stores/stores.js" */
 
-  import shamanObjectMetadata from "/shamanObjectMetadata.js"
-  import { groundTypes } from "/xml-utils.ts"
+  import shamanObjectMetadata from "/metadata/shamanObject/index"
+  import * as Editor from "/data/editor"
+
+  import * as sceneObjects from "/state/sceneObjects"
+   import { platforms, decorations, shamanObjects, joints, images } from "/state/sceneObjects"
+  import { mapSettings } from "/state/map"
+  import * as selection from "/state/selection"
+  import * as creation from "/state/creation"
 
   import Tooltip from "/components/common/Tooltip.svelte"
-  import ObjectPaletteMenu from "/components/ui/ObjectPaletteMenu.svelte"
   import TextInput from "/components/common/TextInput.svelte"
   import ColorTextInput from "/components/common/ColorTextInput.svelte"
+  import ObjectPaletteMenu from "/components/ui/ObjectPaletteMenu.svelte"
 
   let isThin = false
 
   let collapsed = {
-    grounds: false,
     basic: false,
+    platforms: false,
     decorations: false,
-    objects: false,
+    shamanObjects: false,
     joints: false,
   }
 
@@ -41,9 +47,9 @@
   function tryCancelCreation() {
     if(!$creation) return
 
-    if(collapsed.grounds && $creation.objectType === "platform")
+    if(collapsed.platforms && $creation.objectType === "platform")
       $creation = null
-    else if(collapsed.objects && $creation.objectType === "shamanObject")
+    else if(collapsed.shamanObjects && $creation.objectType === "shamanObject")
       $creation = null
     else if(collapsed.joints && $creation.objectType === "joint")
       $creation = null
@@ -57,7 +63,7 @@
   }
 
   $: if($groundTypePicker === true) {
-    collapsed.grounds = false
+    collapsed.platforms = false
   }
 
 
@@ -75,24 +81,16 @@
   }
 
   $: dsDisabled = 
-    $settings._miceSpawn.type === "normal" ? 
-      $decorations.filter(({name}) => name === "DS").length > 0 
-    :
-    $settings._miceSpawn.type === "multiple" ? 
-      true
-    :
-    $settings._miceSpawn.type === "random" ? 
-      true
-    : 
-    false
+    $mapSettings.miceSpawn.type !== "multiple" &&
+    $decorations.spawns.filter(obj => obj.type === "DS").length >= 1
 
-  $: dcCount = $decorations.filter(({name}) => name === "DC").length
-  $: dc2Count = $decorations.filter(({name}) => name === "DC2").length
+  $: dcCount  = $decorations.spawns.filter(obj => obj.type === "DC").length
+  $: dc2Count = $decorations.spawns.filter(obj => obj.type === "DC2").length
 
-  $: objectMaxCount = $settings._defilanteEnabled ? 200 : 30
+  $: shamanObjectMaxCount = $mapSettings.defilante.enabled ? 200 : 30
 
-  $: jointCount = $joints
-                    .map(joint => (joint._type === "VC" && !joint._invalid) ? joint._fineness : 1)
+  $: jointCount = $joints.all
+                    .map(obj => obj.type === "VC" ? obj.fineness : 1)
                     .reduce((a,b) => a+b, 0)
 
   $: currentJointBrushIndex =
@@ -158,7 +156,7 @@
     </div>
   </ObjectPaletteMenu>
 
-  <ObjectPaletteMenu which="grounds" title={$_("category-grounds")} bind:collapsed={collapsed.grounds} 
+  <ObjectPaletteMenu which="platforms" title={$_("category-platforms")} bind:collapsed={collapsed.platforms} 
     active={$groundTypePicker} max="50" count={$platforms.length}
   >
     <div class="flex flex-wrap justify-center content-center">
@@ -189,7 +187,7 @@
   </ObjectPaletteMenu>
 
 
-  <ObjectPaletteMenu which="objects" title={$_("shaman_objects")} bind:collapsed={collapsed.objects} grow max={objectMaxCount} count={$shamanObjects.length}>
+  <ObjectPaletteMenu which="shamanObjects" title={$_("shaman_objects")} bind:collapsed={collapsed.shamanObjects} grow max={shamanObjectMaxCount} count={$shamanObjects.length}>
     <div class="scrollbox-container">
       <div class="flex flex-wrap justify-center scrollbox">
 
@@ -227,7 +225,7 @@
     </div>
   </ObjectPaletteMenu>
 
-  {#if !collapsed.objects && $creation && $creation.objectType === "shamanObject" && shamanObjectMetadata[$creation.type].variants}
+  {#if !collapsed.shamanObjects && $creation && $creation.objectType === "shamanObject" && shamanObjectMetadata[$creation.type].variants}
   <!-- <div  class="flex flex-grow"> -->
     <ObjectPaletteMenu title={$_("variants")} noActions grow>
       <div transition:fly={{duration:100, y: 50}} class="scrollbox-container">

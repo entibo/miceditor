@@ -42,7 +42,7 @@ export function store <T extends object> (object: T): Store<T> {
     },
     invalidate: {
       enumerable: false,
-      value: () => store.update(x=>x),
+      value: () => store.update(_=>object),
     },
   })
   return object as Store<T>

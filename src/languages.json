@@ -2,6 +2,9 @@
     "en": {
         "category-decorations": "Decorations",
         "category-grounds": "Grounds",
+        "category-mechanics": "Mechanics",
+        "category-images": "Images",
+        "layers": "layers",
         "background0": "Daylight",
         "background1": "Dawn",
         "background2": "Twilight",

@@ -2,23 +2,23 @@
 <script>
   import { slide, fly } from "svelte/transition"
 
-  import SelectionMenu from "/components/ui/SelectionMenu.svelte"
+  //import SelectionMenu from "/components/ui/SelectionMenu.svelte"
   import MapSettingsMenu from "/components/ui/MapSettingsMenu.svelte"
 
-  import { selection } from "/stores/stores.js"
+  import { selection } from "/state/selection"
 
 </script>
 
 
 
-<div class="relative w-64 text-white z-10 flex-shrink-0"> 
+<div class="panel relative w-64 text-white z-10 flex-shrink-0"> 
   <MapSettingsMenu />
 
   {#if $selection.length}
 
-  <div transition:fly={{ x: 500, duration: 80 }} class="flying">
+  <!-- <div transition:fly={{ x: 500, duration: 80 }} class="flying">
     <SelectionMenu /> 
-  </div>
+  </div> -->
 
   {/if}
 </div>

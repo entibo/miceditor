@@ -128,6 +128,26 @@
   {/if}
 </g>
 
+{#if $mapSettings.miceSpawn.type === "random" 
+&& $obj.type === "DS"
+&& $obj.selected}       
+  <g class="pointer-events-none"
+    stroke="white" stroke-width="4" stroke-dasharray="8"
+  >
+    {#if $mapSettings.miceSpawn.axis === "x"}
+      <line 
+        x1={0} y1={$obj.y}
+        x2={$mapSettings.width} y2={$obj.y}
+      />
+    {:else}
+      <line 
+        x1={$obj.x} y1={0} 
+        x2={$obj.x} y2={$mapSettings.height} 
+      />
+    {/if}
+  </g>
+{/if}
+
 <style lang="text/postcss">
   :global(.decoration > g > *) {
     transition: fill 100ms, outline-color 50ms;

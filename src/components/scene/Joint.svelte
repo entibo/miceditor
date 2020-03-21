@@ -1,72 +1,4 @@
 
-<script context="module">
-
-  import { get as storeGet } from "svelte/store"
-  import { zoom, drawingData } from "/state/user"
-
-  let resizeInfo = null
-/* 
-  window.addEventListener("mousemove", onMouseMove)
-  window.addEventListener("mouseup", onMouseRelease)
-  window.addEventListener("mouseleave", onMouseRelease)
-
-
-  let __mouse = { x: 0, y: 0 }
-  function onMouseMove(e) {
-    if(resizeInfo && !resizeInfo.start) {
-      resizeInfo.start = __mouse
-    }
-    __mouse = { x: e.clientX, y: e.clientY }
-
-    if(!resizeInfo) return
-
-    let {joint, listKey, pointIndex, originalPoint, start} = resizeInfo
-
-    let scale = 1 / storeGet(zoom)
-    let dx = scale * (e.clientX - start.x)
-    let dy = scale * (e.clientY - start.y)
-    
-    let nx = originalPoint.x + dx
-    let ny = originalPoint.y + dy
-
-    if(e.ctrlKey || e.shiftKey) {
-
-      let relativePoint
-      if(listKey === "_points") {
-        relativePoint = joint._points[pointIndex - 1] || joint._points[pointIndex + 1]
-      }
-      else {
-        relativePoint = joint._points[pointIndex]
-      }
-      let cx = relativePoint.x
-      let cy = relativePoint.y
-
-      let dist = Math.sqrt((cx-nx)**2 + (cy-ny)**2)
-
-      let angleIncrement = 15 * Math.PI/180
-      let angle = ( Math.atan2(ny-cy, nx-cx) + Math.PI*2 ) % (Math.PI*2)
-      let newAngle = angleIncrement * Math.round(angle/angleIncrement)
-
-      nx = cx + Math.round( dist * Math.cos(newAngle) )
-      ny = cy + Math.round( dist * Math.sin(newAngle) )
-
-    }
-
-    joint[listKey][pointIndex].x = nx
-    joint[listKey][pointIndex].y = ny
-
-    encodeJointData(joint)
-    joints.update(v => v)
-    selection.update(v => v)
-    buildXML()
-  }
-
-  function onMouseRelease() {
-    resizeInfo = null
-  } */
-
-</script>
-
 <script>
 
   //import { encodeJointData } from "/xml-utils.ts"
@@ -75,6 +7,7 @@
   } from "/stores/stores.js" */
   import { bezier } from "@/util"
   import creation from "/state/creation"
+  import { jointMouseDown } from "/components/scene/interaction"
 
   export let obj
 
@@ -165,7 +98,7 @@
       <circle fill="transparent" stroke="none"
         x={0} y={0}
         r={crosshairRadius}
-        on:mousedown|stopPropagation|preventDefault={e => undefined}
+        on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
       />
     </g>
     {/each}
@@ -185,7 +118,7 @@
       <circle fill="transparent" stroke="none"
         x={0} y={0}
         r={crosshairRadius}
-        on:mousedown|stopPropagation|preventDefault={e => undefined}
+        on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
       />
     </g>
     <line fill="none" stroke="#33ff44" opacity="0.8" stroke-width="0.5"

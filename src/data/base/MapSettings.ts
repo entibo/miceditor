@@ -25,8 +25,6 @@ export interface Node extends XML.Node {
 
 export interface MapSettings extends Common.UnknownAttributes {
 
-/*   maxWidth: number
-  maxHeight: number */
   width: number
   height: number
 
@@ -52,9 +50,7 @@ export interface MapSettings extends Common.UnknownAttributes {
       position: number }
 
   defilante: 
-    { enabled: false }
-    |
-    { enabled: true
+    { enabled: boolean
       startSpeed: number
       acceleration: number
       maxSpeed: number
@@ -88,6 +84,10 @@ const disappearingImageDefaults: () => DisappearingImage = () => ({
   rh: 0,
 })
 
+export const miceSpawnDefaults: (type: MapSettings["miceSpawn"]["type"]) => MapSettings["miceSpawn"] = type =>
+  type === "normal"   ? { type } :
+  type === "multiple" ? { type, positions: [], } :
+                        { type, axis: "x", position: 300, }
 
 export const defaults: () => MapSettings = () => ({
   unknownAttributes: {},
@@ -110,7 +110,13 @@ export const defaults: () => MapSettings = () => ({
 
   miceSpawn: { type: "normal" },
 
-  defilante: { enabled: false },
+  defilante: { 
+    enabled: false,
+    acceleration: 0,
+    startSpeed: 0,
+    maxSpeed: 0,
+    freeScroll: false,
+  },
 
   theme: "",
 

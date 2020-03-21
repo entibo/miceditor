@@ -1,9 +1,12 @@
 
 import { get } from "svelte/store"
 
+import { rotate } from "@/util"
+import { clamp } from "data/base/util"
+
 import * as Editor from "data/editor"
 
-import { store } from "state/util"
+import { store, Store } from "state/util"
 
 import * as selection from "@/state/selection"
 
@@ -52,9 +55,10 @@ export const isKeyDown = store({
 export function windowKeyDown(e: KeyboardEvent) {
   let key = e.key.toLowerCase()
   if(e.shiftKey)    isKeyDown.update(() => (isKeyDown.shift = true, isKeyDown))
-  if(e.ctrlKey)     isKeyDown.update(() => (isKeyDown.ctrl = true, isKeyDown))
-  if(e.altKey)      isKeyDown.update(() => (isKeyDown.alt = true, isKeyDown))
-  if(key === " ") isKeyDown.update(() => (isKeyDown.space = true, isKeyDown))
+  if(e.ctrlKey)     isKeyDown.update(() => (isKeyDown.ctrl  = true, isKeyDown))
+  if(e.altKey)      isKeyDown.update(() => (isKeyDown.alt   = true, isKeyDown))
+  if(key === " ")   isKeyDown.update(() => (isKeyDown.space = true, isKeyDown))
+
   if(key === "escape") cancel()
 
   if(isKeyDown.ctrl) {
@@ -118,6 +122,12 @@ export function keyDown(e: KeyboardEvent) {
 
 
 
+export function resetPan() {
+  pan.x = Math.round( svgContainer.width/2  - mapSettings.width/2 )
+  pan.y = Math.round( svgContainer.height/2 - mapSettings.height/2 )
+  pan.invalidate()
+}
+
 
 class MouseMovement {
   start: Point
@@ -144,28 +154,6 @@ class MouseMovement {
     this.current = getSceneCoordinates(e)
   }
   end(e: MouseEvent) {}
-}
-
-export function resetPan() {
-  pan.x = Math.round( svgContainer.width/2  - mapSettings.width/2 )
-  pan.y = Math.round( svgContainer.height/2 - mapSettings.height/2 )
-  pan.invalidate()
-}
-export function centerPan(e: MouseEvent, delta: number) {
-  let $zoom = get(zoom)
-  let factor = $zoom / ($zoom-delta)
-  let p1 = getSceneCoordinates(e)
-  let a = {
-    x: p1.x - pan.x,
-    y: p1.y - pan.y,
-  }
-  let b = {
-    x: a.x * (factor),
-    y: a.y * (factor),
-  }
-  pan.x = pan.x - (b.x-a.x)
-  pan.y = pan.y - (b.y-a.y)
-  pan.invalidate()
 }
 
 class Pan extends MouseMovement {
@@ -222,6 +210,134 @@ class Select extends MouseMovement {
   }
 }
 
+class JointAction extends MouseMovement {
+  constructor(
+    e: MouseEvent, 
+    public obj: Store<Editor.Joint.Joint>, 
+    public startPoint: Point & {name:Editor.Joint.PointName}) 
+  {
+    super(e)
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let $zoom = get(zoom)
+    let delta = this.deltaStart()
+    
+    let dx = delta.x/$zoom
+    let dy = delta.y/$zoom
+
+    let nx = this.startPoint.x + dx
+    let ny = this.startPoint.y + dy
+
+    if(isKeyDown.ctrl || isKeyDown.shift) {
+      let relativePoint = Editor.Joint.getRelativePoint(this.obj, this.startPoint.name)
+      if(relativePoint) {
+        let cx = relativePoint.x
+        let cy = relativePoint.y
+
+        let dist = Math.sqrt((cx-nx)**2 + (cy-ny)**2)
+
+        let angleIncrement = 15 * Math.PI/180
+        let angle = ( Math.atan2(ny-cy, nx-cx) + Math.PI*2 ) % (Math.PI*2)
+        let newAngle = angleIncrement * Math.round(angle/angleIncrement)
+
+        nx = cx + Math.round( dist * Math.cos(newAngle) )
+        ny = cy + Math.round( dist * Math.sin(newAngle) )
+      }
+    }
+
+    let point: Point = (this.obj as any)[this.startPoint.name]
+    point.x = nx
+    point.y = ny
+    this.obj.invalidate()
+  }
+}
+
+class PlatformCircleResizeAction extends MouseMovement {
+  constructor(
+    e: MouseEvent, 
+    public obj: Store<Extract<Editor.Platform.Platform, Editor.Platform.Circle>>) 
+  {
+    super(e)
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let gamePosition = sceneToGameCoordinates(this.current)
+    
+    let dx = gamePosition.x - this.obj.x
+    let dy = gamePosition.y - this.obj.y
+
+    let dist = Math.sqrt(dx**2 + dy**2)
+    this.obj.radius = Math.max(10, dist)
+    this.obj.invalidate()
+  }
+}
+
+class PlatformRectangleResizeAction extends MouseMovement {
+  startPosition: Point
+  startDimensions: Point
+  constructor(
+    e: MouseEvent, 
+    public obj: Store<Extract<Editor.Platform.Platform, Editor.Platform.Rectangle>>,
+    public knob: number)
+  {
+    super(e)
+    this.startPosition = { x: obj.x, y: obj.y }
+    this.startDimensions = { x: obj.width, y: obj.height }
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let $zoom = get(zoom)
+    
+    let delta = this.deltaStart()
+    let dx = delta.x/$zoom
+    let dy = delta.y/$zoom
+
+    let rotation = "rotation" in this.obj ? this.obj.rotation : 0
+
+    let [rdx,rdy] = rotate(dx, dy, -rotation)
+    if([1,5].includes(this.knob)) rdx = 0
+    if([3,7].includes(this.knob)) rdy = 0
+
+    let sign = { x: 1, y: 1 }
+    if([4,5,6].includes(this.knob)) sign.y = -1
+    if([6,7,0].includes(this.knob)) sign.x = -1
+
+    let newWidth =  sign.x*(+rdx) + this.startDimensions.x
+    let newHeight = sign.y*(-rdy) + this.startDimensions.y
+    let extraWidth = newWidth < 10 ? 10 - newWidth : 0
+    let extraHeight = newHeight < 10 ? 10 - newHeight : 0
+    this.obj.width = Math.max(10, newWidth)
+    this.obj.height = Math.max(10, newHeight)
+
+    let [a,b] = rotate(rdx + sign.x*extraWidth, rdy - sign.y*extraHeight, rotation)
+    this.obj.x = Math.round(this.startPosition.x + a/2)
+    this.obj.y = Math.round(this.startPosition.y + b/2)
+
+    this.obj.invalidate()
+  }
+}
+
+import * as layout from "state/layout"
+class WindowMoveAction extends MouseMovement {
+  constructor(
+    e: MouseEvent, 
+    public window: layout.Window)
+  {
+    super(e)
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let delta = this.deltaLast()
+    let newX = this.window.x + delta.x
+    let newY = this.window.y + delta.y
+    this.window.x = clamp(newX, 0, svgContainer.width-this.window.width)
+    this.window.y = clamp(newY, 0, svgContainer.height-this.window.height)
+    layout.layoutConfig.update(x => x)
+  }
+}
+
+
 let currentMouseMovement: MouseMovement | null = null
 
 export function backgroundMouseDown(e: MouseEvent) {
@@ -239,35 +355,61 @@ export function backgroundMouseDown(e: MouseEvent) {
 }
 
 export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
+  if(isKeyDown.space) return
   e.stopPropagation()
 
-  if(isKeyDown.shift) {
-    if(selection.has(obj))
-      selection.unselect(obj)
-    else
-      selection.select(obj)
-    return
-  } 
+  if(isKeyDown.shift)
+    return selection.has(obj)
+      ? selection.unselect(obj)
+      : selection.select(obj)
 
   if(!selection.has(obj)) {
     selection.clear()
     selection.select(obj)
   }
+
   currentMouseMovement = new Move(e)
 }
 
+export function jointMouseDown(e: MouseEvent, obj: Store<Editor.Joint.Joint>, startPoint: Point & {name:Editor.Joint.PointName}) {
+  if(isKeyDown.space) return
+  e.stopPropagation()
+
+  currentMouseMovement = new JointAction(e, obj, startPoint)
+}
+
+export function platformResizeKnobMouseDown(e: MouseEvent, obj: Store<Editor.Platform.Platform>, knob: number) {
+  if(isKeyDown.space) return
+  e.stopPropagation()
+
+  currentMouseMovement = Editor.Platform.isCircle(obj)
+    ? new PlatformCircleResizeAction(e, obj as any)
+    : new PlatformRectangleResizeAction(e, obj as any, knob)
+}
+
+export function windowTitleMouseDown(e: MouseEvent, window: layout.Window) {
+  if(isKeyDown.space) return
+  e.stopPropagation()
+  windowPanelMouseDown(window)
+
+  currentMouseMovement = new WindowMoveAction(e, window)
+}
+
+export function windowPanelMouseDown(window: layout.Window) {
+  layout.layoutConfig.update(cfg => {
+    let idx = cfg.windows.indexOf(window)
+    if(idx === cfg.windows.length-1) return cfg
+    cfg.windows.splice(idx, 1)
+    cfg.windows.push(window)
+    return cfg
+  })
+}
+
 export function windowMouseMove(e: MouseEvent) {
-  /* let {x,y} = getSceneCoordinates(e)
-  currentScenePosition.x = x
-  currentScenePosition.y = y
-  currentScenePosition.invalidate() */
   currentScenePosition.set(getSceneCoordinates(e))
 
   if(!currentMouseMovement) return
-
   currentMouseMovement.update(e)
-
-
 }
 
 export function windowMouseUp(e: MouseEvent) {
@@ -290,12 +432,44 @@ export function windowMouseLeave(e: MouseEvent) {
   }
 }
 
+import { tabMovement, finishMovement } from "state/layout"
+export function backgroundMouseUp(e: MouseEvent) {
+  if(!tabMovement.enabled || !tabMovement.active) return
+  console.log("interaction > backgroundMouseUp > ", getSceneCoordinates(e))
+  e.preventDefault()
+  e.stopPropagation()
+  finishMovement(getSceneCoordinates(e), true)
+}
+
+
+function changeZoom(e: WheelEvent) {
+  e.preventDefault()
+  let delta = -0.1*Math.sign(e.deltaY)
+  let zoomChangeRatio = 1
+  zoom.update(z => {
+    let oldZoom = z
+    let newZoom = oldZoom + delta
+    zoomChangeRatio = newZoom / oldZoom
+    return newZoom
+  })
+  let p1 = getSceneCoordinates(e)
+  let a = {
+    x: p1.x - pan.x,
+    y: p1.y - pan.y,
+  }
+  let b = {
+    x: a.x * (zoomChangeRatio),
+    y: a.y * (zoomChangeRatio),
+  }
+  pan.x = pan.x - (b.x-a.x)
+  pan.y = pan.y - (b.y-a.y)
+  pan.invalidate()
+}
+
+
 export function wheel(e: WheelEvent) {
   if(isKeyDown.ctrl) {
-    e.preventDefault()
-    let delta = -0.1*Math.sign(e.deltaY)
-    zoom.update(z => z + delta)
-    centerPan(e, delta)
+    changeZoom(e)
     return
   }
   
@@ -313,6 +487,8 @@ export function wheel(e: WheelEvent) {
   else selection.rotate(delta)
 
 }
+
+
 
 
 function getSceneCoordinates(e: MouseEvent) {

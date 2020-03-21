@@ -5,7 +5,7 @@
       "build": "rollup -c",
       "build:auto": "rollup -c -w",
       "dev": "run-p build:auto serve",
-      "serve": "http-server",
+      "serve": "http-server --silent",
       "translations": "curl 'https://localise.biz/api/export/all.json?format=multi&key=_KwQn345xaZK8iQ3yj3JkzfGbzjIWAgk' -o ./src/languages.json"
    },
    "devDependencies": {

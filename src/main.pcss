@@ -45,7 +45,7 @@ div.material-input {
     @apply text-sm;
 }
 div.material-input.disabled {
-    position: relative;
+  
 }
 div.material-input:focus-within:before {
     width: 100%;
@@ -74,4 +74,80 @@ div.material-input select, div.material-input input {
 }
 div.material-input input {
     @apply appearance-none;
+}
+
+
+.rtl-input {
+  direction: rtl;
+}
+.rtl-input:focus-within {
+  direction: initial;
+}
+
+
+.panel {
+  @apply p-3 bg-gray-800 shadow-lg z-10;
+}
+.panel.vertical {
+  @apply flex-col;
+}
+.panel.horizontal {
+  @apply flex-row;
+}
+.group {
+  
+}
+.group.target {
+  outline: dashed 4px white;
+}
+.panel.vertical .group:not(:last-child) {
+  @apply mb-2
+}
+.panel.horizontal .group:not(:last-child) {
+  @apply mr-2
+}
+
+.tabList {
+
+}
+.tab {
+  @apply text-sm px-1 inline-block;
+  @apply text-gray-500;
+}
+.tab.active {
+  @apply text-gray-100 font-medium;
+}
+.tab:hover {
+  @apply text-gray-100;
+}
+.tabContent {
+  @apply bg-gray-700b rounded-sm shadow-md text-gray-200;
+  @apply p-2 flex-grow overflow-auto;
+}
+
+
+
+.form label {
+  @apply flex items-center justify-between;
+}
+.form label > span {
+  user-select: none;
+  cursor: pointer;
+  line-height: 0.8rem;
+  @apply mr-3 text-sm text-gray-200;
+}
+.form label:hover > span {
+  @apply text-white;
+}
+.form .submenu {
+  @apply border-l-2 pl-2 py-1 border-gray-200;
+}
+
+
+.icon {
+  @apply text-sm text-gray-200 cursor-pointer;
+}
+.icon.disabled {
+  @apply pointer-events-none;
+  opacity: 0.4;
 }

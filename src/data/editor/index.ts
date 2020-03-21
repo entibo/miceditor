@@ -1,4 +1,5 @@
 
+import { rotate as _rotate } from "@/util"
 import * as util from "data/base/util"
 
 
@@ -73,4 +74,29 @@ export function move(obj: Object, dx: number, dy: number) {
   } */
   obj.x += dx
   obj.y += dy
+}
+
+export function flip(obj: Object, cx: number) {
+  if("reverse" in obj)  obj.reverse = !obj.reverse
+  if("rotation" in obj) obj.rotation = -obj.rotation
+
+  if(isJoint(obj))
+    return Joint.flip(obj, cx)
+
+  obj.x = 2*cx - obj.x
+}
+
+export function rotate(obj: Object, a: number) {
+  if("rotation" in obj) obj.rotation += a
+}
+
+export function rotateAround(obj: Object, a: number, p: Point) {
+  rotate(obj, a)
+
+  if(isJoint(obj))
+    return Joint.rotateAround(obj, a, p)
+
+  let [x,y] = _rotate(obj.x, obj.y, a, p.x, p.y)
+  obj.x = x
+  obj.y = y
 }

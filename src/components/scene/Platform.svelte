@@ -1,111 +1,28 @@
 
-<script context="module">
-
-  import { get } from "svelte/store"
-  import { rotate } from "/util"
-  import { zoom } from "/state/user"
-
-  let resizeInfo = null
-
-  window.addEventListener("mousemove",  resizeMove)
-  window.addEventListener("mouseup",    resizeStop)
-  window.addEventListener("mouseleave", resizeStop)
-
-  // 0 1 2
-  // 7   3
-  // 6 5 4
-  function resizeMove(e) {
-    if(!resizeInfo) return
-    let {k, start, platform, platformStart} = resizeInfo
-
-    let rotation = platform.rotation || 0
-
-    let isCircle = platform.type === 13
-
-    let scale = 1 / get(zoom)
-    let dx = scale * (e.clientX - start.x)
-    let dy = scale * (e.clientY - start.y)
-
-    if(isCircle) {
-      platform.radius = Math.max(10, platformStart.width/2 + dx)
-    }
-    else {
-      let [rdx,rdy] = rotate(dx, dy, -rotation)
-      if([1,5].includes(k)) rdx = 0
-      if([3,7].includes(k)) rdy = 0
-
-      let sign = { x: 1, y: 1 }
-      if([4,5,6].includes(k)) sign.y = -1
-      if([6,7,0].includes(k)) sign.x = -1
-
-      let newWidth =  sign.x*(+rdx) + platformStart.width
-      let newHeight = sign.y*(-rdy) + platformStart.height
-      let extraWidth = newWidth < 10 ? 10 - newWidth : 0
-      let extraHeight = newHeight < 10 ? 10 - newHeight : 0
-      platform.width = Math.max(10, newWidth)
-      platform.height = Math.max(10, newHeight)
-
-      let [a,b] = rotate(rdx + sign.x*extraWidth, rdy - sign.y*extraHeight, rotation)
-      platform.x = Math.round(platformStart.x + a/2)
-      platform.y = Math.round(platformStart.y + b/2)
-    }
-
-    platform.invalidate()
-  }
-
-  function resizeStop() {
-    resizeInfo = null
-  }
-
-</script>
-
 <script>
 
-  //import { encodePlatformData } from "/xml-utils.ts"
   import * as Platform from "/data/editor/Platform"
   import { showInvisibleGrounds } from "/state/user"
   import * as selection from "/state/selection"
+  import { platformResizeKnobMouseDown } from "/components/scene/interaction"
 
   import SvgImage from "/components/common/SvgImage.svelte"
 
   export let obj
   $: active = $obj.selected
 
-  const typeNames = [
-    "wood", "ice", "trampoline", 
-    "lava", "chocolate", 
-    "earth", "grass",
-    "sand", "cloud", "water",
-    "stone", "snow", 
-    "rectangle", "circle",
-    "invisible", "cobweb",
-    "wood", "grass2",
-  ]
-  $: typeName = typeNames[$obj.type]
+  $: typeName = Platform.typeNames[$obj.type]
 
   $: isCircle = typeName === "circle"
 
   $: width  = isCircle ? $obj.radius*2 : $obj.width
   $: height = isCircle ? $obj.radius*2 : $obj.height
 
-
+  // Resize points dimensions
   $: rs = 6
   $: rw = rs/2 + width/2
   $: rh = rs/2 + height/2
-
-  function resizeStart(e, k) {
-    resizeInfo = { 
-      k,
-      start: { x: e.clientX, y: e.clientY },
-      platformStart: {
-        x: $obj.x,
-        y: $obj.y,
-        width,
-        height,
-      },
-      platform: $obj,
-    }
-  }
+  //
 
   $: invisibilityClass = Platform.isInvisible($obj)
       ? $showInvisibleGrounds 
@@ -191,7 +108,7 @@
   >
     {#each 
     isCircle 
-      ? [[+rw, 0]] 
+      ? [[+rw, 0], [-rw,0], [0,-rh], [0,+rh]] 
       : [
           [-rw,-rh], [0,-rh], [+rw,-rh], [+rw,0],
           [+rw,+rh], [0,+rh], [-rw,+rh], [-rw,0],
@@ -199,7 +116,7 @@
         .map(([x,y], k) => [x,y,k])
     as [x,y,k]}
     <rect fill="white" width={rs} height={rs} {x} {y}
-      on:mousedown|stopPropagation|preventDefault={e => resizeStart(e, k)}
+      on:mousedown|stopPropagation|preventDefault={e => platformResizeKnobMouseDown(e, obj, k)}
     />
     {/each}
   </g>

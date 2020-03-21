@@ -86,6 +86,9 @@ export type Joint
 
 export type JointProps = UnionToIntersection<Joint>
 
+export type PointName = 
+  "point1" | "point2" | "point3" | "point4" | "controlPoint1" | "controlPoint2"
+
 
 const baseDefaults: () => Base = () => ({
   unknownAttributes: {},

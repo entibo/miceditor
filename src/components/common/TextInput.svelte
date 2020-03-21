@@ -2,6 +2,9 @@
 <script>
   import { tick } from "svelte"
 
+  let className = ""
+  export { className as class }
+
   export let value = ""
   export let disabled = false
   export let center = false
@@ -58,7 +61,7 @@
   }
 </script>
 
-<div class="material-input" class:disabled={disabled} >
+<div class="material-input {className}" class:disabled={disabled} >
   <input type="text" disabled={disabled} 
     placeholder={placeholder}
     class:text-center={center}

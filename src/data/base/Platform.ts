@@ -33,6 +33,17 @@ export enum Type {
   Water =      9,
 }
 
+export const typeNames = [
+    "wood", "ice", "trampoline", 
+    "lava", "chocolate", 
+    "earth", "grass",
+    "sand", "cloud", "water",
+    "stone", "snow", 
+    "rectangle", "circle",
+    "invisible", "cobweb",
+    "wood", "grass2",
+  ]
+
 interface Base extends Common.UnknownAttributes {
   //objectType: "Platform"
   x: number
@@ -59,11 +70,11 @@ export interface NonStatic {
 interface Colored {
   color: string
 }
-interface Rectangle {
+export interface Rectangle {
   width: number
   height: number
 }
-interface Circle {
+export interface Circle {
   radius: number
 }
 interface Rotatable {
@@ -312,7 +323,7 @@ export function readType(str: string): M.Maybe<Type> {
 
 export function readDimension(str: string): M.Maybe<number> {
   return M.map( 
-    x => util.clamp(x, 10, 3000),
+    x => util.clamp(x, 10, 10000),
     util.readInt(str),
   )
 }

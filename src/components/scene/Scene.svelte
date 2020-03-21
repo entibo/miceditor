@@ -12,8 +12,8 @@
   import Joint from "/components/scene/Joint.svelte"
   import Footer from "/components/scene/Footer.svelte"
   import Image from "/components/scene/Image.svelte"
-
   import SvgImage from "/components/common/SvgImage.svelte"
+  import Window from "/components/ui/Window.svelte"
 
 
   import { mapSettings } from "/state/map"
@@ -30,6 +30,9 @@
 
   import * as interaction from "./interaction"
   import { pan, selectionBox, currentGamePosition, isKeyDown } from "./interaction"
+
+  import * as layout from "/state/layout"
+  import { layoutConfig } from "/state/layout"
 
 
   let svgContainerEl = null, svgWidth = 1, svgHeight = 1
@@ -69,6 +72,8 @@
   bind:clientWidth={svgWidth} bind:clientHeight={svgHeight}
   on:wheel={interaction.wheel}
   on:mousedown={interaction.backgroundMouseDown}  
+  on:mouseup={interaction.backgroundMouseUp}
+  on:mousemove="{() => layout.tabMouseMoveOverGroup("",-1)}"
   on:blur={interaction.windowMouseLeave}
   on:keydown={interaction.keyDown} tabindex="-1"
 >
@@ -212,6 +217,10 @@
   {#if $creation.active }
   <div class="absolute top-0 right-0 bottom-0 left-0 w-full h-full"></div>
   {/if}
+
+  {#each $layoutConfig.windows as window, _ (window.tab)}
+  <Window window={window} />
+  {/each}
 
   <Footer position={$currentGamePosition} selectionBox={$selectionBox} />
 

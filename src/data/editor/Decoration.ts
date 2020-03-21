@@ -2,6 +2,8 @@
 import * as Base from "data/base"
 import * as Common from "./Common"
 
+export * from "data/base/Decoration"
+
 
 export type Decoration = Base.Decoration.Decoration & Common.Metadata & { objectType: "DECORATION" }
 
@@ -16,3 +18,6 @@ export const isForeground = (obj: Decoration) =>
 
 export const isSpawn = (obj: Decoration) =>
   obj.type === "DS" || obj.type === "DC" || obj.type === "DC2"
+
+export const isMouseSpawn = (obj: Decoration) =>
+  obj.type === "DS"
