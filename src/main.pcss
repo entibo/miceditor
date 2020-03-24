@@ -94,8 +94,11 @@ div.material-input input {
 .panel.horizontal {
   @apply flex-row;
 }
-.group {
-  
+.panel.vertical .group {
+  min-height: 160px;
+}
+.panel.horizontal .group {
+  min-width: 160px;
 }
 .group.target {
   outline: dashed 4px white;
@@ -123,6 +126,37 @@ div.material-input input {
 .tabContent {
   @apply bg-gray-700b rounded-sm shadow-md text-gray-200;
   @apply p-2 flex-grow overflow-auto;
+}
+
+
+.dim-40 {
+  width: 40px;
+  height: 40px;
+}
+.dim-max-40 {
+  max-width: 40px;
+  max-height: 40px;
+}
+.tile {
+  @apply m-1 cursor-pointer flex justify-center items-center;
+  transition: filter 40ms;
+}
+.tile.active {
+  outline-width: 4px;
+  outline-offset: -4px;
+  outline-style: dashed;
+  outline-color: rgba(255,255,255,1);
+}
+.tile:hover {
+  filter: brightness(1.15) drop-shadow(0 3px 5px rgba(0,0,0,.2));
+  /* transform: translateY(-2px) scale(1.5); */
+}
+.tile.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.tile.outline-outside {
+  outline-offset: -1px;
 }
 
 

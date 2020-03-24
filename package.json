@@ -42,6 +42,7 @@
       "svelte-preprocess-postcss": "^1.0.0",
       "tailwindcss": "^1.0.1",
       "ts-jest": "^24.3.0",
+      "tslib": "^1.11.1",
       "typescript": "^3.9.0-dev.20200226",
       "ws": ">=3.3.1"
    },

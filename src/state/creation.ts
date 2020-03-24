@@ -1,27 +1,175 @@
 
+import { store, Store } from "state/util"
+import { eq } from "data/base/util"
+
 import * as sceneObjects from "state/sceneObjects"
+import * as interaction from "components/scene/interaction"
 
 import * as Editor from "data/editor"
-
-import { store, Store } from "state/util"
+import * as Base from "data/base"
+import { Brush, curveTool } from "state/user"
+import * as selection from "state/selection"
+import { rotate } from "@/util"
 
 type Creation = 
-  { active: false }
+  { enabled: false }
   | 
-  { active: true
-    platform: Store<Editor.Platform.Platform> }
+  { enabled: true, creationType: "PLATFORM"
+    type: Editor.Platform.Type }
   | 
-  { active: true
-    image: Store<Editor.Image.Image> }
+  { enabled: true, creationType: "DECORATION"
+    type: Editor.Decoration.Type }
   | 
-  { active: true
-    decoration: Store<Editor.Decoration.Decoration> }
+  { enabled: true, creationType: "SHAMANOBJECT"
+    type: Editor.ShamanObject.Type
+    rotation: number }
   | 
-  { active: true
-    shamanObject: Store<Editor.ShamanObject.ShamanObject> }
+  { enabled: true, creationType: "IMAGE"
+    imageUrl: Editor.Image.ImageUrl }
   | 
-  { active: true
-    joint: Store<Editor.Joint.Joint>
-    /* */ }
+  { enabled: true, creationType: "LINE"
+    brush: Brush }
 
-export default store<Creation>({ active: false, })  
+export const creation = store<Creation>({ enabled: false })  
+
+
+export const disable = () => creation.set({ enabled: false })  
+
+
+function set(value: Creation) {
+  console.log(creation, eq(value)(creation), value)
+  if(creation.enabled && value.enabled && eq(value)(creation))
+    return disable()
+  creation.set(value)
+}
+
+export const setPlatform = (type: Editor.Platform.Type) =>
+  set({ enabled: true, creationType: "PLATFORM", 
+        type })
+
+export const setDecoration = (type: Editor.Decoration.Type) =>
+  set({ enabled: true, creationType: "DECORATION", 
+        type })
+
+export const setShamanObject = (type: Editor.ShamanObject.Type) =>
+  set({ enabled: true, creationType: "SHAMANOBJECT",   
+        type, rotation: 0 })
+
+export const setImage = (imageUrl: Editor.Image.ImageUrl) =>
+  set({ enabled: true, creationType: "IMAGE", imageUrl })
+
+export const setLine = (brush: Brush) =>
+  set({ enabled: true, creationType: "LINE", brush })
+
+
+export const create = (e: MouseEvent, x: number, y: number) => {
+  if(!creation.enabled) throw "create was called when creation was disabled"
+
+  if(creation.creationType === "PLATFORM") {
+    let obj = Editor.Platform.make(Editor.Platform.defaults(creation.type))
+    if(Editor.Platform.isCircle(obj)) {
+      obj.x = x
+      obj.y = y
+    }
+    else {
+      obj.x = x+5
+      obj.y = y+5
+    }
+    let store = sceneObjects.add(obj)
+    interaction.platformResizeKnobMouseDown(e, store, 4, true)
+    selection.set([store])
+  }
+
+  if(creation.creationType === "DECORATION") {
+    let obj = Editor.Decoration.make(Editor.Decoration.defaults(creation.type))
+    obj.x = x
+    obj.y = y
+    selection.set([ sceneObjects.add(obj) ])
+  }
+
+  if(creation.creationType === "SHAMANOBJECT") {
+    let obj = Editor.ShamanObject.make(Editor.ShamanObject.defaults(creation.type))
+    obj.x = x
+    obj.y = y
+    if("rotation" in obj) obj.rotation = creation.rotation
+    selection.set([ sceneObjects.add(obj) ])
+  }
+
+  if(creation.creationType === "IMAGE") {
+    let obj = Editor.Image.make(Editor.Image.defaults())
+    obj.x = x
+    obj.y = y
+    obj.imageUrl = creation.imageUrl
+    selection.set([ sceneObjects.add(obj) ])
+  }
+
+  if(creation.creationType === "LINE") {
+
+    let setRenderProperties = (obj: Extract<Editor.Joint.Joint,Editor.Joint.Renderable>) => {
+      obj.renderEnabled = true
+      obj.color = creation.brush.color
+      obj.thickness = creation.brush.thickness
+      obj.opacity = creation.brush.opacity
+      obj.foreground = creation.brush.foreground
+    }
+
+    if(curveTool.enabled) {
+      let selectionObjects = selection.getAll()
+      let lastCurve = selectionObjects.length === 1
+        ? selectionObjects.find(x => Editor.isJoint(x) && x.type === "VC") as Store<Extract<Editor.Joint.Joint,{type:"VC"}>>
+        : undefined
+
+      if(!lastCurve) {
+        let obj = Editor.Joint.make(Editor.Joint.defaults("VC")) as Extract<Editor.Joint.Joint,{type:"VC"}>
+
+        obj.fineness = curveTool.fineness
+        setRenderProperties(obj)
+        Editor.Joint.move(obj, x, y)
+
+        let store = sceneObjects.add(obj)
+        interaction.jointMouseDown(e, store, { name: "controlPoint1", ...store.controlPoint1 })
+        selection.set([store])
+      }
+
+      else {
+        if(eq(lastCurve.point1)(lastCurve.point2)) {
+          lastCurve.point2 = {x,y}
+          lastCurve.controlPoint2 = {x,y}
+          lastCurve.invalidate()
+          interaction.jointMouseDown(e, lastCurve, { name: "controlPoint2", ...lastCurve.controlPoint2 })
+        }
+
+        else {
+          let obj = Editor.Joint.make(Editor.Joint.defaults("VC")) as Extract<Editor.Joint.Joint,{type:"VC"}>
+
+          obj.fineness = curveTool.fineness
+          setRenderProperties(obj)
+          Editor.Joint.move(obj, x, y)
+
+          obj.point1 = { ...lastCurve.point2 }
+          let [px,py] = rotate(lastCurve.controlPoint2.x, lastCurve.controlPoint2.y, 180, lastCurve.point2.x, lastCurve.point2.y)
+          obj.controlPoint1 = { x: px, y: py }
+
+          let store = sceneObjects.add(obj)
+          interaction.jointMouseDown(e, store, { name: "controlPoint2", ...store.controlPoint2 })
+          selection.set([store])
+        }
+      }
+
+    }
+
+    else {
+      let obj = Editor.Joint.make(Editor.Joint.defaults("JD")) as Extract<Editor.Joint.Joint,{type:"JD"}>
+
+      setRenderProperties(obj)
+      Editor.Joint.move(obj, x, y)
+      obj.point1.enabled = obj.point2.enabled = true
+
+      let store = sceneObjects.add(obj)
+      interaction.jointMouseDown(e, store, { name: "point2", ...obj.point2 })
+      selection.set([store])      
+    }
+
+  }
+
+}

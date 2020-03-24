@@ -10,7 +10,7 @@ const attributes = [
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
-type Type = number
+export type Type = number
 const anchorTypes = [12, 13, 15, 16]
 type AnchorType = 12 | 13 | 15 | 16
 

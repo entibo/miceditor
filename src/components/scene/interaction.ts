@@ -9,6 +9,7 @@ import * as Editor from "data/editor"
 import { store, Store } from "state/util"
 
 import * as selection from "@/state/selection"
+import * as Creation from "state/creation"
 
 import { mapSettings } from "state/map"
 import * as sceneObjects from "state/sceneObjects"
@@ -34,8 +35,8 @@ currentScenePosition.subscribe(p =>
 )
 
 function cancel() {
-  if(0/* creation */) 
-    1
+  if(Creation.creation.enabled) 
+    Creation.disable()
   else if(selection.size() > 0)
     selection.clear()
   else if(get(zoom) !== 1) 
@@ -86,7 +87,7 @@ const keyActions: { [key: string]: (e: KeyboardEvent) => void } = {
   "a": (e) => {
     if(!isKeyDown.ctrl) return
     e.preventDefault()
-    /* creation: cancel */
+    Creation.disable()
     if(isKeyDown.shift)
       selection.clear()
     else
@@ -134,7 +135,6 @@ class MouseMovement {
   last: Point
   current: Point
   constructor(e: MouseEvent) {
-    console.log("MouseMovement created", this)
     this.start = this.last = this.current = getSceneCoordinates(e)
   }
   deltaStart(): Point {
@@ -279,11 +279,21 @@ class PlatformRectangleResizeAction extends MouseMovement {
   constructor(
     e: MouseEvent, 
     public obj: Store<Extract<Editor.Platform.Platform, Editor.Platform.Rectangle>>,
-    public knob: number)
+    public knob: number,
+    relativeToKnob = false)
   {
     super(e)
     this.startPosition = { x: obj.x, y: obj.y }
     this.startDimensions = { x: obj.width, y: obj.height }
+    if(relativeToKnob) {
+      let rotation = "rotation" in obj ? obj.rotation : 0
+      let [vx,vy] = [[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0]][knob]
+      let [dx,dy] = rotate(vx*obj.width/2, vy*obj.height/2, rotation)
+      this.start = this.last = this.current = gameToSceneCoordinates({
+        x: obj.x + dx,
+        y: obj.y + dy,
+      })
+    }
   }
   update(e: MouseEvent) {
     super.update(e)
@@ -305,6 +315,28 @@ class PlatformRectangleResizeAction extends MouseMovement {
 
     let newWidth =  sign.x*(+rdx) + this.startDimensions.x
     let newHeight = sign.y*(-rdy) + this.startDimensions.y
+
+
+    if(this.obj.width === 10 && newWidth < 0) {
+      let knob = ({ 0:2, 1:1, 2:0, 3:7, 4:6, 5:5, 6:4, 7:3 } as any)[this.knob]
+      let [offsetX,offsetY] = rotate(-10 * sign.x, 0, rotation)
+      this.obj.x += offsetX
+      this.obj.y += offsetY
+      this.obj.invalidate()
+      currentMouseMovement = new PlatformRectangleResizeAction(e, this.obj, knob, true)
+      return
+    }
+    if(this.obj.height === 10 && newHeight < 0) {
+      let knob = ({ 0:6, 1:5, 2:4, 3:3, 4:2, 5:1, 6:0, 7:7 } as any)[this.knob]
+      let [offsetX,offsetY] = rotate(0, 10 * sign.y, rotation)
+      this.obj.x += offsetX
+      this.obj.y += offsetY
+      this.obj.invalidate()
+      currentMouseMovement = new PlatformRectangleResizeAction(e, this.obj, knob, true)
+      return
+    }
+
+    
     let extraWidth = newWidth < 10 ? 10 - newWidth : 0
     let extraHeight = newHeight < 10 ? 10 - newHeight : 0
     this.obj.width = Math.max(10, newWidth)
@@ -320,19 +352,35 @@ class PlatformRectangleResizeAction extends MouseMovement {
 
 import * as layout from "state/layout"
 class WindowMoveAction extends MouseMovement {
-  constructor(
-    e: MouseEvent, 
-    public window: layout.Window)
-  {
+  startWindow: layout.Window
+  constructor(e: MouseEvent, public window: layout.Window) {
     super(e)
+    this.startWindow = { ...window }
   }
   update(e: MouseEvent) {
     super.update(e)
-    let delta = this.deltaLast()
-    let newX = this.window.x + delta.x
-    let newY = this.window.y + delta.y
+    let delta = this.deltaStart()
+    let newX = this.startWindow.x + delta.x
+    let newY = this.startWindow.y + delta.y
     this.window.x = clamp(newX, 0, svgContainer.width-this.window.width)
     this.window.y = clamp(newY, 0, svgContainer.height-this.window.height)
+    layout.layoutConfig.update(x => x)
+  }
+}
+
+class WindowResizeAction extends MouseMovement {
+  startWindow: layout.Window
+  constructor(e: MouseEvent, public window: layout.Window) {
+    super(e)
+    this.startWindow = { ...window }
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let delta = this.deltaStart()
+    let newW = this.startWindow.width  + delta.x
+    let newH = this.startWindow.height + delta.y
+    this.window.width  = clamp(newW, 80,  svgContainer.width-this.window.x)
+    this.window.height = clamp(newH, 80, svgContainer.height-this.window.y)
     layout.layoutConfig.update(x => x)
   }
 }
@@ -343,11 +391,14 @@ let currentMouseMovement: MouseMovement | null = null
 export function backgroundMouseDown(e: MouseEvent) {
   if(isKeyDown.space)
     currentMouseMovement = new Pan(e)
-  else if(0/* creation */) {
 
+  else if(Creation.creation.enabled) {
+    let {x,y} = sceneToGameCoordinates(getSceneCoordinates(e))
+    Creation.create(e, x, y)
+    //selection.set([obj])
   }
+
   else {
-    /* selection */
     if(!isKeyDown.shift)
       selection.clear()
     currentMouseMovement = new Select(e)
@@ -378,21 +429,29 @@ export function jointMouseDown(e: MouseEvent, obj: Store<Editor.Joint.Joint>, st
   currentMouseMovement = new JointAction(e, obj, startPoint)
 }
 
-export function platformResizeKnobMouseDown(e: MouseEvent, obj: Store<Editor.Platform.Platform>, knob: number) {
+export function platformResizeKnobMouseDown(e: MouseEvent, obj: Store<Editor.Platform.Platform>, knob: number, relativeToKnob = false) {
   if(isKeyDown.space) return
   e.stopPropagation()
 
   currentMouseMovement = Editor.Platform.isCircle(obj)
     ? new PlatformCircleResizeAction(e, obj as any)
-    : new PlatformRectangleResizeAction(e, obj as any, knob)
+    : new PlatformRectangleResizeAction(e, obj as any, knob, relativeToKnob)
 }
 
 export function windowTitleMouseDown(e: MouseEvent, window: layout.Window) {
   if(isKeyDown.space) return
   e.stopPropagation()
-  windowPanelMouseDown(window)
+  //windowPanelMouseDown(window)
 
   currentMouseMovement = new WindowMoveAction(e, window)
+}
+
+export function windowBottomMouseDown(e: MouseEvent, window: layout.Window) {
+  if(isKeyDown.space) return
+  e.stopPropagation()
+  //windowPanelMouseDown(window)
+
+  currentMouseMovement = new WindowResizeAction(e, window)
 }
 
 export function windowPanelMouseDown(window: layout.Window) {
@@ -435,7 +494,6 @@ export function windowMouseLeave(e: MouseEvent) {
 import { tabMovement, finishMovement } from "state/layout"
 export function backgroundMouseUp(e: MouseEvent) {
   if(!tabMovement.enabled || !tabMovement.active) return
-  console.log("interaction > backgroundMouseUp > ", getSceneCoordinates(e))
   e.preventDefault()
   e.stopPropagation()
   finishMovement(getSceneCoordinates(e), true)
@@ -476,9 +534,11 @@ export function wheel(e: WheelEvent) {
   let factor = isKeyDown.alt ? 1 : 10
   let delta = Math.sign(e.deltaY) * factor
 
-  /* if(creation) {
+  if(Creation.creation.enabled && Creation.creation.creationType === "SHAMANOBJECT") {
+    Creation.creation.rotation += delta
+    Creation.creation.invalidate()
     return
-  } */
+  }
   
   if(isKeyDown.shift) {
     let p = sceneToGameCoordinates(getSceneCoordinates(e))
@@ -509,6 +569,6 @@ export function gameToSceneCoordinates(p: Point): Point {
   let $zoom = get(zoom)
   return {
     x: p.x * $zoom + pan.x,
-    y: p.x * $zoom + pan.y,
+    y: p.y * $zoom + pan.y,
   }
 }

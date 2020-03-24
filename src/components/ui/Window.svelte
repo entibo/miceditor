@@ -8,7 +8,7 @@ import TabContent from "/components/ui/TabContent.svelte"
 
 import * as layout from "/state/layout"
 import { closeWindow } from "/state/layout"
-import { windowTitleMouseDown, windowPanelMouseDown } from "/components/scene/interaction"
+import { windowTitleMouseDown, windowPanelMouseDown, windowBottomMouseDown } from "/components/scene/interaction"
 
 import { _ } from "/state/locale"
 
@@ -24,11 +24,12 @@ $: titleName = $_(layout.tabToLocaleKey[window.tab])
      style="transform: translate({window.x}px, {window.y}px); 
             width: {window.width}px; 
             height: {window.height}px;"
-     on:mousedown={() => windowPanelMouseDown(window)}
+     on:mousedown|stopPropagation={() => windowPanelMouseDown(window)}
 >
   <div class="flex items-center justify-between items-center cursor-move bg-gray-800 p-1"
        on:mousedown={e => windowTitleMouseDown(e, window)}
   >
+
     <div class="tab active">
       {titleName}
     </div>
@@ -38,16 +39,25 @@ $: titleName = $_(layout.tabToLocaleKey[window.tab])
       <Icon icon={faTimes} />
     </div>
   </div>
-  <div class="tabContent"
-       on:mousedown|stopPropagation
-  >
+
+  <div class="tabContent">
     <TabContent tab={window.tab} />
   </div>
+
+  <div class="w-full bottom-thing bg-gray-800 text-right"
+       on:mousedown={e => windowBottomMouseDown(e, window)}
+  ></div>
+
 </div>
 
 
 <style lang="postcss">
   .window {
     opacity: 0.95;
+  }
+  .bottom-thing {
+    min-height: 1rem;
+    max-height: 1rem;
+    cursor: nwse-resize;
   }
 </style>

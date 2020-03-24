@@ -5,6 +5,8 @@ import * as Common from "./Common"
 import shamanObjectMetadata from "metadata/shamanObject"
 
 
+export * from "data/base/ShamanObject"
+
 export type ShamanObject = Base.ShamanObject.ShamanObject & Common.Metadata & { objectType: "SHAMANOBJECT" }
 
 export const make: (obj: Base.ShamanObject.ShamanObject) => ShamanObject = obj =>

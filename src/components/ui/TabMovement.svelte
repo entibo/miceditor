@@ -1,6 +1,9 @@
 
 <script>
+  import * as layout from "/state/layout"
   import { layoutConfig, tabMovement } from "/state/layout"
+  
+  import { _ } from "/state/locale"
 
   let x = -100, y = -100
   function onMousemove(e) {
@@ -17,6 +20,6 @@
 <div class="tab active pointer-events-none absolute z-50 bg-gray-900 rounded shadow-md"
      style="transform: translate({x}px, {y}px) translate(-50%, -50%);"
 >
-  {$tabMovement.source.tab}
+  {$_(layout.tabToLocaleKey[$tabMovement.source.tab])}
 </div>
 {/if}

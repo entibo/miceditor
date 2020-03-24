@@ -3,6 +3,8 @@ import * as Base from "data/base"
 import * as MapSettings from "data/base/MapSettings"
 import * as Common from "./Common"
 
+export * from "data/base/Image"
+
 
 export type Image 
   = Common.Metadata & { objectType: "IMAGE" }

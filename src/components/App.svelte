@@ -10,6 +10,8 @@
 
   import { layoutConfig, tabMovement } from "/state/layout"
 
+  $: console.log($layoutConfig)
+
   console.info("App loaded")
 </script>
 

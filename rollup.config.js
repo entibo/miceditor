@@ -39,7 +39,7 @@ export default {
       postcss({
          extract: true,
       }),
-      !production && livereload('dist'),
+      // !production && livereload('dist'),
       production && terser(),
    ],
    // watch: {

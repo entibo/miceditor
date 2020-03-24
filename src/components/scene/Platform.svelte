@@ -3,7 +3,6 @@
 
   import * as Platform from "/data/editor/Platform"
   import { showInvisibleGrounds } from "/state/user"
-  import * as selection from "/state/selection"
   import { platformResizeKnobMouseDown } from "/components/scene/interaction"
 
   import SvgImage from "/components/common/SvgImage.svelte"

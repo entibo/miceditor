@@ -1,6 +1,7 @@
 
 import { writable } from "svelte/store"
 
+import { store } from "state/util"
 import { persistentWritable } from "state/util"
 
 export const showGameGUI = persistentWritable("showGameGUI", true)
@@ -29,19 +30,27 @@ export const zoom = (() => {
   }
 })()
 
-export const jointPalette = persistentWritable("jointPalette", [
-  { 
-    color: "000000",
-    thickness: 20,
-    opacity: 0.8,
-    foreground: false,
-  },
-])
 
-export const drawingData = writable({
-  curveToolEnabled: false,
-  curveToolFineness: 10,
+export interface Brush {
+  color: string
+  thickness: number
+  opacity: number
+  foreground: boolean
+}
+export const brushDefaults: () => Brush = () => 
+  ({
+    color: "ffffff",
+    thickness: 10,
+    opacity: 0.9,
+    foreground: false,
+  })
+export const brushPalette = persistentWritable("brushPalette", [brushDefaults()])
+
+export const curveTool = store({
+  enabled: false,
+  fineness: 10,
 })
+
 
 export const firstVisit = false === Boolean(localStorage.getItem("firstVisit"))
 localStorage.setItem("firstVisit", "firstVisit")

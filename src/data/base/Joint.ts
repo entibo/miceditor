@@ -240,8 +240,8 @@ export function encode(data: Joint): Node {
   setAttr ("M1") (getProp ("platform1") (util.omitOn(0), util.writeInt))
   setAttr ("M2") (getProp ("platform2") (util.omitOn(0), util.writeInt))
 
-  setAttr ("P1") (getProp ("point1") (M.iff(p => p.enabled), writePoint))
-  setAttr ("P2") (getProp ("point2") (M.iff(p => p.enabled), writePoint))
+  setAttr ("P1") (getProp ("point1") (M.iff(p => "enabled" in p ? p.enabled : true), writePoint))
+  setAttr ("P2") (getProp ("point2") (M.iff(p => "enabled" in p ? p.enabled : true), writePoint))
   setAttr ("P3") (getProp ("point3") (M.iff(p => p.enabled), writePoint))
   setAttr ("P4") (getProp ("point4") (M.iff(p => p.enabled), writePoint))
 

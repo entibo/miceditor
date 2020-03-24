@@ -10,7 +10,7 @@ const attributes = [
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
-type Type = number | SpecialType
+export type Type = number | SpecialType
 type SpecialType = "T" | "F" | "DS" | "DC" | "DC2"
 
 

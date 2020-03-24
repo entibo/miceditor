@@ -41,11 +41,12 @@ export function clear() {
   groups.images.invalidate()
 }
 
-function getGroup(obj: Editor.Object): Store<SceneObject[]> {
+function getGroup<T extends Editor.Object>(obj: T): Store<Store<T>[]>
+function getGroup(obj: Editor.Object) {
   if(Editor.isPlatform(obj))     return groups.platforms
   if(Editor.isDecoration(obj))   return groups.decorations
-  if(Editor.isJoint(obj))        return groups.joints
   if(Editor.isShamanObject(obj)) return groups.shamanObjects
+  if(Editor.isJoint(obj))        return groups.joints
   if(Editor.isImage(obj))        return groups.images
   throw "never"
 }
@@ -84,8 +85,8 @@ function removeFromGroup(group: Store<SceneObject[]>, obj: SceneObject) {
   group.invalidate()
 }
 
-
-export function add(obj: Editor.Object, index?: number): SceneObject {
+export function add <T extends Editor.Object> (obj: T, index?: number): Store<T>
+export function add(obj: Editor.Object, index?: number) {
   let group = getGroup(obj)
   let s = store(obj)
   s.index = group.length

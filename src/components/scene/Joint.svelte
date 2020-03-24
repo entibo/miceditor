@@ -6,7 +6,6 @@
     joints, selection, buildXML, creation, bezier
   } from "/stores/stores.js" */
   import { bezier } from "@/util"
-  import creation from "/state/creation"
   import { jointMouseDown } from "/components/scene/interaction"
 
   export let obj
@@ -20,9 +19,11 @@
             .map(s => parseInt(s, 16))
             .every((x,i) => Math.abs([0x6a,0x74,0x95][i] - x) < 10)
 
+  let points
   $: points = ["point1","point3","point4","point2"] 
         .map(name => $obj[name] && { ...$obj[name], name })
-        .filter(x => x !== undefined && x.enabled)
+        .filter(x => x && ("enabled" in x ? x.enabled : true))
+  
 
   $: controlPoints = ["controlPoint1", "controlPoint2"] 
         .map(name => ({ ...$obj[name], name }))
@@ -88,43 +89,43 @@
   <g class="point-crosshairs" class:active >
 
     {#each points as {x,y,name}}
-    <g fill="none" stroke="yellow" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
-      transform="translate({x},{y})"
-    >
-      <line x1={0-crosshairRadius} x2={0+crosshairRadius}
-            y1={0} y2={0}  />
-      <line x1={0} x2={0}
-            y1={0-crosshairRadius} y2={0+crosshairRadius}  />
-      <circle fill="transparent" stroke="none"
-        x={0} y={0}
-        r={crosshairRadius}
-        on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
-      />
-    </g>
+      <g fill="none" stroke="yellow" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
+        transform="translate({x},{y})"
+      >
+        <line x1={0-crosshairRadius} x2={0+crosshairRadius}
+              y1={0} y2={0}  />
+        <line x1={0} x2={0}
+              y1={0-crosshairRadius} y2={0+crosshairRadius}  />
+        <circle fill="transparent" stroke="none"
+          x={0} y={0}
+          r={crosshairRadius}
+          on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
+        />
+      </g>
     {/each}
 
     {#if $obj.type === "VC"}
-    <line fill="none" stroke="yellow" opacity="0.8" stroke-width="0.5"
-          x1={points[0].x} x2={points[1].x}
-          y1={points[0].y} y2={points[1].y}  />
-    {#each controlPoints as {x,y,name}, idx}
-    <g fill="none" stroke="#33ff44" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
-      transform="translate({x},{y})"
-    >
-      <line x1={0-crosshairRadius} x2={0+crosshairRadius}
-            y1={0} y2={0}  />
-      <line x1={0} x2={0}
-            y1={0-crosshairRadius} y2={0+crosshairRadius}  />
-      <circle fill="transparent" stroke="none"
-        x={0} y={0}
-        r={crosshairRadius}
-        on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
-      />
-    </g>
-    <line fill="none" stroke="#33ff44" opacity="0.8" stroke-width="0.5"
-          x1={x} x2={points[idx].x}
-          y1={y} y2={points[idx].y}  />
-    {/each}
+      <line fill="none" stroke="yellow" opacity="0.8" stroke-width="0.5"
+            x1={points[0].x} x2={points[1].x}
+            y1={points[0].y} y2={points[1].y}  />
+      {#each controlPoints as {x,y,name}, idx}
+        <g fill="none" stroke="#33ff44" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
+          transform="translate({x},{y})"
+        >
+          <line x1={0-crosshairRadius} x2={0+crosshairRadius}
+                y1={0} y2={0}  />
+          <line x1={0} x2={0}
+                y1={0-crosshairRadius} y2={0+crosshairRadius}  />
+          <circle fill="transparent" stroke="none"
+            x={0} y={0}
+            r={crosshairRadius}
+            on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
+          />
+        </g>
+        <line fill="none" stroke="#33ff44" opacity="0.8" stroke-width="0.5"
+              x1={x} x2={points[idx].x}
+              y1={y} y2={points[idx].y}  />
+      {/each}
     {/if}
 
   </g>

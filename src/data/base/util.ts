@@ -74,6 +74,7 @@ export function eq <T> (a: T) {
         if(k in b && eq((<any>b)[k])(v)) continue
         return false
       }
+      return true
     }
     return false
   }

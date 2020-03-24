@@ -14,7 +14,7 @@
 
   let instanceId = getUniqueId()
 
-  $: metadata = getDecorationMetadata($obj)
+  $: metadata = getDecorationMetadata($obj, $mapSettings)
   const specialMetadataOffset = {
     T: { x: 21, y: 31 },
     "T-1": { x: 25, y: 35 },

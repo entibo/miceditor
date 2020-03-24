@@ -6,6 +6,7 @@
   import * as layout from "/state/layout"
   import { tabMovement } from "/state/layout"
   
+  import { _ } from "/state/locale"
 
   export let panel
   export let panelName 
@@ -25,7 +26,7 @@
       : e.y - resizeActionPosition.y
     if(resize === "left" || resize === "top") delta = -delta
     let newPanelSize = panel.size + delta
-    if(newPanelSize >= 200) {
+    if(newPanelSize >= 180) {
       panel.size = newPanelSize
       resizeActionPosition = e
     }
@@ -57,7 +58,7 @@
 
   {#each panel.groups as group, groupIndex}
     {#if group.tabs.length}
-      <div class="group relative flex flex-col flex-grow overflow-hidden"
+      <div class="group relative flex flex-col overflow-hidden" class:flex-grow={group.activeTab}
            class:target={$tabMovement.active && $tabMovement.target.panel === panelName && $tabMovement.target.groupIndex === groupIndex}
           on:mousemove={() => layout.tabMouseMoveOverGroup(panelName, groupIndex)}
       >
@@ -67,16 +68,18 @@
               on:click={() => layout.selectTab(panelName,groupIndex,tab)}
               on:mousedown={e => layout.tabMouseDown(e, panelName,groupIndex,tab)}
           >
-            {tab}
+            {$_(layout.tabToLocaleKey[tab])}
           </div>
           {/each}
         </div>
         <div class="tabContent">
+          {#if group.activeTab}
           <TabContent tab={group.activeTab} />
+          {/if}
         </div>
       </div>
     {:else}
-      <div class="group dummy-group tabContent {direction === "vertical" ? "h-6" : "w-6"}"
+      <div class="group dummy-group tabContent {direction}"
            class:target={$tabMovement.active && $tabMovement.target.panel === panelName && $tabMovement.target.groupIndex === groupIndex}
            on:mousemove={() => layout.tabMouseMoveOverGroup(panelName, groupIndex)}
       ></div>
@@ -88,8 +91,16 @@
 
 <style lang="postcss">
   .dummy-group {
+    min-width: 0 !important;
+    min-height: 0 !important;
     flex-grow: 0 !important;
     opacity: 0.8;
+  }
+  .dummy-group.vertical {
+    @apply h-6;
+  }
+  .dummy-group.horizontal {
+    @apply w-6;
   }
 
 </style>

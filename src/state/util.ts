@@ -29,6 +29,9 @@ export function store <T extends object> (object: T): Store<T> {
     set: {
       enumerable: false,
       value: (value: T) => {
+        for(let prop in object)
+          if(!(prop in value))
+            delete object[prop]
         Object.assign(object, value)
         store.set(value)
       },

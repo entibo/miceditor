@@ -1,14 +1,16 @@
 
 
 import { clone } from "data/base/util"
-
 import { store, Store, persistentWritable } from "state/util"
+
+import { creation } from "state/creation"
+import shamanObjectMetadata from "metadata/shamanObject"
 
 
 const panels = ["left", "right", "bottom"] as const
 type PanelName = (typeof panels)[number]
 
-const tabs = ["basic","platforms","decorations","shamanObjects","lines","mechanics","images","layers","mapSettings","selection"] as const
+const tabs = ["basic","platforms","decorations","shamanObjects","shamanObjectVariants","lines","mechanics","images","layers","mapSettings","selection"] as const
 type TabName = (typeof tabs)[number]
 
 interface Layout {
@@ -23,7 +25,7 @@ interface Panel {
 interface Group {
   size: number
   tabs: TabName[]
-  activeTab: TabName
+  activeTab?: TabName
 }
 
 export interface Window {
@@ -41,6 +43,7 @@ export const tabToLocaleKey: Record<TabName, LocaleKey> = {
   "basic": "mice-stuff",
   "decorations": "category-decorations",
   "shamanObjects": "shaman_objects",
+  "shamanObjectVariants": "variants",
   "lines": "category-lines",
   "mechanics": "category-mechanics",
   "images": "category-images",
@@ -108,8 +111,8 @@ const defaultLayoutConfig: Layout = {
       tab: "platforms",
       x: 100,
       y: 100,
-      width: 124,
-      height: 240,
+      width: 160,
+      height: 180,
     }
   ],
 }
@@ -133,6 +136,37 @@ export function selectTab(panel: PanelName, groupIndex: number, tab: TabName) {
     return cfg
   })
 }
+
+
+
+creation.subscribe(() => {
+  let metadata
+  if( creation.enabled && 
+      creation.creationType === "SHAMANOBJECT" && 
+      ( metadata = shamanObjectMetadata[creation.type],
+        "variants" in metadata &&
+        metadata.variants &&
+        metadata.variants.length
+      )
+  ) {
+    layoutConfig.update(cfg => {
+      if(!cfg.windows.find(({tab}) => tab === "shamanObjectVariants"))
+        cfg.windows.push({
+          tab: "shamanObjectVariants",
+          x: 0, y: 0,
+          width: 200,
+          height: 360
+        })
+      return cfg
+    })
+  }
+  else {
+    layoutConfig.update(cfg => {
+      cfg.windows = cfg.windows.filter(({tab}) => tab !== "shamanObjectVariants")
+      return cfg
+    })
+  }
+})
 
 
 
@@ -176,8 +210,10 @@ window.addEventListener("mousemove", e => {
     let dist = Math.sqrt((e.x-tabMovement.mouseDownPosition.x)**2 + (e.y-tabMovement.mouseDownPosition.y)**2)
     if(dist < 10) return
 
-    tabMovement.active = true
-    tabMovement.invalidate()
+    tabMovement.update(tm => {
+      tm.active = true
+      return tm
+    })
 
     layoutConfig.update(cfg => {
       let srcPanel = cfg.panels[tabMovement.source.panel]
@@ -187,7 +223,7 @@ window.addEventListener("mousemove", e => {
         let panel = cfg.panels[panelName]
         let groups = [...panel.groups]
         panel.groups = []
-        let pushDummy = () => panel.groups.push({ activeTab: "basic", size: 0, tabs: [] })
+        let pushDummy = () => panel.groups.push({ activeTab: undefined, size: 0, tabs: [] })
         for(let k=0; k < groups.length; k++) {
           pushDummy()
           panel.groups.push(groups[k])
@@ -220,6 +256,15 @@ export function finishMovement(p: Point, toWindow = false) {
       let srcTab = tabMovement.source.tab
 
       if(toWindow) {
+        if(srcGroup.activeTab === srcTab) {
+          srcGroup.activeTab = undefined
+          for(let tab of srcGroup.tabs) {
+            if(tab !== srcTab) {
+              srcGroup.activeTab = tab
+              break
+            }
+          }
+        }
         cfg.windows = cfg.windows.filter(w => w.tab !== srcTab)
         cfg.windows.push({
           tab: srcTab,
