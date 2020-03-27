@@ -10,7 +10,8 @@ const attributes = [
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
-type Type = "JD" | "JP" | "JPL" | "JR" | "VC"
+export type BaseType = "JD" | "JP" | "JPL" | "JR"
+export type Type = BaseType | "VC"
 
 export interface Node extends XML.Node {
   name: Type,
@@ -19,8 +20,8 @@ export interface Node extends XML.Node {
 }
 
 interface Base extends Common.UnknownAttributes {
-  platform1: number
-  platform2: number
+  platform1Index: number
+  platform2Index: number
 }
 
 export interface Renderable {
@@ -82,7 +83,7 @@ export type Joint
       point2: Point
       controlPoint1: Point
       controlPoint2: Point }
-    & Renderable & Common.UnknownAttributes
+    & Base & Renderable
 
 export type JointProps = UnionToIntersection<Joint>
 
@@ -92,8 +93,8 @@ export type PointName =
 
 const baseDefaults: () => Base = () => ({
   unknownAttributes: {},
-  platform1: 0,
-  platform2: 0,
+  platform1Index: 0,
+  platform2Index: 0,
 })
 
 const renderableDefaults: () => Renderable = () => ({
@@ -111,17 +112,6 @@ const optionalPointDefaults: () => OptionalPoint = () => ({
 })
 
 export const defaults: (t: Type) => Joint = type =>
-  type === "VC" ?
-    { type,
-      ...renderableDefaults(),
-      fineness: 10,
-      point1:        { x: 0, y: 0 },
-      point2:        { x: 0, y: 0 },
-      controlPoint1: { x: 0, y: 0 },
-      controlPoint2: { x: 0, y: 0 },
-      unknownAttributes: {},
-    }
-  :
   ({ ...baseDefaults(),
       ...(
         type === "JD" ?
@@ -158,6 +148,7 @@ export const defaults: (t: Type) => Joint = type =>
             point2: optionalPointDefaults(),
           }
         :
+        type === "JPL" ?
           { type,
             ...renderableDefaults(),
             ratio: 1,
@@ -165,6 +156,16 @@ export const defaults: (t: Type) => Joint = type =>
             point2: optionalPointDefaults(),
             point3: optionalPointDefaults(),
             point4: optionalPointDefaults(),
+          }
+        :
+        // type === "VC" ?
+          { type,
+            ...renderableDefaults(),
+            fineness: 10,
+            point1:        { x: 0, y: 0 },
+            point2:        { x: 0, y: 0 },
+            controlPoint1: { x: 0, y: 0 },
+            controlPoint2: { x: 0, y: 0 },
           }
       ) 
     })
@@ -180,13 +181,15 @@ export function decode(xmlNode: XML.Node): Joint {
   const setProp = util.makeSetter(data as JointProps)
   const getProp = util.makeGetter<JointProps>(data)
 
-  setProp ("platform1") (getAttr ("M1") (util.readInt, M.iff(x => x >= 0)))
-  setProp ("platform2") (getAttr ("M2") (util.readInt, M.iff(x => x >= 0)))
+
+  setProp ("platform1Index") (getAttr ("M1") (util.readInt, M.iff(x => x >= 0)))
+  setProp ("platform2Index") (getAttr ("M2") (util.readInt, M.iff(x => x >= 0)))
 
   setProp ("point1") (getAttr ("P1") (readPoint, p => ({...p, enabled: true})))
   setProp ("point2") (getAttr ("P2") (readPoint, p => ({...p, enabled: true})))
   setProp ("point3") (getAttr ("P3") (readPoint, p => ({...p, enabled: true})))
   setProp ("point4") (getAttr ("P4") (readPoint, p => ({...p, enabled: true})))
+
 
   getAttr ("c") (readRenderValues, values => {
     setProp ("renderEnabled") (true)
@@ -221,6 +224,7 @@ export function decode(xmlNode: XML.Node): Joint {
   setProp ("controlPoint1") (getAttr ("C1") (readPoint))
   setProp ("controlPoint2") (getAttr ("C2") (readPoint))
 
+
   return data
 }
 
@@ -237,8 +241,8 @@ export function encode(data: Joint): Node {
   const getProp = util.makeGetter<JointProps>(data)
   const setAttr = util.makeSetter(node.attributes)
   
-  setAttr ("M1") (getProp ("platform1") (util.omitOn(0), util.writeInt))
-  setAttr ("M2") (getProp ("platform2") (util.omitOn(0), util.writeInt))
+  setAttr ("M1") (getProp ("platform1Index") (util.omitOn(0), util.writeInt))
+  setAttr ("M2") (getProp ("platform2Index") (util.omitOn(0), util.writeInt))
 
   setAttr ("P1") (getProp ("point1") (M.iff(p => "enabled" in p ? p.enabled : true), writePoint))
   setAttr ("P2") (getProp ("point2") (M.iff(p => "enabled" in p ? p.enabled : true), writePoint))
@@ -246,7 +250,7 @@ export function encode(data: Joint): Node {
   setAttr ("P4") (getProp ("point4") (M.iff(p => p.enabled), writePoint))
 
   setAttr ("c") (M.andThen(
-    getProp ("renderEnabled") (x => x === true),
+    getProp ("renderEnabled") (M.iff(x => x === true)),
     () => writeRenderValues([
       getProp ("color")      (),   
       getProp ("thickness")  (),     
@@ -319,7 +323,6 @@ function readPowerSpeed(str: string) {
   }
 }
 function writePowerSpeed(power: number, speed: number): string {
-  console.log(power, speed)
   return [
     util.writeFloat(power),
     util.writeFloat(speed),

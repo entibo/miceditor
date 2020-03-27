@@ -26,8 +26,7 @@ body {
 }
 
 :--links {
-    color: blue;
-    text-decoration: underline;
+
 }
 
 :--headings {
@@ -37,6 +36,7 @@ body {
 
 img, image {
     user-select: none;
+    -webkit-user-drag: none;
     user-drag: none;
 }
 
@@ -85,6 +85,14 @@ div.material-input input {
 }
 
 
+.target {
+  outline: dashed 4px white;
+}
+.target-inner {
+  outline: dashed 4px white;
+  outline-offset: -4px;
+}
+
 .panel {
   @apply p-3 bg-gray-800 shadow-lg z-10;
 }
@@ -99,9 +107,6 @@ div.material-input input {
 }
 .panel.horizontal .group {
   min-width: 160px;
-}
-.group.target {
-  outline: dashed 4px white;
 }
 .panel.vertical .group:not(:last-child) {
   @apply mb-2

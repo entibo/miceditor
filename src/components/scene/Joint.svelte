@@ -8,21 +8,56 @@
   import { bezier } from "@/util"
   import { jointMouseDown } from "/components/scene/interaction"
 
+  import * as Editor from "data/editor/index"
+
   export let obj
 
   $: active = $obj.selected
 
+
+  $: hidden = !Editor.Joint.isRendered($obj)
+
+  let color, thickness, opacity
+  $: if(!hidden) {
+      color = $obj.color
+      thickness = $obj.thickness
+      opacity = $obj.opacity
+    } else {
+      color = "fff"
+      thickness = 2
+      opacity = $obj.selected ? 0.9 : 0.6
+    }
+
+  const green = "#33ff44"
+  const yellow = "yellow"
+
+
   $: isHardToSee 
-      =  ( $obj.opacity < 0.1 ) 
-      || ( isNaN(parseInt($obj.color, 16)) ) 
-      || [$obj.color.substring(0,2), $obj.color.substring(2,4), $obj.color.substring(4,6)]
+      =  ( opacity < 0.1 ) 
+      || ( isNaN(parseInt(color, 16)) ) 
+      || [color.substring(0,2), color.substring(2,4), color.substring(4,6)]
             .map(s => parseInt(s, 16))
             .every((x,i) => Math.abs([0x6a,0x74,0x95][i] - x) < 10)
 
+
+  let platform1, platform2
+  $: if($obj.platform1 !== $obj.platform2) {
+    platform1 = $obj.platform1
+    platform2 = $obj.platform2
+  }
+
+
   let points
-  $: points = ["point1","point3","point4","point2"] 
-        .map(name => $obj[name] && { ...$obj[name], name })
-        .filter(x => x && ("enabled" in x ? x.enabled : true))
+  $: {
+        points = ["point1","point3","point4","point2"] 
+          .map(name => $obj[name] && { ...$obj[name], name })
+          .filter(x => x && ("enabled" in x ? x.enabled : true))
+
+        if("platform1" in $obj && platform1)
+          points = [{ name: "platform1", x: platform1.x, y: platform1.y }, ...points]
+        if("platform2" in $obj && platform2)
+          points = [...points, { name: "platform2", x: platform2.x, y: platform2.y }]
+    }
   
 
   $: controlPoints = ["controlPoint1", "controlPoint2"] 
@@ -35,38 +70,6 @@
         : points )
       .map(p => [p.x,p.y].join(",")).join(" ")
 
-/* 
-  $: if($obj.__delegateAction) {
-        if($obj.name === "VC") {
-          let cp = $obj._points[0].x == $obj._points[1].x
-                && $obj._points[0].y == $obj._points[1].y ? 0 : 1
-          resizeInfo = { 
-            $obj,
-            listKey: "_controlPoints",
-            pointIndex: cp,
-            originalPoint: {...$obj._controlPoints[cp]},
-          }
-        }
-        else {
-          resizeInfo = { 
-            $obj,
-            listKey: "_points",
-            pointIndex: 1,
-            originalPoint: {...$obj._points[1]},
-          }
-        }
-        $obj.__delegateAction = false
-  }
-  function pointMoveStart(e, listKey, pointIndex) {
-    resizeInfo = { 
-      $obj,
-      listKey,
-      pointIndex,
-      originalPoint: {...$obj[listKey][pointIndex]},
-      start: { x: e.clientX, y: e.clientY },
-    }
-  } */
-
   let crosshairRadius = 6
   let crosshairThickness = 2
 
@@ -78,17 +81,18 @@
   >
     <g class="selectable" class:active class:hard-to-see={isHardToSee} >
       <polyline points={polyline}
-        stroke-width={$obj.thickness}
-        stroke="#{$obj.color}" 
+        stroke-width={thickness}
+        stroke="#{color}" 
         fill="none"
-        opacity={$obj.opacity}
+        opacity={opacity}
+        class:joint-hidden={hidden}
       >
     </g>
   </g>
   
   <g class="point-crosshairs" class:active >
 
-    {#each points as {x,y,name}}
+    {#each points.filter(({name}) => !name.startsWith("platform")) as {x,y,name}}
       <g fill="none" stroke="yellow" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
         transform="translate({x},{y})"
       >
@@ -105,11 +109,11 @@
     {/each}
 
     {#if $obj.type === "VC"}
-      <line fill="none" stroke="yellow" opacity="0.8" stroke-width="0.5"
+      <line fill="none" stroke={yellow} opacity="0.8" stroke-width="0.5"
             x1={points[0].x} x2={points[1].x}
             y1={points[0].y} y2={points[1].y}  />
       {#each controlPoints as {x,y,name}, idx}
-        <g fill="none" stroke="#33ff44" opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
+        <g fill="none" stroke={green} opacity="0.8" stroke-width={crosshairThickness} stroke-linecap="butt" 
           transform="translate({x},{y})"
         >
           <line x1={0-crosshairRadius} x2={0+crosshairRadius}
@@ -122,7 +126,7 @@
             on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
           />
         </g>
-        <line fill="none" stroke="#33ff44" opacity="0.8" stroke-width="0.5"
+        <line fill="none" stroke={green} opacity="0.8" stroke-width="0.5"
               x1={x} x2={points[idx].x}
               y1={y} y2={points[idx].y}  />
       {/each}
@@ -150,6 +154,21 @@
   .joint {
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+
+  .joint-hidden {
+    stroke-dasharray: 6;
+  }
+  .active .joint-hidden {
+    animation: dash-animation 2s linear infinite;
+  }
+  @keyframes dash-animation {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -12;
+    }
   }
 
   .selectable.hard-to-see {

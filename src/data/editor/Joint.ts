@@ -4,14 +4,24 @@ import { rotate as _rotate } from "@/util"
 import * as Base from "data/base"
 import * as Common from "./Common"
 
+import { Platform } from "./Platform"
+import { Store } from "state/util"
+
 export * from "data/base/Joint"
 
+
 export type Joint = Base.Joint.Joint & Common.Metadata & { objectType: "JOINT" }
+  & {
+      platform1?: Store<Platform>
+      platform2?: Store<Platform>
+    }
 
 export const make: (obj: Base.Joint.Joint) => Joint = obj =>
   ({ objectType: "JOINT",
     ...obj,
     ...Common.metadataDefaults(),
+    platform1: undefined, 
+    platform2: undefined,
   })
 
 
@@ -70,13 +80,15 @@ export function rotateAround(obj: Joint, a: number, p: Point) {
 }
 
 export function getBoundingBox(obj: Joint): Box {
-  let pp = []
-  if("point1" in obj) pp.push(obj.point1)
-  if("point2" in obj) pp.push(obj.point2)
-  if("point3" in obj) pp.push(obj.point3)
-  if("point4" in obj) pp.push(obj.point4)
+  let _obj = obj as any
+  let pp: Point[] =
+    ["point1", "point2", "point3", "point4"]
+      .filter(k => k in _obj && ("enabled" in _obj[k] ? _obj[k].enabled : true))
+      .map(k => (_obj as any)[k])
+
   let xs = pp.map(({x}) => x)
   let ys = pp.map(({y}) => y)
+  console.log("joint > bb", pp, xs, ys)
   return {
     p1: { x: Math.min(...xs),
           y: Math.min(...ys) },

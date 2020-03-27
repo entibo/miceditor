@@ -351,6 +351,7 @@ class PlatformRectangleResizeAction extends MouseMovement {
 }
 
 import * as layout from "state/layout"
+
 class WindowMoveAction extends MouseMovement {
   startWindow: layout.Window
   constructor(e: MouseEvent, public window: layout.Window) {
@@ -405,9 +406,27 @@ export function backgroundMouseDown(e: MouseEvent) {
   }
 }
 
+type MechanicCreation = { platform1Index?: number }
+let mechanicCreation: MechanicCreation = {}
+Creation.creation.subscribe(() => mechanicCreation = {})
+
 export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
   if(isKeyDown.space) return
   e.stopPropagation()
+
+  if(Creation.creation.enabled && Creation.creation.creationType === "MECHANIC") {
+    if(!Editor.isPlatform(obj)) return
+
+    if(mechanicCreation.platform1Index !== undefined) {
+      let platform2 = obj.index
+      Creation.createMechanic(mechanicCreation.platform1Index, platform2)
+      mechanicCreation = {}
+    }
+    else
+      mechanicCreation.platform1Index = obj.index
+
+    return
+  }
 
   if(isKeyDown.shift)
     return selection.has(obj)
@@ -440,7 +459,6 @@ export function platformResizeKnobMouseDown(e: MouseEvent, obj: Store<Editor.Pla
 
 export function windowTitleMouseDown(e: MouseEvent, window: layout.Window) {
   if(isKeyDown.space) return
-  e.stopPropagation()
   //windowPanelMouseDown(window)
 
   currentMouseMovement = new WindowMoveAction(e, window)
@@ -491,12 +509,11 @@ export function windowMouseLeave(e: MouseEvent) {
   }
 }
 
-import { tabMovement, finishMovement } from "state/layout"
-export function backgroundMouseUp(e: MouseEvent) {
-  if(!tabMovement.enabled || !tabMovement.active) return
-  e.preventDefault()
-  e.stopPropagation()
-  finishMovement(getSceneCoordinates(e), true)
+export function backgroundMouseMove(e: MouseEvent) {
+  layout.setTabMovementTarget({
+    type: "window",
+    ...getSceneCoordinates(e)
+  })
 }
 
 

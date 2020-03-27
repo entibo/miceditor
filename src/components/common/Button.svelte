@@ -1,13 +1,15 @@
 <script>
 
   export let disabled = false
-  // export let className
+
+  let className = ""
+  export {className as class}
   
 </script>
 
 <button on:click
   disabled={disabled}
-  class="text-white space border-none outline-none bg-blue-600 rounded-sm select-none {$$props.class || ''}"
+  class="text-white space border-none outline-none bg-blue-600 rounded-sm select-none {className}"
 >
   <slot></slot>
 </button>

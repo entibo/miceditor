@@ -40,6 +40,7 @@
 
 </script>
 
+
 <svelte:window 
   on:mouseup={() => resizeActionPosition = null}
   on:mouseleave={() => resizeActionPosition = null}
@@ -47,54 +48,73 @@
 />
 
 
+
 {#if panel.groups.length}
 
-<div class="panel relative flex {direction}" style="max-{dimensionName}: {panel.size}px; min-{dimensionName}: {panel.size}px">
+  <div class="panel relative flex {direction}" style="max-{dimensionName}: {panel.size}px; min-{dimensionName}: {panel.size}px">
 
-  <div class="absolute {resizeClasses}"
-       style="cursor: {direction === "vertical" ? "ew" : "ns"}-resize;"
-       on:mousedown={e => resizeActionPosition = e}
-  ></div>
+    <div class="absolute {resizeClasses}"
+        style="cursor: {direction === "vertical" ? "ew" : "ns"}-resize;"
+        on:mousedown={e => resizeActionPosition = e}
+    ></div>
 
-  {#each panel.groups as group, groupIndex}
-    {#if group.tabs.length}
-      <div class="group relative flex flex-col overflow-hidden" class:flex-grow={group.activeTab}
-           class:target={$tabMovement.active && $tabMovement.target.panel === panelName && $tabMovement.target.groupIndex === groupIndex}
-          on:mousemove={() => layout.tabMouseMoveOverGroup(panelName, groupIndex)}
-      >
-        <div class="tabList">
-          {#each group.tabs as tab}
-          <div class="tab cursor-pointer" class:active={tab === group.activeTab}
-              on:click={() => layout.selectTab(panelName,groupIndex,tab)}
-              on:mousedown={e => layout.tabMouseDown(e, panelName,groupIndex,tab)}
-          >
-            {$_(layout.tabToLocaleKey[tab])}
+    {#each panel.groups as group, groupIndex}
+
+        {#if $tabMovement.active}
+          <div class="group dummy-group tabContent {direction}"
+              class:target={$tabMovement.active && $tabMovement.target.type === "newGroup" && $tabMovement.target.panelName === panelName && $tabMovement.target.groupIndex === groupIndex}
+              on:mousemove={() => layout.setTabMovementTarget({ type: "newGroup", panelName, groupIndex })}
+          ></div>
+        {/if}
+
+        <div class="group relative flex flex-col overflow-hidden" class:flex-grow={group.activeTab}
+            class:target={$tabMovement.active && $tabMovement.target.type === "group" && $tabMovement.target.panelName === panelName && $tabMovement.target.groupIndex === groupIndex}
+            on:mousemove={() => layout.setTabMovementTarget({ type: "group", panelName, groupIndex })}
+        >
+          <div class="tabList">
+            {#each group.tabs as tab}
+            <div class="tab cursor-pointer" class:active={tab === group.activeTab}
+                on:click={() => layout.selectTab(panelName,groupIndex,tab)}
+                on:mousedown={e => layout.tabMouseDown(e, panelName,groupIndex,tab)}
+            >
+              {$_(layout.tabToLocaleKey[tab])}
+            </div>
+            {/each}
           </div>
-          {/each}
+          <div class="tabContent">
+            {#if group.activeTab}
+            <TabContent tab={group.activeTab} />
+            {/if}
+          </div>
         </div>
-        <div class="tabContent">
-          {#if group.activeTab}
-          <TabContent tab={group.activeTab} />
-          {/if}
-        </div>
-      </div>
-    {:else}
+        
+    {/each}
+
+    {#if $tabMovement.active}
       <div class="group dummy-group tabContent {direction}"
-           class:target={$tabMovement.active && $tabMovement.target.panel === panelName && $tabMovement.target.groupIndex === groupIndex}
-           on:mousemove={() => layout.tabMouseMoveOverGroup(panelName, groupIndex)}
+           class:target={$tabMovement.active && $tabMovement.target.type === "newGroup" && $tabMovement.target.panelName === panelName && $tabMovement.target.groupIndex === panel.groups.length}
+           on:mousemove={() => layout.setTabMovementTarget({ type: "newGroup", panelName, groupIndex: panel.groups.length })}
       ></div>
     {/if}
-  {/each}
-</div>
+    
+  </div>
+
+{:else if $tabMovement.active}
+
+  <div class="panel dummy-panel {direction}"
+       class:target-inner={$tabMovement.active && $tabMovement.target.type === "newGroup" && $tabMovement.target.panelName === panelName && $tabMovement.target.groupIndex === 0}
+       on:mousemove={() => layout.setTabMovementTarget({ type: "newGroup", panelName, groupIndex: 0 })}
+  ></div>
 
 {/if}
 
+
+
 <style lang="postcss">
-  .dummy-group {
+  .dummy-group, .dummy-panel {
     min-width: 0 !important;
     min-height: 0 !important;
     flex-grow: 0 !important;
-    opacity: 0.8;
   }
   .dummy-group.vertical {
     @apply h-6;
@@ -102,5 +122,10 @@
   .dummy-group.horizontal {
     @apply w-6;
   }
-
+  .dummy-panel.vertical {
+    @apply w-6;
+  }
+  .dummy-panel.horizontal {
+    @apply h-6;
+  }
 </style>

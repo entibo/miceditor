@@ -8,7 +8,7 @@
   import Platform from "/components/scene/Platform.svelte"
   import Decoration from "/components/scene/Decoration.svelte"
   import ShamanObject from "/components/scene/ShamanObject.svelte"
-  import Image from "/components/scene/Image.svelte"
+  import SvgImage from "/components/common/SvgImage.svelte"
 
   function getPlatform() {
     let obj = Editor.Platform.make(Editor.Platform.defaults($creation.type))
@@ -47,5 +47,7 @@
             fill="#{$creation.brush.color}" 
             opacity={$creation.brush.opacity}
     />
+  {:else if $creation.creationType === "IMAGE"}
+    <SvgImage href={$creation.imageUrl.url}/>
   {/if}
 {/if}

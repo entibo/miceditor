@@ -59,11 +59,20 @@ export function getAll(): SceneObject[] {
 export function remove() {
   for(let unsubscribe of selectionMap.values())
     unsubscribe()
-  for(let obj of [...selectionMap.keys()].sort((a,b) => b.index-a.index))
+
+  let all = [...selectionMap.keys()].sort((a,b) => b.index-a.index)
+  let platforms = all.filter(Editor.isPlatform)
+  let joints = sceneObjects.groups.joints
+    .filter(obj => !obj.selected)
+    .filter(obj => (platforms.includes(obj.platform1 as any) && (obj.platform1 as any).index > 0)
+                || (platforms.includes(obj.platform2 as any) && (obj.platform2 as any).index > 0))
+
+  for(let obj of all.concat(joints))
     sceneObjects.remove(obj)
   selectionMap.clear()
   blank.invalidate()
 }
+
 export function duplicate() {
   let duplicates = []
   for(let obj of selectionMap.keys()) {
@@ -77,7 +86,6 @@ export function duplicate() {
     select(obj)
   move(40, 0)
 }
-
 
 export function move(dx: number, dy: number) {
   for(let obj of selectionMap.keys()) {

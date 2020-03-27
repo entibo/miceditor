@@ -29,6 +29,9 @@
       ? { ...activeBrush }
       : brushDefaults()
     $brushPalette = [...$brushPalette, newBrush]
+
+    Creation.disable()
+    Creation.setLine(newBrush)
   }
   function removeBrush(brush) {
     $brushPalette = $brushPalette.filter(b => b !== brush)
@@ -69,7 +72,7 @@
       <div class="tile dim-40 rounded-sm active opacity-50 hover:opacity-100"
             on:click={addBrush}
       >
-          <Icon icon={faPlus} />
+        <Icon icon={faPlus} />
       </div>
     </Tooltip>
 
@@ -100,8 +103,10 @@
     <div class="" transition:fly={{duration: 80, x:50}}>
       <label>
         <span>{$_("color")}</span>
-        <div class="p-2 mr-2 shadow rounded cursor-pointer" style="background: #{activeBrush.color}"></div>
-        <ColorTextInput bind:value={activeBrush.color} on:input={updateActiveBrush} />
+        <label>
+          <div class="p-2 mr-2 shadow rounded cursor-pointer" style="background: #{activeBrush.color}"></div>
+          <ColorTextInput bind:value={activeBrush.color} on:input={updateActiveBrush} />
+        </label>
       </label>
       <label>
         <span>{$_("line-width")}</span>

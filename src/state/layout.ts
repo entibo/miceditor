@@ -89,9 +89,9 @@ const defaultLayoutConfig: Layout = {
       size: 250,
       groups: [
         {
-          size: 600,
+          size: 0,
           tabs: ["decorations", "shamanObjects"],
-          activeTab: "decorations",
+          activeTab: undefined,
         },
         {
           size: 0,
@@ -107,13 +107,13 @@ const defaultLayoutConfig: Layout = {
     },
   },
   windows: [
-    {
+    /* {
       tab: "platforms",
       x: 100,
       y: 100,
       width: 160,
       height: 180,
-    }
+    } */
   ],
 }
 
@@ -130,9 +130,9 @@ export function closeWindow(window: Window) {
 }
 
 
-export function selectTab(panel: PanelName, groupIndex: number, tab: TabName) {
+export function selectTab(panelName: PanelName, groupIndex: number, tab: TabName) {
   layoutConfig.update(cfg => {
-    cfg.panels[panel].groups[groupIndex].activeTab = tab
+    cfg.panels[panelName].groups[groupIndex].activeTab = tab
     return cfg
   })
 }
@@ -172,137 +172,145 @@ creation.subscribe(() => {
 
 
 type TabMovement
-  = { enabled: boolean
+  = { enabled: false }
+  | { enabled: true
+      active: boolean 
       mouseDownPosition: Point
-      active: boolean
       source: {
-        panel: PanelName
+        panelName: PanelName
         groupIndex: number
         tab: TabName
       }
-      target: {
-        panel: PanelName
-        groupIndex: number
-      }
+      target: TabMovementTarget
     }
-export const tabMovement: Store<TabMovement> = store({ 
-  enabled: false,
-  mouseDownPosition: { x: 0, y: 0 },
-  active: false,
-  source: { panel: "left", groupIndex: -1, tab: "basic" },
-  target: { panel: "left", groupIndex: -1 },
-})
 
-export function tabMouseDown(e: MouseEvent, panel: PanelName, groupIndex: number, tab: TabName) {
+type TabMovementTarget
+  = { type: "group" 
+      panelName: PanelName
+      groupIndex: number
+    }
+  | { type: "newGroup"
+      panelName: PanelName
+      groupIndex: number
+    }
+  | { type: "window"
+      x: number
+      y: number
+    }
+
+export const tabMovement = store<TabMovement>({ enabled: false })
+
+export function tabMouseDown(e: MouseEvent, panelName: PanelName, groupIndex: number, tab: TabName) {
   tabMovement.set({
     enabled: true,
-    mouseDownPosition: { x: e.x, y: e.y },
     active: false,
-    source: { panel, groupIndex, tab },
-    target: { panel, groupIndex },
+    mouseDownPosition: { x: e.x, y: e.y },
+    source: { panelName, groupIndex, tab },
+    target: { type: "group", panelName, groupIndex },
   })
 }
 
-window.addEventListener("mousemove", e => {
+// Only make it "active" after a minimum movement of ~10px
+// to avoid unintentional dragging while clicking
+addEventListener("mousemove", e => {
   if(!tabMovement.enabled) return
-  if(!tabMovement.active) {
+  if(tabMovement.active) return
 
-    let dist = Math.sqrt((e.x-tabMovement.mouseDownPosition.x)**2 + (e.y-tabMovement.mouseDownPosition.y)**2)
-    if(dist < 10) return
+  let dist = Math.sqrt((e.x-tabMovement.mouseDownPosition.x)**2 + (e.y-tabMovement.mouseDownPosition.y)**2)
+  if(dist < 10) return
 
-    tabMovement.update(tm => {
-      tm.active = true
-      return tm
-    })
-
-    layoutConfig.update(cfg => {
-      let srcPanel = cfg.panels[tabMovement.source.panel]
-      let srcGroup = srcPanel.groups[tabMovement.source.groupIndex]
-
-      for(let panelName of panels) {
-        let panel = cfg.panels[panelName]
-        let groups = [...panel.groups]
-        panel.groups = []
-        let pushDummy = () => panel.groups.push({ activeTab: undefined, size: 0, tabs: [] })
-        for(let k=0; k < groups.length; k++) {
-          pushDummy()
-          panel.groups.push(groups[k])
-        }
-        pushDummy()
-      }
-
-      tabMovement.source.groupIndex = srcPanel.groups.indexOf(srcGroup)
-
-      return cfg
-    })
-  }
+  tabMovement.active = true
+  tabMovement.invalidate()
 })
 
-export function tabMouseMoveOverGroup(panel: PanelName, groupIndex: number) {
+export function setTabMovementTarget(target: TabMovementTarget) {
   if(!tabMovement.enabled) return
-  tabMovement.target = { panel, groupIndex }
+  tabMovement.target = target
   tabMovement.invalidate()
 }
 
-export function finishMovement(p: Point, toWindow = false) {
+addEventListener("mouseup", () => {
   if(!tabMovement.enabled) return
 
-  console.log("finishMovement >", p)
+  if(!tabMovement.active)
+    return tabMovement.set({ enabled: false })
 
-  if(tabMovement.active) {
-    layoutConfig.update(cfg => {
-      let srcPanel = cfg.panels[tabMovement.source.panel]
-      let srcGroup = srcPanel.groups[tabMovement.source.groupIndex]
-      let srcTab = tabMovement.source.tab
+  layoutConfig.update(cfg => {
+    let srcPanel = cfg.panels[tabMovement.source.panelName]
+    let srcGroup = srcPanel.groups[tabMovement.source.groupIndex]
+    let srcTab = tabMovement.source.tab
 
-      if(toWindow) {
-        if(srcGroup.activeTab === srcTab) {
-          srcGroup.activeTab = undefined
-          for(let tab of srcGroup.tabs) {
-            if(tab !== srcTab) {
-              srcGroup.activeTab = tab
-              break
-            }
+    if(tabMovement.target.type === "window") {
+
+      if(srcGroup.activeTab === srcTab) {
+        srcGroup.activeTab = undefined
+        for(let tab of srcGroup.tabs) {
+          if(tab !== srcTab) {
+            srcGroup.activeTab = tab
+            break
           }
         }
-        cfg.windows = cfg.windows.filter(w => w.tab !== srcTab)
-        cfg.windows.push({
-          tab: srcTab,
-          x: p.x,
-          y: p.y,
-          width: 240,
-          height: 360,
-        })
       }
-      else {
-        
-        // Remove
-        srcGroup.tabs.splice(srcGroup.tabs.indexOf(srcTab), 1)
-        if(srcGroup.activeTab === srcTab) {
-          srcGroup.activeTab = srcGroup.tabs[0]
-        }
 
-        // Add
-        let tgtGroup = cfg.panels[tabMovement.target.panel].groups[tabMovement.target.groupIndex]
-        if(tgtGroup === srcGroup) { }
-        tgtGroup.tabs.push(srcTab)
-        tgtGroup.activeTab = srcTab
-
-      }
-      
-      // Remove empty groups
-      for(let panelName of panels) {
-        cfg.panels[panelName].groups =
-          cfg.panels[panelName].groups.filter(group => group.tabs.length > 0)
-      }
+      cfg.windows = cfg.windows.filter(({tab}) => tab !== srcTab)
+      cfg.windows.push({
+        tab: srcTab,
+        x: tabMovement.target.x,
+        y: tabMovement.target.y,
+        width: 240,
+        height: 360,
+      })
 
       return cfg
-    })
-  }
 
-  tabMovement.enabled = tabMovement.active = false
-  tabMovement.invalidate()
-}
+    }
+      
+    let removeSrcTab = () => {
+      let idx = srcGroup.tabs.indexOf(srcTab)
+      srcGroup.tabs.splice(idx, 1)
+      if(srcGroup.activeTab === srcTab)
+        srcGroup.activeTab = srcGroup.tabs[idx-1] || srcGroup.tabs[0]
+    }
 
-window.addEventListener("mouseup",    finishMovement)
-window.addEventListener("mouseleave", finishMovement)
+    if(tabMovement.target.type === "group") {
+
+      let tgtGroup = cfg.panels[tabMovement.target.panelName].groups[tabMovement.target.groupIndex]
+      if(tgtGroup === srcGroup)
+        return cfg
+
+      removeSrcTab()
+      tgtGroup.tabs.push(srcTab)
+      tgtGroup.activeTab = srcTab
+
+    }
+
+    if(tabMovement.target.type === "newGroup") {
+
+      removeSrcTab()
+      let newGroup: Group = {
+        size: 0,
+        tabs: [srcTab],
+        activeTab: srcTab,
+      }
+      let tgtPanel = cfg.panels[tabMovement.target.panelName]
+      let idx = tabMovement.target.groupIndex
+      tgtPanel.groups =
+        [ ...tgtPanel.groups.slice(0, idx), 
+          newGroup, 
+          ...tgtPanel.groups.slice(idx),
+        ]
+
+    }
+
+    // Make sure we don't have any empty groups
+    for(let panelName of panels)
+      cfg.panels[panelName].groups = cfg.panels[panelName].groups.filter(g => g.tabs.length > 0)
+
+    return cfg
+  })
+
+  tabMovement.set({ enabled: false })
+})
+
+addEventListener("mouseleave", () =>
+  tabMovement.set({ enabled: false }))

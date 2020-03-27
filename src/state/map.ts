@@ -23,6 +23,10 @@ setTimeout(() => {
   importXML(get(xml))
 }, 50)
 
+/*
+  Loads map settings and all objects into memory.
+  Platforms need to be added before joints.
+*/
 export function importXML(str: string) {
   let map = Editor.Map.parse(str)
 

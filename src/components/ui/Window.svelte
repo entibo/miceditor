@@ -14,6 +14,7 @@ import { _ } from "/state/locale"
 
 
 export let window
+export let z
 
 $: titleName = $_(layout.tabToLocaleKey[window.tab])
 
@@ -23,7 +24,8 @@ $: titleName = $_(layout.tabToLocaleKey[window.tab])
 <div class="window absolute top-0 left-0 flex flex-col overflow-hidden rounded-sm shadow-md" 
      style="transform: translate({window.x}px, {window.y}px); 
             width: {window.width}px; 
-            height: {window.height}px;"
+            height: {window.height}px;
+            z-index: {z};"
      on:mousedown|stopPropagation={() => windowPanelMouseDown(window)}
 >
   <div class="flex items-center justify-between items-center cursor-move bg-gray-800 p-1"

@@ -4,6 +4,8 @@ import { writable } from "svelte/store"
 import { store } from "state/util"
 import { persistentWritable } from "state/util"
 
+import * as Editor from "data/editor"
+
 export const showGameGUI = persistentWritable("showGameGUI", true)
 export const showMapBorder = persistentWritable("showMapBorder", true)
 export const showInvisibleGrounds = persistentWritable("showInvisibleGrounds", true)
@@ -13,7 +15,7 @@ export const grid = persistentWritable("grid", {
   enabled: false,
   width: 40, height: 40,
   sticky: false,
-  color: "0e0e0e",
+  color: "3D4253",
 })
 
 export const zoom = (() => {
@@ -50,6 +52,9 @@ export const curveTool = store({
   enabled: false,
   fineness: 10,
 })
+
+
+export const imagePalette = persistentWritable("imagePalette", [Editor.Image.readUrl("x_transformice/x_inventaire/17.jpg")])
 
 
 export const firstVisit = false === Boolean(localStorage.getItem("firstVisit"))

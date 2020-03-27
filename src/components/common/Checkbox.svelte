@@ -15,7 +15,7 @@
 
 </script>
 
-<label class="{className} cursor-pointer">
+<label class="cursor-pointer {className}">
 
   <input type="checkbox" bind:checked on:change class="hidden" />
   <Icon icon={checked ? faCheckSquare : faSquare}/>

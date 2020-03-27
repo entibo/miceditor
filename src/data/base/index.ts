@@ -21,31 +21,3 @@ export type Object
   | Decoration.Decoration
   | ShamanObject.ShamanObject
   | Joint.Joint
-
-export const isPlatform
-  = util.makeChecker <Object, Platform.Platform> ("invisible")
-
-/* export const isJoint
-  = util.makeChecker <Object, Joint.Joint> ("platform1") */
-
-export function isDecoration(obj: Object): obj is Decoration.Decoration {
-  if(!("type" in obj)) return false
-  return typeof obj.type === "string" 
-    ? true
-    : "reverse" in obj 
-}
-
-export const isImage
-  = util.makeChecker <Object, Image.Image> ("imageUrl")
-
-
-
-
-export function move(obj: Object, dx: number, dy: number) {
-/*   if(isJoint(obj)) {
-
-    return
-  }
-  obj.x += dx
-  obj.y += dy */
-}

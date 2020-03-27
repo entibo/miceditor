@@ -45,7 +45,6 @@ export const typeNames = [
   ]
 
 interface Base extends Common.UnknownAttributes {
-  //objectType: "Platform"
   x: number
   y: number
   invisible: boolean
@@ -408,11 +407,4 @@ export function readCollision(str: string): M.Maybe<{ miceCollision: boolean, ob
 export function writeCollision(miceCollision: boolean, objectCollision: boolean): string {
   let n = 4 - (miceCollision?1:0) - (objectCollision?2:0)
   return n.toString()
-}
-
-
-export function isForeground(data: Platform): boolean {
-  return data.type === Type.Water
-      || data.type === Type.Cobweb
-      || data.foreground
 }

@@ -8,9 +8,7 @@
   import Panel from "/components/ui/Panel.svelte"
   import TabMovement from "/components/ui/TabMovement.svelte"
 
-  import { layoutConfig, tabMovement } from "/state/layout"
-
-  $: console.log($layoutConfig)
+  import { layoutConfig } from "/state/layout"
 
   console.info("App loaded")
 </script>

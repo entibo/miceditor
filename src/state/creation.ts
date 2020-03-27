@@ -29,6 +29,9 @@ type Creation =
   | 
   { enabled: true, creationType: "LINE"
     brush: Brush }
+  | 
+  { enabled: true, creationType: "MECHANIC"
+    type: Editor.Joint.BaseType }
 
 export const creation = store<Creation>({ enabled: false })  
 
@@ -37,7 +40,6 @@ export const disable = () => creation.set({ enabled: false })
 
 
 function set(value: Creation) {
-  console.log(creation, eq(value)(creation), value)
   if(creation.enabled && value.enabled && eq(value)(creation))
     return disable()
   creation.set(value)
@@ -61,6 +63,9 @@ export const setImage = (imageUrl: Editor.Image.ImageUrl) =>
 export const setLine = (brush: Brush) =>
   set({ enabled: true, creationType: "LINE", brush })
 
+export const setMechanic = (type: Editor.Joint.BaseType) =>
+  set({ enabled: true, creationType: "MECHANIC", type })
+
 
 export const create = (e: MouseEvent, x: number, y: number) => {
   if(!creation.enabled) throw "create was called when creation was disabled"
@@ -80,14 +85,14 @@ export const create = (e: MouseEvent, x: number, y: number) => {
     selection.set([store])
   }
 
-  if(creation.creationType === "DECORATION") {
+  else if(creation.creationType === "DECORATION") {
     let obj = Editor.Decoration.make(Editor.Decoration.defaults(creation.type))
     obj.x = x
     obj.y = y
     selection.set([ sceneObjects.add(obj) ])
   }
 
-  if(creation.creationType === "SHAMANOBJECT") {
+  else if(creation.creationType === "SHAMANOBJECT") {
     let obj = Editor.ShamanObject.make(Editor.ShamanObject.defaults(creation.type))
     obj.x = x
     obj.y = y
@@ -95,15 +100,17 @@ export const create = (e: MouseEvent, x: number, y: number) => {
     selection.set([ sceneObjects.add(obj) ])
   }
 
-  if(creation.creationType === "IMAGE") {
-    let obj = Editor.Image.make(Editor.Image.defaults())
+  else if(creation.creationType === "IMAGE") {
+    if(creation.imageUrl.value === "")
+      return
+    let obj = Editor.Image.make(Editor.Image.defaults(), false)
     obj.x = x
     obj.y = y
     obj.imageUrl = creation.imageUrl
     selection.set([ sceneObjects.add(obj) ])
   }
 
-  if(creation.creationType === "LINE") {
+  else if(creation.creationType === "LINE") {
 
     let setRenderProperties = (obj: Extract<Editor.Joint.Joint,Editor.Joint.Renderable>) => {
       obj.renderEnabled = true
@@ -172,4 +179,18 @@ export const create = (e: MouseEvent, x: number, y: number) => {
 
   }
 
+
+}
+
+
+export function createMechanic(platform1Index: number, platform2Index: number) {
+  if(!creation.enabled) return
+  if(creation.creationType !== "MECHANIC") return
+  let {type} = creation
+  let obj = Editor.Joint.make(Editor.Joint.defaults(type)) as Extract<Editor.Joint.Joint,{type: typeof type}>
+  obj.platform1Index = platform1Index
+  obj.platform2Index = platform2Index
+
+  let store = sceneObjects.add(obj)
+  selection.set([store])
 }

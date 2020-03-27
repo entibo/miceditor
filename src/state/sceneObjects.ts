@@ -93,6 +93,12 @@ export function add(obj: Editor.Object, index?: number) {
   group.push(s)
   setIndex(s, group, index !== undefined ? index : group.length)
   s.subscribe(history.invalidate)
+  if(Editor.isJoint(s)) {
+    s.platform1 = groups.platforms[s.platform1Index]
+    s.platform2 = groups.platforms[s.platform2Index]
+    s.platform1 && s.platform1.subscribe(s.invalidate)
+    s.platform2 && s.platform2.subscribe(s.invalidate)
+  }
   return s
 }
 
@@ -132,8 +138,9 @@ export const shamanObjects = derive(groups.shamanObjects, all => {
 })
 
 export const joints = derive(groups.joints, all => {
-  let [foreground,background] = all.filter(Editor.Joint.isRendered).split(Editor.Joint.isForeground)
-  return {all,foreground,background}
+  let [renderable,hidden] = all.split(Editor.Joint.isRendered)
+  let [foreground,background] = renderable.split(Editor.Joint.isForeground)
+  return {all,foreground,background,hidden}
 })
 
 export const images = derive(groups.images, all => {

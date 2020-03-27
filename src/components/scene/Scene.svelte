@@ -33,7 +33,7 @@
   import { pan, selectionBox, currentGamePosition, isKeyDown } from "./interaction"
 
   import * as layout from "/state/layout"
-  import { layoutConfig } from "/state/layout"
+  import { layoutConfig, tabMovement } from "/state/layout"
 
 
   let svgContainerEl = null, svgWidth = 1, svgHeight = 1
@@ -58,6 +58,11 @@
     }
   }
 
+  $: windowsWithIndex = 
+        $layoutConfig.windows
+          .map((w,idx) => [w,idx])
+          .sort(([a,_],[b,__]) => a.tab < b.tab ? -1 : 1)
+
 </script>
 
 <svelte:window 
@@ -68,13 +73,13 @@
   on:mouseleave={interaction.windowMouseLeave}
 />
 
-<div class="flex-grow bg-tfm-blue outline-none" 
+<div class="scene-container flex-grow bg-tfm-blue outline-none" 
+  class:target-inner={$tabMovement.active && $tabMovement.target.type === "window"}
   bind:this={svgContainerEl}
   bind:clientWidth={svgWidth} bind:clientHeight={svgHeight}
   on:wheel={interaction.wheel}
   on:mousedown={interaction.backgroundMouseDown}  
-  on:mouseup={interaction.backgroundMouseUp}
-  on:mousemove="{() => layout.tabMouseMoveOverGroup("",-1)}"
+  on:mousemove={interaction.backgroundMouseMove}
   on:blur={interaction.windowMouseLeave}
   on:keydown={interaction.keyDown} tabindex="-1"
 >
@@ -163,6 +168,9 @@
       <SceneObject {obj}> <ShamanObject {obj}/> </SceneObject>
       {/each}
 
+      {#each $joints.hidden as obj}
+      <SceneObject {obj}> <Joint {obj}/> </SceneObject>
+      {/each}
 
       {#each $decorations.spawns as obj}
       <SceneObject {obj}> <Decoration {obj}/> </SceneObject>
@@ -205,12 +213,12 @@
     </g>
   </svg>
 
-  {#if $creation.enabled }
+  {#if $creation.enabled && $creation.creationType !== "MECHANIC" }
   <div class="absolute top-0 right-0 bottom-0 left-0 w-full h-full"></div>
   {/if}
 
-  {#each $layoutConfig.windows as window, _ (window.tab)}
-  <Window window={window} />
+  {#each windowsWithIndex as [window,idx], _ (window.tab)}
+  <Window window={window} z={idx} />
   {/each}
 
   <Footer position={$currentGamePosition} selectionBox={$selectionBox} />

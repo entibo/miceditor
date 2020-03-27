@@ -144,8 +144,8 @@ export function decode(xmlNode: XML.Node): MapSettings {
 
   setProp ("backgroundImageId") (getAttr ("F") (util.readInt, util.writeInt))
 
-  setProp ("backgroundImages")   (getAttr ("d")   (readImages))
-  setProp ("foregroundImages")   (getAttr ("D")   (readImages))
+  setProp ("backgroundImages")   (getAttr ("D")   (readImages))
+  setProp ("foregroundImages")   (getAttr ("d")   (readImages))
   setProp ("disappearingImages") (getAttr ("APS") (readDisappearingImages))
 
   getAttr ("G") (readGravityWind, r => {
@@ -192,8 +192,8 @@ export function encode(data: MapSettings): Node {
 
   setAttr ("F") (getProp ("backgroundImageId") (util.omitOn("-1")))
 
-  setAttr ("d") (getProp ("backgroundImages") (util.omitOn([]), writeImages))
-  setAttr ("D") (getProp ("foregroundImages") (util.omitOn([]), writeImages))
+  setAttr ("D") (getProp ("backgroundImages") (util.omitOn([]), writeImages))
+  setAttr ("d") (getProp ("foregroundImages") (util.omitOn([]), writeImages))
   setAttr ("APS") (getProp ("disappearingImages") (util.omitOn([]), writeDisappearingImages))
 
   setAttr ("G") (M.map(

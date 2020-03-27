@@ -1,5 +1,9 @@
 {
     "en": {
+        "distance-joint": "Distance Joint",
+        "prismatic-joint": "Prismatic Joint",
+        "rotation-joint": "Rotation Joint",
+        "pulley-joint": "Pulley Joint",
         "fineness": "Fineness",
         "curve-tool": "Curve tool",
         "category-decorations": "Decorations",
