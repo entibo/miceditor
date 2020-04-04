@@ -4,7 +4,7 @@ import { writable, Writable, derived, get as storeGet } from "svelte/store"
 import * as Editor from "data/editor"
 import * as sceneObjects from "state/sceneObjects"
 import { SceneObject } from "state/sceneObjects"
-import { store } from "state/util"
+import { store, Store } from "state/util"
 
 const blank = store({})
 let selectionMap = new Map<SceneObject, ()=>void>()
@@ -103,7 +103,32 @@ export function resize(dx: number, dy: number) {
 }
 
 export function shiftIndex(dz: number) {
-
+  let map = new Map<ReturnType<typeof sceneObjects.getGroup>, SceneObject[]>()
+  for(let obj of selectionMap.keys()) {
+    let group = sceneObjects.getGroup(obj)
+    let list = map.get(group)
+    if(!list) (list = [], map.set(group, list))
+    list.push(obj)
+  }
+  for(let [group, list] of map.entries()) {
+    list = list.sort((a,b) => a.index - b.index)
+    if(dz < 0) {
+      let min = 0
+      for(let obj of list) {
+        let target = Math.max(obj.index + dz, min)
+        sceneObjects.setIndex(obj, target)
+        min = target + 1
+      }
+    }
+    else {
+      let max = group.length - 1
+      for(let obj of list.reverse()) {
+        let target = Math.min(obj.index + dz, max)
+        sceneObjects.setIndex(obj, target)
+        max = target - 1
+      }      
+    }
+  }
 }
 
 export function flip() {
@@ -130,6 +155,16 @@ export function rotate(a: number) {
 export function rotateAround(a: number, p: Point) {
   for(let obj of selectionMap.keys()) {
     Editor.rotateAround(obj, a, p)
+    obj.invalidate()
+  }
+}
+
+export function invertLH() {
+  for(let obj of selectionMap.keys()) {
+    if(!("height" in obj)) continue
+    let height = obj.height
+    obj.height = obj.width
+    obj.width = height
     obj.invalidate()
   }
 }

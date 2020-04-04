@@ -8,6 +8,7 @@ import { store, Store } from "state/util"
 import { clamp } from "data/base/util"
 
 import * as history from "state/history"
+import * as selection from "state/selection"
 
 
 
@@ -41,8 +42,8 @@ export function clear() {
   groups.images.invalidate()
 }
 
-function getGroup<T extends Editor.Object>(obj: T): Store<Store<T>[]>
-function getGroup(obj: Editor.Object) {
+export function getGroup<T extends Editor.Object>(obj: T): Store<Store<T>[]>
+export function getGroup(obj: Editor.Object) {
   if(Editor.isPlatform(obj))     return groups.platforms
   if(Editor.isDecoration(obj))   return groups.decorations
   if(Editor.isShamanObject(obj)) return groups.shamanObjects
@@ -51,9 +52,11 @@ function getGroup(obj: Editor.Object) {
   throw "never"
 }
 
-function setIndex(obj: SceneObject, group: Store<SceneObject[]>, target: number) {
+export function setIndex(obj: SceneObject, target: number) {
+  let group = getGroup(obj as Editor.Object)
   target = clamp(target, 0, group.length-1)
-  let src = obj.index
+  // let src = obj.index
+  let src = group.indexOf(obj)
   //if(target === src) return
   if(target < src) {
     for(let i=src; i > target; i--) {
@@ -76,6 +79,10 @@ function setIndex(obj: SceneObject, group: Store<SceneObject[]>, target: number)
 }
 
 function removeFromGroup(group: Store<SceneObject[]>, obj: SceneObject) {
+  if(group[obj.index] !== obj) {
+    console.error("removeFromGroup: index is invalid", obj, group)
+    return
+  }
   for(let i=obj.index; i < group.length-1; i++) {
     group[i] = group[i+1]
     group[i].index--
@@ -91,24 +98,156 @@ export function add(obj: Editor.Object, index?: number) {
   let s = store(obj)
   s.index = group.length
   group.push(s)
-  setIndex(s, group, index !== undefined ? index : group.length)
+  if(index !== undefined)
+    setIndex(s, index)
+  group.invalidate()
   s.subscribe(history.invalidate)
-  if(Editor.isJoint(s)) {
-    s.platform1 = groups.platforms[s.platform1Index]
-    s.platform2 = groups.platforms[s.platform2Index]
-    s.platform1 && s.platform1.subscribe(s.invalidate)
-    s.platform2 && s.platform2.subscribe(s.invalidate)
-  }
+
+  if(Editor.isJoint(s))
+    onJointAdded(s as J)
+
+  else if(Editor.isPlatform(s))
+    onPlatformAdded(s as P)
+
   return s
 }
 
 export function remove(obj: SceneObject) {
   removeFromGroup(getGroup(obj), obj)
+  if(obj.selected) selection.unselect(obj)
+
+  if(Editor.isJoint(obj))
+    onJointRemoved(obj as J)
+
+  else if(Editor.isPlatform(obj))
+    onPlatformRemoved(obj as P)
 }
 
 export function getAll() {
   return Object.values(groups).flat() //as SceneObject[]
 }
+
+
+
+
+type P = Store<Editor.Platform.Platform>
+type J = Store<Editor.Joint.Joint>
+
+type PlatformLink = { obj: P, unsubscribe: () => void }
+
+const links = {
+  joints: new WeakMap<
+    J, 
+    { platform1?: PlatformLink,
+      platform2?: PlatformLink }
+  >(),
+  platforms: new WeakMap<P, Set<J>>(),
+}
+
+export function getJointPlatforms(joint: J) {
+  let value = links.joints.get(joint)
+  if(!value) return { platform1: null, platform2: null }
+  return {
+    platform1: value.platform1 ? value.platform1.obj : null,
+    platform2: value.platform2 ? value.platform2.obj : null,
+  }
+}
+
+export function linkJointToPlatform(joint: J, which: "platform1"|"platform2", platformIndex: number) {
+  let value = links.joints.get(joint)
+  if(!value) links.joints.set(joint, value = {})
+
+  // Disconnect previous platform, if any
+  let data = value[which]
+  if(data) {
+    data.unsubscribe()
+    // Remove joint from platform's set, unless still connected
+    let otherData = value[which === "platform1" ? "platform2" : "platform1"]
+    if(otherData && otherData.obj === data.obj) {}
+    else {
+      let jointSet = links.platforms.get(data.obj)
+      jointSet && jointSet.delete(joint)
+    }
+  }
+
+  // Connect to new platform, if it exists
+  let platform = groups.platforms[platformIndex]
+  if(platform === undefined) {
+    delete value[which]
+    return
+  }
+  value[which] = {
+    obj: platform,
+    unsubscribe: platform.subscribe(obj => {
+      joint[which] = obj.index
+      ;(joint as any)[which+"Ref"] = obj
+      joint.invalidate()
+    }),
+  }
+  let jointSet = links.platforms.get(platform)
+  if(!jointSet) links.platforms.set(platform, jointSet = new Set())
+  jointSet.add(joint)
+
+}
+
+
+function onJointAdded(joint: J) {
+  linkJointToPlatform(joint, "platform1", joint.platform1)
+  linkJointToPlatform(joint, "platform2", joint.platform2)
+}
+
+function onPlatformAdded(platform: P) {
+  if(!Editor.Platform.isStatic(platform)) return
+  for(let joint of groups.joints) {
+    let value = links.joints.get(joint)
+    if(!value) continue
+    for(let which of (["platform1","platform2"] as const)) {
+      if(joint[which] !== platform.index) continue
+      let data = value[which]
+      if(data) continue
+      linkJointToPlatform(joint, which, platform.index)
+    }
+  }
+}
+
+function onJointRemoved(joint: J) {
+  let value = links.joints.get(joint)
+  if(!value) return
+  for(let which of (["platform1","platform2"] as const)) {
+    let data = value[which]
+    if(!data) continue
+    data.unsubscribe()
+    let jointSet = links.platforms.get(data.obj)
+    jointSet && jointSet.delete(joint)
+  }
+}
+
+function onPlatformRemoved(platform: P) {
+  let joints = links.platforms.get(platform) || []
+
+  if(!Editor.Platform.isStatic(platform)) {
+    for(let joint of joints)
+      remove(joint)
+    return
+  }
+
+  let firstStaticPlatformIndex = groups.platforms.findIndex(obj => Editor.Platform.isStatic(obj))
+  if(firstStaticPlatformIndex === -1) firstStaticPlatformIndex = 0
+  
+  for(let joint of joints) {
+    let value = links.joints.get(joint)
+    if(!value) continue
+    for(let which of (["platform1","platform2"]) as const) {
+      let data = value[which]
+      if(!data) continue
+      if(data.obj !== platform) continue
+      joint[which] = firstStaticPlatformIndex
+      linkJointToPlatform(joint, which, firstStaticPlatformIndex)
+    }
+  }
+
+}
+
 
 
 

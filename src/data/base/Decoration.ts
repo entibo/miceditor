@@ -66,7 +66,8 @@ export const colorDefaults: (t: number) => string[] = type =>
     ? metadata[type].filters.map(o => o.defaultColor) 
     : []
 
-export const defaults: (t: Type) => Decoration = type =>
+export const defaults = <T extends Type> (type: T) =>
+ <T extends number ? Extract<Decoration,{type:number}> : Extract<Decoration,{type:T}>>
  ({ ...baseDefaults(),
     ...(
       type === "DS" || type === "DC" || type === "DC2" ?
@@ -84,7 +85,7 @@ export const defaults: (t: Type) => Decoration = type =>
       { type,
         foreground: false,
         reverse: false,
-        colors: colorDefaults(type) }
+        colors: colorDefaults(type as number) }
     ) 
   })
   

@@ -8,25 +8,20 @@
   import { bezier } from "@/util"
   import { jointMouseDown } from "/components/scene/interaction"
 
-  import * as Editor from "data/editor/index"
+  import * as Editor from "/data/editor/index"
+  import * as sceneObjects from "/state/sceneObjects"
 
   export let obj
 
   $: active = $obj.selected
 
 
-  $: hidden = !Editor.Joint.isRendered($obj)
+  $: isRendered = Editor.Joint.isRendered($obj)
 
-  let color, thickness, opacity
-  $: if(!hidden) {
-      color = $obj.color
-      thickness = $obj.thickness
-      opacity = $obj.opacity
-    } else {
-      color = "fff"
-      thickness = 2
-      opacity = $obj.selected ? 0.9 : 0.6
-    }
+
+  $: color = $obj.color
+  $: thickness = $obj.thickness
+  $: opacity = $obj.opacity
 
   const green = "#33ff44"
   const yellow = "yellow"
@@ -40,35 +35,60 @@
             .every((x,i) => Math.abs([0x6a,0x74,0x95][i] - x) < 10)
 
 
-  let platform1, platform2
-  $: if($obj.platform1 !== $obj.platform2) {
-    platform1 = $obj.platform1
-    platform2 = $obj.platform2
-  }
 
-
-  let points
-  $: {
-        points = ["point1","point3","point4","point2"] 
-          .map(name => $obj[name] && { ...$obj[name], name })
-          .filter(x => x && ("enabled" in x ? x.enabled : true))
-
-        if("platform1" in $obj && platform1)
-          points = [{ name: "platform1", x: platform1.x, y: platform1.y }, ...points]
-        if("platform2" in $obj && platform2)
-          points = [...points, { name: "platform2", x: platform2.x, y: platform2.y }]
-    }
+  $: points = ["point1","point3","point4","point2"] 
+      .map(name => $obj[name] && { ...$obj[name], name })
+      .filter(x => x && ("enabled" in x ? x.enabled : true))
   
 
   $: controlPoints = ["controlPoint1", "controlPoint2"] 
         .map(name => ({ ...$obj[name], name }))
 
-  $: polyline = 
-      ( $obj.type === "VC" 
-        ? Array($obj.fineness + 1).fill()
-            .map((_,i) => bezier(i/$obj.fineness, $obj.point1, $obj.point2, $obj.controlPoint1, $obj.controlPoint2))
-        : points )
-      .map(p => [p.x,p.y].join(",")).join(" ")
+
+
+
+  let platform1 = null, platform2 = null
+  $: {
+    let r = sceneObjects.getJointPlatforms($obj)
+    platform1 = r.platform1
+    platform2 = r.platform2
+  }
+
+
+  function pointToString(p) {
+    if(!p) return ""
+    return [p.x,p.y].join(",")
+  }
+
+  $: polyline 
+      = $obj.type === "VC" 
+          ? Array($obj.fineness + 1).fill()
+              .map((_,i) => bezier(i/$obj.fineness, $obj.point1, $obj.point2, $obj.controlPoint1, $obj.controlPoint2))
+              .map(pointToString).join(" ")
+      : $obj.type === "JD"
+          ? [ points.find(p => p.name === "point1") || platform1,
+              points.find(p => p.name === "point2") || platform2,
+            ].filter(x => x).map(pointToString).join(" ")
+      : $obj.type === "JPL"
+          ? [ points.find(p => p.name === "point1") || platform1,
+              $obj.point3,
+              $obj.point4,
+              points.find(p => p.name === "point2") || platform2,
+            ].filter(x => x).map(pointToString).join(" ")
+      : ""
+
+
+  $: fullPolyline =
+      [ platform1,
+        ...points,
+        platform2,
+      ].filter(x => x).map(pointToString).join(" ")
+
+  $: renderFullPolyline
+      =  (platform1 && !Editor.Platform.isStatic(platform1))
+      || (platform2 && !Editor.Platform.isStatic(platform2))
+      || !isRendered
+
 
   let crosshairRadius = 6
   let crosshairThickness = 2
@@ -79,15 +99,21 @@
   <g class="joint" 
     on:mousedown on:mousemove on:mouseleave
   >
-    <g class="selectable" class:active class:hard-to-see={isHardToSee} >
-      <polyline points={polyline}
-        stroke-width={thickness}
-        stroke="#{color}" 
-        fill="none"
-        opacity={opacity}
-        class:joint-hidden={hidden}
-      >
-    </g>
+    {#if renderFullPolyline}
+      <g class="selectable" class:active>
+        <polyline points={fullPolyline} class="dashed-line" />
+      </g>
+    {/if}
+    {#if isRendered}
+      <g class="selectable" class:active class:hard-to-see={isHardToSee} >
+        <polyline points={polyline}
+          stroke-width={thickness}
+          stroke="#{color}" 
+          opacity={opacity}
+          fill="none"
+        />
+      </g>
+    {/if}
   </g>
   
   <g class="point-crosshairs" class:active >
@@ -156,25 +182,11 @@
     stroke-linejoin: round;
   }
 
-  .joint-hidden {
-    stroke-dasharray: 6;
-  }
-  .active .joint-hidden {
-    animation: dash-animation 2s linear infinite;
-  }
-  @keyframes dash-animation {
-    from {
-      stroke-dashoffset: 0;
-    }
-    to {
-      stroke-dashoffset: -12;
-    }
-  }
 
   .selectable.hard-to-see {
     transition: outline-color 50ms;
-    outline-width: 4px;
-    outline-offset: -4px;
+    outline-width: 2px;
+    outline-offset: -1px;
     outline-style: dashed;
     outline-color: rgba(255,255,255,0.0);
   }

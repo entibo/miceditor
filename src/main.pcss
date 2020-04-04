@@ -45,7 +45,8 @@ div.material-input {
     @apply text-sm;
 }
 div.material-input.disabled {
-  
+    opacity: 0.66;
+    /* pointer-events: none; */
 }
 div.material-input:focus-within:before {
     width: 100%;
@@ -86,15 +87,15 @@ div.material-input input {
 
 
 .target {
-  outline: dashed 4px white;
+  outline: dashed 2px white;
 }
 .target-inner {
-  outline: dashed 4px white;
-  outline-offset: -4px;
+  outline: dashed 2px white;
+  outline-offset: -1px;
 }
 
 .panel {
-  @apply p-3 bg-gray-800 shadow-lg z-10;
+  @apply p-3 bg-gray-800;
 }
 .panel.vertical {
   @apply flex-col;
@@ -147,8 +148,8 @@ div.material-input input {
   transition: filter 40ms;
 }
 .tile.active {
-  outline-width: 4px;
-  outline-offset: -4px;
+  outline-width: 2px;
+  outline-offset: -1px;
   outline-style: dashed;
   outline-color: rgba(255,255,255,1);
 }
@@ -182,11 +183,40 @@ div.material-input input {
   @apply border-l-2 pl-2 py-1 border-gray-200;
 }
 
-
-.icon {
-  @apply text-sm text-gray-200 cursor-pointer;
+.form div.disabled, .form label.disabled {
+  opacity: 0.66;
+  pointer-events: none;
 }
-.icon.disabled {
+
+
+.icon-btn {
+  @apply text-xs text-gray-400 cursor-pointer;
+}
+.icon-btn:hover {
+  @apply text-gray-200;
+}
+.icon-btn.disabled {
   @apply pointer-events-none;
   opacity: 0.4;
+}
+
+
+.dashed-line {
+  fill: none;
+  stroke: white;
+  stroke-width: 1;
+  opacity: 0.6;
+  stroke-dasharray: 6;
+}
+.active .dashed-line, .active.dashed-line {
+  opacity: 0.9;
+  animation: dash-animation 2s linear infinite;
+}
+@keyframes dash-animation {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -12;
+  }
 }

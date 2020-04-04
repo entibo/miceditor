@@ -23,10 +23,10 @@
 
   import { _ } from "/state/locale"
   import { mapSettings, updateMiceSpawn } from "/state/map"
+  import { parkourMode, setParkourMode } from "/state/mapExtra"
   
   import * as sceneObjects from "/state/sceneObjects"
   function updateDecorations() {
-    console.log("updateDecorations()")
     for(let cheese of sceneObjects.groups.decorations.filter(obj => obj.type === "F"))
       cheese.invalidate()
   }
@@ -43,51 +43,64 @@
   <div class="flex">
     <label>
       <span>L</span>
-      <TextInput number sub="max: {maxWidth}" bind:value={$mapSettings.width} />
+      <TextInput int min={800} sliderMax={maxWidth} sub="max: {maxWidth}" bind:value={$mapSettings.width} />
     </label>
   <div class="mr-3"></div>
     <label>
       <span>H</span>
-      <TextInput number sub="max: {maxHeight}" bind:value={$mapSettings.height} />
+      <TextInput int min={400} sliderMax={maxHeight} sub="max: {maxHeight}" bind:value={$mapSettings.height} />
     </label>
   </div>
 
-  <div class="mb-2"></div>
+  <div class="mb-4"></div>
 
   <label>
-    <span>{$_("gravity")}</span>
-    <TextInput number bind:value={$mapSettings.gravity} class="w-16" />
+    <span>{$_("defilante-mode")}...</span>
+    <Checkbox bind:checked={$mapSettings.defilante.enabled}  />
   </label>
-  
-  <label>
-    <span>{$_("wind")}</span>
-    <TextInput number bind:value={$mapSettings.wind} class="w-16" />
-  </label>
-  
-  <div class="mb-2"></div>
-
-  <section>
+  {#if $mapSettings.defilante.enabled}
+  <div class="submenu" transition:fly={{duration: 80, y:-50}}>
     <label>
-      <span>{$_("background")}</span>
-      <div class="material-input w-32">
-        <select bind:value={$mapSettings.backgroundImageId} >
-          <option value="-1">{$_("none")}</option>
-          <option value="-2">{$_("random")}</option>
-          <option value="0">{$_("background0")}</option>
-          <option value="1">{$_("background1")}</option>
-          <option value="2">{$_("background2")}</option>
-          <option value="3">{$_("background3")}</option>
-          <option value="4">{$_("background4")}</option>
-          <option value="5">{$_("background5")}</option>
-          <option value="6">{$_("background6")}</option>
-          <option value="7">{$_("background7")}</option>
-          <option value="8">{$_("background8")}</option>
-        </select>
-      </div>
+      <span>{$_("defilante-start-speed")}</span>
+      <TextInput float min={0} bind:value={$mapSettings.defilante.startSpeed} class="w-16"/>
     </label>
-  </section>
+    <label>
+      <span>{$_("defilante-acceleration")}</span>
+      <TextInput float min={0} bind:value={$mapSettings.defilante.acceleration} class="w-16"/>
+    </label>
+    <label>
+      <span>{$_("defilante-maximum-speed")}</span>
+      <TextInput float min={0} bind:value={$mapSettings.defilante.maxSpeed} class="w-16"/>
+    </label>
+    <label class="mt-1">
+      <span>{$_("defilante-free-scroll")}</span>
+      <Checkbox bind:checked={$mapSettings.defilante.freeScroll}  />
+    </label>
+  </div>
+  {/if}  
+  
+  <div class="mb-4"></div>
 
-  <div class="mb-2"></div>
+  <label>
+    <span>{$_("background")}</span>
+    <div class="material-input w-32">
+      <select bind:value={$mapSettings.backgroundImageId} >
+        <option value="-1">{$_("none")}</option>
+        <option value="-2">{$_("random")}</option>
+        <option value="0">{$_("background0")}</option>
+        <option value="1">{$_("background1")}</option>
+        <option value="2">{$_("background2")}</option>
+        <option value="3">{$_("background3")}</option>
+        <option value="4">{$_("background4")}</option>
+        <option value="5">{$_("background5")}</option>
+        <option value="6">{$_("background6")}</option>
+        <option value="7">{$_("background7")}</option>
+        <option value="8">{$_("background8")}</option>
+      </select>
+    </div>
+  </label>
+
+  <div class="mb-1"></div>
 
   <section>
     <label>
@@ -101,14 +114,27 @@
     </label>
   </section>
 
-  <div class="mb-2"></div>
+  <div class="mb-4"></div>
 
-  <section>
-    <label>
-      <span>{$_("shaman_objects")}: {$_("mass")}</span>
-      <TextInput number bind:value={$mapSettings.shamanObjectsMass} class="w-16" />
-    </label>
-  </section>
+  <label>
+    <span>{$_("gravity")}</span>
+    <div class="flex">
+      <label class="icon-btn text-xs mr-2" on:click={() => $mapSettings.gravity = 10} >
+        <Icon icon={faUndo} />
+      </label>
+      <TextInput float sliderMin={-50} sliderMax={50} bind:value={$mapSettings.gravity} class="w-16" />
+    </div>
+  </label>
+  <div class="mb-1"></div>
+  <label>
+    <span>{$_("wind")}</span>
+    <div class="flex">
+      <label class="icon-btn text-xs mr-2" on:click={() => $mapSettings.wind = 0} >
+        <Icon icon={faUndo} />
+      </label>
+      <TextInput float sliderMin={-50} sliderMax={50} bind:value={$mapSettings.wind} class="w-16" />
+    </div>
+  </label>
 
   <div class="mb-4"></div>
 
@@ -154,33 +180,6 @@
   <div class="mb-4"></div>
 
   <label>
-    <span>{$_("defilante-mode")}...</span>
-    <Checkbox bind:checked={$mapSettings.defilante.enabled}  />
-  </label>
-  {#if $mapSettings.defilante.enabled}
-  <div class="submenu" transition:fly={{duration: 80, x:50}}>
-    <label>
-      <span>{$_("defilante-start-speed")}</span>
-      <TextInput number bind:value={$mapSettings.defilante.startSpeed} class="w-16"/>
-    </label>
-    <label>
-      <span>{$_("defilante-acceleration")}</span>
-      <TextInput number bind:value={$mapSettings.defilante.acceleration} class="w-16"/>
-    </label>
-    <label>
-      <span>{$_("defilante-maximum-speed")}</span>
-      <TextInput number bind:value={$mapSettings.defilante.maxSpeed} class="w-16"/>
-    </label>
-    <label class="mt-1">
-      <span>{$_("defilante-free-scroll")}</span>
-      <Checkbox bind:checked={$mapSettings.defilante.freeScroll}  />
-    </label>
-  </div>
-  {/if}
-
-  <div class="mb-4"></div>
-
-  <label>
     <span>{$_("mice-spawn")}</span>
     <div class="material-input w-32">
       <select value={$mapSettings.miceSpawn.type === "random" 
@@ -197,9 +196,16 @@
 
   <div class="mb-4"></div>
 
-<!--   <ImagesSubMenu which="backgroundImages" title={$_("background")}/>
-  <ImagesSubMenu which="foregroundImages" title={$_("foreground")}/>
-  <ImagesSubMenu which="disappearingImages" title={$_("disappearing-images")}/> -->
+  <label>
+    <span>{$_("shaman_objects")}: {$_("mass")}</span>
+    <TextInput float bind:value={$mapSettings.shamanObjectsMass} class="w-16" />
+  </label>
+
+  <div class="mb-4"></div>
+
+  <div class="flex flex-wrap justify-around">
+    <Button disabled={$parkourMode} on:click={setParkourMode}>#parkour</Button>
+  </div>
 
 </div>
 

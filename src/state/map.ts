@@ -46,17 +46,22 @@ export function importXML(str: string) {
     sceneObjects.add(Editor.Image.make(image))
 
 
-  for(let [index,platform] of map.platforms.entries())
-    sceneObjects.add(Editor.Platform.make(platform))
+  let [platforms, joints] = decodeBoosterPlatforms(
+    map.platforms.map(Editor.Platform.make),
+    map.joints.map(Editor.Joint.make)
+  )
 
-  for(let [index,decoration] of map.decorations.entries())
+  for(let platform of platforms)
+    sceneObjects.add(platform)
+
+  for(let decoration of map.decorations)
     sceneObjects.add(Editor.Decoration.make(decoration))
 
-  for(let [index,shamanObject] of map.shamanObjects.entries())
+  for(let shamanObject of map.shamanObjects)
     sceneObjects.add(Editor.ShamanObject.make(shamanObject))
 
-  for(let [index,joint] of map.joints.entries())
-    sceneObjects.add(Editor.Joint.make(joint))
+  for(let joint of joints)
+    sceneObjects.add(joint)
 
 
   if(mapSettings.miceSpawn.type === "multiple") {
@@ -93,25 +98,88 @@ export function exportXML(update=true) {
 
   let decorations = handleMouseSpawns([...sceneObjects.groups.decorations])
 
-  // let joints = sceneObjects.groups.joints
-  for(let platform of sceneObjects.groups.platforms) {
-    if("booster" in platform) {
-      // Create joints
-      // joints.push()
-    }
-  }
+  let [platforms, joints] = encodeBoosterPlatforms([...sceneObjects.groups.platforms], [...sceneObjects.groups.joints])
 
   let map: Editor.Map.Map = {
     mapSettings,
-    platforms: sceneObjects.groups.platforms,
-    decorations: decorations,
+    platforms,
+    decorations,
     shamanObjects: sceneObjects.groups.shamanObjects,
-    joints: sceneObjects.groups.joints,
+    joints,
   }
 
   let result = Editor.Map.serialize(map)
   if(update) xml.set(result)
   return result
+}
+
+function decodeBoosterPlatforms(platforms: Editor.Platform.Platform[], joints: Editor.Joint.Joint[]) {
+  let jointIdx = 0
+  while(jointIdx < joints.length-1) {
+    let [j1,j2] = [joints[jointIdx], joints[jointIdx+1]]
+
+    if( j1.type === "JP" && j2.type === "JP" &&
+        j1.platform1 === j2.platform1 && 
+        j1.platform2 === j2.platform2 &&
+        j1.axis.x === -1 && j2.axis.y === 1
+    ) {
+      let platform = platforms[j1.platform1]
+      if(platform && "booster" in platform) {
+
+        platform.booster.enabled = true
+        platform.booster.speed = j1.speed
+
+        let platformAngle = platform.rotation
+        platform.rotation = -j1.angle
+        platform.booster.angle = -j1.angle - platformAngle
+
+      } else { 
+        console.log(platform, j1, j2)
+        throw "decodeBoosterPlatforms: platform cannot be booster"
+      }
+
+      joints.splice(jointIdx, 2)
+      continue
+    }
+
+    jointIdx++
+  }
+  
+  return [platforms, joints] as const
+}
+
+function encodeBoosterPlatforms(platforms: Editor.Platform.Platform[], joints: Editor.Joint.Joint[]) {
+  for(let k=0; k < platforms.length; k++) {
+    let platform = clone(platforms[k])
+    if(!("booster" in platform) || !platform.booster.enabled) continue
+
+    // Ensure a few properties
+    platform.dynamic = true
+    platform.fixedRotation = false
+    platform.mass = 0
+    platform.linearDamping = platform.angularDamping = 0
+    
+    let targetPlatformAngle = platform.rotation
+    platform.rotation = targetPlatformAngle - platform.booster.angle
+    let boosterAngle = -targetPlatformAngle
+
+    // Create 2 prismatic joints
+    let j1 = Editor.Joint.defaults("JP") as Extract<Editor.Joint.Joint,{type: "JP"}>
+    let j2 = Editor.Joint.defaults("JP") as Extract<Editor.Joint.Joint,{type: "JP"}>
+    j1.platform1 = j2.platform1 = platform.index
+    j1.platform2 = j2.platform2 = platforms.findIndex(Editor.Platform.isStatic)
+    j1.angle = j2.angle = boosterAngle
+    j1.axis = { x: -1, y: 0 }
+    j1.power = Infinity
+    j1.speed = platform.booster.speed
+    j2.axis = { x: 0, y: 1 }
+    joints.push(j1)
+    joints.push(j2)
+
+    platforms[k] = platform
+  }
+
+  return [platforms, joints] as const
 }
 
 function handleMouseSpawns(decorations: Editor.Decoration.Decoration[]): Editor.Decoration.Decoration[] {

@@ -67,7 +67,7 @@
           ></div>
         {/if}
 
-        <div class="group relative flex flex-col overflow-hidden" class:flex-grow={group.activeTab}
+        <div class="group flex flex-col overflow-hidden" class:flex-grow={group.activeTab}
             class:target={$tabMovement.active && $tabMovement.target.type === "group" && $tabMovement.target.panelName === panelName && $tabMovement.target.groupIndex === groupIndex}
             on:mousemove={() => layout.setTabMovementTarget({ type: "group", panelName, groupIndex })}
         >

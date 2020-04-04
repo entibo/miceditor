@@ -151,8 +151,8 @@
 <style lang="text/postcss">
   :global(.decoration > g > *) {
     transition: fill 100ms, outline-color 50ms;
-    outline-width: 4px;
-    outline-offset: -4px;
+    outline-width: 2px;
+    outline-offset: -1px;
     outline-style: dashed;
     outline-color: rgba(255,255,255,0.0);
   }

@@ -79,6 +79,7 @@ export function move(obj: Object, dx: number, dy: number) {
 export function flip(obj: Object, cx: number) {
   if("reverse" in obj)  obj.reverse = !obj.reverse
   if("rotation" in obj) obj.rotation = -obj.rotation
+  if("booster" in obj) obj.booster.angle = -obj.booster.angle - 180
 
   if(isJoint(obj))
     return Joint.flip(obj, cx)

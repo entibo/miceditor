@@ -19,26 +19,98 @@
   import Checkbox from "/components/common/Checkbox.svelte"
   import CheckboxItem from "/components/common/CheckboxItem.svelte"
 
+  import { _ } from "/state/locale"
+
+
+  //import * as sceneObjects from "/state/sceneObjects"
+  import * as selection from "/state/selection"
+
   import Platforms from "/components/ui/menus/selectionMenu/Platforms.svelte"
+  import Decorations from "/components/ui/menus/selectionMenu/Decorations.svelte"
+  import ShamanObjects from "/components/ui/menus/selectionMenu/ShamanObjects.svelte"
+  import Images from "/components/ui/menus/selectionMenu/Images.svelte"
+  import Joints from "/components/ui/menus/selectionMenu/Joints.svelte"
 
 
-  import { platformProps, } from "state/selectionProperties"
+  import { properties, groups } from "state/selectionProperties"
+  console.log("properties", $properties, "groups", $groups)
 
-  console.log("platformProps", platformProps)
-
-  let _platformProps
-  platformProps.subscribe(v => _platformProps = v)
+  $: numCategories = Object.values($groups)
+        .map(g => g.length)
+        .filter(x => x > 0)
+        .length
+        
+  $: displayCategoryTitles = numCategories > 1
   
-  import * as sceneObjects from "/state/sceneObjects"
-
+  function shiftIndex(e, dz) {
+    if(e.shiftKey) dz *= 10
+    if(e.ctrlKey)  dz *= 100
+    selection.shiftIndex(dz)
+  }
 
 </script>
 
 <div class="form">
 
-  <Platforms props={_platformProps} />
 
-  <div class="mb-2"></div>
+  {#if numCategories > 0}
+    <div class="category">
+      <label>
+        <span>Z</span>
+        <div class="flex">
+          <Button on:click={e => shiftIndex(e, -1)}>-1</Button>
+          <div class="mr-2"></div>
+          <Button on:click={e => shiftIndex(e, +1)}>+1</Button>
+        </div>
+      </label>  
+    </div>
+  {/if}
+
+
+  {#if $groups.PLATFORM.length}
+    <div class="category">
+      {#if displayCategoryTitles}
+        <div class="category-title">{$_("category-grounds")}</div>
+      {/if}
+      <Platforms props={$properties.PLATFORM} />
+    </div>
+  {/if}
+
+  {#if $groups.JOINT.length}
+    <div class="category">
+      {#if displayCategoryTitles}
+        <div class="category-title">{$_("category-lines")}</div>
+      {/if}
+      <Joints props={$properties.JOINT} />
+    </div>
+  {/if}
+  
+  {#if $groups.DECORATION.length}
+    <div class="category">
+      {#if displayCategoryTitles}
+        <div class="category-title">{$_("category-decorations")}</div>
+      {/if}
+      <Decorations props={$properties.DECORATION} />
+    </div>
+  {/if}  
+  
+  {#if $groups.SHAMANOBJECT.length}
+    <div class="category">
+      {#if displayCategoryTitles}
+        <div class="category-title">{$_("shaman_objects")}</div>
+      {/if}
+      <ShamanObjects props={$properties.SHAMANOBJECT} />
+    </div>
+  {/if}  
+
+  {#if $groups.IMAGE.length}
+    <div class="category">
+      {#if displayCategoryTitles}
+        <div class="category-title">{$_("category-images")}</div>
+      {/if}
+      <Images props={$properties.IMAGE} />
+    </div>
+  {/if}
 
 </div>
 
@@ -46,7 +118,20 @@
 
 <style lang="text/postcss">
 
-
+.category {
+  @apply flex flex-col
+}
+.category:not(:last-child) {
+  @apply mb-4;
+}
+.category-title {
+  @apply text-gray-200 font-bold text-xs mb-4;
+  @apply flex items-center;
+}
+.category-title:before, .category-title:after {
+  content: "";
+  @apply mx-1 flex-grow h-1 border-b-2 border-gray-500 border-dashed;
+}
 
 
 </style>

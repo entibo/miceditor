@@ -15,7 +15,7 @@
 
   import * as Creation from "/state/creation"
   import { creation } from "/state/creation"
-  import { brushPalette, brushDefaults, curveTool } from "/state/user"
+  import { brushPalette, brushDefaults } from "/state/user"
 
   import { _ } from "/state/locale"
 
@@ -80,46 +80,54 @@
 
   <div class="mb-2"></div>
 
-  <label >
-    <span> 
-      <Icon icon={faPenNib} /> 
-      {$_("curve-tool")}
-    </span>
-    <Checkbox bind:checked={$curveTool.enabled}  />
-  </label>
-
-  {#if $curveTool.enabled}
-    <div class="submenu mt-1" transition:fly={{duration: 80, x:50}}>
-      <label>
-        <span>{$_("fineness")}</span>
-        <TextInput number bind:value={$curveTool.fineness} class="w-16"/>
-      </label>
-    </div>
-  {/if}
-
-  <div class="mb-2"></div>
-
   {#if activeBrush}
-    <div class="" transition:fly={{duration: 80, x:50}}>
+    <div class="" transition:fly={{duration: 80, y:-50}}>
+
       <label>
         <span>{$_("color")}</span>
-        <label>
-          <div class="p-2 mr-2 shadow rounded cursor-pointer" style="background: #{activeBrush.color}"></div>
-          <ColorTextInput bind:value={activeBrush.color} on:input={updateActiveBrush} />
-        </label>
+        <TextInput color bind:value={activeBrush.color} set={updateActiveBrush} class="w-16"/>
       </label>
+
+      <div class="mb-1"></div>
+
       <label>
         <span>{$_("line-width")}</span>
-        <TextInput number bind:value={activeBrush.thickness} on:input={updateActiveBrush} class="w-16"/>
+        <TextInput int min={1} max={250} bind:value={activeBrush.thickness} set={updateActiveBrush} class="w-16"/>
       </label>
+
+      <div class="mb-1"></div>
+
       <label>
         <span>{$_("opacity")}</span>
-        <TextInput number bind:value={activeBrush.opacity} on:input={updateActiveBrush} class="w-16"/>
+        <TextInput float min={0} max={1} step={0.01} bind:value={activeBrush.opacity} set={updateActiveBrush} class="w-16"/>
       </label>
+
+      <div class="mb-1"></div>
+
       <label >
         <span>{$_("foreground")}</span>
-        <Checkbox bind:checked={activeBrush.foreground} on:change={updateActiveBrush} />
+        <Checkbox bind:checked={activeBrush.foreground} set={updateActiveBrush} />
       </label>
+
+      <div class="mb-2"></div>
+
+      <label >
+        <span> 
+          <Icon icon={faPenNib} /> 
+          {$_("curve-tool")}
+        </span>
+        <Checkbox bind:checked={activeBrush.curveToolEnabled}  />
+      </label>
+
+      {#if activeBrush.curveToolEnabled}
+        <div class="submenu mt-1" transition:fly={{duration: 80, y:-50}}>
+          <label>
+            <span>{$_("fineness")}</span>
+            <TextInput int min={1} sliderMax={16} bind:value={activeBrush.fineness} class="w-16"/>
+          </label>
+        </div>
+      {/if}   
+
     </div>
   {/if}
 

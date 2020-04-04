@@ -73,7 +73,7 @@
   on:mouseleave={interaction.windowMouseLeave}
 />
 
-<div class="scene-container flex-grow bg-tfm-blue outline-none" 
+<div class="scene-container flex-grow bg-tfm-blue outline-none flex" 
   class:target-inner={$tabMovement.active && $tabMovement.target.type === "window"}
   bind:this={svgContainerEl}
   bind:clientWidth={svgWidth} bind:clientHeight={svgHeight}
@@ -83,7 +83,7 @@
   on:blur={interaction.windowMouseLeave}
   on:keydown={interaction.keyDown} tabindex="-1"
 >
-  <svg class="w-full h-full" >
+  <svg class="flex-grow" >
   
     <defs>
       <pattern id="grid" patternUnits="userSpaceOnUse"
@@ -97,6 +97,10 @@
     {#if $grid.enabled}
     <rect width="100%" height="100%" fill="url(#grid)" />
     {/if}
+
+    <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow stdDeviation="4 5" in="SourceGraphic" dx="0" dy="5" flood-color="#0d161c" flood-opacity="0.7" x="0%" y="0%" width="100%" height="100%" result="dropShadow"/>
+    </filter>
 
 
     <g transform="translate({$pan.x}, {$pan.y}) scale({$zoom})">
@@ -193,11 +197,9 @@
           height={$selectionBox.box.p2.y - $selectionBox.box.p1.y} />
       </g>
       {/if}
-
+      
       {#if $creation.enabled}
-      <g transform={`translate(${$currentGamePosition.x}, ${$currentGamePosition.y})`}>
-        <CreationPreview />
-      </g>
+        <CreationPreview x={$currentGamePosition.x} y={$currentGamePosition.y} />
       {/if}
 
       {#if $isKeyDown.shift}
@@ -229,7 +231,7 @@
 
   .mapBorder {
     fill: none;
-    outline: 4px dashed rgba(0, 0, 0, 0.2);
+    outline: 2px dashed rgba(0, 0, 0, 0.2);
   }
 
   .playerView rect {
@@ -241,13 +243,13 @@
     width: 800px;
     height: 600px;
     fill: none;
-    outline: 4px solid rgba(0, 0, 0, 0.2);
+    outline: 2px solid rgba(0, 0, 0, 0.2);
   }
 
   .selectionBox {
     fill: none;
     stroke: none;
-    outline-offset: -4px;
-    outline: 4px dashed rgba(255,255,255,0.95);
+    outline-offset: -1px;
+    outline: 2px dashed rgba(255,255,255,0.95);
   }
 </style>

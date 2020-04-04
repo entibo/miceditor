@@ -36,7 +36,7 @@
     }
 
     return [target].concat(getParents(target), window);
-}
+  }
 
 </script>
 
@@ -44,7 +44,7 @@
   on:mousedown={e => colorPickerVisible = eventPath(e).includes(tooltipElement) }
 />
 
-<Tooltip inline noStyle bottom end active={colorPickerVisible}>
+<Tooltip inline noStyle top end active={colorPickerVisible}>
   <TextInput bind:value={value} on:input on:change
     on:focus={() => colorPickerVisible = true}
   />

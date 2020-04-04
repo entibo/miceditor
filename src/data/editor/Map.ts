@@ -3,71 +3,118 @@ import { bezier } from "@/util"
 import * as Base from "data/base"
 import * as Editor from "data/editor"
 
-export interface Map {
+
+type P = Base.Platform.Platform
+type Joint = Base.Joint.Joint
+type VC = Extract<Joint,{type: "VC"}>
+
+/* export interface Map {
   mapSettings: Editor.MapSettings.MapSettings
   platforms: Editor.Platform.Platform[]
   decorations: Editor.Decoration.Decoration[]
   shamanObjects: Editor.ShamanObject.ShamanObject[]
   joints: Editor.Joint.Joint[]
-}
+} */
+export type Map = Base.Map.Map
 
-export function parse(str: string): Base.Map.Map {
+export function parse(str: string): Map {
   let map = Base.Map.parse(str)
 
-  // Remove <JPL>s related to <VC>s
-  let joints = []
-  for(let k=map.joints.length-1; k >= 0; k--) {
-    let obj = map.joints[k]
-    joints.push(obj)
-    if(obj.type === "VC") {
-      k -= Math.ceil(obj.fineness/3)
-    }
-  }
-  map.joints = joints.reverse()
+  map.joints = removeCurveSegments(map.joints)
 
   return map
 }
 
+function removeCurveSegments(joints: Joint[]) {
+
+  let filter: (_: Joint[]) => Joint[] = ([obj,...rest]) =>
+    obj === undefined
+      ? []
+      : obj.type !== "VC"
+          ? [obj, ...filter(rest)]
+          : [obj, ...filter(
+              rest.slice(1 + rest.findIndex(j => 
+                (j.type === "JD" || j.type === "JPL") && 
+                j.point1.enabled &&
+                Math.abs(j.point1.x - obj.point1.x) <= 1 &&
+                Math.abs(j.point1.y - obj.point1.y) <= 1 ))
+            )]
+
+  return filter(joints.reverse()).reverse()
+}
+
+
+
 export function serialize(map: Map): string {
 
-  // Generate <JPL>s related to <VC>s
-  let joints = [] as Editor.Joint.Joint[]
-  for(let obj of map.joints) {
-    if(obj.type !== "VC") {
-      joints.push(obj)
-      continue
-    }
-
-    let jplCount = Math.ceil(obj.fineness/3)
-    let points = []
-    for(let k=0; k < obj.fineness+1; k++)
-      points.push({
-        ...bezier(
-          k * (1/obj.fineness),
-          obj.point1,
-          obj.point2,
-          obj.controlPoint1,
-          obj.controlPoint2,
-        ),
-        enabled: true,
-      })
-    for(let k=0; k < jplCount; k++) {
-      let jpl = Base.Joint.defaults("JPL") as Extract<Base.Joint.Joint, { type: "JPL" }>
-      jpl.renderEnabled = true
-      jpl.color      = obj.color
-      jpl.thickness  = obj.thickness
-      jpl.opacity    = obj.opacity
-      jpl.foreground = obj.foreground
-      jpl.point1 = points[k*3]
-      jpl.point3 = points[k*3 + 1]
-      jpl.point4 = points[k*3 + 2] || points[k*3]
-      jpl.point2 = points[k*3 + 3] || points[k*3]
-      joints.push(jpl as any)
-    }
-
-    joints.push(obj)
-  }
-  map.joints = joints
+  map.joints = map.joints.flatMap(obj =>
+    obj.type === "VC"
+      ? generateCurveSegments(obj, map.platforms[obj.platform1], map.platforms[obj.platform2])
+        .concat(obj)
+      : obj)
 
   return Base.Map.serialize(map)
 }
+
+
+function generateCurveSegments(vc: VC, p1: P, p2: P) {
+
+  let linkedToPlatform 
+    =  ("dynamic" in p1 ? p1.dynamic : false)
+    && ("dynamic" in p2 ? p2.dynamic : false)
+
+  /** Initialized with at least 2 points */
+  let points =
+    Array(vc.fineness+1).fill(0).map((_,k) =>
+      bezier(
+        k * (1/vc.fineness),
+        vc.point1,
+        vc.point2,
+        vc.controlPoint1,
+        vc.controlPoint2,
+      ))
+
+  let joints: Joint[] = []
+  while(points.length >= 2) {
+    let pp = linkedToPlatform
+      ? points.slice(0,2)
+      : points.slice(0,4)
+    points = points.slice(pp.length-1)
+    joints.push(
+      pp.length === 2
+        ? makeJD(pp, vc)
+        : makeJPL(pp, vc))
+  }
+  
+  return joints
+}
+
+const makeJD = (pp: Point[], vc: VC) =>
+  ({
+    ...Base.Joint.defaults("JD"),
+    point1: { ...pp[0], enabled: true },
+    point2: { ...pp[1], enabled: true },
+    platform1: vc.platform1,
+    platform2: vc.platform2,
+    renderEnabled: true,
+    color: vc.color,
+    thickness: vc.thickness,
+    opacity: vc.opacity,
+    foreground: vc.foreground,
+  })
+
+const makeJPL = (pp: Point[], vc: VC) =>
+  ({
+    ...Base.Joint.defaults("JPL"),
+    point1: { ...pp[0], enabled: true },
+    point3: { ...pp[1] },
+    point4: { ...pp[2] },
+    point2: { ...(pp[3] || pp[1]), enabled: true },
+    platform1: vc.platform1,
+    platform2: vc.platform2,
+    renderEnabled: true,
+    color: vc.color,
+    thickness: vc.thickness,
+    opacity: vc.opacity,
+    foreground: vc.foreground,
+  })

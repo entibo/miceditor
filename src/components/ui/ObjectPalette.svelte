@@ -382,8 +382,8 @@
     transition: filter 40ms;
   }
   .tile.active {
-    outline-width: 4px;
-    outline-offset: -4px;
+    outline-width: 2px;
+    outline-offset: -1px;
     outline-style: dashed;
     outline-color: rgba(255,255,255,1);
   }

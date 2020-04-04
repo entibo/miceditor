@@ -2,9 +2,9 @@
 import { rotate as _rotate } from "@/util"
 
 import * as Base from "data/base"
+import * as Editor from "data/editor"
 import * as Common from "./Common"
 
-import { Platform } from "./Platform"
 import { Store } from "state/util"
 
 export * from "data/base/Joint"
@@ -12,16 +12,14 @@ export * from "data/base/Joint"
 
 export type Joint = Base.Joint.Joint & Common.Metadata & { objectType: "JOINT" }
   & {
-      platform1?: Store<Platform>
-      platform2?: Store<Platform>
-    }
+    platform1Ref?: Store<Editor.Platform.Platform>
+    platform2Ref?: Store<Editor.Platform.Platform>
+  }
 
 export const make: (obj: Base.Joint.Joint) => Joint = obj =>
   ({ objectType: "JOINT",
     ...obj,
     ...Common.metadataDefaults(),
-    platform1: undefined, 
-    platform2: undefined,
   })
 
 
@@ -86,6 +84,20 @@ export function getBoundingBox(obj: Joint): Box {
       .filter(k => k in _obj && ("enabled" in _obj[k] ? _obj[k].enabled : true))
       .map(k => (_obj as any)[k])
 
+  let addP1 = () => obj.platform1Ref && pp.push(obj.platform1Ref)
+  let addP2 = () => obj.platform2Ref && pp.push(obj.platform2Ref)
+
+  if(isRendered(obj) && (obj.type === "JD" || obj.type === "JPL" || obj.type === "VC")) {
+    if(obj.type !== "VC") {
+      if(!obj.point1.enabled) addP1()
+      if(!obj.point2.enabled) addP2()
+    }
+  }
+  else {
+    addP1()
+    addP2()
+  }
+
   let xs = pp.map(({x}) => x)
   let ys = pp.map(({y}) => y)
   console.log("joint > bb", pp, xs, ys)
@@ -106,23 +118,21 @@ export const getRelativePoint = (obj: Joint, name: Base.Joint.PointName) => {
          : name === "controlPoint2" ? obj.point2
          : undefined
   if(name === "point1") {
+    if("point3" in obj) return obj.point3
     if("point2" in obj && obj.point2.enabled) return obj.point2
-    if("point3" in obj && obj.point3.enabled) return obj.point3
-    if("point4" in obj && obj.point4.enabled) return obj.point4
   }
   if(name === "point2") {
+    if("point4" in obj) return obj.point4
     if("point1" in obj && obj.point1.enabled) return obj.point1
-    if("point3" in obj && obj.point3.enabled) return obj.point3
-    if("point4" in obj && obj.point4.enabled) return obj.point4
   }
   if(name === "point3") {
     if("point1" in obj && obj.point1.enabled) return obj.point1
+    if("point4" in obj) return obj.point4
     if("point2" in obj && obj.point2.enabled) return obj.point2
-    if("point4" in obj && obj.point4.enabled) return obj.point4
   }
   if(name === "point4") {
+    if("point3" in obj) return obj.point3
     if("point1" in obj && obj.point1.enabled) return obj.point1
     if("point2" in obj && obj.point2.enabled) return obj.point2
-    if("point3" in obj && obj.point3.enabled) return obj.point3
   }
 }

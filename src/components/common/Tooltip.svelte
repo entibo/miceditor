@@ -2,6 +2,9 @@
 <script>
 
   import { fly } from "svelte/transition"
+  
+  let className = ""
+  export { className as class }
 
   export let active
 
@@ -21,7 +24,9 @@
 
   let hovering = false
   
-  $: visible = active === true ? true : active === false ? false : hovering
+  $: visible = active === true ? true 
+             : active === false ? false 
+             : hovering
 
   $: flyDirectionOptions =
     left    ? { x:  10 } :
@@ -36,40 +41,127 @@
   let targetElement
   let tooltipElement
 
-  $: checkTooltipElement(tooltipElement)
-  function checkTooltipElement(el) {
-    if(!el) return
-    let bbox = el.getBoundingClientRect()
-    if(bbox.top < 0 && top) {
-      top = false
-      bottom = true
+  $: tooltipElement, positionTooltip()
+  function positionTooltip(force = false) {
+    if(!tooltipElement || !targetElement) return
+
+    let targetRect  = targetElement.getBoundingClientRect()
+    let tooltipRect = tooltipElement.getBoundingClientRect()
+
+    let fullWidth  = document.body.offsetWidth
+    let fullHeight = document.body.offsetHeight
+
+    let x = 0, y = 0
+    if(top) {    
+      tooltipElement.style.top = 0
+      y = targetRect.top - tooltipRect.height
     }
-    if(bbox.bottom > document.body.offsetHeight && bottom) {
-      bottom = false
-      top = true
+    if(bottom) { 
+      tooltipElement.style.top = 0
+      y = targetRect.bottom
     }
-    if(bbox.left < 0 && left) {
-      left = false
-      right = true
+    if(top || bottom) {
+      tooltipElement.style.left = 0
+      x = start ? targetRect.left 
+        : end   ? targetRect.right - tooltipRect.width
+                : (targetRect.right + targetRect.left)/2 - tooltipRect.width/2
     }
-    if(bbox.right > document.body.offsetWidth && right) {
-      right = false
-      left = true
+    if(left) {   
+      tooltipElement.style.left = 0
+      x = targetRect.left - tooltipRect.width
     }
+    if(right) {  
+      tooltipElement.style.left = 0
+      x = targetRect.right
+    }
+    if(left || right) {
+      tooltipElement.style.top = 0
+      y = start ? targetRect.top 
+        : end   ? targetRect.bottom - tooltipRect.height
+                : (targetRect.bottom + targetRect.top)/2 - tooltipRect.height/2
+    }
+
+    if(!force) {
+      let overflows = false
+      if(y < 0) {
+        if(top) {
+          top = false
+          bottom = true
+        }
+        else y = 0
+        overflows = true
+      }
+      if(y + tooltipRect.height > fullHeight) {
+        if(bottom) {
+          bottom = false
+          top = true
+        }
+        else y = fullHeight - tooltipRect.height
+        overflows = true
+      }
+      if(x < 0) {
+        if(left) {
+          left = false
+          right = true
+        }
+        else x = 0
+        overflows = true
+      }
+      if(x + tooltipRect.width > fullWidth) {
+        if(right) {
+          right = false
+          left = true
+        }
+        else x = fullWidth - tooltipRect.width
+        overflows = true
+      }
+      if(overflows)
+        return positionTooltip(true)
+    }
+    else {
+      if(y < 0) 
+        y = 0
+      if(y + tooltipRect.height > fullHeight)
+        y = fullHeight - tooltipRect.height
+      if(x < 0)
+        x = 0
+      if(x + tooltipRect.width > fullWidth)
+        x = fullWidth - tooltipRect.width
+    }
+    
+    {
+      let firstPositionedAncestor
+      let el = tooltipElement
+      while(el.parentElement) {
+        el = el.parentElement
+        let position = getComputedStyle(el).position
+        if(position !== "static") {
+          firstPositionedAncestor = el
+          break
+        }
+      }
+      if(firstPositionedAncestor) {
+        let rect = firstPositionedAncestor.getBoundingClientRect()
+        x -= rect.x
+        y -= rect.y
+      }
+    }
+
+    tooltipElement.style.transform = `translate(${x}px,${y}px)`
   }
 
 </script>
 
-<div class="relative" class:inline-block={inline} 
-  on:mouseenter={() => hovering = true} 
-  on:mouseleave={() => hovering = false} 
-  bind:this={targetElement}
+<div bind:this={targetElement}
+     class={className || "flex items-center"}
+     on:mouseenter={() => hovering = true} 
+     on:mouseleave={() => hovering = false} 
 >
   <slot></slot>
   {#if visible}
-  <div class="tooltip" class:border={!noBorder} class:top class:bottom class:left class:right class:start class:end
-    transition:fly={flyOptions}
-    bind:this={tooltipElement}
+  <div bind:this={tooltipElement}
+       no="transition:fly={flyOptions}"
+       class="tooltip" class:border={!noBorder} 
   >
     <div class:inner={!noStyle}>
       <slot name="tooltip">

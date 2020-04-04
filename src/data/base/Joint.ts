@@ -20,8 +20,8 @@ export interface Node extends XML.Node {
 }
 
 interface Base extends Common.UnknownAttributes {
-  platform1Index: number
-  platform2Index: number
+  platform1: number
+  platform2: number
 }
 
 export interface Renderable {
@@ -73,8 +73,8 @@ export type Joint
       ratio: number
       point1: OptionalPoint
       point2: OptionalPoint
-      point3: OptionalPoint
-      point4: OptionalPoint }
+      point3: Point
+      point4: Point }
     & Base & Renderable
 
   | { type: "VC"
@@ -93,8 +93,8 @@ export type PointName =
 
 const baseDefaults: () => Base = () => ({
   unknownAttributes: {},
-  platform1Index: 0,
-  platform2Index: 0,
+  platform1: 0,
+  platform2: 0,
 })
 
 const renderableDefaults: () => Renderable = () => ({
@@ -111,7 +111,8 @@ const optionalPointDefaults: () => OptionalPoint = () => ({
   enabled: false,
 })
 
-export const defaults: (t: Type) => Joint = type =>
+export const defaults = <T extends Type> (type: T) =>
+  <Extract<Joint,{type:T}>>
   ({ ...baseDefaults(),
       ...(
         type === "JD" ?
@@ -154,8 +155,8 @@ export const defaults: (t: Type) => Joint = type =>
             ratio: 1,
             point1: optionalPointDefaults(),
             point2: optionalPointDefaults(),
-            point3: optionalPointDefaults(),
-            point4: optionalPointDefaults(),
+            point3: { x: 0, y: 0 },
+            point4: { x: 0, y: 0 },
           }
         :
         // type === "VC" ?
@@ -182,13 +183,16 @@ export function decode(xmlNode: XML.Node): Joint {
   const getProp = util.makeGetter<JointProps>(data)
 
 
-  setProp ("platform1Index") (getAttr ("M1") (util.readInt, M.iff(x => x >= 0)))
-  setProp ("platform2Index") (getAttr ("M2") (util.readInt, M.iff(x => x >= 0)))
+  setProp ("platform1") (getAttr ("M1") (util.readInt, M.iff(x => x >= 0)))
+  setProp ("platform2") (getAttr ("M2") (util.readInt, M.iff(x => x >= 0)))
 
-  setProp ("point1") (getAttr ("P1") (readPoint, p => ({...p, enabled: true})))
-  setProp ("point2") (getAttr ("P2") (readPoint, p => ({...p, enabled: true})))
-  setProp ("point3") (getAttr ("P3") (readPoint, p => ({...p, enabled: true})))
-  setProp ("point4") (getAttr ("P4") (readPoint, p => ({...p, enabled: true})))
+  let makeOptional = (p: Point) =>
+    type === "VC" ? p as OptionalPoint
+                  : {...p, enabled: true}
+  setProp ("point1") (getAttr ("P1") (readPoint, makeOptional))
+  setProp ("point2") (getAttr ("P2") (readPoint, makeOptional))
+  setProp ("point3") (getAttr ("P3") (readPoint))
+  setProp ("point4") (getAttr ("P4") (readPoint))
 
 
   getAttr ("c") (readRenderValues, values => {
@@ -241,13 +245,13 @@ export function encode(data: Joint): Node {
   const getProp = util.makeGetter<JointProps>(data)
   const setAttr = util.makeSetter(node.attributes)
   
-  setAttr ("M1") (getProp ("platform1Index") (util.omitOn(0), util.writeInt))
-  setAttr ("M2") (getProp ("platform2Index") (util.omitOn(0), util.writeInt))
+  setAttr ("M1") (getProp ("platform1") (util.omitOn(0), util.writeInt))
+  setAttr ("M2") (getProp ("platform2") (util.omitOn(0), util.writeInt))
 
   setAttr ("P1") (getProp ("point1") (M.iff(p => "enabled" in p ? p.enabled : true), writePoint))
   setAttr ("P2") (getProp ("point2") (M.iff(p => "enabled" in p ? p.enabled : true), writePoint))
-  setAttr ("P3") (getProp ("point3") (M.iff(p => p.enabled), writePoint))
-  setAttr ("P4") (getProp ("point4") (M.iff(p => p.enabled), writePoint))
+  setAttr ("P3") (getProp ("point3") (writePoint))
+  setAttr ("P4") (getProp ("point4") (writePoint))
 
   setAttr ("c") (M.andThen(
     getProp ("renderEnabled") (M.iff(x => x === true)),
@@ -273,11 +277,11 @@ export function encode(data: Joint): Node {
   setAttr ("AXIS") (getProp ("axis") (writePoint, util.omitOn("0,0")))
 
   setAttr ("LIM1") (M.andThen(
-    getProp ("limit1Enabled") (x => x === true),
+    getProp ("limit1Enabled") (M.iff(x => x === true)),
     () => getProp ("limit1") (v => v / 30, util.writeFloat)
   ))
   setAttr ("LIM2") (M.andThen(
-    getProp ("limit2Enabled") (x => x === true),
+    getProp ("limit2Enabled") (M.iff(x => x === true)),
     () => getProp ("limit2") (v => v / 30, util.writeFloat)
   ))
   
@@ -299,7 +303,7 @@ function readRenderValues(str: string): RenderValues {
   let parts = str.split(",")
   return [
     M.andThen(parts.shift(), M.iffDefined, util.readColor),
-    M.andThen(parts.shift(), M.iffDefined, util.readFloat),
+    M.andThen(parts.shift(), M.iffDefined, util.readFloat, M.iff(x => x >= 1)),
     M.andThen(parts.shift(), M.iffDefined, util.readFloat),
     M.andThen(parts.shift(), M.iffDefined, util.readBool),
   ]

@@ -7,7 +7,7 @@ import * as interaction from "components/scene/interaction"
 
 import * as Editor from "data/editor"
 import * as Base from "data/base"
-import { Brush, curveTool } from "state/user"
+import { Brush } from "state/user"
 import * as selection from "state/selection"
 import { rotate } from "@/util"
 
@@ -31,12 +31,23 @@ type Creation =
     brush: Brush }
   | 
   { enabled: true, creationType: "MECHANIC"
-    type: Editor.Joint.BaseType }
+    type: Editor.Joint.BaseType
+    current?: {
+      which: "platform1" | "platform2"
+      joints: Store<Editor.Joint.Joint>[]
+    }}
 
 export const creation = store<Creation>({ enabled: false })  
 
 
-export const disable = () => creation.set({ enabled: false })  
+export const disable = () => {
+  if(!creation.enabled) return
+  if(creation.creationType === "MECHANIC" && creation.current) {
+    selection.set(creation.current.joints)
+    selection.remove()
+  }
+  creation.set({ enabled: false })  
+}
 
 
 function set(value: Creation) {
@@ -63,8 +74,8 @@ export const setImage = (imageUrl: Editor.Image.ImageUrl) =>
 export const setLine = (brush: Brush) =>
   set({ enabled: true, creationType: "LINE", brush })
 
-export const setMechanic = (type: Editor.Joint.BaseType) =>
-  set({ enabled: true, creationType: "MECHANIC", type })
+export const setMechanic = (type: Editor.Joint.BaseType, current?: Extract<Creation,{creationType:"MECHANIC"}>["current"]) =>
+  set({ enabled: true, creationType: "MECHANIC", type, current })
 
 
 export const create = (e: MouseEvent, x: number, y: number) => {
@@ -120,7 +131,7 @@ export const create = (e: MouseEvent, x: number, y: number) => {
       obj.foreground = creation.brush.foreground
     }
 
-    if(curveTool.enabled) {
+    if(creation.brush.curveToolEnabled) {
       let selectionObjects = selection.getAll()
       let lastCurve = selectionObjects.length === 1
         ? selectionObjects.find(x => Editor.isJoint(x) && x.type === "VC") as Store<Extract<Editor.Joint.Joint,{type:"VC"}>>
@@ -129,7 +140,7 @@ export const create = (e: MouseEvent, x: number, y: number) => {
       if(!lastCurve) {
         let obj = Editor.Joint.make(Editor.Joint.defaults("VC")) as Extract<Editor.Joint.Joint,{type:"VC"}>
 
-        obj.fineness = curveTool.fineness
+        obj.fineness = creation.brush.fineness
         setRenderProperties(obj)
         Editor.Joint.move(obj, x, y)
 
@@ -149,7 +160,7 @@ export const create = (e: MouseEvent, x: number, y: number) => {
         else {
           let obj = Editor.Joint.make(Editor.Joint.defaults("VC")) as Extract<Editor.Joint.Joint,{type:"VC"}>
 
-          obj.fineness = curveTool.fineness
+          obj.fineness = creation.brush.fineness
           setRenderProperties(obj)
           Editor.Joint.move(obj, x, y)
 
@@ -183,14 +194,49 @@ export const create = (e: MouseEvent, x: number, y: number) => {
 }
 
 
-export function createMechanic(platform1Index: number, platform2Index: number) {
+export function createMechanic(platformIndex: number) {
   if(!creation.enabled) return
   if(creation.creationType !== "MECHANIC") return
-  let {type} = creation
-  let obj = Editor.Joint.make(Editor.Joint.defaults(type)) as Extract<Editor.Joint.Joint,{type: typeof type}>
-  obj.platform1Index = platform1Index
-  obj.platform2Index = platform2Index
 
-  let store = sceneObjects.add(obj)
-  selection.set([store])
+  if(!creation.current) {
+
+    let joint = Editor.Joint.make(Editor.Joint.defaults(creation.type))
+    joint.platform1 = joint.platform2 = platformIndex
+
+    if(joint.type === "JPL") {
+      let p1 = sceneObjects.groups.platforms[joint.platform1]
+      if(p1) {
+        joint.point3 = { x: p1.x, y: p1.y - 100 }
+        joint.point4 = { x: p1.x, y: p1.y - 100 }
+      }
+    }
+
+    let store = sceneObjects.add(joint)
+    selection.set([store])
+
+    creation.current = {
+      joints: [store],
+      which: "platform2",
+    }
+    creation.invalidate()
+    return
+  }
+
+  for(let joint of creation.current.joints) {
+    joint[creation.current.which] = platformIndex
+    sceneObjects.linkJointToPlatform(joint, creation.current.which, platformIndex)
+
+    if(joint.type === "JPL") {
+      let p1 = sceneObjects.groups.platforms[joint.platform1]
+      let p2 = sceneObjects.groups.platforms[joint.platform2]
+      if(creation.current.which === "platform1" && p1)
+        joint.point3 = { x: p1.x, y: p1.y - 100 }
+      else
+        joint.point4 = { x: p2.x, y: p2.y - 100 }
+    }
+  }
+
+  creation.current = undefined
+  disable()
+
 }

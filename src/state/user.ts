@@ -9,7 +9,6 @@ import * as Editor from "data/editor"
 export const showGameGUI = persistentWritable("showGameGUI", true)
 export const showMapBorder = persistentWritable("showMapBorder", true)
 export const showInvisibleGrounds = persistentWritable("showInvisibleGrounds", true)
-export const parkour = persistentWritable("parkour", false)
 
 export const grid = persistentWritable("grid", {
   enabled: false,
@@ -38,6 +37,8 @@ export interface Brush {
   thickness: number
   opacity: number
   foreground: boolean
+  curveToolEnabled: boolean
+  fineness: number
 }
 export const brushDefaults: () => Brush = () => 
   ({
@@ -45,13 +46,11 @@ export const brushDefaults: () => Brush = () =>
     thickness: 10,
     opacity: 0.9,
     foreground: false,
+    curveToolEnabled: false,
+    fineness: 6
   })
 export const brushPalette = persistentWritable("brushPalette", [brushDefaults()])
 
-export const curveTool = store({
-  enabled: false,
-  fineness: 10,
-})
 
 
 export const imagePalette = persistentWritable("imagePalette", [Editor.Image.readUrl("x_transformice/x_inventaire/17.jpg")])

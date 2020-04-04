@@ -3,7 +3,11 @@
 
   import * as Platform from "/data/editor/Platform"
   import { showInvisibleGrounds } from "/state/user"
-  import { platformResizeKnobMouseDown } from "/components/scene/interaction"
+  import { platformResizeKnobMouseDown,
+           platformBoosterVectorMouseDown,
+           platformBoosterVectorMinLength, 
+           platformBoosterVectorSpeedLengthRatio, 
+         } from "/components/scene/interaction"
 
   import SvgImage from "/components/common/SvgImage.svelte"
 
@@ -17,6 +21,8 @@
   $: width  = isCircle ? $obj.radius*2 : $obj.width
   $: height = isCircle ? $obj.radius*2 : $obj.height
 
+  $: rotation = $obj.rotation || 0
+
   // Resize points dimensions
   $: rs = 6
   $: rw = rs/2 + width/2
@@ -29,11 +35,25 @@
           : "zero-opacity"
       : ""
 
+  let boosterVector 
+  $: if($obj.booster && $obj.booster.enabled) {
+    let angle = $obj.booster.angle
+    let rad = angle * Math.PI / 180
+    let length = platformBoosterVectorMinLength 
+               + $obj.booster.speed * platformBoosterVectorSpeedLengthRatio
+    boosterVector = {
+      angle,
+      x: length * Math.cos(rad),
+      y: length * Math.sin(rad),
+    }
+  }
+  else boosterVector = null
+
 </script>
 
 <g 
   transform="translate({$obj.x}, {$obj.y}) 
-             rotate({$obj.rotation || 0})"
+             rotate({rotation || 0})"
 >
   <g class="platform"
     on:mousedown on:mousemove on:mouseleave
@@ -120,6 +140,23 @@
     {/each}
   </g>
 
+  {#if boosterVector && active}
+    <g class="booster-vector resize-knobs" 
+       class:zero-speed={$obj.booster.speed <= 0.1}
+       class:active transform="rotate({-rotation})"
+    >
+      <line x1={0} x2={boosterVector.x}
+            y1={0} y2={boosterVector.y}
+      />
+      <path class="arrowHead"
+            transform="translate({boosterVector.x} {boosterVector.y})
+                       rotate({boosterVector.angle})" 
+            d="M 0 -5 L 10 0 L 0 5 z" 
+            on:mousedown|stopPropagation|preventDefault={e => platformBoosterVectorMouseDown(e, obj)}
+      />
+    </g>
+  {/if}
+
 </g>
 
 
@@ -141,13 +178,40 @@
     visibility: visible;
   }
 
+  .booster-vector {
+    opacity: 0.9;
+  }
+  .booster-vector.zero-speed {
+    opacity: 0.5;
+  }
+  .booster-vector line {
+    stroke: yellow;
+    stroke-width: 2;
+    stroke-dasharray: 4;
+    animation: dash-animation 2s linear infinite;
+  }
+  .booster-vector .arrowHead {
+    /* fill: #0dff41; */
+    /* stroke: white;
+    stroke-width: 1; */
+    fill: yellow;
+  }
+  @keyframes dash-animation {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -8;
+    }
+  }
+
   .platform rect, .platform circle {
     transition: fill 100ms;
   }
   .selectable {
     /* transition: outline-color 50ms; */
-    outline-width: 4px;
-    outline-offset: -4px;
+    outline-width: 2px;
+    outline-offset: -1px;
     outline-style: dashed;
     outline-color: rgba(255,255,255,0.0);
   }

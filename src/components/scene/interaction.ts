@@ -15,7 +15,7 @@ import { mapSettings } from "state/map"
 import * as sceneObjects from "state/sceneObjects"
 import { SceneObject } from "state/sceneObjects"
 
-import { zoom } from "state/user"
+import { zoom, brushPalette } from "state/user"
 
 import { undo, redo } from "state/history"
 
@@ -350,6 +350,37 @@ class PlatformRectangleResizeAction extends MouseMovement {
   }
 }
 
+export const platformBoosterVectorMinLength = 30
+export const platformBoosterVectorSpeedLengthRatio = 5
+class PlatformBoosterVectorResizeAction extends MouseMovement {
+  constructor(
+    e: MouseEvent, 
+    public obj: Store<Extract<Editor.Platform.Platform, Editor.Platform.NonStatic>>) 
+  {
+    super(e)
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let gamePosition = sceneToGameCoordinates(this.current)
+    
+    let dx = gamePosition.x - this.obj.x
+    let dy = gamePosition.y - this.obj.y
+
+    let length = Math.sqrt(dx**2 + dy**2)
+    let angle = Math.atan2(dy, dx) * 180 / Math.PI
+    if(isKeyDown.ctrl || isKeyDown.shift) {
+      let angleIncrement = 15
+      angle = angleIncrement * Math.round(angle/angleIncrement)
+    }
+
+    this.obj.booster.angle = angle
+    this.obj.booster.speed = 
+      Math.max(0, (length - platformBoosterVectorMinLength) / platformBoosterVectorSpeedLengthRatio)
+    this.obj.invalidate()
+  }
+}
+
+
 import * as layout from "state/layout"
 
 class WindowMoveAction extends MouseMovement {
@@ -406,9 +437,6 @@ export function backgroundMouseDown(e: MouseEvent) {
   }
 }
 
-type MechanicCreation = { platform1Index?: number }
-let mechanicCreation: MechanicCreation = {}
-Creation.creation.subscribe(() => mechanicCreation = {})
 
 export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
   if(isKeyDown.space) return
@@ -416,15 +444,7 @@ export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
 
   if(Creation.creation.enabled && Creation.creation.creationType === "MECHANIC") {
     if(!Editor.isPlatform(obj)) return
-
-    if(mechanicCreation.platform1Index !== undefined) {
-      let platform2 = obj.index
-      Creation.createMechanic(mechanicCreation.platform1Index, platform2)
-      mechanicCreation = {}
-    }
-    else
-      mechanicCreation.platform1Index = obj.index
-
+    Creation.createMechanic(obj.index)
     return
   }
 
@@ -455,6 +475,13 @@ export function platformResizeKnobMouseDown(e: MouseEvent, obj: Store<Editor.Pla
   currentMouseMovement = Editor.Platform.isCircle(obj)
     ? new PlatformCircleResizeAction(e, obj as any)
     : new PlatformRectangleResizeAction(e, obj as any, knob, relativeToKnob)
+}
+
+export function platformBoosterVectorMouseDown(e: MouseEvent, obj: Store<Editor.Platform.Platform>) {
+  if(isKeyDown.space) return
+  e.stopPropagation()
+
+  currentMouseMovement = new PlatformBoosterVectorResizeAction(e, obj as any)
 }
 
 export function windowTitleMouseDown(e: MouseEvent, window: layout.Window) {
@@ -551,9 +578,16 @@ export function wheel(e: WheelEvent) {
   let factor = isKeyDown.alt ? 1 : 10
   let delta = Math.sign(e.deltaY) * factor
 
-  if(Creation.creation.enabled && Creation.creation.creationType === "SHAMANOBJECT") {
-    Creation.creation.rotation += delta
-    Creation.creation.invalidate()
+  if(Creation.creation.enabled) {
+    if(Creation.creation.creationType === "SHAMANOBJECT") {
+      Creation.creation.rotation += delta
+      Creation.creation.invalidate()
+    }
+    else if(Creation.creation.creationType === "LINE") {
+      Creation.creation.brush.thickness = clamp(Creation.creation.brush.thickness - Math.sign(e.deltaY), 1, 250)
+      Creation.creation.invalidate()
+      brushPalette.update(x => x)
+    }
     return
   }
   

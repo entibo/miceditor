@@ -6,7 +6,7 @@
   import TextInput from "/components/common/TextInput.svelte"
   import ColorTextInput from "/components/common/ColorTextInput.svelte"
 
-  import { parkour, showGameGUI, showMapBorder, showInvisibleGrounds, grid } from "/state/user"
+  import { showGameGUI, showMapBorder, showInvisibleGrounds, grid } from "/state/user"
   import { _ } from "/state/locale"
 
 </script>
@@ -70,15 +70,6 @@
       </section>
     </div>
     {/if}
-
-    <div class="mb-2"></div>
-
-    <section>
-      <label class="flex items-center">
-        <input type="checkbox" bind:checked={$parkour}/>
-        <span class="text-sm gray-200 ml-2">{$_("show-parkour-checkpoints")}</span>
-      </label>
-    </section>
 
   </div>
 

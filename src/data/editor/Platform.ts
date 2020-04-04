@@ -8,15 +8,15 @@ import * as Common from "./Common"
 interface Booster {
   booster: {
     enabled: boolean
-    axis: "x" | "y"
-    power: number
+    angle: number
+    speed: number
   }
 }
 const boosterDefaults: () => Booster = () => ({
   booster: {
     enabled: false,
-    axis: "x",
-    power: 10,
+    angle: 0,
+    speed: 10,
   },
 })
 
@@ -41,6 +41,11 @@ export const make: (p: P.Platform) => Platform = p =>
       objectType: "PLATFORM",
     }
 
+export function isStatic(p: Platform): p is Exclude<Platform, P.NonStatic> {
+  return "dynamic" in p
+    ? p.dynamic === false && p.booster.enabled === false
+    : true
+}
 
 export const isForeground = (p: Platform) =>
   "foreground" in p ? p.foreground : true

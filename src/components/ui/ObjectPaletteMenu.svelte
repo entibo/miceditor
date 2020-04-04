@@ -98,7 +98,7 @@
     text-shadow: 0px 0px 3px black;
   }
   .menu.active {
-    outline: 4px dashed white;
+    outline: 2px dashed white;
   }
 
   .icon {
