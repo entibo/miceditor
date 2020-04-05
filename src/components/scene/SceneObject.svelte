@@ -5,8 +5,8 @@
 
   import { objectMouseDown } from "./interaction"
 
-  import * as Editor from "/data/editor/index"
-  import { creation } from "/state/creation"
+  import * as Editor from "data/editor/index"
+  import { creation } from "state/creation"
 
   $: outOfTheWay = 
     $creation.enabled && $creation.creationType === "MECHANIC" && !Editor.isPlatform($obj)

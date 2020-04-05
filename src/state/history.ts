@@ -1,7 +1,7 @@
 
 import { writable } from "svelte/store"
 
-import { debounce } from "@/util"
+import { debounce } from "common"
 
 import { importXML, exportXML } from "state/map"
 import xml from "state/xml"

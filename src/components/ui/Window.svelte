@@ -4,13 +4,13 @@
 import Icon from "fa-svelte"
 import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes"
 
-import TabContent from "/components/ui/TabContent.svelte"
+import TabContent from "components/ui/TabContent.svelte"
 
-import * as layout from "/state/layout"
-import { closeWindow } from "/state/layout"
-import { windowTitleMouseDown, windowPanelMouseDown, windowBottomMouseDown } from "/components/scene/interaction"
+import * as layout from "state/layout"
+import { closeWindow } from "state/layout"
+import { windowTitleMouseDown, windowPanelMouseDown, windowBottomMouseDown } from "components/scene/interaction"
 
-import { _ } from "/state/locale"
+import { _ } from "state/locale"
 
 
 export let window

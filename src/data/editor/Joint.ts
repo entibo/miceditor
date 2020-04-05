@@ -1,5 +1,5 @@
 
-import { rotate as _rotate } from "@/util"
+import { rotate as _rotate } from "common"
 
 import * as Base from "data/base"
 import * as Editor from "data/editor"

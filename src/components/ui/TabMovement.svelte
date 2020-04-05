@@ -1,9 +1,9 @@
 
 <script>
-  import * as layout from "/state/layout"
-  import { layoutConfig, tabMovement } from "/state/layout"
+  import * as layout from "state/layout"
+  import { layoutConfig, tabMovement } from "state/layout"
   
-  import { _ } from "/state/locale"
+  import { _ } from "state/locale"
 
   let x = -100, y = -100
   function onMousemove(e) {

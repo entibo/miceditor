@@ -13,7 +13,7 @@ export const metadataDefaults: () => Metadata = () => ({
 })
 
 
-import { rotate } from "@/util"
+import { rotate } from "common"
 export function computeBoundingBox(position: Point, dimensions: Point, rotation: number): Box {
   let rw = dimensions.x/2, rh = dimensions.y/2
   let pp = [ [-rw,-rh], [-rw,rh], [rw,-rh], [rw,rh] ]

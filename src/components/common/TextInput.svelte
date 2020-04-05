@@ -6,9 +6,9 @@
   import ColorPicker from "./ColorPicker.svelte"
   import Slider from "./Slider.svelte"
 
-  import * as M from "/util/Maybe"
-  import * as util from "/data/base/util"
-  import { typeNames } from "/data/editor/Platform"
+  import * as M from "maybe/Maybe"
+  import * as util from "data/base/util"
+  import { typeNames } from "data/editor/Platform"
 
 
   let className = ""

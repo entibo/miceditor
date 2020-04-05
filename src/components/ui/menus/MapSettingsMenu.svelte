@@ -12,20 +12,20 @@
   import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle"
   import { faCheckCircle } from "@fortawesome/free-solid-svg-icons/faCheckCircle"
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import ColorTextInput from "/components/common/ColorTextInput.svelte"
-  import Button from "/components/common/Button.svelte"
-  import Checkbox from "/components/common/Checkbox.svelte"
-  import CheckboxItem from "/components/common/CheckboxItem.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import ColorTextInput from "components/common/ColorTextInput.svelte"
+  import Button from "components/common/Button.svelte"
+  import Checkbox from "components/common/Checkbox.svelte"
+  import CheckboxItem from "components/common/CheckboxItem.svelte"
 
-//  import ImagesSubMenu from "/components/ui/ImagesSubMenu.svelte"
+//  import ImagesSubMenu from "components/ui/ImagesSubMenu.svelte"
 
-  import { _ } from "/state/locale"
-  import { mapSettings, updateMiceSpawn } from "/state/map"
-  import { parkourMode, setParkourMode } from "/state/mapExtra"
+  import { _ } from "state/locale"
+  import { mapSettings, updateMiceSpawn } from "state/map"
+  import { parkourMode, setParkourMode } from "state/mapExtra"
   
-  import * as sceneObjects from "/state/sceneObjects"
+  import * as sceneObjects from "state/sceneObjects"
   function updateDecorations() {
     for(let cheese of sceneObjects.groups.decorations.filter(obj => obj.type === "F"))
       cheese.invalidate()

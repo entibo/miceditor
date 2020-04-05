@@ -2,8 +2,8 @@
 <script>
   import { fly } from "svelte/transition"
 
-  import { selection } from "/state/selection"
-  import Tooltip from "/components/common/Tooltip.svelte"
+  import { selection } from "state/selection"
+  import Tooltip from "components/common/Tooltip.svelte"
 
   export let position
   export let selectionBox

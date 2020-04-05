@@ -3,11 +3,11 @@
 
   import { slide, fly } from "svelte/transition"
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import ColorTextInput from "/components/common/ColorTextInput.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import ColorTextInput from "components/common/ColorTextInput.svelte"
 
-  import { showGameGUI, showMapBorder, showInvisibleGrounds, grid } from "/state/user"
-  import { _ } from "/state/locale"
+  import { showGameGUI, showMapBorder, showInvisibleGrounds, grid } from "state/user"
+  import { _ } from "state/locale"
 
 </script>
 

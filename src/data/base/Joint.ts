@@ -1,5 +1,5 @@
 
-import * as M from "util/Maybe"
+import * as M from "maybe/Maybe"
 import * as XML from "./XML"
 import * as util from "./util"
 import * as Common from "./Common"

@@ -3,20 +3,20 @@
   import { onMount, tick } from "svelte"
   import { fade } from "svelte/transition"
 
-  import { randInt } from "/utils.js"
+  import { randInt } from "utils.js"
 
-  import { encodeObjectData, encodeMapData, rotate } from "/xml-utils.ts"
+  import { encodeObjectData, encodeMapData, rotate } from "xml-utils.ts"
   import { 
     platforms, decorations, shamanObjects, joints, jointPalette,
     settings, selection, creation, visibility, highlightedObject, buildXML,
-    showGameGUI, showMapBorder, gridSettings, zoom } from "/stores/stores.js"
-  import Platform from "/components/scene/Platform.svelte"
-  import Decoration from "/components/scene/Decoration.svelte"
-  import ShamanObject from "/components/scene/ShamanObject.svelte"
-  import Joint from "/components/scene/Joint.svelte"
-  import Footer from "/components/scene/Footer.svelte"
+    showGameGUI, showMapBorder, gridSettings, zoom } from "stores/stores.js"
+  import Platform from "components/scene/Platform.svelte"
+  import Decoration from "components/scene/Decoration.svelte"
+  import ShamanObject from "components/scene/ShamanObject.svelte"
+  import Joint from "components/scene/Joint.svelte"
+  import Footer from "components/scene/Footer.svelte"
 
-  import SvgImage from "/components/common/SvgImage.svelte"
+  import SvgImage from "components/common/SvgImage.svelte"
 
 
   import { platforms } from "stores/sceneObjects"

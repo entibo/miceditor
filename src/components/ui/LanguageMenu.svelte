@@ -1,8 +1,8 @@
 
 <script>
-  import { language, _, localeFlag, localeTranslators } from "/state/locale"
+  import { language, _, localeFlag, localeTranslators } from "state/locale"
 
-  import Tooltip from "/components/common/Tooltip.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
 
   function formatTranslatorsTooltipTitle(list) {
     if(!list || !list.length) return ""

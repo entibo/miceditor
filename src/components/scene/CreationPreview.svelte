@@ -2,13 +2,13 @@
 <script>
 
   import { readable } from "svelte/store"
-  import { creation } from "/state/creation"
+  import { creation } from "state/creation"
   import * as Editor from "data/editor/index"
   
-  import Platform from "/components/scene/Platform.svelte"
-  import Decoration from "/components/scene/Decoration.svelte"
-  import ShamanObject from "/components/scene/ShamanObject.svelte"
-  import SvgImage from "/components/common/SvgImage.svelte"
+  import Platform from "components/scene/Platform.svelte"
+  import Decoration from "components/scene/Decoration.svelte"
+  import ShamanObject from "components/scene/ShamanObject.svelte"
+  import SvgImage from "components/common/SvgImage.svelte"
 
 
   export let x

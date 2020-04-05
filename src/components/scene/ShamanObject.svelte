@@ -2,12 +2,12 @@
 <script>
   import { readable } from "svelte/store"
 
-  import * as Editor from "/data/editor/index"
-  import shamanObjectMetadata from "/metadata/shamanObject/index"
+  import * as Editor from "data/editor/index"
+  import shamanObjectMetadata from "metadata/shamanObject/index"
 
-  import { parkourMode } from "/state/mapExtra"
-  import { mapSettings } from "/state/map"
-  import { shamanObjects } from "/state/sceneObjects"
+  import { parkourMode } from "state/mapExtra"
+  import { mapSettings } from "state/map"
+  import { shamanObjects } from "state/sceneObjects"
 
   import Decoration from "./Decoration.svelte"
 

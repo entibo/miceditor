@@ -11,9 +11,9 @@
     selection, visibility,
     platforms, decorations, shamanObjects,
     _
-  } from "/stores/stores.js"
+  } from "stores/stores.js"
 
-  import Tooltip from "/components/common/Tooltip.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
 
   export let which
   export let title

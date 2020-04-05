@@ -1,4 +1,4 @@
-import { getUniqueId } from "@/util"
+import { getUniqueId } from "common"
 import decorationMetadata from "./decorationMetadata.json"
 
 const defaultFilter = () => ({ 

@@ -1,14 +1,14 @@
 
 import { get } from "svelte/store"
 
-import { rotate } from "@/util"
+import { rotate } from "common"
 import { clamp } from "data/base/util"
 
 import * as Editor from "data/editor"
 
 import { store, Store } from "state/util"
 
-import * as selection from "@/state/selection"
+import * as selection from "state/selection"
 import * as Creation from "state/creation"
 
 import { mapSettings } from "state/map"

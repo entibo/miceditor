@@ -12,24 +12,24 @@
   import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle"
   import { faCheckCircle } from "@fortawesome/free-solid-svg-icons/faCheckCircle"
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import ColorTextInput from "/components/common/ColorTextInput.svelte"
-  import Button from "/components/common/Button.svelte"
-  import Checkbox from "/components/common/Checkbox.svelte"
-  import CheckboxItem from "/components/common/CheckboxItem.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import ColorTextInput from "components/common/ColorTextInput.svelte"
+  import Button from "components/common/Button.svelte"
+  import Checkbox from "components/common/Checkbox.svelte"
+  import CheckboxItem from "components/common/CheckboxItem.svelte"
 
-  import { _ } from "/state/locale"
+  import { _ } from "state/locale"
 
 
-  //import * as sceneObjects from "/state/sceneObjects"
-  import * as selection from "/state/selection"
+  //import * as sceneObjects from "state/sceneObjects"
+  import * as selection from "state/selection"
 
-  import Platforms from "/components/ui/menus/selectionMenu/Platforms.svelte"
-  import Decorations from "/components/ui/menus/selectionMenu/Decorations.svelte"
-  import ShamanObjects from "/components/ui/menus/selectionMenu/ShamanObjects.svelte"
-  import Images from "/components/ui/menus/selectionMenu/Images.svelte"
-  import Joints from "/components/ui/menus/selectionMenu/Joints.svelte"
+  import Platforms from "components/ui/menus/selectionMenu/Platforms.svelte"
+  import Decorations from "components/ui/menus/selectionMenu/Decorations.svelte"
+  import ShamanObjects from "components/ui/menus/selectionMenu/ShamanObjects.svelte"
+  import Images from "components/ui/menus/selectionMenu/Images.svelte"
+  import Joints from "components/ui/menus/selectionMenu/Joints.svelte"
 
 
   import { properties, groups } from "state/selectionProperties"
@@ -119,7 +119,7 @@
 <style lang="text/postcss">
 
 .category {
-  @apply flex flex-col
+  @apply flex flex-col;
 }
 .category:not(:last-child) {
   @apply mb-4;

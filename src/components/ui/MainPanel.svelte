@@ -2,10 +2,10 @@
 <script>
   import { slide, fly } from "svelte/transition"
 
-  //import SelectionMenu from "/components/ui/SelectionMenu.svelte"
-  import MapSettingsMenu from "/components/ui/MapSettingsMenu.svelte"
+  //import SelectionMenu from "components/ui/SelectionMenu.svelte"
+  import MapSettingsMenu from "components/ui/MapSettingsMenu.svelte"
 
-  import { selection } from "/state/selection"
+  import { selection } from "state/selection"
 
 </script>
 

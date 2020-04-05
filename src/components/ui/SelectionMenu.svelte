@@ -8,13 +8,13 @@
   import { faExchangeAlt } from "@fortawesome/free-solid-svg-icons/faExchangeAlt"
   import { faCrosshairs } from "@fortawesome/free-solid-svg-icons/faCrosshairs"
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import ColorTextInput from "/components/common/ColorTextInput.svelte"
-  import Button from "/components/common/Button.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import ColorTextInput from "components/common/ColorTextInput.svelte"
+  import Button from "components/common/Button.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
 
-  import { platforms, decorations, shamanObjects, joints, settings, selection, creation, groundTypePicker, buildXML, _} from "/stores/stores.js"
-  import { encodeObjectData } from "/xml-utils.ts"
+  import { platforms, decorations, shamanObjects, joints, settings, selection, creation, groundTypePicker, buildXML, _} from "stores/stores.js"
+  import { encodeObjectData } from "xml-utils.ts"
 
 
 

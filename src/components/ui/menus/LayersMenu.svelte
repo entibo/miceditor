@@ -1,7 +1,7 @@
 
 <script>
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import Button from "/components/common/Button.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import Button from "components/common/Button.svelte"
 
 </script>
 

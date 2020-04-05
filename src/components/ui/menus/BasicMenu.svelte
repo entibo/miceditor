@@ -1,8 +1,8 @@
 
 <script>
-  import * as Creation from "/state/creation"
-  import { creation } from "/state/creation"
-  import { mapSettings } from "/state/map"
+  import * as Creation from "state/creation"
+  import { creation } from "state/creation"
+  import { mapSettings } from "state/map"
 
   const types = ["F","T","DS","DC","DC2"]
   const getFileName = type =>

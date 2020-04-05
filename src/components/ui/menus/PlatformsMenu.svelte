@@ -1,8 +1,8 @@
 
 <script>
-  import * as Creation from "/state/creation"
-  import { creation } from "/state/creation"
-  import { typeNames } from "/data/editor/Platform"
+  import * as Creation from "state/creation"
+  import { creation } from "state/creation"
+  import { typeNames } from "data/editor/Platform"
 </script>
 
 <div class="flex flex-wrap justify-center">

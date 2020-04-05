@@ -3,37 +3,37 @@
   import { onMount, tick } from "svelte"
   import { fade } from "svelte/transition"
 
-  import { randInt } from "/util"
+  import { randInt } from "common"
 
-  import SceneObject from "/components/scene/SceneObject.svelte"
-  import Platform from "/components/scene/Platform.svelte"
-  import Decoration from "/components/scene/Decoration.svelte"
-  import ShamanObject from "/components/scene/ShamanObject.svelte"
-  import Image from "/components/scene/Image.svelte"
-  import Joint from "/components/scene/Joint.svelte"
-  import Footer from "/components/scene/Footer.svelte"
-  import CreationPreview from "/components/scene/CreationPreview.svelte"
-  import SvgImage from "/components/common/SvgImage.svelte"
-  import Window from "/components/ui/Window.svelte"
+  import SceneObject from "components/scene/SceneObject.svelte"
+  import Platform from "components/scene/Platform.svelte"
+  import Decoration from "components/scene/Decoration.svelte"
+  import ShamanObject from "components/scene/ShamanObject.svelte"
+  import Image from "components/scene/Image.svelte"
+  import Joint from "components/scene/Joint.svelte"
+  import Footer from "components/scene/Footer.svelte"
+  import CreationPreview from "components/scene/CreationPreview.svelte"
+  import SvgImage from "components/common/SvgImage.svelte"
+  import Window from "components/ui/Window.svelte"
 
 
-  import { mapSettings } from "/state/map"
-  import { platforms, decorations, shamanObjects, joints, images } from "/state/sceneObjects"
+  import { mapSettings } from "state/map"
+  import { platforms, decorations, shamanObjects, joints, images } from "state/sceneObjects"
 
-  import { creation } from "/state/creation"
+  import { creation } from "state/creation"
   import { 
     grid,
     showGameGUI,
     showMapBorder,
     showInvisibleGrounds,
     zoom,
-  } from "/state/user"
+  } from "state/user"
 
   import * as interaction from "./interaction"
   import { pan, selectionBox, currentGamePosition, isKeyDown } from "./interaction"
 
-  import * as layout from "/state/layout"
-  import { layoutConfig, tabMovement } from "/state/layout"
+  import * as layout from "state/layout"
+  import { layoutConfig, tabMovement } from "state/layout"
 
 
   let svgContainerEl = null, svgWidth = 1, svgHeight = 1
