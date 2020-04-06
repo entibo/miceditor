@@ -2,8 +2,9 @@
   "name": "miceditor",
   "scripts": {
     "test": "jest",
-    "build": "webpack --config webpack/webpack.config.js",
-    "serve": "http-server --silent",
+    "build": "webpack --config webpack/production.config.js",
+    "dev": "webpack-dev-server --config webpack/development.config.js --hot",
+    "serve": "http-server",
     "translations": "curl 'https://localise.biz/api/export/all.json?format=multi&key=_KwQn345xaZK8iQ3yj3JkzfGbzjIWAgk' -o ./src/languages.json"
   },
   "devDependencies": {
@@ -12,6 +13,7 @@
     "@rollup/plugin-typescript": "^4.0.0",
     "@types/jest": "^24.0.25",
     "@types/webpack": "^4.41.10",
+    "autoprefixer": "^9.7.5",
     "chokidar": "^3.0.0",
     "css-loader": "^3.4.2",
     "cssnano": "^4.1.10",
@@ -25,11 +27,13 @@
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.6.0",
     "postcss-url": "^8.0.0",
+    "purgecss": "^2.1.0",
     "rimraf": "^2.6.3",
     "rm": "^0.1.8",
     "style-loader": "^1.1.3",
     "svelte": "^3.4.0",
     "svelte-loader": "^2.13.6",
+    "svelte-loader-hot": "^0.3.0",
     "svelte-preprocess": "^2.9.0",
     "svelte-preprocess-postcss": "^1.0.0",
     "tailwindcss": "^1.0.1",

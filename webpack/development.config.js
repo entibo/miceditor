@@ -2,21 +2,26 @@
 
 const path = require('path')
 
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-
-
 const root = path.resolve(__dirname, '..')
 
 /** @type { import('webpack').Configuration } */
 module.exports = {
 
   mode: 'development',
+  
+  devtool: false,
 
-  // context: root,
+  devServer: {
+    host: '0.0.0.0',
+    publicPath: '/dist/',
+    liveReload: false,
+    hotOnly: true,
+  },
 
   entry: path.resolve(root, 'src', 'main.js'),
 
   output: {
+    publicPath: '/dist/',
     path: path.resolve(root, 'dist'),
     filename: 'main.js',
   },
@@ -46,15 +51,21 @@ module.exports = {
       {
         test: /\.svelte$/,
         exclude: /node_modules/,
-        loader: 'svelte-loader',
+        loader: 'svelte-loader-hot',
         options: {
+          dev: true,
           emitCss: true,
+          hotReload: true,
+          hotOptions: {
+            noPreserveState: true,
+            optimistic: true,
+          },
         },
       },
       {
         test: /\.p?css$/,
         use: [
-          'style-loader', /* MiniCssExtractPlugin.loader, */
+          'style-loader',
           {
             loader: 'css-loader',
             options: { 
@@ -77,7 +88,7 @@ module.exports = {
   },
 
   plugins: [
-    /* new MiniCssExtractPlugin({  }), */
+    
   ],
 
 }
