@@ -152,6 +152,9 @@ const data = store<Data>({
       sideEffect: () => sceneObjects.groups.decorations.invalidate()
     },
     reverse: {},
+    color0: {
+      path: ["colors", "0"],
+    },
     color1: {
       path: ["colors", "1"],
     },

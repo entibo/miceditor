@@ -65,14 +65,12 @@
   }
   function onKeyDown(e) {
     let key = e.key.toLowerCase()
+
     if((key === "escape" || key === "enter") && focused) {
-      e.stopPropagation()
       inputElement.blur()
       return
     }
-    if((int || float) && (key === "arrowup" || key === "arrowdown")) { 
-      e.stopPropagation()
-      e.preventDefault()
+    if((int || float) && (key === "arrowup" || key === "arrowdown")) {
       let delta = key === "arrowup" ? 1 : -1
       let factor = e.ctrlKey ? 100 : e.shiftKey ? 10 : e.altKey ? 0.1 : 1
       let newValue = parseFloat((internalValue + delta*factor).toFixed(6))

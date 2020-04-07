@@ -20,5 +20,4 @@
 </script>
 
 <image class={className} {href} {x} {y} {width} {height} 
-  on:mousedown|preventDefault
 />

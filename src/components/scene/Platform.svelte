@@ -12,11 +12,15 @@
   import SvgImage from "components/common/SvgImage.svelte"
 
   export let obj
-  $: active = $obj.selected
+
+  $: selected = $obj.selected
 
   $: typeName = Platform.typeNames[$obj.type]
 
   $: isCircle = typeName === "circle"
+
+  $: x = $obj.x
+  $: y = $obj.y
 
   $: width  = isCircle ? $obj.radius*2 : $obj.width
   $: height = isCircle ? $obj.radius*2 : $obj.height
@@ -29,11 +33,11 @@
   $: rh = rs/2 + height/2
   //
 
-  $: invisibilityClass = Platform.isInvisible($obj)
+  $: opacityLevel = Platform.isInvisible($obj)
       ? $showInvisibleGrounds 
-          ? "half-opacity" 
-          : "zero-opacity"
-      : ""
+          ? "half" 
+          : "zero"
+      : "full"
 
   let boosterVector 
   $: if($obj.booster && $obj.booster.enabled) {
@@ -51,42 +55,41 @@
 
 </script>
 
-<g 
-  transform="translate({$obj.x}, {$obj.y}) 
-             rotate({rotation || 0})"
+<g transform="translate({x}, {y}) 
+              rotate({rotation})"
 >
-  <g class="platform"
-    on:mousedown on:mousemove on:mouseleave
-  >
+
+  <g class="cursor-pointer">
 
     {#if $obj.image.enabled}
-    <SvgImage class="pointer-events-none"
-      x={-width/2  + $obj.image.x} 
-      y={-height/2 + $obj.image.y}
-      href={$obj.image.imageUrl.url}
-    />}
-    <rect
-      x={-width/2} y={-height/2}
-      width={width} height={height}
-      fill="transparent"
-      class="selectable"
-      class:active
-    />
+
+      <SvgImage class="pointer-events-none"
+        x={-width/2  + $obj.image.x} 
+        y={-height/2 + $obj.image.y}
+        href={$obj.image.imageUrl.url}
+      />
+      <rect
+        x={-width/2} y={-height/2}
+        width={width} height={height}
+        fill="transparent"
+      />
+
     {:else}
 
-    <g class="selectable" class:active >
-      <g class={invisibilityClass} >
+      <g class={opacityLevel === "full" ? "opacity-100" : opacityLevel === "half" ? "opacity-50" : "opacity-0"} >
 
         {#if typeName === "circle"}
           <circle
             r={$obj.radius}
             fill="#{$obj.color}"
+            class="object-outline-stroke"
           />
         {:else if typeName === "rectangle"}
           <rect
             x={-width/2} y={-height/2}
             width={width} height={height}
             fill="#{$obj.color}"
+            class="object-outline"
           />
         {:else if ["wood", "ice", "trampoline", "chocolate", "cloud"].includes(typeName)}
           <image 
@@ -95,17 +98,20 @@
             preserveAspectRatio="none" 
             href="dist/grounds/{ typeName }.png"
             on:mousedown|preventDefault
+            class="object-outline"
           />
         {:else if typeName === "invisible"}
           <rect
             x={-width/2} y={-height/2}
             width={width} height={height}
             fill="white"
+            class="object-outline"
           />
         {:else}
           <foreignObject
             x={-width/2} y={-height/2}
             width={width} height={height} 
+            class="object-outline"
           >
             <div
               class="w-full h-full {typeName !== 'invisible' ? typeName : ''}"
@@ -116,34 +122,35 @@
         {/if}
 
       </g>
-    </g>
 
     {/if}
 
   </g>
 
-  <g transform="translate({-rs/2}, {-rs/2})" 
-    class="resize-knobs" class:active
-  >
-    {#each 
-    isCircle 
-      ? [[+rw, 0], [-rw,0], [0,-rh], [0,+rh]] 
-      : [
-          [-rw,-rh], [0,-rh], [+rw,-rh], [+rw,0],
-          [+rw,+rh], [0,+rh], [-rw,+rh], [-rw,0],
-        ]
-        .map(([x,y], k) => [x,y,k])
-    as [x,y,k]}
-    <rect fill="white" width={rs} height={rs} {x} {y}
-      on:mousedown|stopPropagation|preventDefault={e => platformResizeKnobMouseDown(e, obj, k)}
-    />
-    {/each}
-  </g>
+  {#if selected}
+    <g transform="translate({-rs/2}, {-rs/2})" 
+       class="cursor-crosshair"
+    >
+      {#each 
+      isCircle 
+        ? [[+rw, 0], [-rw,0], [0,-rh], [0,+rh]] 
+        : [
+            [-rw,-rh], [0,-rh], [+rw,-rh], [+rw,0],
+            [+rw,+rh], [0,+rh], [-rw,+rh], [-rw,0],
+          ]
+          .map(([x,y], k) => [x,y,k])
+      as [x,y,k]}
+        <rect fill="white" width={rs} height={rs} {x} {y}
+          on:mousedown|stopPropagation|preventDefault={e => platformResizeKnobMouseDown(e, obj, k)}
+        />
+      {/each}
+    </g>
+  {/if}
 
-  {#if boosterVector && active}
-    <g class="booster-vector resize-knobs" 
+  {#if selected && boosterVector}
+    <g class="booster-vector" 
        class:zero-speed={$obj.booster.speed <= 0.1}
-       class:active transform="rotate({-rotation})"
+       transform="rotate({-rotation})"
     >
       <line x1={0} x2={boosterVector.x}
             y1={0} y2={boosterVector.y}
@@ -162,21 +169,6 @@
 
 
 <style lang="text/postcss">
-
-  .half-opacity {
-    opacity: 0.4;
-  }
-  .zero-opacity {
-    opacity: 0;
-  }
-
-  .resize-knobs {
-    visibility: hidden;
-    cursor: crosshair;
-  }
-  .resize-knobs.active {
-    visibility: visible;
-  }
 
   .booster-vector {
     opacity: 0.9;
@@ -205,31 +197,11 @@
     }
   }
 
-  .platform rect, .platform circle {
-    transition: fill 100ms;
-  }
-  .selectable {
-    /* transition: outline-color 50ms; */
-    outline-width: 2px;
-    outline-offset: -1px;
-    outline-style: dashed;
-    outline-color: rgba(255,255,255,0.0);
-  }
-  .selectable:hover {
-    cursor: pointer;
-    outline-color: rgba(255,255,255,0.5);
-  }
-  .selectable.active {
-    outline-color: rgba(255,255,255,0.95);
-  }
 
-  /* 
-  .invisible {
-    visibility: initial !important;
-  } 
-  */
+
 
   .cobweb { background: url(grounds/cobweb.png); }
+
   .sand { background: url(grounds/sand.png); }
 
   .water { background: url(grounds/water-high.png); }

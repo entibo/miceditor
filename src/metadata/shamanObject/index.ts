@@ -1,18 +1,20 @@
 
-type Sprite = {
-  sprite: string
+type Dimensions = {
   width:  number
   height: number
+  boundingWidth?:  number
+  boundingHeight?: number
+  circle?: boolean
 }
-type Spritesheet = {
+
+type Sprite = Dimensions & {
+  sprite: string
+}
+type Spritesheet = Dimensions & {
   spritesheet: string
-  width:  number
-  height: number
   variants?: number[]
   isVariant: boolean
   offset: Point
-  boundingWidth:  number
-  boundingHeight: number
 }
 
 export type Metadata = (Sprite | Spritesheet) & { defilanteVariant?: Sprite }
@@ -24,15 +26,19 @@ let data = {} as Record<number, Metadata>
 function setData(types: number | number[], arg: Metadata | ((t: number) => Metadata)) {
   if(!(types instanceof Array))
     types = [types]
-  if(typeof arg === "function") {
-    for(let type of types) {
+
+  if(typeof arg === "function")
+    for(let type of types)
       data[type] = arg(type)
-    }
-  }
-  else {
-    for(let type of types) {
+  else
+    for(let type of types)
       data[type] = arg
-    }
+
+  for(let type of types) {
+    if(data[type].boundingWidth === undefined)
+      data[type].boundingWidth = data[type].width
+    if(data[type].boundingHeight === undefined)
+      data[type].boundingHeight = data[type].height
   }
 }
 
@@ -98,6 +104,7 @@ setData([6, ...range(601, 614)], type => {
     offset: { x: 90*variant, y: 0 },
     boundingWidth: 30,
     boundingHeight: 30,
+    circle: true,
   }
 })
 setData([7, 701], type => {
@@ -108,7 +115,7 @@ setData([7, 701], type => {
     spritesheet: "trampolines.png",
     width: 140, height: 70,
     offset: { x: 140*variant, y: 0 },
-    boundingWidth: 102,
+    boundingWidth: 100,
     boundingHeight: 20,
   }
 })
@@ -134,6 +141,7 @@ setData([17, ...range(1701, 1711)], type => {
     offset: { x: 90*variant, y: 0 },
     boundingWidth: 30,
     boundingHeight: 30,
+    circle: true,
   }
 })
 setData([...range(28,31), ...range(2801, 2821)], type => {
@@ -144,8 +152,9 @@ setData([...range(28,31), ...range(2801, 2821)], type => {
     spritesheet: "balloons.png",
     width: 72, height: 100,
     offset: { x: 72*variant, y: 0 },
-    boundingWidth: 42,
-    boundingHeight: 42,
+    boundingWidth: 30,
+    boundingHeight: 30,
+    circle: true,
   }
 })
 setData([22, ...range(11, 16)], type => {
@@ -156,17 +165,24 @@ setData([22, ...range(11, 16)], type => {
     spritesheet: "nails.png",
     width: 40, height: 40,
     offset: { x: 40*variant, y: 0 },
-    boundingWidth: 40,
-    boundingHeight: 40,
+    boundingWidth: 10,
+    boundingHeight: 10,
+    circle: true,
   }
 })
 setData(32, {
   sprite: "rune.png",
   width: 34, height: 26,
+  boundingWidth: 30,
+  boundingHeight: 30,
+  circle: true,
 })
 setData(62, {
   sprite: "stable-rune.png",
   width: 34, height: 26,
+  boundingWidth: 30,
+  boundingHeight: 30,
+  circle: true,
 })
 setData(54, {
   sprite: "icecube.png",
@@ -175,26 +191,43 @@ setData(54, {
 setData(23, {
   sprite: "bomb.png",
   width: 80, height: 80,
+  boundingWidth: 30,
+  boundingHeight: 30,
+  circle: true,
 })
 setData(33, {
   sprite: "chicken.png",
   width: 34, height: 34,
+  boundingWidth: 20,
+  boundingHeight: 20,
+  circle: true,
 })
 setData(63, {
   sprite: "fish.png",
   width: 40, height: 40,
+  boundingWidth: 34,
+  boundingHeight: 40,
 })
 setData(65, {
   sprite: "pufferfish.png",
   width: 40, height: 40,
+  boundingWidth: 22,
+  boundingHeight: 22,
+  circle: true,
 })
 setData(80, {
   sprite: "plane.png",
   width: 42, height: 42,
+  boundingWidth: 14,
+  boundingHeight: 14,
+  circle: true,
 })
 setData(89, {
   sprite: "pumpkin.png",
   width: 40, height: 40,
+  boundingWidth: 24,
+  boundingHeight: 24,
+  circle: true,
 })
 setData(90, {
   sprite: "tombstone.png",
@@ -203,61 +236,88 @@ setData(90, {
 setData(95, {
   sprite: "paperball.png",
   width: 40, height: 40,
+  boundingWidth: 16,
+  boundingHeight: 16,
+  circle: true,
 })
 setData(97, {
   sprite: "energyorb.png",
   width: 40, height: 40,
+  boundingWidth: 10,
+  boundingHeight: 10,
+  circle: true,
 })
 setData(39, {
   sprite: "apple.png",
   width: 40, height: 40,
+  boundingWidth: 30,
+  boundingHeight: 30,
 })
 setData(45, {
   sprite: "ice-plank.png",
   width: 120, height: 28,
+  boundingWidth: 100,
+  boundingHeight: 10,
 })
 setData(46, {
   sprite: "chocolate-plank.png",
   width: 120, height: 28,
+  boundingWidth: 100,
+  boundingHeight: 10,
 })
 setData(57, {
   sprite: "cloud.png",
   width: 100, height: 70,
+  boundingWidth: 61,
+  boundingHeight: 31,
 })
 setData(59, {
   sprite: "bubble.png",
   width: 44, height: 44,
+  boundingWidth: 30,
+  boundingHeight: 30,
+  circle: true,
 })
 setData(60, {
   sprite: "mini-plank.png",
   width: 70, height: 30,
+  boundingWidth: 50,
+  boundingHeight: 10,
 })
 setData(61, {
   sprite: "companion.png",
   width: 66, height: 66,
+  boundingWidth: 55,
+  boundingHeight: 55,
 })
 setData(68, {
   sprite: "triangle.png",
   width: 100, height: 100,
+  boundingWidth: 80,
+  boundingHeight: 80,
 })
 setData(69, {
   sprite: "s.png",
   width: 88, height: 88,
+  boundingWidth: 71,
+  boundingHeight: 71,
 })
 setData(35, {
   sprite: "cupid-arrow.png",
   width: 40, height: 40,
+  boundingWidth: 25,
+  boundingHeight: 9,
 })
 setData(24, {
   sprite: "spirit.png",
   width: 40, height: 40,
+  boundingWidth: 20,
+  boundingHeight: 20,
+  circle: true,
 })
 setData(67, {
-  spritesheet: "very-big-plank.png",
-  variants: undefined,
-  isVariant: false,
+  sprite: "very-big-plank.png",
   width: 306, height: 14,
-  offset: { x: 0, y: 0 },
   boundingWidth: 300,
   boundingHeight: 10,
 })
@@ -265,18 +325,22 @@ setData(67, {
 data[6].defilanteVariant = {
   sprite: "plus-one.png",
   width: 30, height: 30,
+  circle: true,
 }
 data[32].defilanteVariant = {
   sprite: "speed-boost.png",
   width: 30, height: 30,
+  circle: true,
 }
 data[15].defilanteVariant = {
   sprite: "skull.png",
   width: 30, height: 30,
+  circle: true,
 }
 data[16].defilanteVariant = {
   sprite: "spring.png",
   width: 30, height: 30,
+  circle: true,
 }
 
 export default data

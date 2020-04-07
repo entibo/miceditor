@@ -81,7 +81,7 @@
   on:mousedown={interaction.backgroundMouseDown}  
   on:mousemove={interaction.backgroundMouseMove}
   on:blur={interaction.windowMouseLeave}
-  on:keydown={interaction.keyDown} tabindex="-1"
+  tabindex="-1"
 >
   <svg class="flex-grow" >
   

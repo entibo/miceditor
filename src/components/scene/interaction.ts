@@ -55,10 +55,17 @@ export const isKeyDown = store({
 })
 export function windowKeyDown(e: KeyboardEvent) {
   let key = e.key.toLowerCase()
+
   if(e.shiftKey)    isKeyDown.update(() => (isKeyDown.shift = true, isKeyDown))
   if(e.ctrlKey)     isKeyDown.update(() => (isKeyDown.ctrl  = true, isKeyDown))
   if(e.altKey)      isKeyDown.update(() => (isKeyDown.alt   = true, isKeyDown))
   if(key === " ")   isKeyDown.update(() => (isKeyDown.space = true, isKeyDown))
+
+
+  let target = e.target as Node
+  if(target && "nodeName" in target && ["INPUT","SELECT"].includes(target.nodeName.toUpperCase()))
+    return
+
 
   if(key === "escape") cancel()
 
@@ -69,6 +76,28 @@ export function windowKeyDown(e: KeyboardEvent) {
     }
     else if(key === "y") redo()
   }
+
+  if(key.startsWith("arrow")) {
+    let dx = key === "arrowleft" ? -1 : key === "arrowright" ? 1 : 0
+    let dy = key === "arrowup"   ? -1 : key === "arrowdown"  ? 1 : 0
+    if(isKeyDown.shift) {
+      dx *= 10
+      dy *= 10
+    }
+    if(isKeyDown.ctrl) {
+      dx *= 100
+      dy *= 100
+    }
+    if(isKeyDown.alt) {
+      e.preventDefault()
+      selection.resize(dx, -dy)
+    }
+    else {
+      selection.move(dx, dy)
+    }
+  }
+  else if(key in keyActions) 
+    keyActions[key](e)
 }
 export function windowKeyUp(e: KeyboardEvent) {
   if     (e.key === "Shift")   isKeyDown.update(() => (isKeyDown.shift = false, isKeyDown))
@@ -94,33 +123,6 @@ const keyActions: { [key: string]: (e: KeyboardEvent) => void } = {
       selection.set(sceneObjects.getAll())
   },
 }
-
-export function keyDown(e: KeyboardEvent) {
-  let key = e.key.toLowerCase()
-
-  if(key.startsWith("arrow")) {
-    let dx = key === "arrowleft" ? -1 : key === "arrowright" ? 1 : 0
-    let dy = key === "arrowup"   ? -1 : key === "arrowdown"  ? 1 : 0
-    if(isKeyDown.shift) {
-      dx *= 10
-      dy *= 10
-    }
-    if(isKeyDown.ctrl) {
-      dx *= 100
-      dy *= 100
-    }
-    if(isKeyDown.alt) {
-      e.preventDefault()
-      selection.resize(dx, -dy)
-    }
-    else {
-      selection.move(dx, dy)
-    }
-  }
-  else if(key in keyActions) 
-    keyActions[key](e)
-}
-
 
 
 export function resetPan() {
@@ -421,6 +423,12 @@ class WindowResizeAction extends MouseMovement {
 let currentMouseMovement: MouseMovement | null = null
 
 export function backgroundMouseDown(e: MouseEvent) {
+  if(e.defaultPrevented) {
+    let activeElement = document.activeElement as HTMLElement
+    activeElement && activeElement.blur && activeElement.blur()
+    return
+  }
+
   if(isKeyDown.space)
     currentMouseMovement = new Pan(e)
 
@@ -440,7 +448,8 @@ export function backgroundMouseDown(e: MouseEvent) {
 
 export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
   if(isKeyDown.space) return
-  e.stopPropagation()
+
+  e.preventDefault()
 
   if(Creation.creation.enabled && Creation.creation.creationType === "MECHANIC") {
     if(!Editor.isPlatform(obj)) return
@@ -463,14 +472,14 @@ export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
 
 export function jointMouseDown(e: MouseEvent, obj: Store<Editor.Joint.Joint>, startPoint: Point & {name:Editor.Joint.PointName}) {
   if(isKeyDown.space) return
-  e.stopPropagation()
+  e.preventDefault()
 
   currentMouseMovement = new JointAction(e, obj, startPoint)
 }
 
 export function platformResizeKnobMouseDown(e: MouseEvent, obj: Store<Editor.Platform.Platform>, knob: number, relativeToKnob = false) {
   if(isKeyDown.space) return
-  e.stopPropagation()
+  e.preventDefault()
 
   currentMouseMovement = Editor.Platform.isCircle(obj)
     ? new PlatformCircleResizeAction(e, obj as any)
@@ -479,7 +488,7 @@ export function platformResizeKnobMouseDown(e: MouseEvent, obj: Store<Editor.Pla
 
 export function platformBoosterVectorMouseDown(e: MouseEvent, obj: Store<Editor.Platform.Platform>) {
   if(isKeyDown.space) return
-  e.stopPropagation()
+  e.preventDefault()
 
   currentMouseMovement = new PlatformBoosterVectorResizeAction(e, obj as any)
 }
@@ -493,7 +502,7 @@ export function windowTitleMouseDown(e: MouseEvent, window: layout.Window) {
 
 export function windowBottomMouseDown(e: MouseEvent, window: layout.Window) {
   if(isKeyDown.space) return
-  e.stopPropagation()
+  e.preventDefault()
   //windowPanelMouseDown(window)
 
   currentMouseMovement = new WindowResizeAction(e, window)

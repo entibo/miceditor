@@ -10,7 +10,9 @@
   import { mapSettings } from "state/map"
 
   export let obj
-  $: active = $obj.selected
+
+
+  $: selected = $obj.selected
 
   let instanceId = getUniqueId()
 
@@ -91,8 +93,7 @@
 
 
 
-<g on:mousedown 
-  class="decoration" class:active={active} 
+<g 
   transform="translate({$obj.x}, {$obj.y}) {$obj.reverse ? 'scale(-1, 1)' : ''}"
 >
   {#if metadata}
@@ -106,20 +107,62 @@
         </filter>
         {/each}
 
-        {#await promise then svg}
-          {@html svg}
-        {/await}
+        <g class="object-outline cursor-pointer">
+          {#await promise then svg}
+            {@html svg}
+          {/await}
+        </g>
 
       {:else}
+        {#if metadata.type == "DS" || metadata.type == "DC" || metadata.type == "DC2"}
 
-        <SvgImage href="dist/decorations/{metadata.type}.png"/>
+          <SvgImage href="dist/decorations/{metadata.type}.png" class="pointer-events-none"/>
+          <circle
+            transform="translate({metadata.offset.x} {metadata.offset.y})"
+            r="15"
+            fill="transparent"
+            class="object-outline-stroke cursor-pointer"
+          />
 
+        {:else if metadata.type.startsWith("F")}
+
+          <SvgImage href="dist/decorations/{metadata.type}.png" class="pointer-events-none"/>
+          <g transform="translate({metadata.offset.x} {metadata.offset.y})">
+            <circle
+              r="20"
+              fill="transparent"
+              class="object-outline-stroke cursor-pointer"
+            />
+            {#if selected}
+              <circle r="5" fill="none" stroke="#ff00ff" stroke-width="1" class="pointer-events-none"/>
+            {/if}
+          </g>
+
+        {:else if metadata.type.startsWith("T")}
+
+          <SvgImage href="dist/decorations/{metadata.type}.png" class="pointer-events-none"/>
+          <g transform="translate({metadata.offset.x} {metadata.offset.y - 15})">
+            <circle
+              r="20"
+              fill="transparent"
+              class="object-outline-stroke cursor-pointer"
+            />
+            {#if selected}
+              <circle r="5" fill="none" stroke="#ff00ff" stroke-width="1" class="pointer-events-none"/>
+            {/if}
+          </g>        
+
+        {:else}
+
+          <SvgImage href="dist/decorations/{metadata.type}.png" class="object-outline cursor-pointer"/>
+
+        {/if}
       {/if}
 
     </g>
   {:else}
     <g>
-      <rect class="selectable"
+      <rect class="object-outline cursor-pointer"
         x={-20} y={-20}
         width={40} height={40}
         fill="red"
@@ -149,19 +192,6 @@
 {/if}
 
 <style lang="text/postcss">
-  :global(.decoration > g > *) {
-    transition: fill 100ms, outline-color 50ms;
-    outline-width: 2px;
-    outline-offset: -1px;
-    outline-style: dashed;
-    outline-color: rgba(255,255,255,0.0);
-  }
-  :global(.decoration > g > *:hover) {
-    cursor: pointer;
-    outline-color: rgba(255,255,255,0.5);
-  }
-  :global(.decoration.active > g > *) {
-    outline-color: rgba(255,255,255,0.95);
-  }
+
 
 </style>

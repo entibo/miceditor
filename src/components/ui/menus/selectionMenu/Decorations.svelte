@@ -72,13 +72,13 @@
     </div>
   </label>
 
-  {#if props.color1.value !== undefined}
+  {#if props.color0.value !== undefined}
     <div class="mb-4"></div>
     <label>
       <span>{$_("decoration-colors")}</span>
     </label>
     <div class="submenu mt-1">
-      {#each [1,2,3].map(k => "color"+k) as name}
+      {#each [0,1,2,3].map(k => "color"+k) as name}
         {#if props[name].value !== undefined}
           <div class="mt-1"></div>
           <label>

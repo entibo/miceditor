@@ -100,7 +100,6 @@ export function getBoundingBox(obj: Joint): Box {
 
   let xs = pp.map(({x}) => x)
   let ys = pp.map(({y}) => y)
-  console.log("joint > bb", pp, xs, ys)
   return {
     p1: { x: Math.min(...xs),
           y: Math.min(...ys) },

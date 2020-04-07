@@ -17,6 +17,8 @@
 
 <g class:pointer-events-none={!$obj.interactive}
    class:out-of-the-way={outOfTheWay}
+   class:selectable={$obj.interactive}
+   class:selected={$obj.selected}
    on:mousedown={e => objectMouseDown(e, obj)}
 >
   <slot></slot>

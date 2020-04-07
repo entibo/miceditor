@@ -220,3 +220,42 @@ div.material-input input {
     stroke-dashoffset: -12;
   }
 }
+
+
+.object-outline {
+  transition: outline-color 50ms;
+  outline-width: 2px;
+  outline-offset: -1px;
+  outline-style: dashed;
+  outline-color: rgba(255,255,255,0.0);
+}
+.selectable:hover .object-outline {
+  outline-color: rgba(255,255,255,0.5);
+}
+.selectable.selected .object-outline {
+  outline-color: rgba(255,255,255,0.95);
+}
+
+.object-outline-stroke {
+  transition: stroke 50ms;
+  stroke-width: 2;
+  stroke-dasharray: 5;
+  stroke: rgba(255,255,255,0.0);
+}
+.selectable:hover .object-outline-stroke {
+  stroke: rgba(255,255,255,0.5);
+}
+.selectable.selected .object-outline-stroke {
+  stroke: rgba(255,255,255,0.95);
+}
+
+
+rect, circle {
+  transition: fill 50ms, stroke 50ms;
+}
+
+
+
+.cursor-crosshair {
+  cursor: crosshair;
+}

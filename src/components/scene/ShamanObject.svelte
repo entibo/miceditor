@@ -14,8 +14,6 @@
   export let obj
 
 
-  $: active = $obj.selected
-
   $: metadata = getMetadata($obj, $mapSettings)
   function getMetadata(shamanObject, mapSettings) {
     let spriteData = shamanObjectMetadata[shamanObject.type]
@@ -35,9 +33,7 @@
 </script>
 
 
-<g on:mousedown
-   class:active={active} 
-   transform="translate({$obj.x}, {$obj.y}) 
+<g transform="translate({$obj.x}, {$obj.y}) 
               rotate({$obj.rotation || 0})"
 >
 
@@ -48,39 +44,59 @@
     </g>
   {/if}
 
-  {#if metadata && metadata.spritesheet}
+  {#if metadata}
 
-    <foreignObject class="pointer-events-none" class:opacity50={$obj.ghost}
-      x={-metadata.width/2} y={-metadata.height/2}
-      width={metadata.width} height={metadata.height}
-    >
-      <div style="background-image: url(dist/shamanObjects/{metadata.spritesheet}); 
-                  background-position: {-metadata.offset.x}px {-metadata.offset.y}px;
-                  background-repeat: no-repeat;"
-        class="w-full h-full"
-      ></div>
-    </foreignObject>
+    {#if metadata.spritesheet}
 
-    <rect fill="transparent" class="selectable" 
-      x={-metadata.boundingWidth/2} y={-metadata.boundingHeight/2}
-      width={metadata.boundingWidth} height={metadata.boundingHeight}
-    />
+      <foreignObject 
+        x={-metadata.width/2} y={-metadata.height/2}
+        width={metadata.width} height={metadata.height}
+        class="pointer-events-none" 
+        class:opacity-50={$obj.ghost}
+      >
+        <div style="background-image: url(dist/shamanObjects/{metadata.spritesheet}); 
+                    background-position: {-metadata.offset.x}px {-metadata.offset.y}px;
+                    background-repeat: no-repeat;"
+          class="w-full h-full"
+        ></div>
+      </foreignObject>
 
-  {:else if metadata && metadata.sprite}
+    {:else}
 
-    <image class="selectable" class:opacity50={$obj.ghost}
-      x={-metadata.width/2} y={-metadata.height/2}
-      width={metadata.width} height={metadata.height}
-      href="dist/shamanObjects/{metadata.sprite}"
-      on:mousedown|preventDefault
-    />
+      <image 
+        x={-metadata.width/2} y={-metadata.height/2}
+        width={metadata.width} height={metadata.height}
+        href="dist/shamanObjects/{metadata.sprite}"
+        on:mousedown|preventDefault
+        class="pointer-events-none" 
+        class:opacity-50={$obj.ghost}
+      />
+
+    {/if}
+
+    {#if metadata.circle}
+      <circle
+        r={metadata.boundingWidth/2}
+        fill="transparent"
+        class="object-outline-stroke cursor-pointer"
+      />
+    {:else}
+      <rect 
+        x={-metadata.boundingWidth/2} y={-metadata.boundingHeight/2}
+        width={metadata.boundingWidth} height={metadata.boundingHeight}
+        fill="transparent"
+        class="object-outline cursor-pointer"
+      />
+    {/if}
 
   {:else}
 
-    <rect class="selectable" class:opacity50={$obj.ghost}
+    <rect 
       x={-20} y={-20}
       width={40} height={40}
       fill="red"
+      class="object-outline" 
+      class:opacity-50={$obj.ghost}
     />
 
   {/if}
@@ -89,24 +105,6 @@
 
 
 <style lang="text/postcss">
-  .opacity50 {
-    opacity: 0.5;
-  }
-
-  .selectable {
-    transition: fill 100ms, outline-color 50ms;
-    outline-width: 2px;
-    outline-offset: -1px;
-    outline-style: dashed;
-    outline-color: rgba(255,255,255,0.0);
-  }
-  .selectable:hover {
-    cursor: pointer;
-    outline-color: rgba(255,255,255,0.5);
-  }
-  .active .selectable {
-    outline-color: rgba(255,255,255,0.95);
-  }
 
   text {
     fill: black;

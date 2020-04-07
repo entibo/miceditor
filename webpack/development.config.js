@@ -2,6 +2,8 @@
 
 const path = require('path')
 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
 const root = path.resolve(__dirname, '..')
 
 /** @type { import('webpack').Configuration } */
@@ -65,7 +67,13 @@ module.exports = {
       {
         test: /\.p?css$/,
         use: [
-          'style-loader',
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: true,
+              reloadAll: true,
+            },
+          },
           {
             loader: 'css-loader',
             options: { 
@@ -88,7 +96,9 @@ module.exports = {
   },
 
   plugins: [
-    
+    new MiniCssExtractPlugin({
+      filename: 'main.css',
+    })
   ],
 
 }
