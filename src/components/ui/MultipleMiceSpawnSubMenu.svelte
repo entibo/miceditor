@@ -7,11 +7,11 @@
   import { faTrashAlt as faTrash } from "@fortawesome/free-solid-svg-icons/faTrashAlt"
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
 
-  import { settings, visibility, buildXML, _ } from "/stores/stores.js"
-  import { encodeMapData } from "/xml-utils.ts"
+  import { settings, visibility, buildXML, _ } from "stores/stores.js"
+  import { encodeMapData } from "xml-utils.ts"
 
   function updateSettings() {
     encodeMapData($settings)

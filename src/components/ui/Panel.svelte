@@ -1,12 +1,12 @@
 
 <script>
   
-  import TabContent from "/components/ui/TabContent.svelte"
+  import TabContent from "components/ui/TabContent.svelte"
 
-  import * as layout from "/state/layout"
-  import { tabMovement } from "/state/layout"
+  import * as layout from "state/layout"
+  import { tabMovement } from "state/layout"
   
-  import { _ } from "/state/locale"
+  import { _ } from "state/locale"
 
   export let panel
   export let panelName 

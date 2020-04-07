@@ -1,15 +1,15 @@
 
 <script>
 
-  import * as Platform from "/data/editor/Platform"
-  import { showInvisibleGrounds } from "/state/user"
+  import * as Platform from "data/editor/Platform"
+  import { showInvisibleGrounds } from "state/user"
   import { platformResizeKnobMouseDown,
            platformBoosterVectorMouseDown,
            platformBoosterVectorMinLength, 
            platformBoosterVectorSpeedLengthRatio, 
-         } from "/components/scene/interaction"
+         } from "components/scene/interaction"
 
-  import SvgImage from "/components/common/SvgImage.svelte"
+  import SvgImage from "components/common/SvgImage.svelte"
 
   export let obj
   $: active = $obj.selected

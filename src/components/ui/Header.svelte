@@ -15,29 +15,29 @@
   import { faSearchPlus } from "@fortawesome/free-solid-svg-icons/faSearchPlus"
   import { faQuestion } from "@fortawesome/free-solid-svg-icons/faQuestion"
 
-  import { debounce } from "/util"
+  import { debounce } from "common"
 
 /*   import { 
     xml, settings, 
     undo, redo, canUndo, canRedo,
     highQuality, parkour, showGameGUI, showMapBorder, zoom, firstVisit,
     language, _, localeFlag
-  } from "/stores/stores.js" */
+  } from "stores/stores.js" */
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import Button from "/components/common/Button.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import UserSettings from "/components/ui/UserSettings.svelte"
-  import XmlEditor from "/components/ui/XmlEditor.svelte"
-  import HelpMenu from "/components/ui/HelpMenu.svelte"
-  import LanguageMenu from "/components/ui/LanguageMenu.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Button from "components/common/Button.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import UserSettings from "components/ui/UserSettings.svelte"
+  import XmlEditor from "components/ui/XmlEditor.svelte"
+  import HelpMenu from "components/ui/HelpMenu.svelte"
+  import LanguageMenu from "components/ui/LanguageMenu.svelte"
 
 
-  import xml from "/state/xml"
-  import { importXML, exportXML } from "/state/map"
-  import { localeFlag, language, _ } from "/state/locale"
-  import { undo, redo, canUndo, canRedo } from "/state/history"
-  import { zoom } from "/state/user"
+  import xml from "state/xml"
+  import { importXML, exportXML } from "state/map"
+  import { localeFlag, language, _ } from "state/locale"
+  import { undo, redo, canUndo, canRedo } from "state/history"
+  import { zoom } from "state/user"
 
 
   let copyIconActive = false

@@ -16,21 +16,21 @@
     selection, creation, groundTypePicker, visibility, jointPalette, drawingData,
     settings, platforms, decorations, shamanObjects, joints,
     _
-  } from "/stores/stores.js" */
+  } from "stores/stores.js" */
 
-  import shamanObjectMetadata from "/metadata/shamanObject/index"
-  import * as Editor from "/data/editor"
+  import shamanObjectMetadata from "metadata/shamanObject/index"
+  import * as Editor from "data/editor"
 
-  import * as sceneObjects from "/state/sceneObjects"
-   import { platforms, decorations, shamanObjects, joints, images } from "/state/sceneObjects"
-  import { mapSettings } from "/state/map"
-  import * as selection from "/state/selection"
-  import * as creation from "/state/creation"
+  import * as sceneObjects from "state/sceneObjects"
+   import { platforms, decorations, shamanObjects, joints, images } from "state/sceneObjects"
+  import { mapSettings } from "state/map"
+  import * as selection from "state/selection"
+  import * as creation from "state/creation"
 
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import TextInput from "/components/common/TextInput.svelte"
-  import ColorTextInput from "/components/common/ColorTextInput.svelte"
-  import ObjectPaletteMenu from "/components/ui/ObjectPaletteMenu.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import ColorTextInput from "components/common/ColorTextInput.svelte"
+  import ObjectPaletteMenu from "components/ui/ObjectPaletteMenu.svelte"
 
   let isThin = false
 

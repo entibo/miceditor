@@ -1,15 +1,15 @@
 
 <script>
 
-  //import { encodeJointData } from "/xml-utils.ts"
+  //import { encodeJointData } from "xml-utils.ts"
   /* import {
     joints, selection, buildXML, creation, bezier
-  } from "/stores/stores.js" */
-  import { bezier } from "@/util"
-  import { jointMouseDown } from "/components/scene/interaction"
+  } from "stores/stores.js" */
+  import { bezier } from "common"
+  import { jointMouseDown } from "components/scene/interaction"
 
-  import * as Editor from "/data/editor/index"
-  import * as sceneObjects from "/state/sceneObjects"
+  import * as Editor from "data/editor/index"
+  import * as sceneObjects from "state/sceneObjects"
 
   export let obj
 

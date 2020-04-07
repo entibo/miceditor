@@ -1,9 +1,9 @@
 
 <script>
-  import TextInput from "/components/common/TextInput.svelte"
-  import Button from "/components/common/Button.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Button from "components/common/Button.svelte"
 
-  import { _ } from "/state/locale"
+  import { _ } from "state/locale"
 
   let data = [
     {

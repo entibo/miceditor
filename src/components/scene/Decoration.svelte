@@ -2,12 +2,12 @@
 <script>
   import cc from "color-convert"
   import { onMount } from "svelte"
-  import { getUniqueId } from "/util"
-  import decorationMetadata from "/metadata/decoration/index"
+  import { getUniqueId } from "common"
+  import decorationMetadata from "metadata/decoration/index"
 
-  import SvgImage from "/components/common/SvgImage.svelte"
+  import SvgImage from "components/common/SvgImage.svelte"
   
-  import { mapSettings } from "/state/map"
+  import { mapSettings } from "state/map"
 
   export let obj
   $: active = $obj.selected

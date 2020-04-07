@@ -1,40 +1,43 @@
 
-import { rotate as _rotate } from "@/util"
+import { rotate as _rotate } from "common"
 import * as util from "data/base/util"
 
 
 import * as Base from "data/base"
 export * from "data/base"
 
-export * as Map from "./Map"
+type Foo <K extends string> = K extends "A" | "B" ? K : never
+
+import * as Map from "./Map"
+export { Map }
 
 import * as Platform from "./Platform"
-export * as Platform from "./Platform"
+export { Platform }
 export function isPlatform(obj: Object): obj is Platform.Platform {
   return obj.objectType === "PLATFORM"
 }
 
 import * as Decoration from "./Decoration"
-export * as Decoration from "./Decoration"
+export { Decoration }
 export function isDecoration(obj: Object): obj is Decoration.Decoration {
   return obj.objectType === "DECORATION"
 }
 
 import * as ShamanObject from "./ShamanObject"
-export * as ShamanObject from "./ShamanObject"
+export { ShamanObject }
 export function isShamanObject(obj: Object): obj is ShamanObject.ShamanObject {
   return obj.objectType === "SHAMANOBJECT"
 }
 
 import * as Joint from "./Joint"
-export * as Joint from "./Joint"
+export { Joint }
 export function isJoint(obj: Object): obj is Joint.Joint {
   return obj.objectType === "JOINT"
 }
 
 
 import * as Image from "./Image"
-export * as Image from "./Image"
+export { Image }
 export function isImage(obj: Object): obj is Image.Image {
   return obj.objectType === "IMAGE"
 }

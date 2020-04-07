@@ -1,5 +1,5 @@
 
-const svelte_preprocess_postcss = require('svelte-preprocess-postcss')
+const svelte_preproceses_postcss = require('svelte-preprocess-postcss')
 
 module.exports = {
   css: css => {

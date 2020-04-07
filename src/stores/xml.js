@@ -6,7 +6,7 @@ import {
   parseXMLData, xmlDataToString, 
   decodeMapData,
   decodePlatformData, decodeDecorationData, decodeShamanObjectData, decodeJointData
-} from "/xml-utils.js"
+} from "xml-utils.js"
 
 import { selection } from "./selection.js"
 

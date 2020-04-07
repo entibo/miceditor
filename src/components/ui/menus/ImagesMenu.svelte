@@ -8,18 +8,18 @@
   import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes"
   import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons/faExternalLinkAlt"
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import Button from "/components/common/Button.svelte"
-  import Checkbox from "/components/common/Checkbox.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import Button from "components/common/Button.svelte"
+  import Checkbox from "components/common/Checkbox.svelte"
 
-  import * as Editor from "/data/editor/index"
+  import * as Editor from "data/editor/index"
 
-  import * as Creation from "/state/creation"
-  import { creation } from "/state/creation"
-  import { imagePalette } from "/state/user"
+  import * as Creation from "state/creation"
+  import { creation } from "state/creation"
+  import { imagePalette } from "state/user"
 
-  import { _ } from "/state/locale"
+  import { _ } from "state/locale"
 
 
   let editingElement

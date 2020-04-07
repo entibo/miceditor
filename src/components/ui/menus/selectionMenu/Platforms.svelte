@@ -13,16 +13,16 @@
   import { faCheckCircle } from "@fortawesome/free-solid-svg-icons/faCheckCircle"
   import { faExchangeAlt } from "@fortawesome/free-solid-svg-icons/faExchangeAlt"
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import ColorTextInput from "/components/common/ColorTextInput.svelte"
-  import Button from "/components/common/Button.svelte"
-  import Checkbox from "/components/common/Checkbox.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import ColorTextInput from "components/common/ColorTextInput.svelte"
+  import Button from "components/common/Button.svelte"
+  import Checkbox from "components/common/Checkbox.svelte"
 
 
-  import { _ } from "/state/locale"
+  import { _ } from "state/locale"
 
-  import * as selection from "/state/selection"
+  import * as selection from "state/selection"
 
   export let props
   

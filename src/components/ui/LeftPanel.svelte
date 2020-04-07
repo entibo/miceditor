@@ -1,6 +1,6 @@
 
 <script>
-  import { layoutConfig } from "/state/layout"
+  import { layoutConfig } from "state/layout"
 
 
 

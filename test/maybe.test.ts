@@ -1,5 +1,5 @@
 
-import * as M from "util/Maybe"
+import * as M from "maybe/Maybe"
 import * as util from "data/util"
 
 const increment = (x: number) => x + 1

@@ -1,9 +1,9 @@
 
 <script>
-  import * as Creation from "/state/creation"
-  import { creation } from "/state/creation"
-  import { mapSettings } from "/state/map"
-  import shamanObjectMetadata from "/metadata/shamanObject/index"
+  import * as Creation from "state/creation"
+  import { creation } from "state/creation"
+  import { mapSettings } from "state/map"
+  import shamanObjectMetadata from "metadata/shamanObject/index"
 </script>
 
 

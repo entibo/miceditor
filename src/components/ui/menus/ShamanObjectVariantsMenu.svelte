@@ -1,8 +1,8 @@
 
 <script>
-  import * as Creation from "/state/creation"
-  import { creation } from "/state/creation"
-  import shamanObjectMetadata from "/metadata/shamanObject/index"
+  import * as Creation from "state/creation"
+  import { creation } from "state/creation"
+  import shamanObjectMetadata from "metadata/shamanObject/index"
 
   $: variants = $creation.enabled && $creation.creationType === "SHAMANOBJECT" && shamanObjectMetadata[$creation.type].variants
         ? shamanObjectMetadata[$creation.type].variants

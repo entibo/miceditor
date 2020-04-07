@@ -1,6 +1,6 @@
 
 <script>
-  import SvgImage from "/components/common/SvgImage.svelte"
+  import SvgImage from "components/common/SvgImage.svelte"
 
   export let obj
   $: active = $obj.selected

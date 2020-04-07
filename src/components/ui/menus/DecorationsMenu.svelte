@@ -1,8 +1,8 @@
 
 <script>
-  import * as Creation from "/state/creation"
-  import { creation } from "/state/creation"
-  import decorationMetadata from "/metadata/decoration/index"
+  import * as Creation from "state/creation"
+  import { creation } from "state/creation"
+  import decorationMetadata from "metadata/decoration/index"
 </script>
 
 <div class="flex flex-wrap justify-center">

@@ -2,7 +2,7 @@
 <script>
 
   import { createEventDispatcher } from "svelte"
-  import { clamp } from "/data/base/util"
+  import { clamp } from "data/base/util"
 
   export let min = 0
   export let max = 100

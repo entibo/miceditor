@@ -7,17 +7,17 @@
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
   import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes"
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import ColorTextInput from "/components/common/ColorTextInput.svelte"
-  import Button from "/components/common/Button.svelte"
-  import Checkbox from "/components/common/Checkbox.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import ColorTextInput from "components/common/ColorTextInput.svelte"
+  import Button from "components/common/Button.svelte"
+  import Checkbox from "components/common/Checkbox.svelte"
 
-  import * as Creation from "/state/creation"
-  import { creation } from "/state/creation"
-  import { brushPalette, brushDefaults } from "/state/user"
+  import * as Creation from "state/creation"
+  import { creation } from "state/creation"
+  import { brushPalette, brushDefaults } from "state/user"
 
-  import { _ } from "/state/locale"
+  import { _ } from "state/locale"
 
 
   $: activeBrush = $creation.enabled && $creation.creationType === "LINE"

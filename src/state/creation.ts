@@ -9,7 +9,7 @@ import * as Editor from "data/editor"
 import * as Base from "data/base"
 import { Brush } from "state/user"
 import * as selection from "state/selection"
-import { rotate } from "@/util"
+import { rotate } from "common"
 
 type Creation = 
   { enabled: false }

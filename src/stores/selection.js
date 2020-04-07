@@ -2,11 +2,11 @@
 import { writable, derived, get as storeGet } from "svelte/store"
 
 import { encodePlatformData, encodeDecorationData, encodeJointData, encodeObjectData,
-  platformProperties, groundTypes, rotate as rotatePoint } from "/xml-utils.ts"
+  platformProperties, groundTypes, rotate as rotatePoint } from "xml-utils.ts"
 import { platforms, decorations, shamanObjects, joints, settings, buildXML } from "./xml.js"
 import { persistentWritable } from "../state/user.ts"
 
-import { gridSettings } from "/stores/stores.js"
+import { gridSettings } from "stores/stores.js"
 
 
 export const clipboard = persistentWritable("clipboard", [], true)

@@ -1,5 +1,5 @@
 
-import { bezier } from "@/util"
+import { bezier } from "common"
 import * as Base from "data/base"
 import * as Editor from "data/editor"
 
