@@ -13,6 +13,7 @@
 
   export let obj
 
+  $: rotation = $obj.rotation || 0
 
   $: metadata = getMetadata($obj, $mapSettings)
   function getMetadata(shamanObject, mapSettings) {
@@ -34,11 +35,11 @@
 
 
 <g transform="translate({$obj.x}, {$obj.y}) 
-              rotate({$obj.rotation || 0})"
+              rotate({rotation})"
 >
 
-  {#if $parkourMode && $obj.type === 22}
-    <g class="pointer-events-none">
+  {#if $parkourMode && $obj.type == 22}
+    <g class="pointer-events-none" transform="rotate({-rotation})">
       <Decoration obj={parkourMouseSpawn} />
       <text y="-32">{parkourCheckpointIndex}</text>
     </g>

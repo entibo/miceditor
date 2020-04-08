@@ -47,7 +47,7 @@
   <div class:disabled={props.rotation.value === undefined}>
     <label>
       <span>{$_("rotation")}</span>
-      <TextInput float value={props.rotation.value} set={props.rotation.set} class="w-16"/>
+      <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
     </label>
   </div>
   

@@ -117,7 +117,7 @@
   <div class="mb-4"></div>
 
   <label class:disabled={props.dynamic.value === undefined}>
-    <span>Physics</span>
+    <span>Mode</span>
     <div class="material-input w-32">
       <select value={props.physics.value} 
               on:change={e => props.physics.set(e.target.value)}

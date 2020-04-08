@@ -148,7 +148,7 @@
   {/if}
 
   {#if selected && boosterVector}
-    <g class="booster-vector" 
+    <g class="booster-vector cursor-pointer" 
        class:zero-speed={$obj.booster.speed <= 0.1}
        transform="rotate({-rotation})"
     >

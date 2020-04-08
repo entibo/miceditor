@@ -3,6 +3,7 @@
   import * as Creation from "state/creation"
   import { creation } from "state/creation"
   import { mapSettings } from "state/map"
+  import { parkourMode } from "state/mapExtra"
 
   const types = ["F","T","DS","DC","DC2"]
   const getFileName = type =>
@@ -24,6 +25,19 @@
     >
       <img class="dim-max-40" src="dist/decorations/{getFileName(type, $mapSettings)}.png" alt={type}/>
     </div>
+
+    {#if type === "DS" && $parkourMode}
+      <div class="tile dim-40" class:active={$creation.enabled && $creation.creationType === "SHAMANOBJECT" && $creation.type == 22}
+        on:click={() => Creation.setShamanObject(22)}
+      >
+        <img src="dist/shamanObjects/nails.png"
+          style=" object-fit: none;
+                  object-position: 0px 0px;
+                  width: 40px; 
+                  height: 40px;"
+        />
+      </div>
+    {/if}
 
   {/each}
 </div>

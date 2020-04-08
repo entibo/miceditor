@@ -4,6 +4,8 @@
   import { creation } from "state/creation"
   import { mapSettings } from "state/map"
   import shamanObjectMetadata from "metadata/shamanObject/index"
+
+  import ShamanObjectImage from "components/ui/ShamanObjectImage.svelte"
 </script>
 
 
@@ -25,17 +27,7 @@
     <div class="tile" class:active={$creation.enabled && $creation.creationType === "SHAMANOBJECT" && $creation.type == type}
       on:click={() => Creation.setShamanObject(type)}
     >
-      {#if data.sprite}
-        <img src="dist/shamanObjects/{data.sprite}" alt={data.sprite}/>
-      {:else}
-        <img src="dist/shamanObjects/{data.spritesheet}"
-          style=" object-fit: none;
-                  object-position:  {-data.offset.x-(data.width-data.boundingWidth)/2 + (data.spritesheet.includes('anvils') ? 10 : 0)}px 
-                                    {-data.offset.y-(data.height-data.boundingHeight)/2}px;
-                  width: {data.boundingWidth + (data.spritesheet.includes('anvils') ? 20 : 0)}px; 
-                  height: {data.boundingHeight}px;"
-        />
-      {/if}
+      <ShamanObjectImage {data} />
     </div>
   {/each}
 
