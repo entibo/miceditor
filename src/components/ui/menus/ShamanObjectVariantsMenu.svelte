@@ -6,8 +6,8 @@
 
   import ShamanObjectImage from "components/ui/ShamanObjectImage.svelte"
 
-  $: variants = $creation.enabled && $creation.creationType === "SHAMANOBJECT" && shamanObjectMetadata[$creation.type].variants
-        ? shamanObjectMetadata[$creation.type].variants
+  $: variants = $creation.enabled && $creation.creationType === "SHAMANOBJECT" && shamanObjectMetadata.get($creation.type).variants
+        ? shamanObjectMetadata.get($creation.type).variants
         : []
 
 </script>
@@ -15,7 +15,7 @@
 
 <div class="flex flex-wrap justify-center">
 
-  {#each variants.map(type => [type, shamanObjectMetadata[type]]) as [type, data]}
+  {#each variants.map(type => [type, shamanObjectMetadata.get(type)]) as [type, data]}
     <div class="tile" class:active={$creation.enabled && $creation.creationType === "SHAMANOBJECT" && $creation.type == type}
       on:click={() => Creation.setShamanObject(type)}
     >

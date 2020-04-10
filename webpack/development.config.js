@@ -6,6 +6,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const root = path.resolve(__dirname, '..')
 
+const typeCheck = !!process.env.TYPECHECK
+
 /** @type { import('webpack').Configuration } */
 module.exports = {
 
@@ -47,7 +49,7 @@ module.exports = {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         options: {
-          transpileOnly: true,
+          transpileOnly: !typeCheck,
         }
       },
       {

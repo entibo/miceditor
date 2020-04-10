@@ -1,5 +1,7 @@
 {
     "en": {
+        "yes": "Yes",
+        "no": "No",
         "distance-joint": "Distance Joint",
         "prismatic-joint": "Prismatic Joint",
         "rotation-joint": "Rotation Joint",

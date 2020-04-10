@@ -13,72 +13,35 @@
 
 
   $: selected = $obj.selected
+  $: type = $obj.type
+  $: x = $obj.x
+  $: y = $obj.y
+  $: reverse = $obj.reverse
+  $: holeColor = $obj.holeColor
 
-  let instanceId = getUniqueId()
+  $: specialType = 
+    type === "F"
+      ? $mapSettings.dodue
+          ? $mapSettings.theme === "halloween"
+              ? "F-candy"
+              : "F-triple"
+          : type
+      : type === "T"
+          ? holeColor !== ""
+              ? "T-" + holeColor
+              : type
+          : type
 
-  $: metadata = getDecorationMetadata($obj, $mapSettings)
-  const specialMetadataOffset = {
-    T: { x: 21, y: 31 },
-    "T-1": { x: 25, y: 35 },
-    "T-2": { x: 25, y: 35 },
-    F: { x: 23, y: 21 },
-    "F-triple": { x: 23+12, y: 21+7 },
-    "F-candy": { x: 23+12, y: 21+7 },
-    DS: { x: 26, y: 43 },
-    DC: { x: 26, y: 43 },
-    DC2: { x: 26, y: 43 },
-  }
-  function getDecorationMetadata(obj) {
-  	let type = obj.type
-    if(typeof obj.type === "number") {
-      return decorationMetadata[type]
-    }
-    else if(obj.type === "F") {
-      if($mapSettings.dodue) {
-        type = "F-triple"
-        if($mapSettings.theme === "halloween") {
-          type = "F-candy"
-        }
-      }
-    }
-    else if(obj.type === "T") {
-      if(obj.holeColor !== "") {
-        let newType = "T-" + obj.holeColor
-        if(specialMetadataOffset[newType]) {
-          type = newType
-        }
-      }
-    }
-    return { 
-      type, 
-      filters: [],
-      offset: specialMetadataOffset[type],
-    }
-  }
 
-  $: filters = getFilters($obj)
-  function getFilters(obj) {
-    if(!metadata) return []
-    return metadata.filters.map(({name,defaultColor}, index) => {
-      let color = "#" + obj.colors[index]
-      let matrix = getColorMatrix(color)
-      return { name, matrix }
-    })
-  }
+  $: metadata = decorationMetadata.get(specialType)
 
-  function withInstancedFilterIds(xml) {
-    for(let {name} of filters) {
-      xml = xml.replace(new RegExp(name, "g"), name+"-"+instanceId)
-    }
-    return xml
-  }
 
-  $: filtersLength = filters.length
-  
-  let promise
-  $: if(filtersLength)
-      promise = fetch(`dist/decorations/${$obj.type}.svg`).then(r => r.text()).then(withInstancedFilterIds)
-
+  $: filters = metadata.svg
+    ? metadata.filters.map(({name}, index) => {
+        let matrix = getColorMatrix("#" + $obj.colors[index])
+        return { name, matrix }
+      })
+    : []
   function getColorMatrix(hex) {
     let [r,g,b] = cc.hex.rgb(hex).map(x => x/255)
     return `
@@ -88,110 +51,116 @@
       0 0 0 1 0`.trim()
   }
 
+  
+  let instanceId = getUniqueId()
+
+  let promise, currentFile = null
+  $: if(metadata.svg && metadata.file !== currentFile) {
+    currentFile = metadata.file
+    promise = fetch(`dist/decorations/${metadata.file}`)
+      .then(r => r.text())
+      .then(withInstancedFilterIds)
+  }
+  function withInstancedFilterIds(xml) {
+    for(let {name} of filters) {
+      xml = xml.replace(new RegExp(name, "g"), name+"-"+instanceId)
+    }
+    return xml
+  }
+
+
 </script>
 
 
 
 
 <g 
-  transform="translate({$obj.x}, {$obj.y}) {$obj.reverse ? 'scale(-1, 1)' : ''}"
+  transform="translate({x}, {y}) {reverse ? 'scale(-1, 1)' : ''}"
 >
-  {#if metadata}
-    <g transform="translate(-{metadata.offset.x}, -{metadata.offset.y})">
+  <g transform="translate(-{metadata.offset.x}, -{metadata.offset.y})">
 
-      {#if filters.length}
+    {#if metadata.svg}
 
-        {#each filters as filter}
+      {#each filters as filter}
         <filter id="{filter.name}-{instanceId}" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
           <feColorMatrix type="matrix" values={filter.matrix} x="0%" y="0%" width="100%" height="100%" in="colormatrix" result="colormatrix1"/>
         </filter>
-        {/each}
+      {/each}
 
-        <g class="object-outline cursor-pointer">
-          {#await promise then svg}
-            {@html svg}
-          {/await}
-        </g>
+      <g class="object-outline cursor-pointer">
+        {#await promise then svg}
+          {@html svg}
+        {/await}
+      </g>
 
-      {:else}
-        {#if metadata.type == "DS" || metadata.type == "DC" || metadata.type == "DC2"}
+    {:else}
+      {#if type == "DS" || type == "DC" || type == "DC2"}
 
-          <SvgImage href="dist/decorations/{metadata.type}.png" class="pointer-events-none"/>
+        <SvgImage href="dist/decorations/{metadata.file}" class="pointer-events-none"/>
+        <circle
+          transform="translate({metadata.offset.x} {metadata.offset.y})"
+          r="15"
+          fill="transparent"
+          class="object-outline-stroke cursor-pointer"
+        />
+
+      {:else if type == "F"}
+
+        <SvgImage href="dist/decorations/{metadata.file}" class="pointer-events-none"/>
+        <g transform="translate({metadata.offset.x} {metadata.offset.y})">
           <circle
-            transform="translate({metadata.offset.x} {metadata.offset.y})"
-            r="15"
+            r="20"
             fill="transparent"
             class="object-outline-stroke cursor-pointer"
           />
+          {#if selected}
+            <circle r="5" fill="none" stroke="#ff00ff" stroke-width="1" class="pointer-events-none"/>
+          {/if}
+        </g>
 
-        {:else if metadata.type.startsWith("F")}
+      {:else if type == "T"}
 
-          <SvgImage href="dist/decorations/{metadata.type}.png" class="pointer-events-none"/>
-          <g transform="translate({metadata.offset.x} {metadata.offset.y})">
-            <circle
-              r="20"
-              fill="transparent"
-              class="object-outline-stroke cursor-pointer"
-            />
-            {#if selected}
-              <circle r="5" fill="none" stroke="#ff00ff" stroke-width="1" class="pointer-events-none"/>
-            {/if}
-          </g>
+        <SvgImage href="dist/decorations/{metadata.file}" class="pointer-events-none"/>
+        <g transform="translate({metadata.offset.x} {metadata.offset.y - 15})">
+          <circle
+            r="20"
+            fill="transparent"
+            class="object-outline-stroke cursor-pointer"
+          />
+          {#if selected}
+            <circle r="5" fill="none" stroke="#ff00ff" stroke-width="1" class="pointer-events-none"/>
+          {/if}
+        </g>        
 
-        {:else if metadata.type.startsWith("T")}
+      {:else}
 
-          <SvgImage href="dist/decorations/{metadata.type}.png" class="pointer-events-none"/>
-          <g transform="translate({metadata.offset.x} {metadata.offset.y - 15})">
-            <circle
-              r="20"
-              fill="transparent"
-              class="object-outline-stroke cursor-pointer"
-            />
-            {#if selected}
-              <circle r="5" fill="none" stroke="#ff00ff" stroke-width="1" class="pointer-events-none"/>
-            {/if}
-          </g>        
+        <SvgImage href="dist/decorations/{metadata.file}" class="object-outline cursor-pointer"/>
 
-        {:else}
-
-          <SvgImage href="dist/decorations/{metadata.type}.png" class="object-outline cursor-pointer"/>
-
-        {/if}
       {/if}
+    {/if}
 
-    </g>
-  {:else}
-    <g>
-      <rect class="object-outline cursor-pointer"
-        x={-20} y={-20}
-        width={40} height={40}
-        fill="red"
-      />
-    </g>
-  {/if}
+  </g>
 </g>
 
+
 {#if $mapSettings.miceSpawn.type === "random" 
-&& $obj.type === "DS"
-&& $obj.selected}       
+  && type === "DS"
+  && selected}    
+
   <g class="pointer-events-none"
     stroke="white" stroke-width="4" stroke-dasharray="8"
   >
     {#if $mapSettings.miceSpawn.axis === "x"}
       <line 
-        x1={0} y1={$obj.y}
-        x2={$mapSettings.width} y2={$obj.y}
+        x1={0} y1={y}
+        x2={$mapSettings.width} y2={y}
       />
     {:else}
       <line 
-        x1={$obj.x} y1={0} 
-        x2={$obj.x} y2={$mapSettings.height} 
+        x1={x} y1={0} 
+        x2={x} y2={$mapSettings.height} 
       />
     {/if}
   </g>
+
 {/if}
-
-<style lang="text/postcss">
-
-
-</style>

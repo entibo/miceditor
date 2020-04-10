@@ -29,7 +29,7 @@ export type Decoration
 
   = { type: number
       foreground: boolean
-      reverse: boolean
+      reverse: boolean | "random"
       colors: string[] }
     & Base
 
@@ -48,7 +48,7 @@ export type Decoration
 export interface DecorationProps extends Base {
   type: Type
   foreground: boolean
-  reverse: boolean
+  reverse: boolean | "random"
   colors: string[]
   holeColor: "" | "1" | "2"
 }
@@ -60,11 +60,13 @@ const baseDefaults: () => Base = () => ({
   y: 0,
 })
 
-import metadata from "metadata/decoration"
-export const colorDefaults: (t: number) => string[] = type =>
-  metadata[type] !== undefined
-    ? metadata[type].filters.map(o => o.defaultColor) 
+import decorationMetadata from "metadata/decoration"
+export const colorDefaults: (t: number) => string[] = type => {
+  let metadata = decorationMetadata.get(type)
+  return metadata.svg
+    ? metadata.filters.map(o => o.defaultColor)
     : []
+}
 
 export const defaults = <T extends Type> (type: T) =>
  <T extends number ? Extract<Decoration,{type:number}> : Extract<Decoration,{type:T}>>
@@ -184,13 +186,17 @@ function readForegroundReverse(str: string) {
   let parts = str.split(",")
   return {
     foreground: M.andThen(parts.shift(), M.iffDefined, util.readBool),
-    reverse:    M.andThen(parts.shift(), M.iffDefined, util.readBool),
+    reverse:    M.andThen(parts.shift(), M.iffDefined, util.readInt, 
+      x => 
+        x === 1 ? true :
+        x === 2 ? "random" as const :
+                  false),
   }
 }
-function writeForegroundReverse(foreground: boolean, reverse: boolean): string {
+function writeForegroundReverse(foreground: boolean, reverse: boolean | "random"): string {
   return [
     util.writeBool(foreground),
-    util.writeBool(reverse),
+    reverse === "random" ? "2" : util.writeBool(reverse),
   ].join(",")
 }
 

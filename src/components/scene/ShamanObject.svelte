@@ -17,11 +17,10 @@
 
   $: metadata = getMetadata($obj, $mapSettings)
   function getMetadata(shamanObject, mapSettings) {
-    let spriteData = shamanObjectMetadata[shamanObject.type]
-    if(!spriteData) return
-    return mapSettings.defilante.enabled && spriteData.defilanteVariant
-      ? spriteData.defilanteVariant
-      : spriteData
+    let metadata = shamanObjectMetadata.get(shamanObject.type)
+    return mapSettings.defilante.enabled && metadata.defilanteVariant
+      ? metadata.defilanteVariant
+      : metadata
   }
 
 
@@ -45,61 +44,47 @@
     </g>
   {/if}
 
-  {#if metadata}
+  {#if metadata.spritesheet}
 
-    {#if metadata.spritesheet}
-
-      <foreignObject 
-        x={-metadata.width/2} y={-metadata.height/2}
-        width={metadata.width} height={metadata.height}
-        class="pointer-events-none" 
-        class:opacity-50={$obj.ghost}
-      >
-        <div style="background-image: url(dist/shamanObjects/{metadata.spritesheet}); 
-                    background-position: {-metadata.offset.x}px {-metadata.offset.y}px;
-                    background-repeat: no-repeat;"
-          class="w-full h-full"
-        ></div>
-      </foreignObject>
-
-    {:else}
-
-      <image 
-        x={-metadata.width/2} y={-metadata.height/2}
-        width={metadata.width} height={metadata.height}
-        href="dist/shamanObjects/{metadata.sprite}"
-        on:mousedown|preventDefault
-        class="pointer-events-none" 
-        class:opacity-50={$obj.ghost}
-      />
-
-    {/if}
-
-    {#if metadata.circle}
-      <circle
-        r={metadata.boundingWidth/2}
-        fill="transparent"
-        class="object-outline-stroke cursor-pointer"
-      />
-    {:else}
-      <rect 
-        x={-metadata.boundingWidth/2} y={-metadata.boundingHeight/2}
-        width={metadata.boundingWidth} height={metadata.boundingHeight}
-        fill="transparent"
-        class="object-outline cursor-pointer"
-      />
-    {/if}
+    <foreignObject 
+      x={-metadata.width/2} y={-metadata.height/2}
+      width={metadata.width} height={metadata.height}
+      class="pointer-events-none" 
+      class:opacity-50={$obj.ghost}
+    >
+      <div style="background-image: url(dist/shamanObjects/{metadata.spritesheet}); 
+                  background-position: {-metadata.offset.x}px {-metadata.offset.y}px;
+                  background-repeat: no-repeat;"
+        class="w-full h-full"
+      ></div>
+    </foreignObject>
 
   {:else}
 
-    <rect 
-      x={-20} y={-20}
-      width={40} height={40}
-      fill="red"
-      class="object-outline" 
+    <image 
+      x={-metadata.width/2} y={-metadata.height/2}
+      width={metadata.width} height={metadata.height}
+      href="dist/shamanObjects/{metadata.sprite}"
+      on:mousedown|preventDefault
+      class="pointer-events-none" 
       class:opacity-50={$obj.ghost}
     />
 
+  {/if}
+
+  {#if metadata.circle}
+    <circle
+      r={metadata.boundingWidth/2}
+      fill="transparent"
+      class="object-outline-stroke cursor-pointer"
+    />
+  {:else}
+    <rect 
+      x={-metadata.boundingWidth/2} y={-metadata.boundingHeight/2}
+      width={metadata.boundingWidth} height={metadata.boundingHeight}
+      fill="transparent"
+      class="object-outline cursor-pointer"
+    />
   {/if}
 
 </g>

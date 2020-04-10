@@ -1,4 +1,6 @@
 
+import { range } from "common"
+
 type Dimensions = {
   width:  number
   height: number
@@ -20,27 +22,47 @@ type Spritesheet = Dimensions & {
 export type Metadata = (Sprite | Spritesheet) & { defilanteVariant?: Sprite }
       
 
+const data = new Map<number, Metadata>()
 
-let data = {} as Record<number, Metadata>
+export default {
+  get: (type: number) =>
+    data.get(type)
+    || {
+      sprite: "unknown-shaman-object.png",
+      width: 30,
+      height: 30,
+      boundingWidth: 30,
+      boundingHeight: 30,
+    },
+  entries: () => [...data.entries()]
+}
+
+
+function normalizeDimensions<T extends Dimensions>(value: T): T {
+  if(value.boundingWidth === undefined)
+    value.boundingWidth = value.width
+  if(value.boundingHeight === undefined)
+    value.boundingHeight = value.height
+  return value
+}
 
 function setData(types: number | number[], arg: Metadata | ((t: number) => Metadata)) {
   if(!(types instanceof Array))
     types = [types]
 
-  if(typeof arg === "function")
-    for(let type of types)
-      data[type] = arg(type)
-  else
-    for(let type of types)
-      data[type] = arg
-
   for(let type of types) {
-    if(data[type].boundingWidth === undefined)
-      data[type].boundingWidth = data[type].width
-    if(data[type].boundingHeight === undefined)
-      data[type].boundingHeight = data[type].height
+    let value = (typeof arg === "function") ? arg(type) : arg
+    value = normalizeDimensions(value)
+    data.set(type, value)
   }
 }
+
+function setDefilanteVariant(type: number, sprite: Sprite) {
+  let value = data.get(type)
+  if(!value) throw "Couldn't set defilante variant on unknown type: "+type
+  value.defilanteVariant = normalizeDimensions(sprite)
+}
+
 
 setData(0, {
   sprite: "arrow.png",
@@ -202,6 +224,13 @@ setData(33, {
   boundingHeight: 20,
   circle: true,
 })
+setData(34, {
+  sprite: "snowball.png",
+  width: 12, height: 12,
+  boundingWidth: 12,
+  boundingHeight: 12,
+  circle: true,
+})
 setData(63, {
   sprite: "fish.png",
   width: 40, height: 40,
@@ -250,6 +279,12 @@ setData(97, {
 setData(39, {
   sprite: "apple.png",
   width: 40, height: 40,
+  boundingWidth: 30,
+  boundingHeight: 30,
+})
+setData(40, {
+  sprite: "sheep.png",
+  width: 56, height: 47,
   boundingWidth: 30,
   boundingHeight: 30,
 })
@@ -322,33 +357,23 @@ setData(67, {
   boundingHeight: 10,
 })
 
-data[6].defilanteVariant = {
+setDefilanteVariant(6, {
   sprite: "plus-one.png",
   width: 30, height: 30,
   circle: true,
-}
-data[32].defilanteVariant = {
+})
+setDefilanteVariant(32, {
   sprite: "speed-boost.png",
   width: 30, height: 30,
   circle: true,
-}
-data[15].defilanteVariant = {
+})
+setDefilanteVariant(15, {
   sprite: "skull.png",
   width: 30, height: 30,
   circle: true,
-}
-data[16].defilanteVariant = {
+})
+setDefilanteVariant(16, {
   sprite: "spring.png",
   width: 30, height: 30,
   circle: true,
-}
-
-export default data
-
-
-function range(a: number, b: number) {
-  let arr = []
-  for(let k=a; k <= b; k++)
-    arr.push(k)
-  return arr
-}
+})

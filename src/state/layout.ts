@@ -147,7 +147,7 @@ creation.subscribe(() => {
   let metadata
   if( creation.enabled && 
       creation.creationType === "SHAMANOBJECT" && 
-      ( metadata = shamanObjectMetadata[creation.type],
+      ( metadata = shamanObjectMetadata.get(creation.type),
         "variants" in metadata &&
         metadata.variants &&
         metadata.variants.length

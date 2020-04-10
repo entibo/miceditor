@@ -4,6 +4,7 @@
     "test": "jest",
     "build": "webpack --config webpack/production.config.js",
     "dev": "webpack-dev-server --config webpack/development.config.js --hot",
+    "dev:check": "TYPECHECK=1 webpack-dev-server --config webpack/development.config.js --hot",
     "serve": "http-server",
     "translations": "curl 'https://localise.biz/api/export/all.json?format=multi&key=_KwQn345xaZK8iQ3yj3JkzfGbzjIWAgk' -o ./src/languages.json"
   },

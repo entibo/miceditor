@@ -80,7 +80,6 @@ export function decode(xmlNode: XML.Node): ShamanObject {
   let data = defaults(type)
   data.unknownAttributes = Common.getUnknownAttributes(attributes, node.attributes)
   const setProp = util.makeSetter(data as ShamanObjectProps)
-  const getProp = util.makeGetter<ShamanObjectProps>(data)
 
   setProp ("x") (getAttr ("X") (util.readInt))
   setProp ("y") (getAttr ("Y") (util.readInt))
@@ -94,6 +93,8 @@ export function decode(xmlNode: XML.Node): ShamanObject {
     setProp ("rotation") (r.rotation)
     setProp ("ghost")    (r.ghost)
   })
+
+  console.log(data)
 
   return data
 }

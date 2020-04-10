@@ -53,7 +53,19 @@
 
   <label class:disabled={props.reverse.value === undefined}>
     <span>{$_("flip-horizontally")}</span>
-    <Checkbox checked={props.reverse.value} set={props.reverse.set} />
+    <div class="flex">
+      <div class="material-input w-16">
+        <select value={props.reverse.value.toString()} 
+                on:change={e => props.reverse.set(e.target.value === "false" ? false : e.target.value === "true" ? true : "random")}
+        >
+          <option value="false">{$_("no")}</option>
+          <option value="true">{$_("yes")}</option>
+          <option value="random">{$_("random")}</option>
+        </select>
+      </div>
+      <div class="mr-1"></div>
+      <Checkbox checked={props.reverse.value} set={props.reverse.set} />
+    </div>
   </label>
   
   <div class="mb-2"></div>

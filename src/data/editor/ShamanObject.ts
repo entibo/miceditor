@@ -20,11 +20,10 @@ export const isForeground = (obj: ShamanObject) =>
   Base.ShamanObject.isAnchor(obj)
 
 
-import { rotate } from "common"
 export function getBoundingBox(obj: ShamanObject): Box {
-  let metadata = shamanObjectMetadata[obj.type]
-  let width  = "boundingWidth"  in metadata ? metadata.boundingWidth  : metadata.width
-  let height = "boundingHeight" in metadata ? metadata.boundingHeight : metadata.height
+  let metadata = shamanObjectMetadata.get(obj.type)
+  let width  = metadata.boundingWidth  || metadata.width
+  let height = metadata.boundingHeight || metadata.height
   return Common.computeBoundingBox(
     { x: obj.x,     y: obj.y },
     { x: width, y: height },

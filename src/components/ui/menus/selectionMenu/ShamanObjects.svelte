@@ -50,7 +50,7 @@
     </label>
   </div>
   
-  <div class="mb-2"></div>
+  <div class="mb-1"></div>
 
   <label class:disabled={props.ghost.value === undefined}>
     <span>{$_("ghost")}</span>
@@ -71,7 +71,7 @@
     </label>
   </div>
   
-  <div class="mb-2"></div>
+  <div class="mb-4"></div>
 
   <label class:disabled={props.nosync.value === undefined}>
     <span>nosync</span>
