@@ -30,7 +30,7 @@
       <div class="tile dim-40" class:active={$creation.enabled && $creation.creationType === "SHAMANOBJECT" && $creation.type == 22}
         on:click={() => Creation.setShamanObject(22)}
       >
-        <img src="dist/shamanObjects/nails.png"
+        <img src="dist/shamanObjects/nails.png" alt="#parkour checkpoint"
           style=" object-fit: none;
                   object-position: 0px 0px;
                   width: 40px; 

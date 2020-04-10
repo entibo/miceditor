@@ -7,6 +7,8 @@
 
 @tailwind utilities;
 
+
+
 *,*:before,*:after {
     box-sizing: border-box;
 }
@@ -19,7 +21,7 @@ html, body {
 }
 
 body {
-    font-family: system-ui;
+    @apply font-sans;
     font-size: 1em;
     line-height: 1.5;
     overflow: hidden;
@@ -39,6 +41,35 @@ img, image {
     -webkit-user-drag: none;
     user-drag: none;
 }
+
+
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-md;
+  background: rgba(255,255,255,0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.6);
+}
+::-webkit-scrollbar-button {
+  @apply hidden;
+}
+::-webkit-scrollbar-corner {
+  @apply hidden;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+*:hover {
+  scrollbar-color: rgba(255,255,255,0.6) transparent;
+}
+
 
 div.material-input {
     position: relative;
@@ -103,11 +134,14 @@ div.material-input input {
 .panel.horizontal {
   @apply flex-row;
 }
-.panel.vertical .group {
+.panel.vertical .group.has-active-tab {
   min-height: 160px;
 }
-.panel.horizontal .group {
+.panel.horizontal .group.has-active-tab {
   min-width: 160px;
+}
+.panel .group.has-active-tab {
+  @apply flex-grow;
 }
 .panel.vertical .group:not(:last-child) {
   @apply mb-2
@@ -120,6 +154,7 @@ div.material-input input {
 
 }
 .tab {
+  @apply font-cursive;
   @apply text-sm px-1 inline-block;
   @apply text-gray-500;
 }

@@ -47,10 +47,9 @@
 <div class="right-0 absolute z-30 bottom-0 px-4 flex">
 
   <div class="section">
-    <span class="text-gray-100">Miceditor</span>
-    <span class="text-gray-500 text-xs ml-1">v2.0.0</span>
-    <span class="text-gray-500 text-xs ml-2">by</span>
-    <span class="text-gray-100 ml-1">entibo</span>
+    <span class="text-gray-100 font-cursive font-bold">Miceditor</span>
+    <span class="text-gray-500 font-mono text-xs ml-1">v2.0.0</span>
+    <span class="text-gray-300 font-sans text-sm ml-2">by <span class="font-medium">entibo</span></span>
   </div>
 
   <div class="ml-2 section">

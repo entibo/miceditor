@@ -118,12 +118,6 @@
 
 
 <style lang="postcss">
-  .image-preview {
-    @apply rounded-full absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
   .image-remove {
     @apply absolute text-red-600 text-sm;
     top: -6px;

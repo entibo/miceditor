@@ -132,7 +132,11 @@ export function closeWindow(window: Window) {
 
 export function selectTab(panelName: PanelName, groupIndex: number, tab: TabName) {
   layoutConfig.update(cfg => {
-    cfg.panels[panelName].groups[groupIndex].activeTab = tab
+    let group = cfg.panels[panelName].groups[groupIndex]
+    if(group.activeTab === tab)
+      group.activeTab = undefined
+    else
+      group.activeTab = tab
     return cfg
   })
 }

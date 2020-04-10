@@ -29,8 +29,8 @@
     zoom,
   } from "state/user"
 
-  import * as interaction from "./interaction"
-  import { pan, selectionBox, currentGamePosition, isKeyDown } from "./interaction"
+  import * as interaction from "state/interaction"
+  import { pan, selectionBox, currentGamePosition, isKeyDown } from "state/interaction"
 
   import * as layout from "state/layout"
   import { layoutConfig, tabMovement } from "state/layout"

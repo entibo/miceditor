@@ -13,7 +13,7 @@
 
 <div class="container">
   {#each Object.entries(localeFlag) as [locale, flag]}
-  <Tooltip bottom inline
+  <Tooltip bottom
     active={ localeTranslators[locale] !== undefined ? null : false }
     title={ formatTranslatorsTooltipTitle(localeTranslators[locale]) }
   >

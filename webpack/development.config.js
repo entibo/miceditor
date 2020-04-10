@@ -20,6 +20,10 @@ module.exports = {
     hotOnly: true,
   },
 
+  stats: {
+    children: false,
+  },
+
   entry: path.resolve(root, 'src', 'main.js'),
 
   output: {

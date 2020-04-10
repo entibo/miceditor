@@ -4,7 +4,6 @@
   import { slide, fly } from "svelte/transition"
 
   import TextInput from "components/common/TextInput.svelte"
-  import ColorTextInput from "components/common/ColorTextInput.svelte"
 
   import { showGameGUI, showMapBorder, showInvisibleGrounds, grid } from "state/user"
   import { _ } from "state/locale"
@@ -64,7 +63,7 @@
           <span>{$_("grid-color")}</span>
           <div class="color-tile cursor-pointer" style="background: #{$grid.color}"></div>
           <span class="w-24">
-            <ColorTextInput bind:value={$grid.color} />
+            <TextInput color bind:value={$grid.color} />
           </span>
         </label>
       </section>
@@ -91,7 +90,7 @@
   label + label {
     @apply ml-4;
   }
-  label > span, small-text {
+  label > span {
     user-select: none;
     white-space: nowrap;
     @apply mr-3 text-sm text-gray-300;

@@ -256,7 +256,7 @@
   label + label {
     @apply ml-4;
   }
-  label > span, small-text {
+  label > span {
     user-select: none;
     white-space: nowrap;
     @apply mr-3 text-sm text-gray-300;

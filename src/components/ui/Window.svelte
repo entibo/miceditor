@@ -8,7 +8,7 @@ import TabContent from "components/ui/TabContent.svelte"
 
 import * as layout from "state/layout"
 import { closeWindow } from "state/layout"
-import { windowTitleMouseDown, windowPanelMouseDown, windowBottomMouseDown } from "components/scene/interaction"
+import { windowTitleMouseDown, windowPanelMouseDown, windowBottomMouseDown } from "state/interaction"
 
 import { _ } from "state/locale"
 

@@ -6,7 +6,7 @@
     joints, selection, buildXML, creation, bezier
   } from "stores/stores.js" */
   import { bezier } from "common"
-  import { jointMouseDown } from "components/scene/interaction"
+  import { jointMouseDown } from "state/interaction"
 
   import * as Editor from "data/editor/index"
   import * as sceneObjects from "state/sceneObjects"

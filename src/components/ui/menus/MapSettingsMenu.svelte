@@ -14,12 +14,9 @@
 
   import TextInput from "components/common/TextInput.svelte"
   import Tooltip from "components/common/Tooltip.svelte"
-  import ColorTextInput from "components/common/ColorTextInput.svelte"
   import Button from "components/common/Button.svelte"
   import Checkbox from "components/common/Checkbox.svelte"
-  import CheckboxItem from "components/common/CheckboxItem.svelte"
 
-//  import ImagesSubMenu from "components/ui/ImagesSubMenu.svelte"
 
   import { _ } from "state/locale"
   import { mapSettings, updateMiceSpawn } from "state/map"

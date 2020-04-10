@@ -9,7 +9,6 @@
 
   import TextInput from "components/common/TextInput.svelte"
   import Tooltip from "components/common/Tooltip.svelte"
-  import ColorTextInput from "components/common/ColorTextInput.svelte"
   import Button from "components/common/Button.svelte"
   import Checkbox from "components/common/Checkbox.svelte"
 

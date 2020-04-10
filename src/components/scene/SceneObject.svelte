@@ -3,7 +3,7 @@
 
   export let obj
 
-  import { objectMouseDown } from "./interaction"
+  import { objectMouseDown } from "state/interaction"
 
   import * as Editor from "data/editor/index"
   import { creation } from "state/creation"

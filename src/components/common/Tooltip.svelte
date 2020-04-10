@@ -9,7 +9,6 @@
   export let active
 
   export let title = "Tooltip"
-  export let inline = false
   export let noStyle = false
   export let noBorder = false
 
@@ -28,15 +27,14 @@
              : active === false ? false 
              : hovering
 
+  const flyOffset = 10
   $: flyDirectionOptions =
-    left    ? { x:  10 } :
-    right   ? { x: -10 } :
-    top     ? { y:  10 } :
-    bottom  ? { y: -10 } : {}
-  $: flyOptions = {
-    ...flyDirectionOptions,
-    duration: 150,
-  }
+    left    ? { x:  flyOffset } :
+    right   ? { x: -flyOffset } :
+    top     ? { y:  flyOffset } :
+    bottom  ? { y: -flyOffset } : {}
+  $: flyInOptions  = { ...flyDirectionOptions, duration: 140 }
+  $: flyOutOptions = { ...flyDirectionOptions, duration: 80 }
 
   let targetElement
   let tooltipElement
@@ -160,12 +158,14 @@
   <slot></slot>
   {#if visible}
   <div bind:this={tooltipElement}
-       no="transition:fly={flyOptions}"
        class="tooltip" class:border={!noBorder} 
   >
-    <div class:inner={!noStyle}>
+    <div class:inner={!noStyle} 
+         in:fly={flyInOptions}
+         out:fly={flyOutOptions}
+    >
       <slot name="tooltip">
-        <span class=" pointer-events-all whitespace-no-wrap">{title}</span>
+        <span class="pointer-events-all whitespace-no-wrap">{title}</span>
       </slot>
     </div>
   </div>

@@ -3,7 +3,7 @@ import { store, Store } from "state/util"
 import { eq } from "data/base/util"
 
 import * as sceneObjects from "state/sceneObjects"
-import * as interaction from "components/scene/interaction"
+import * as interaction from "state/interaction"
 
 import * as Editor from "data/editor"
 import * as Base from "data/base"

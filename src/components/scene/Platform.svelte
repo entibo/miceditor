@@ -7,7 +7,7 @@
            platformBoosterVectorMouseDown,
            platformBoosterVectorMinLength, 
            platformBoosterVectorSpeedLengthRatio, 
-         } from "components/scene/interaction"
+         } from "state/interaction"
 
   import SvgImage from "components/common/SvgImage.svelte"
 
