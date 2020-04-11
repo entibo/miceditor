@@ -17,6 +17,20 @@ export function debounce(fn: Function, ms: number) {
   fnToTimeout.set(fn, timeout)
 }
 
+/**
+  - No values --> undefined
+  - All values are the same --> value
+  - Not all values are the same --> null
+*/
+export function combine<T>(values: T[]): T | null | undefined {
+  let value = undefined
+  for(let x of values) {
+    if(value === undefined) value = x
+    else if(value !== x) return null
+  }
+  return value
+}
+
 export function range(a: number, b: number) {
   let arr = []
   for(let k=a; k <= b; k++)

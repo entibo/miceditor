@@ -1,15 +1,17 @@
 
 import { store, Store } from "state/util"
 import { eq } from "data/base/util"
+import { rotate } from "common"
 
 import * as sceneObjects from "state/sceneObjects"
 import * as interaction from "state/interaction"
 
 import * as Editor from "data/editor"
-import * as Base from "data/base"
 import { Brush } from "state/user"
 import * as selection from "state/selection"
-import { rotate } from "common"
+import highlight from "state/highlight"
+
+
 
 type Creation = 
   { enabled: false }
@@ -46,7 +48,8 @@ export const disable = () => {
     selection.set(creation.current.joints)
     selection.remove()
   }
-  creation.set({ enabled: false })  
+  creation.set({ enabled: false })
+  highlight.update(s => (s.clear(), s))
 }
 
 
@@ -74,8 +77,10 @@ export const setImage = (imageUrl: Editor.Image.ImageUrl) =>
 export const setLine = (brush: Brush) =>
   set({ enabled: true, creationType: "LINE", brush })
 
-export const setMechanic = (type: Editor.Joint.BaseType, current?: Extract<Creation,{creationType:"MECHANIC"}>["current"]) =>
+export const setMechanic = (type: Editor.Joint.BaseType, current?: Extract<Creation,{creationType:"MECHANIC"}>["current"]) => {
   set({ enabled: true, creationType: "MECHANIC", type, current })
+  highlight.set(new Set(sceneObjects.groups.platforms))
+}
 
 
 export const create = (e: MouseEvent, x: number, y: number) => {

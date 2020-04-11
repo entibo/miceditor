@@ -135,7 +135,7 @@
   {#if preview}
     {#if color}
       <div class="preview" style="background: #{internalValue}"></div>
-    {:else if platform && internalValue}
+    {:else if platform && internalValue !== undefined && internalValue !== null}
       <img class="preview" src="dist/grounds/{typeNames[internalValue]}.png" alt={typeNames[internalValue]} />
     {/if}
   {/if}

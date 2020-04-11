@@ -7,9 +7,11 @@
 
   import * as Editor from "data/editor/index"
   import { creation } from "state/creation"
+  import highlight from "state/highlight"
 
-  $: outOfTheWay = 
-    $creation.enabled && $creation.creationType === "MECHANIC" && !Editor.isPlatform($obj)
+  $: outOfTheWay = $highlight.size > 0 && !$highlight.has(obj)
+  
+  // $creation.enabled && $creation.creationType === "MECHANIC" && !Editor.isPlatform($obj)
 
 </script>
 

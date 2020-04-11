@@ -55,7 +55,7 @@
     <span>{$_("flip-horizontally")}</span>
     <div class="flex">
       <div class="material-input w-16">
-        <select value={props.reverse.value.toString()} 
+        <select value={props.reverse.value !== undefined && props.reverse.value !== null ? props.reverse.value.toString() : undefined} 
                 on:change={e => props.reverse.set(e.target.value === "false" ? false : e.target.value === "true" ? true : "random")}
         >
           <option value="false">{$_("no")}</option>

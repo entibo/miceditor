@@ -1,6 +1,8 @@
 
 import { writable, Writable, derived, get as storeGet } from "svelte/store"
 
+import { combine } from "common"
+
 import * as Editor from "data/editor"
 import { readUrl } from "data/base/Image"
 
@@ -403,16 +405,3 @@ function setValue(list: Store<Editor.Object>[], valueOrFunction: any, ...keys: s
   return changedObjects
 }
 
-/**
-  - No values --> undefined
-  - All values are the same --> value
-  - Not all values are the same --> null
-*/
-function combine<T>(values: T[]): T | null | undefined {
-  let value = undefined
-  for(let x of values) {
-    if(value === undefined) value = x
-    else if(value !== x) return null
-  }
-  return value
-}
