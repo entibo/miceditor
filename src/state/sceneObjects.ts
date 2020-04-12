@@ -124,7 +124,7 @@ export function remove(obj: SceneObject) {
 }
 
 export function getAll() {
-  return Object.values(groups).flat() //as SceneObject[]
+  return Object.values(groups).flat() as SceneObject[]
 }
 
 

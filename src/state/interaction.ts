@@ -16,6 +16,7 @@ import * as sceneObjects from "state/sceneObjects"
 import { SceneObject } from "state/sceneObjects"
 
 import { zoom, brushPalette } from "state/user"
+import clipboard from "state/clipboard"
 
 import { undo, redo } from "state/history"
 
@@ -70,11 +71,18 @@ export function windowKeyDown(e: KeyboardEvent) {
   if(key === "escape") cancel()
 
   if(isKeyDown.ctrl) {
+
     if(key === "z") {
       if(isKeyDown.shift) redo()
       else undo()
     }
     else if(key === "y") redo()
+
+    if(key === "c")
+      clipboard.copy()
+    else if(key === "v")
+      clipboard.paste()
+
   }
 
   if(key.startsWith("arrow")) {
@@ -113,6 +121,8 @@ const keyActions: { [key: string]: (e: KeyboardEvent) => void } = {
   "g": () => {
     /* grid */
   },
+  "+": () => selection.shiftIndex(+1),
+  "-": () => selection.shiftIndex(-1),
   "a": (e) => {
     if(!isKeyDown.ctrl) return
     e.preventDefault()
@@ -120,7 +130,7 @@ const keyActions: { [key: string]: (e: KeyboardEvent) => void } = {
     if(isKeyDown.shift)
       selection.clear()
     else
-      selection.set(sceneObjects.getAll())
+      selection.selectAll()
   },
 }
 
@@ -186,6 +196,7 @@ class Select extends MouseMovement {
     let {p1,p2} = selectionBox.box!
     let insideSelectionBox
       = sceneObjects.getAll()
+        .filter(obj => obj.interactive)
         .filter(obj => {
           let bb = Editor.getBoundingBox(obj)
           if(bb.p1.x < p1.x || bb.p2.x > p2.x) return false

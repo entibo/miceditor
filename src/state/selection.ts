@@ -33,6 +33,9 @@ export function set(objs: SceneObject[]) {
   }
   blank.invalidate()
 }
+export function selectAll() {
+  set(sceneObjects.getAll().filter(obj => obj.interactive))
+}
 export function select(obj: SceneObject) {
   if(selectionMap.has(obj)) return
   obj.selected = true
@@ -103,14 +106,14 @@ export function resize(dx: number, dy: number) {
 }
 
 export function shiftIndex(dz: number) {
-  let map = new Map<ReturnType<typeof sceneObjects.getGroup>, SceneObject[]>()
+  let groupToListMap = new Map<ReturnType<typeof sceneObjects.getGroup>, SceneObject[]>()
   for(let obj of selectionMap.keys()) {
     let group = sceneObjects.getGroup(obj)
-    let list = map.get(group)
-    if(!list) (list = [], map.set(group, list))
+    let list = groupToListMap.get(group)
+    if(!list) (list = [], groupToListMap.set(group, list))
     list.push(obj)
   }
-  for(let [group, list] of map.entries()) {
+  for(let [group, list] of groupToListMap.entries()) {
     list = list.sort((a,b) => a.index - b.index)
     if(dz < 0) {
       let min = 0
