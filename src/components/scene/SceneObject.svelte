@@ -10,8 +10,6 @@
   import highlight from "state/highlight"
 
   $: outOfTheWay = $highlight.size > 0 && !$highlight.has(obj)
-  
-  // $creation.enabled && $creation.creationType === "MECHANIC" && !Editor.isPlatform($obj)
 
 </script>
 

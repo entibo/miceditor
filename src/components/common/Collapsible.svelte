@@ -3,19 +3,22 @@
   let className = ""
   export {className as class}
 
-  export let active = true
+  export let active = false
+  export let forceCollapse = false
   export let title = ""
+
+  $: collapsed = !active || forceCollapse
 
 </script>
 
 
 <div class="flex flex-col {className}" on:mouseover>
 
-  <div class="flex items-center text-gray-200 hover:text-white cursor-pointer" class:active
+  <div class="flex items-center text-gray-200 hover:text-white cursor-pointer" class:active={!collapsed}
        on:click={() => active = !active}
   >
-    <div class="w-3 h-3 mr-2 arrow relative"></div>
-    <div class="flex-grow relative">
+    <div class="w-3 h-3 mr-1 arrow relative"></div>
+    <div class="flex-grow relative leading-4">
       <slot name="title">
         <span class="text-sm">{title}</span>
       </slot>
@@ -25,9 +28,9 @@
     </div>
   </div>
 
-  {#if active}
+  {#if !collapsed}
     <div class="flex">
-      <div class="w-3 mr-2 guide relative"></div>
+      <div class="w-3 mr-1 guide relative"></div>
       <div class="flex-grow">
         <slot></slot>
       </div>

@@ -48,7 +48,7 @@
 
 </script>
 
-<label class="cursor-pointer {className}">
+<label class="checkbox cursor-pointer {className}">
 
   <input type="checkbox" checked={checked} on:change={onChange} class="hidden" />
   <Icon {icon} class={type === "check" ? (checked === true ? "text-blue-200" : "") : checked === false ? "" : checked === true ? "text-red-500" : "text-yellow-500"}/>

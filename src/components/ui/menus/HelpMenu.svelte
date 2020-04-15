@@ -150,7 +150,7 @@
 
   ]
 
-  let numberValue = 1
+  let numberValue = 42
 </script>
 
 
@@ -158,11 +158,6 @@
   {#each data as {context, rows}}
   <label class="context">
     <span class="mr-2">{context}</span>
-    {#if context === "Numbers"}
-    <TextInput number bind:value={numberValue} />
-    {:else if context === "Buttons"}
-    <Button class="text-sm" on:click={() => numberValue++}>+</Button>
-    {/if}
   </label>
   <table class="table">
     {#each rows as {inputs, description}}

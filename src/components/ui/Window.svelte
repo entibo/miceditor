@@ -21,7 +21,7 @@ $: titleName = $_(layout.tabToLocaleKey[window.tab])
 </script>
 
 
-<div class="window absolute top-0 left-0 flex flex-col rounded-sm shadow-md" 
+<div class="window absolute top-0 left-0 flex flex-col shadow-md" 
      style="transform: translate({window.x}px, {window.y}px); 
             width: {window.width}px; 
             height: {window.height}px;
@@ -29,7 +29,7 @@ $: titleName = $_(layout.tabToLocaleKey[window.tab])
      on:wheel|stopPropagation
      on:mousedown|stopPropagation={() => windowPanelMouseDown(window)}
 >
-  <div class="flex items-center justify-between items-center cursor-move bg-gray-800 p-1"
+  <div class="flex items-center justify-between items-center cursor-move bg-gray-800 rounded-t-sm px-1"
        on:mousedown={e => windowTitleMouseDown(e, window)}
   >
 
@@ -47,7 +47,7 @@ $: titleName = $_(layout.tabToLocaleKey[window.tab])
     <TabContent tab={window.tab} />
   </div>
 
-  <div class="w-full bottom-thing bg-gray-800 text-right"
+  <div class="w-full bottom-thing bg-gray-800 rounded-b-sm text-right"
        on:mousedown={e => windowBottomMouseDown(e, window)}
   ></div>
 

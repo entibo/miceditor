@@ -118,14 +118,7 @@
                 [0,1,2,3,7,8][randInt(0,5)] :
                 $mapSettings.backgroundImageId
             }.svg"
-            on:mousedown|preventDefault
-      />
-      {/if}
-
-      {#if $showMapBorder}
-      <rect x="0" y="0" 
-            width={$mapSettings.width} height={$mapSettings.height}
-            class="mapBorder"
+            class="pointer-events-none"
       />
       {/if}
 
@@ -187,6 +180,13 @@
         <rect y="400" width="800" height="200" />
       </g>
       {/if}
+      
+      {#if $showMapBorder}
+      <rect x="0" y="0" 
+            width={$mapSettings.width} height={$mapSettings.height}
+            class="mapBorder"
+      />
+      {/if}
 
       {#if $selectionBox.box}
       <g>
@@ -231,7 +231,7 @@
 
   .mapBorder {
     fill: none;
-    outline: 2px dashed rgba(0, 0, 0, 0.2);
+    outline: 1px solid #00c4ffab;
   }
 
   .playerView rect {
@@ -243,7 +243,7 @@
     width: 800px;
     height: 600px;
     fill: none;
-    outline: 2px solid rgba(0, 0, 0, 0.2);
+    outline: 1px solid rgba(0, 0, 0, 0.2);
   }
 
   .selectionBox {

@@ -4,7 +4,7 @@ import { writable } from "svelte/store"
 import { debounce } from "common"
 
 import { importXML, exportXML } from "state/map"
-import xml from "state/xml"
+import { xml } from "state/xml"
 
 export const invalidate = () => debounce(exportXML, 1000)
 

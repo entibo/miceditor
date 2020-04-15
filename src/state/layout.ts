@@ -118,7 +118,6 @@ const defaultLayoutConfig: Layout = {
 }
 
 export const layoutConfig = persistentWritable("layoutConfig", clone(defaultLayoutConfig))
-layoutConfig.set(clone(defaultLayoutConfig))
 
 
 
@@ -214,12 +213,12 @@ export function tabMouseDown(e: MouseEvent, panelName: PanelName, groupIndex: nu
   })
 }
 
-// Only make it "active" after a minimum movement of ~10px
-// to avoid unintentional dragging while clicking
 addEventListener("mousemove", e => {
   if(!tabMovement.enabled) return
   if(tabMovement.active) return
-
+  
+  // Only make it "active" after a minimum movement of ~10px
+  // to avoid unintentional dragging while clicking
   let dist = Math.sqrt((e.x-tabMovement.mouseDownPosition.x)**2 + (e.y-tabMovement.mouseDownPosition.y)**2)
   if(dist < 10) return
 

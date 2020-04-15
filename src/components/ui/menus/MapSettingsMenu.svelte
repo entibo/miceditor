@@ -37,15 +37,15 @@
 
   <div class="mb-2"></div>
 
-  <div class="flex">
+  <div class="flex justify-center">
     <label>
       <span>L</span>
-      <TextInput int min={800} sliderMax={maxWidth} sub="max: {maxWidth}" bind:value={$mapSettings.width} />
+      <TextInput int min={800} sliderMax={maxWidth} sub="max: {maxWidth}" bind:value={$mapSettings.width} class="w-16" />
     </label>
   <div class="mr-3"></div>
     <label>
       <span>H</span>
-      <TextInput int min={400} sliderMax={maxHeight} sub="max: {maxHeight}" bind:value={$mapSettings.height} />
+      <TextInput int min={400} sliderMax={maxHeight} sub="max: {maxHeight}" bind:value={$mapSettings.height} class="w-16" />
     </label>
   </div>
 
@@ -56,24 +56,24 @@
     <Checkbox bind:checked={$mapSettings.defilante.enabled}  />
   </label>
   {#if $mapSettings.defilante.enabled}
-  <div class="submenu" transition:fly={{duration: 80, y:-50}}>
-    <label>
-      <span>{$_("defilante-start-speed")}</span>
-      <TextInput float min={0} bind:value={$mapSettings.defilante.startSpeed} class="w-16"/>
-    </label>
-    <label>
-      <span>{$_("defilante-acceleration")}</span>
-      <TextInput float min={0} bind:value={$mapSettings.defilante.acceleration} class="w-16"/>
-    </label>
-    <label>
-      <span>{$_("defilante-maximum-speed")}</span>
-      <TextInput float min={0} bind:value={$mapSettings.defilante.maxSpeed} class="w-16"/>
-    </label>
-    <label class="mt-1">
-      <span>{$_("defilante-free-scroll")}</span>
-      <Checkbox bind:checked={$mapSettings.defilante.freeScroll}  />
-    </label>
-  </div>
+    <div class="submenu" transition:fly={{duration: 80, y:-50}}>
+      <label>
+        <span>{$_("defilante-start-speed")}</span>
+        <TextInput float min={0} bind:value={$mapSettings.defilante.startSpeed} class="w-16"/>
+      </label>
+      <label>
+        <span>{$_("defilante-acceleration")}</span>
+        <TextInput float min={0} bind:value={$mapSettings.defilante.acceleration} class="w-16"/>
+      </label>
+      <label>
+        <span>{$_("defilante-maximum-speed")}</span>
+        <TextInput float min={0} bind:value={$mapSettings.defilante.maxSpeed} class="w-16"/>
+      </label>
+      <label>
+        <span>{$_("defilante-free-scroll")}</span>
+        <Checkbox bind:checked={$mapSettings.defilante.freeScroll}  />
+      </label>
+    </div>
   {/if}  
   
   <div class="mb-4"></div>
@@ -96,8 +96,6 @@
       </select>
     </div>
   </label>
-
-  <div class="mb-1"></div>
 
   <section>
     <label>
@@ -122,7 +120,7 @@
       <TextInput float sliderMin={-50} sliderMax={50} bind:value={$mapSettings.gravity} class="w-16" />
     </div>
   </label>
-  <div class="mb-1"></div>
+  
   <label>
     <span>{$_("wind")}</span>
     <div class="flex">
@@ -135,6 +133,23 @@
 
   <div class="mb-4"></div>
 
+  <label>
+    <span>{$_("mice-spawn")}</span>
+    <div class="material-input w-32">
+      <select value={$mapSettings.miceSpawn.type === "random" 
+                       ? "random"+$mapSettings.miceSpawn.axis.toUpperCase() 
+                       : $mapSettings.miceSpawn.type} 
+              on:change={e => updateMiceSpawn(e.target.value)}>
+        <option value="normal">{$_("mice-spawn-normal")}</option>
+        <option value="multiple">{$_("mice-spawn-multiple")}</option>
+        <option value="randomX">{$_("random-spawn")} X</option>
+        <option value="randomY">{$_("random-spawn")} Y</option>
+      </select>
+    </div>
+  </label>  
+
+  <div class="mb-4"></div>
+  
   <div class="boolean-props">
     <label>
       <span>{$_("allow-portals")}</span>
@@ -177,23 +192,6 @@
   <div class="mb-4"></div>
 
   <label>
-    <span>{$_("mice-spawn")}</span>
-    <div class="material-input w-32">
-      <select value={$mapSettings.miceSpawn.type === "random" 
-                       ? "random"+$mapSettings.miceSpawn.axis.toUpperCase() 
-                       : $mapSettings.miceSpawn.type} 
-              on:change={e => updateMiceSpawn(e.target.value)}>
-        <option value="normal">{$_("mice-spawn-normal")}</option>
-        <option value="multiple">{$_("mice-spawn-multiple")}</option>
-        <option value="randomX">{$_("random-spawn")} X</option>
-        <option value="randomY">{$_("random-spawn")} Y</option>
-      </select>
-    </div>
-  </label>
-
-  <div class="mb-4"></div>
-
-  <label>
     <span>{$_("shaman_objects")}: {$_("mass")}</span>
     <TextInput float bind:value={$mapSettings.shamanObjectsMass} class="w-16" />
   </label>
@@ -208,10 +206,10 @@
 
 
 <style lang="text/postcss">
-
+/* 
   .boolean-props label:not(:last-child) {
     @apply mb-2;
   }
-
+ */
 
 </style>

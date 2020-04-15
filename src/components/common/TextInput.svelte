@@ -14,6 +14,9 @@
   let className = ""
   export { className as class }
 
+  export let bgColor = "bg-gray-800"
+  export let textColor = "text-white"
+
 
   export let value
   export let set = null
@@ -43,6 +46,8 @@
 
   export let preview = true
 
+
+  $: hasValidation = int || float || color || platform
 
   let inputElement
   let internalValue
@@ -83,6 +88,12 @@
 
   function onInput(e) {
     let str = e.target.value
+
+    if(!hasValidation) {
+      invalid = false
+      setNewValue(str)
+      return
+    }
 
     let newValue
 
@@ -141,19 +152,21 @@
   {/if}
 
   <div class="material-input {className}" class:disabled={disabled} class:invalid={invalid} >
+
     <input type="text" 
       bind:this={inputElement} 
       value={presentationValue}
       disabled={disabled} 
       placeholder={placeholder}
       class:text-center={center}
+      class="{textColor}"
       on:focus={onFocus} on:blur={onBlur} 
       on:input={onInput} 
       on:keydown={onKeyDown} 
       on:focus on:blur on:input on:change on:click on:mousedown on:mouseup
     />
     {#if sub}
-      <span class="absolute top-0 right-0 mr-1 text-xs text-gray-400 italic uptop">
+      <span class="absolute top-0 right-0 mr-1 uptop">
         {sub}
       </span>
     {/if}
@@ -190,7 +203,9 @@
     @apply w-4 h-4 mr-2 shadow rounded-sm cursor-pointer;
   }
   .uptop {
+    @apply text-xs text-gray-500 italic;
     transform: translateY(-100%);
     line-height: 0.8rem;
+    white-space: nowrap;
   }
 </style>

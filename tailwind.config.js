@@ -3,7 +3,8 @@ module.exports = {
     extend: {
       colors: {
         "tfm-blue": "#6a7495",
-        "gray-700b": "#44526a",
+        "gray-700b": "#465570",
+        "gray-850": "#242f43",
       },
       fontFamily: {
         cursive: ["Baloo\\ Paaji\\ 2"]

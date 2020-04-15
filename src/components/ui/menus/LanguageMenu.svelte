@@ -13,16 +13,17 @@
 
 <div class="container">
   {#each Object.entries(localeFlag) as [locale, flag]}
-  <Tooltip bottom
-    active={ localeTranslators[locale] !== undefined ? null : false }
-    title={ formatTranslatorsTooltipTitle(localeTranslators[locale]) }
-  >
-    <div class="m-1 cursor-pointer flag flag-{flag}"
-      on:click={() => $language = locale}
-    ></div>
-  </Tooltip>
+    <Tooltip bottom
+      active={ localeTranslators[locale] !== undefined ? null : false }
+      title={ formatTranslatorsTooltipTitle(localeTranslators[locale]) }
+      class="inline"
+    >
+      <div class="m-1 cursor-pointer flag flag-{flag}"
+        on:click={() => $language = locale}
+      ></div>
+    </Tooltip>
   {/each}
-  <div class="mt-2 text-sm">
+  <div class="mt-2 text-sm text-center">
     <Tooltip bottom title="Send me an email with the language(s) you want to translate!">
       <a href="mailto:thibautguenedal@gmail.com">
         Help translate!

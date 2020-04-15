@@ -27,13 +27,13 @@
   import TextInput from "components/common/TextInput.svelte"
   import Button from "components/common/Button.svelte"
   import Tooltip from "components/common/Tooltip.svelte"
-  import UserSettings from "components/ui/UserSettings.svelte"
+  import UserSettingsMenu from "components/ui/menus/UserSettingsMenu.svelte"
   import XmlEditor from "components/ui/XmlEditor.svelte"
-  import HelpMenu from "components/ui/HelpMenu.svelte"
-  import LanguageMenu from "components/ui/LanguageMenu.svelte"
+  import HelpMenu from "components/ui/menus/HelpMenu.svelte"
+  import LanguageMenu from "components/ui/menus/LanguageMenu.svelte"
 
 
-  import xml from "state/xml"
+  import { xml, defaultXML } from "state/xml"
   import { importXML, exportXML } from "state/map"
   import { localeFlag, language, _ } from "state/locale"
   import { undo, redo, canUndo, canRedo } from "state/history"
@@ -50,7 +50,7 @@
       await clipboardCopy($xml)
       copyIconActive = true
       debounce(removeCopyIconActive, 500)
-    } catch(e) {}
+    } catch(e) { console.error("copyXML; error.") }
   }
   async function selectXML(e) {
     exportXML()
@@ -81,7 +81,7 @@
   on:keydown={onKeydown}
 />
 
-<header class="relative flex justify-between items-center px-4 py-2 bg-gray-800 shadow-lg text-white z-10">
+<header class="relative flex justify-between items-center px-4 py-2 bg-gray-800 shadow-lg text-white z-50">
 
   <div class="flex flex-wrap items-center">
 
@@ -143,7 +143,7 @@
         <div class="flex justify-center items-center" >
           <span class="icon" class:active={currentMenu === "xmlEditor"}>
             <Icon icon={faEdit}/> 
-              </span>
+          </span>
           <span class="ml-2 hidden xl:inline">{$_("button-edit")}</span>
         </div>
       </Button>
@@ -151,7 +151,14 @@
 
     <div class="mr-2"></div>
 
-    <TextInput value={$xml} on:input={e => importXML(e.target.value)} on:click={selectXML} />
+    <div class="flex">
+      <label class="icon-btn text-xs mr-2" on:click={() => importXML(defaultXML)} >
+        <Icon icon={faUndo} />
+      </label>
+      <TextInput value={$xml} set={importXML} on:click={selectXML} 
+                bgColor="bg-gray-700" textColor="text-gray-300"
+      />
+    </div>
 
     <div class="mr-2"></div>
 
@@ -195,7 +202,7 @@
 
   <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
 
-    <UserSettings />
+    <UserSettingsMenu />
 
   </div>
 
@@ -266,8 +273,7 @@
     transform: translateY(100%);
     bottom: 1px;
     @apply absolute;
-    @apply z-20 shadow-lg rounded-b text-gray-300 whitespace-no-wrap;
-    background-color: #2b3e50;
+    @apply shadow-lg rounded-b text-gray-300 whitespace-no-wrap bg-gray-800;
   }
   .lower-panel.xml {
     @apply left-0 right-0 w-full rounded-none;

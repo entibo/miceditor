@@ -17,50 +17,50 @@
 
 </script>
 
-<div class="absolute z-40 bottom-0 px-4 pointer-events-none flex">
+<div class="absolute z-20 bottom-0 px-4 pointer-events-none flex h-7">
 
-  <div class="section">
+  <div class="section flex items-baseline">
     <span class="text-gray-500 text-xs">X</span>
-    <span class="text-gray-100 w-8 text-right inline-block">{x}</span>
+    <span class="text-gray-100 text-sm w-8 text-right inline-block">{x}</span>
     <span class="text-gray-500 text-xs ml-2">Y</span>
-    <span class="text-gray-100 w-8 text-right inline-block">{y}</span>
+    <span class="text-gray-100 text-sm w-8 text-right inline-block">{y}</span>
   </div>
 
   {#if $selection.length > 0}
-  <div class="ml-4 section" >
-    <span class="text-gray-100">{$selection.length}</span>
+  <div class="ml-4 section flex items-baseline" >
+    <span class="text-gray-100 text-sm">{$selection.length}</span>
     <span class="text-gray-500 text-xs ml-1">selected</span>
   </div>
   {/if}
 
   {#if selectionBox.box}
-  <div class="ml-4 section" >
+  <div class="ml-4 section flex items-baseline" >
     <span class="text-gray-500 text-xs">L</span>
-    <span class="text-gray-100 w-8 text-right inline-block">{sw}</span>
+    <span class="text-gray-100 text-sm w-8 text-right inline-block">{sw}</span>
     <span class="text-gray-500 text-xs ml-2">H</span>
-    <span class="text-gray-100 w-8 text-right inline-block">{sh}</span>
+    <span class="text-gray-100 text-sm w-8 text-right inline-block">{sh}</span>
   </div>
   {/if}
 
 </div>
 
-<div class="right-0 absolute z-30 bottom-0 px-4 flex">
+<div class="right-0 absolute z-10 bottom-0 px-4 flex h-7">
 
-  <div class="section">
+  <div class="section flex items-baseline pointer-events-none">
     <span class="text-gray-100 font-cursive font-bold">Miceditor</span>
     <span class="text-gray-500 font-mono text-xs ml-1">v2.0.0</span>
     <span class="text-gray-300 font-sans text-sm ml-2">by <span class="font-medium">entibo</span></span>
   </div>
 
-  <div class="ml-2 section">
+  <div class="ml-2 section flex items-center">
     <Tooltip top title="Github">
       <a href="https://github.com/entibo/miceditor" target="_blank">
-        <img src="dist/github.png" alt="Github" style="width: 24px" />
+        <img src="dist/github.png" alt="Github" style="width: 20px" />
       </a>
     </Tooltip>
   </div>
 
-  <div class="ml-2 section flex items-center">
+  <div class="ml-2 bg-gray-800 rounded-t py-1 pl-1 pr-2 flex items-center">
     <Tooltip top title="Atelier801">
       <a href="https://atelier801.com/topic?f=6&t=884238" target="_blank">
           <img src="dist/atelier801.png" alt="Atelier801" />

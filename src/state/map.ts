@@ -13,7 +13,7 @@ import { clone } from "data/base/util"
 
 import * as history from "state/history"
 
-import xml from "state/xml"
+import { xml } from "state/xml"
 
 
 export const mapSettings = store(Editor.MapSettings.defaults())

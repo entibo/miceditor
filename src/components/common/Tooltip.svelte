@@ -177,7 +177,7 @@
 <style lang="text/postcss">
   .tooltip {
     @apply pointer-events-none select-none;
-    @apply absolute z-30;
+    @apply absolute z-40;
   }
   .tooltip.border {
     border: 5px solid transparent;
