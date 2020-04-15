@@ -9,6 +9,7 @@
   export let active
 
   export let title = "Tooltip"
+  export let hoverable = false
   export let noStyle = false
   export let noBorder = false
 
@@ -158,7 +159,9 @@
   <slot></slot>
   {#if visible}
   <div bind:this={tooltipElement}
-       class="tooltip" class:border={!noBorder} 
+       class="tooltip"
+       class:pointer-events-none={!hoverable}
+       class:border={!noBorder} 
   >
     <div class:inner={!noStyle} 
          in:fly={flyInOptions}
@@ -176,7 +179,7 @@
 
 <style lang="text/postcss">
   .tooltip {
-    @apply pointer-events-none select-none;
+    @apply select-none;
     @apply absolute z-40;
   }
   .tooltip.border {

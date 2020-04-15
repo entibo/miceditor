@@ -10,6 +10,12 @@
 .h-7 {
   height: 1.75rem;
 }
+.max-w-16 {
+  max-width: 4rem;
+}
+.max-w-12 {
+  max-width: 3rem;
+}
 
 
 
@@ -221,6 +227,7 @@ img, image {
   min-height: 1.5rem;
   background: rgba(0, 7, 20, 0.26);
   border: 1px solid rgba(0, 10, 26, 0.20);
+  @apply rounded-sm;
   margin-top: -1px;
   margin-bottom: -1px;
 }
@@ -228,16 +235,29 @@ img, image {
   background: rgba(0, 7, 20, 0.36);
 }
 .form label > span {
-  user-select: none;
-  line-height: 0.8rem;
   @apply text-sm text-gray-300;
+  user-select: none;
+  /* line-height: 0.8rem; */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .form label:hover > span {
   @apply text-gray-100;
 }
+.form label:hover > span, .form label > span.incompressible {
+  white-space: normal;
+  text-overflow: initial;
+  overflow: initial;
+  line-height: 0.8;
+}
+
 .form .submenu {
-  @apply border-l-3 pl-2 pt-1 border-gray-200;
+  @apply pl-2 pt-1 pb-1;
+  border-color: #dbe2eacf;
+  border-left-width: 3px;
   margin-top: 1px;
+  margin-bottom: 1px;
   margin-left: 1px;
 }
 

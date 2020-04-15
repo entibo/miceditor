@@ -14,7 +14,6 @@
   let className = ""
   export { className as class }
 
-  export let bgColor = "bg-gray-800"
   export let textColor = "text-white"
 
 
@@ -143,12 +142,14 @@
 
 <Tooltip noStyle top active={hasTooltip && focused}>
 
-  {#if preview}
-    {#if color}
-      <div class="preview" style="background: #{internalValue}"></div>
-    {:else if platform && internalValue !== undefined && internalValue !== null}
-      <img class="preview" src="dist/grounds/{typeNames[internalValue]}.png" alt={typeNames[internalValue]} />
-    {/if}
+  {#if preview && (color || platform)}
+    <div class="preview-container w-6 h-6 flex items-center justify-center">
+      {#if color}
+        <div class="preview rounded-full" style="background: #{internalValue}"></div>
+      {:else if platform && internalValue !== undefined && internalValue !== null}
+        <img class="preview shadow" src="dist/grounds/{typeNames[internalValue]}.png" alt={typeNames[internalValue]} />
+      {/if}
+    </div>
   {/if}
 
   <div class="material-input {className}" class:disabled={disabled} class:invalid={invalid} >
@@ -199,8 +200,11 @@
 
 
 <style lang="text/postcss">
+  .preview-container {
+    background: rgba(143, 160, 213, 0.5);
+  }
   .preview {
-    @apply w-4 h-4 mr-2 shadow rounded-sm cursor-pointer;
+    @apply w-4 h-4 cursor-pointer;
   }
   .uptop {
     @apply text-xs text-gray-500 italic;

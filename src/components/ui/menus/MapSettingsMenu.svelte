@@ -80,7 +80,7 @@
 
   <label>
     <span>{$_("background")}</span>
-    <div class="material-input w-32">
+    <div class="material-input w-24">
       <select bind:value={$mapSettings.backgroundImageId} >
         <option value="-1">{$_("none")}</option>
         <option value="-2">{$_("random")}</option>
@@ -100,7 +100,7 @@
   <section>
     <label>
       <span>{$_("theme")}</span>
-      <div class="material-input w-32">
+      <div class="material-input w-24">
         <select bind:value={$mapSettings.theme} on:change={updateDecorations}>
           <option value="">{$_("none")}</option>
           <option value="halloween">{$_("background4")}</option>
@@ -135,7 +135,7 @@
 
   <label>
     <span>{$_("mice-spawn")}</span>
-    <div class="material-input w-32">
+    <div class="material-input w-24">
       <select value={$mapSettings.miceSpawn.type === "random" 
                        ? "random"+$mapSettings.miceSpawn.axis.toUpperCase() 
                        : $mapSettings.miceSpawn.type} 

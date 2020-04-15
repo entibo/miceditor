@@ -32,31 +32,34 @@
 
   <div class="flex">
     <label>
-      <span>X</span>
+      <span class="incompressible w-6">X</span>
       <TextInput int value={props.x.value} set={props.x.set} />
     </label>
-    <div class="mr-3"></div>
+    <div class="w-2"></div>
     <label>
-      <span>Y</span>
+      <span class="incompressible w-6">Y</span>
       <TextInput int value={props.y.value} set={props.y.set} />
     </label>
   </div>
-
-  <div class="mb-2"></div>
-
-  <div class="flex" class:disabled={props.height.value === undefined}>
-    <label>
-      <span>L</span>
-      <TextInput int min={10} sliderMax={800} value={props.width.value} set={props.width.set} />
-    </label>
-    <label class="icon-btn text-xs mx-2" on:click={selection.invertLH} >
+  
+  <div class="mb-1"></div>
+  
+  <Tooltip hoverable noStyle left>
+    <label slot="tooltip" class="icon-btn text-xs" on:click={selection.invertLH} >
       <Icon icon={faExchangeAlt} />
     </label>
-    <label>
-      <span>H</span>
-      <TextInput int min={10} sliderMax={800} value={props.height.value} set={props.height.set} />
-    </label>
-  </div>
+    <div class="flex" class:disabled={props.height.value === undefined}>
+      <label>
+        <span class="incompressible w-6">L</span>
+        <TextInput int min={10} sliderMax={800} value={props.width.value} set={props.width.set} />
+      </label>
+      <div class="w-2"></div>
+      <label>
+        <span class="incompressible w-6">H</span>
+        <TextInput int min={10} sliderMax={800} value={props.height.value} set={props.height.set} />
+      </label>
+    </div>
+  </Tooltip>
 
   <div class="mb-1"></div>
 
@@ -114,10 +117,21 @@
   </label>
   
   <div class="mb-4"></div>
+  
+  <div class:disabled={props.friction.value === undefined}>
+    <label>
+      <span>{$_("friction")}</span>
+      <TextInput float min={0} value={props.friction.value} set={props.friction.set} class="w-16"/>
+    </label>
+    <label>
+      <span>{$_("restitution")}</span>
+      <TextInput float min={0} value={props.restitution.value} set={props.restitution.set} class="w-16"/>
+    </label>
+  </div>
 
   <label class:disabled={props.dynamic.value === undefined}>
     <span>Mode</span>
-    <div class="material-input w-32">
+    <div class="material-input w-24">
       <select value={props.physics.value} 
               on:change={e => props.physics.set(e.target.value)}
       >
@@ -131,10 +145,6 @@
 
   {#if props.physics.value === "BOOSTER"}
     <div class="submenu">
-      <!-- <label class="mt-1">
-        <span>Enabled</span>
-        <Checkbox checked={props.boosterEnabled.value} set={props.boosterEnabled.set} />
-      </label> -->
       <label>
         <span>Angle</span>
         <TextInput class="w-16" float sliderMin={-180} sliderMax={180} value={props.boosterAngle.value} set={props.boosterAngle.set} />
@@ -146,7 +156,7 @@
     </div>
   {:else if props.physics.value === "DYNAMIC"}
     <div class="submenu">
-      <label class="mt-1">
+      <label >
         <span>{$_("fixed-rotation")}</span>
         <Checkbox checked={props.fixedRotation.value} set={props.fixedRotation.set} />
       </label>
@@ -164,32 +174,33 @@
       </label>
     </div>
   {/if}
-  
-  <div class="mb-2"></div>
 
-  <div class:disabled={props.friction.value === undefined}>
-    <label>
-      <span>{$_("friction")}</span>
-      <TextInput float min={0} value={props.friction.value} set={props.friction.set} class="w-16"/>
-    </label>
-    <div class="mt-1"></div>
-    <label>
-      <span>{$_("restitution")}</span>
-      <TextInput float min={0} value={props.restitution.value} set={props.restitution.set} class="w-16"/>
-    </label>
-  
-    <div class="mb-2"></div>
-
+  <div class:disabled={props.miceCollision.value === undefined}>
     <label>
       <span>{$_("mice-collision")}</span>
       <Checkbox checked={props.miceCollision.value} set={props.miceCollision.set} />
     </label> 
-    <div class="mt-1"></div>
     <label>
       <span>{$_("ground-collision")}</span>
       <Checkbox checked={props.objectCollision.value} set={props.objectCollision.set} />
     </label> 
   </div>
+
+  <div class="mb-4"></div>
+
+  <div class:disabled={props.vanish.value === undefined}>
+    <label>
+      <span>{$_("vanish")}</span>
+      <TextInput float min={0} value={props.vanish.value} set={props.vanish.set} class="w-16"/>
+    </label>   
+  </div>
+  
+  <div class="mb-2"></div>
+  
+  <label>
+    <span>nosync</span>
+    <Checkbox checked={props.nosync.value} set={props.nosync.set} />
+  </label>
 
   <div class="mb-4"></div>
 
@@ -200,18 +211,17 @@
   {#if props.imageEnabled.value}
     <div class="submenu" transition:fly={{duration: 80, x:50}}>
       <label>
-        <span>Url</span>
+        <span class="incompressible">Url</span>
         <TextInput value={props.imageValue.value} set={props.imageValue.set} />
       </label> 
-      <div class="mt-1"></div>
       <div class="flex">
         <label>
-          <span>X</span>
+          <span class="incompressible">X</span>
           <TextInput int value={props.imageX.value} set={props.imageX.set} />
         </label>
-        <div class="mr-3"></div>
+        <div class="w-2"></div>
         <label>
-          <span>Y</span>
+          <span class="incompressible">Y</span>
           <TextInput int value={props.imageY.value} set={props.imageY.set} />
         </label>
       </div>
@@ -220,25 +230,9 @@
 
   <div class="mb-2"></div>
 
-  <div class:disabled={props.vanish.value === undefined}>
-    <label>
-      <span>{$_("vanish")}</span>
-      <TextInput float min={0} value={props.vanish.value} set={props.vanish.set} class="w-16"/>
-    </label>   
-  </div>
-  
-  <div class="mb-2"></div>
-
   <label>
     <span>lua</span>
     <TextInput value={props.lua.value} set={props.lua.set} class="w-16"/>
-  </label>
-
-  <div class="mb-2"></div>
-  
-  <label>
-    <span>nosync</span>
-    <Checkbox checked={props.nosync.value} set={props.nosync.set} />
   </label>
 
 </div>

@@ -49,51 +49,52 @@
     <Checkbox checked={props.foreground.value} set={props.foreground.set} />
   </label>
   
-  <div class="mb-2"></div>
-
-  <label class:disabled={props.reverse.value === undefined}>
-    <span>{$_("flip-horizontally")}</span>
-    <div class="flex">
+  {#if props.reverse.value !== undefined}
+    <div class="mb-2"></div>
+    <label class:disabled={props.reverse.value === undefined}>
+      <span>{$_("flip-horizontally")}</span>
+      <div class="flex">
+        <div class="material-input w-16">
+          <select value={props.reverse.value !== undefined && props.reverse.value !== null ? props.reverse.value.toString() : undefined} 
+                  on:change={e => props.reverse.set(e.target.value === "false" ? false : e.target.value === "true" ? true : "random")}
+          >
+            <option value="false">{$_("no")}</option>
+            <option value="true">{$_("yes")}</option>
+            <option value="random">{$_("random")}</option>
+          </select>
+        </div>
+        <div class="mr-1"></div>
+        <Checkbox checked={props.reverse.value} set={props.reverse.set} />
+      </div>
+    </label>
+  {/if}
+  
+  {#if props.holeColor.value !== undefined}
+    <div class="mb-2"></div>
+    <label class:disabled={props.holeColor.value === undefined}>
+      <span>{$_("hole")}</span>
       <div class="material-input w-16">
-        <select value={props.reverse.value !== undefined && props.reverse.value !== null ? props.reverse.value.toString() : undefined} 
-                on:change={e => props.reverse.set(e.target.value === "false" ? false : e.target.value === "true" ? true : "random")}
+        <select value={props.holeColor.value} 
+                on:change={e => props.holeColor.set(e.target.value)}
         >
-          <option value="false">{$_("no")}</option>
-          <option value="true">{$_("yes")}</option>
-          <option value="random">{$_("random")}</option>
+          <option value=""> </option>
+          <option value="1" style="color:#7DB8BF;">1</option>
+          <option value="2" style="color:#DDA3E5;">2</option>
         </select>
       </div>
-      <div class="mr-1"></div>
-      <Checkbox checked={props.reverse.value} set={props.reverse.set} />
-    </div>
-  </label>
-  
-  <div class="mb-2"></div>
-
-  <label class:disabled={props.holeColor.value === undefined}>
-    <span>{$_("hole")}</span>
-    <div class="material-input w-16">
-      <select value={props.holeColor.value} 
-              on:change={e => props.holeColor.set(e.target.value)}
-      >
-        <option value=""> </option>
-        <option value="1" style="color:#7DB8BF;">1</option>
-        <option value="2" style="color:#DDA3E5;">2</option>
-      </select>
-    </div>
-  </label>
+    </label>
+  {/if}
 
   {#if props.color0.value !== undefined}
     <div class="mb-4"></div>
     <label>
       <span>{$_("decoration-colors")}</span>
     </label>
-    <div class="submenu mt-1">
+    <div class="submenu flex flex-wrap">
       {#each [0,1,2,3].map(k => "color"+k) as name}
         {#if props[name].value !== undefined}
-          <div class="mt-1"></div>
-          <label>
-            <TextInput color value={props[name].value} set={props[name].set}/>
+          <label class="max-content mx-1">
+            <TextInput color value={props[name].value} set={props[name].set} class="w-16"/>
           </label>
         {/if}
       {/each}
@@ -101,3 +102,9 @@
   {/if}
 
 </div>
+
+<style>
+  .max-content {
+    width: max-content;
+  }
+</style>
