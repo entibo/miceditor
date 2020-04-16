@@ -39,13 +39,13 @@
 
   <div class="flex justify-center">
     <label>
-      <span>L</span>
-      <TextInput int min={800} sliderMax={maxWidth} sub="max: {maxWidth}" bind:value={$mapSettings.width} class="w-16" />
+      <span class="incompressible w-6">L</span>
+      <TextInput int min={800} sliderMax={maxWidth} sub="max: {maxWidth}" bind:value={$mapSettings.width} />
     </label>
-  <div class="mr-3"></div>
+  <div class="w-2"></div>
     <label>
-      <span>H</span>
-      <TextInput int min={400} sliderMax={maxHeight} sub="max: {maxHeight}" bind:value={$mapSettings.height} class="w-16" />
+      <span class="incompressible w-6">H</span>
+      <TextInput int min={400} sliderMax={maxHeight} sub="max: {maxHeight}" bind:value={$mapSettings.height} />
     </label>
   </div>
 
@@ -114,7 +114,7 @@
   <label>
     <span>{$_("gravity")}</span>
     <div class="flex">
-      <label class="icon-btn text-xs mr-2" on:click={() => $mapSettings.gravity = 10} >
+      <label class="icon-btn text-xs mr-1" on:click={() => $mapSettings.gravity = 10} >
         <Icon icon={faUndo} />
       </label>
       <TextInput float sliderMin={-50} sliderMax={50} bind:value={$mapSettings.gravity} class="w-16" />
@@ -124,7 +124,7 @@
   <label>
     <span>{$_("wind")}</span>
     <div class="flex">
-      <label class="icon-btn text-xs mr-2" on:click={() => $mapSettings.wind = 0} >
+      <label class="icon-btn text-xs mr-1" on:click={() => $mapSettings.wind = 0} >
         <Icon icon={faUndo} />
       </label>
       <TextInput float sliderMin={-50} sliderMax={50} bind:value={$mapSettings.wind} class="w-16" />

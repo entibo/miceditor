@@ -6,7 +6,7 @@
   let className = ""
   export { className as class }
 
-  export let active
+  export let active = undefined
 
   export let title = "Tooltip"
   export let hoverable = false

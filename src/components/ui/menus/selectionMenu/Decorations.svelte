@@ -32,25 +32,34 @@
 
   <div class="flex">
     <label>
-      <span>X</span>
+      <span class="incompressible w-6">X</span>
       <TextInput int value={props.x.value} set={props.x.set} />
     </label>
-    <div class="mr-3"></div>
+    <div class="w-2"></div>
     <label>
-      <span>Y</span>
+      <span class="incompressible w-6">Y</span>
       <TextInput int value={props.y.value} set={props.y.set} />
     </label>
   </div>
   
   <div class="mb-4"></div>
-
-  <label class:disabled={props.foreground.value === undefined}>
-    <span>{$_("foreground")}</span>
-    <Checkbox checked={props.foreground.value} set={props.foreground.set} />
-  </label>
   
+  {#if props.holeColor.value !== undefined}
+    <label class:disabled={props.holeColor.value === undefined}>
+      <span>{$_("hole")}</span>
+      <div class="material-input w-16">
+        <select value={props.holeColor.value} 
+                on:change={e => props.holeColor.set(e.target.value)}
+        >
+          <option value=""> </option>
+          <option value="1" style="color:#7DB8BF;">1</option>
+          <option value="2" style="color:#DDA3E5;">2</option>
+        </select>
+      </div>
+    </label>
+  {/if}
+
   {#if props.reverse.value !== undefined}
-    <div class="mb-2"></div>
     <label class:disabled={props.reverse.value === undefined}>
       <span>{$_("flip-horizontally")}</span>
       <div class="flex">
@@ -68,25 +77,9 @@
       </div>
     </label>
   {/if}
-  
-  {#if props.holeColor.value !== undefined}
-    <div class="mb-2"></div>
-    <label class:disabled={props.holeColor.value === undefined}>
-      <span>{$_("hole")}</span>
-      <div class="material-input w-16">
-        <select value={props.holeColor.value} 
-                on:change={e => props.holeColor.set(e.target.value)}
-        >
-          <option value=""> </option>
-          <option value="1" style="color:#7DB8BF;">1</option>
-          <option value="2" style="color:#DDA3E5;">2</option>
-        </select>
-      </div>
-    </label>
-  {/if}
 
   {#if props.color0.value !== undefined}
-    <div class="mb-4"></div>
+    <div class="mb-1"></div>
     <label>
       <span>{$_("decoration-colors")}</span>
     </label>

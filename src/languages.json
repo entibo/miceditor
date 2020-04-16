@@ -1,5 +1,16 @@
 {
     "en": {
+        "small": "Small",
+        "large": "Large",
+        "layout": "Layout",
+        "escape-key": "Escape",
+        "cancel": "Cancel",
+        "creation-mode": "Creation Mode",
+        "selected": "selected",
+        "limit": "Limit",
+        "ratio": "Ratio",
+        "damping": "Damping",
+        "frequency": "Frequency",
         "yes": "Yes",
         "no": "No",
         "distance-joint": "Distance Joint",

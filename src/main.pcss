@@ -145,6 +145,7 @@ img, image {
 
 .panel {
   @apply p-3 bg-gray-800;
+  @apply justify-between;
 }
 .panel.vertical {
   @apply flex-col;
@@ -152,20 +153,23 @@ img, image {
 .panel.horizontal {
   @apply flex-row;
 }
+.panel .group:not(.has-active-tab) {
+  flex-shrink: 0;
+}
 .panel.vertical .group.has-active-tab {
   min-height: 160px;
 }
 .panel.horizontal .group.has-active-tab {
-  min-width: 160px;
+  min-width: 200px;
 }
 .panel .group.has-active-tab {
-  @apply flex-grow;
+  /* @apply flex-grow; */
 }
 .panel.vertical .group:not(:last-child) {
-  @apply mb-2
+  @apply mb-2;
 }
 .panel.horizontal .group:not(:last-child) {
-  @apply mr-2
+  @apply mr-2;
 }
 
 .tabList {
@@ -173,8 +177,17 @@ img, image {
 }
 .tab {
   @apply font-cursive;
-  @apply text-sm px-1 inline-block;
+  @apply text-sm inline-block;
   @apply text-gray-500;
+  padding: 4px 0.25rem 0 0.25rem;
+}
+.window .tab {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.panel .tab {
+  border: 1px solid rgba(0,0,0,0.15);
 }
 .tab.active {
   @apply text-gray-100 font-medium;
@@ -266,7 +279,7 @@ img, image {
 }
 
 .form div.disabled, .form label.disabled {
-  opacity: 0.66;
+  opacity: 0.42;
   pointer-events: none;
 }
 

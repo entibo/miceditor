@@ -58,7 +58,6 @@ const data = store<Data>({
       },
     },
     index: {
-      // sideEffect: obj => sceneObjects.setIndex(obj, obj.index),
       autoSet: false,
       set: (v: number) => {
         if(groups.PLATFORM.length === 1)
@@ -147,6 +146,13 @@ const data = store<Data>({
     },
   },
   DECORATION: {
+    index: {
+      autoSet: false,
+      set: (v: number) => {
+        if(groups.DECORATION.length === 1)
+          sceneObjects.setIndex(groups.DECORATION[0], v)
+      },
+    },
     x: {},
     y: {},
     holeColor: {},
@@ -168,6 +174,13 @@ const data = store<Data>({
     },
   },
   IMAGE: {
+    index: {
+      autoSet: false,
+      set: (v: number) => {
+        if(groups.IMAGE.length === 1)
+          sceneObjects.setIndex(groups.IMAGE[0], v)
+      },
+    },
     x: {},
     y: {},
     imageValue: {
@@ -207,6 +220,13 @@ const data = store<Data>({
     rh: {},
   },
   SHAMANOBJECT: {
+    index: {
+      autoSet: false,
+      set: (v: number) => {
+        if(groups.SHAMANOBJECT.length === 1)
+          sceneObjects.setIndex(groups.SHAMANOBJECT[0], v)
+      },
+    },
     x: {},
     y: {},
     rotation: {},
@@ -216,6 +236,13 @@ const data = store<Data>({
     nosync: {},
   },
   JOINT: {
+    index: {
+      autoSet: false,
+      set: (v: number) => {
+        if(groups.JOINT.length === 1)
+          sceneObjects.setIndex(groups.JOINT[0], v)
+      },
+    },
     type: {},
     platform1: {
       sideEffect: obj => sceneObjects.linkJointToPlatform(obj, "platform1", obj.platform1)
@@ -281,9 +308,46 @@ const data = store<Data>({
     foreground: {
       sideEffect: () => sceneObjects.groups.joints.invalidate()
     },
+    frequency: {},
+    damping: {},
+    ratio: {},
+    axisX: {
+      path: ["axis", "x"]
+    },
+    axisY: {
+      path: ["axis", "y"]
+    },
+    limit1: {},
+    limit1Enabled: {},
+    limit2: {},
+    limit2Enabled: {},
+    power: {},
+    speed: {},
   },
 })
 export const properties = data
+
+
+const keys = ["PLATFORM","DECORATION","SHAMANOBJECT","IMAGE","JOINT"] as const
+export const common = derived(properties, () => {
+  let all = keys.map(k => properties[k])
+  return {
+    index: {
+      value: combine(
+        all.map(x => x.index.value)
+           .filter(v => v !== undefined)),
+      set: (v: number) => all.forEach(x => x.index.set!(v))
+    },
+    foreground: {
+      value: 
+        combine(
+          all.map(x => "foreground" in x ? x.foreground.value : undefined)
+             .filter(v => v !== undefined)),
+      set: (v: number) => 
+        all.forEach(x => "foreground" in x && x.foreground.set!(v))
+    },
+  }
+})
 
 
 /**

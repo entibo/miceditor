@@ -126,12 +126,12 @@ export const defaults = <T extends Type> (type: T) =>
         :
         type === "JP" ?
           { type,
-            axis: { x: 0, y: 0 },
+            axis: { x: 1, y: 0 },
             limit1: 0,
             limit1Enabled: false,
             limit2: 0,
             limit2Enabled: false,
-            power: 0,
+            power: Infinity,
             speed: 5,
             angle: 0,
             point1: optionalPointDefaults(),
@@ -143,7 +143,7 @@ export const defaults = <T extends Type> (type: T) =>
             limit1Enabled: false,
             limit2: 0,
             limit2Enabled: false,
-            power: 0,
+            power: Infinity,
             speed: 5,
             point1: optionalPointDefaults(),
             point2: optionalPointDefaults(),

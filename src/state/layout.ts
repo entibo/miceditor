@@ -13,7 +13,7 @@ type PanelName = (typeof panels)[number]
 const tabs = ["basic","platforms","decorations","shamanObjects","shamanObjectVariants","lines","mechanics","images","layers","mapSettings","selection"] as const
 type TabName = (typeof tabs)[number]
 
-interface Layout {
+export interface Layout {
   panels: Record<PanelName, Panel>
   windows: Window[]
 }
@@ -23,7 +23,6 @@ interface Panel {
   groups: Group[]
 }
 interface Group {
-  size: number
   tabs: TabName[]
   activeTab?: TabName
 }
@@ -53,71 +52,19 @@ export const tabToLocaleKey: Record<TabName, LocaleKey> = {
 }
 
 
-const defaultLayoutConfig: Layout = {
-  panels: {
-    right: {
-      size: 250,
-      groups: [
-        {
-          size: 0,
-          tabs: ["mapSettings", "selection"],
-          activeTab: "mapSettings",
-        },
-      ],
-    },
-    left: {
-      size: 250,
-      groups: [
-        {
-          size: 0,
-          tabs: ["basic"],
-          activeTab: "basic"
-        },
-        {
-          size: 200,
-          tabs: ["platforms"],
-          activeTab: "platforms",
-        },
-        {
-          size: 0,
-          tabs: ["lines", "mechanics"],
-          activeTab: "lines",
-        },
-      ],
-    },
-    bottom: {
-      size: 250,
-      groups: [
-        {
-          size: 0,
-          tabs: ["decorations", "shamanObjects"],
-          activeTab: undefined,
-        },
-        {
-          size: 0,
-          tabs: ["images"],
-          activeTab: "images",
-        },
-        {
-          size: 0,
-          tabs: ["layers"],
-          activeTab: "layers",
-        },
-      ],
-    },
-  },
-  windows: [
-    /* {
-      tab: "platforms",
-      x: 100,
-      y: 100,
-      width: 160,
-      height: 180,
-    } */
-  ],
-}
+import smallLayout from "layouts/small"
+import largeLayout from "layouts/large"
 
-export const layoutConfig = persistentWritable("layoutConfig", clone(defaultLayoutConfig))
+const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+const defaultLayout = 
+  windowWidth > 1300
+    ? largeLayout
+    : smallLayout
+
+export const layoutConfig = persistentWritable("layoutConfig", clone(defaultLayout))
+
+export const setSmallLayout = () => layoutConfig.set(clone(smallLayout))
+export const setLargeLayout = () => layoutConfig.set(clone(largeLayout))
 
 
 
@@ -127,6 +74,31 @@ export function closeWindow(window: Window) {
     return cfg
   })
 }
+
+type Dimensions = { width: number, height: number }
+const windowDimensions: Partial<Record<TabName,Dimensions>> = {
+  basic: { 
+    width: 120, height: 150,
+  },
+  platforms: { 
+    width: 120, height: 340,
+  },
+  mechanics: { 
+    width: 210, height: 110,
+  },
+  images: { 
+    width: 460, height: 100,
+  },
+  lines: {
+    width: 220, height: 340,
+  },
+}
+
+const getWindowDimensions = (tab: TabName) =>
+  windowDimensions[tab] || {
+    width: 240,
+    height: 340,
+  }
 
 
 export function selectTab(panelName: PanelName, groupIndex: number, tab: TabName) {
@@ -256,12 +228,12 @@ addEventListener("mouseup", () => {
       }
 
       cfg.windows = cfg.windows.filter(({tab}) => tab !== srcTab)
+      let dimensions = getWindowDimensions(srcTab)
       cfg.windows.push({
         tab: srcTab,
         x: tabMovement.target.x,
         y: tabMovement.target.y,
-        width: 240,
-        height: 360,
+        ...dimensions,
       })
 
       return cfg
@@ -291,7 +263,6 @@ addEventListener("mouseup", () => {
 
       removeSrcTab()
       let newGroup: Group = {
-        size: 0,
         tabs: [srcTab],
         activeTab: srcTab,
       }

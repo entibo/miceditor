@@ -60,8 +60,8 @@ export function serialize(map: Map): string {
 function generateCurveSegments(vc: VC, p1: P, p2: P) {
 
   let linkedToPlatform 
-    =  ("dynamic" in p1 ? p1.dynamic : false)
-    && ("dynamic" in p2 ? p2.dynamic : false)
+    =  ((p1 && "dynamic" in p1) ? p1.dynamic : false)
+    && ((p2 && "dynamic" in p2) ? p2.dynamic : false)
 
   /** Initialized with at least 2 points */
   let points =

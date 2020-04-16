@@ -24,12 +24,8 @@
     if(!isSliding) return
     let rect = container.getBoundingClientRect()
     let ratio = clamp((x-rect.left)/(rect.width), 0, 1)
-    console.log("min", min, "max", max, "step", step)
-    console.log("ratio", ratio)
     let newValue = ratio * (max-min) + min
-    console.log("newValue", newValue)
     newValue = step * Math.round(newValue/step)
-    console.log("newValue > step", newValue)
     value = newValue
     dispatch("input")
   }

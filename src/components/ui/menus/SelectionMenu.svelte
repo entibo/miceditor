@@ -9,6 +9,7 @@
   import { faEyeSlash } from "@fortawesome/free-solid-svg-icons/faEyeSlash"
   import { faTrashAlt as faTrash } from "@fortawesome/free-solid-svg-icons/faTrashAlt"
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
+  import { faMinus } from "@fortawesome/free-solid-svg-icons/faMinus"
   import { faCircle } from "@fortawesome/free-solid-svg-icons/faCircle"
   import { faCheckCircle } from "@fortawesome/free-solid-svg-icons/faCheckCircle"
 
@@ -30,7 +31,7 @@
   import Joints from "components/ui/menus/selectionMenu/Joints.svelte"
 
 
-  import { properties, groups } from "state/selectionProperties"
+  import { properties, common, groups } from "state/selectionProperties"
   console.log("properties", $properties, "groups", $groups)
 
   $: numCategories = Object.values($groups)
@@ -53,14 +54,28 @@
 
   {#if numCategories > 0}
     <div class="category">
-      <label>
-        <span>Z</span>
-        <div class="flex">
-          <Button on:click={e => shiftIndex(e, -1)}>-1</Button>
-          <div class="mr-2"></div>
-          <Button on:click={e => shiftIndex(e, +1)}>+1</Button>
-        </div>
-      </label>  
+      <div class="form">
+        <label>
+          <span>Z</span>
+          <div class="flex" >
+            <label class="icon-btn text-xs mr-1" on:click={e => shiftIndex(e, -1)} >
+              <div class="w-4 flex justify-center items-center">
+                <Icon icon={faMinus} />
+              </div>
+            </label>
+            <TextInput int min={0} value={$common.index.value} set={$common.index.set} class="w-10" />
+            <label class="icon-btn text-xs ml-1" on:click={e => shiftIndex(e, +1)} >
+              <div class="w-4 flex justify-center items-center">
+                <Icon icon={faPlus} />
+              </div>
+            </label>
+          </div>
+        </label>  
+        <label class:disabled={$common.foreground.value === undefined}>
+          <span>{$_("foreground")}</span>
+          <Checkbox checked={$common.foreground.value} set={$common.foreground.set} />
+        </label>
+      </div>
     </div>
   {/if}
 
@@ -123,7 +138,7 @@
   @apply mb-4;
 }
 .category-title {
-  @apply text-gray-200 font-bold text-xs mb-4;
+  @apply text-gray-200 font-cursive font-medium text-xs mb-4;
   @apply flex items-center;
 }
 .category-title:before, .category-title:after {

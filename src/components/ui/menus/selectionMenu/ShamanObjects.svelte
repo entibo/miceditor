@@ -31,45 +31,46 @@
 
   <div class="flex">
     <label>
-      <span>X</span>
+      <span class="incompressible w-6">X</span>
       <TextInput int value={props.x.value} set={props.x.set} />
     </label>
-    <div class="mr-3"></div>
+    <div class="w-2"></div>
     <label>
-      <span>Y</span>
+      <span class="incompressible w-6">Y</span>
       <TextInput int value={props.y.value} set={props.y.set} />
     </label>
   </div>
   
-  <div class="mb-4"></div>
+  {#if props.rotation.value !== undefined}
+    <div class="mb-4"></div>
 
-  <div class:disabled={props.rotation.value === undefined}>
-    <label>
-      <span>{$_("rotation")}</span>
-      <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
-    </label>
-  </div>
-  
-  <div class="mb-1"></div>
+    <div class:disabled={props.rotation.value === undefined}>
+      <label>
+        <span>{$_("rotation")}</span>
+        <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
+      </label>
+    </div>
 
-  <label class:disabled={props.ghost.value === undefined}>
-    <span>{$_("ghost")}</span>
-    <Checkbox checked={props.ghost.value} set={props.ghost.set} />
-  </label>
-  
-  <div class="mb-4"></div>
+    <label class:disabled={props.ghost.value === undefined}>
+      <span>{$_("ghost")}</span>
+      <Checkbox checked={props.ghost.value} set={props.ghost.set} />
+    </label>
+  {/if}
 
-  <div class:disabled={props.power.value === undefined}>
-    <label>
-      <span>{$_("power")}</span>
-      <TextInput float value={props.power.value} set={props.power.set} class="w-16"/>
-    </label>
-    <div class="mb-1"></div>
-    <label>
-      <span>{$_("speed")}</span>
-      <TextInput float value={props.speed.value} set={props.speed.set} class="w-16"/>
-    </label>
-  </div>
+  {#if props.power.value !== undefined}
+    <div class="mb-4"></div>
+
+    <div class:disabled={props.power.value === undefined}>
+      <label>
+        <span>{$_("power")}</span>
+        <TextInput float value={props.power.value} set={props.power.set} class="w-16"/>
+      </label>
+      <label>
+        <span>{$_("speed")}</span>
+        <TextInput float value={props.speed.value} set={props.speed.set} class="w-16"/>
+      </label>
+    </div>
+  {/if}
   
   <div class="mb-4"></div>
 

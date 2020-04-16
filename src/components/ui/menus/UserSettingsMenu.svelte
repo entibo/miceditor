@@ -14,25 +14,22 @@
 
   import { _ } from "state/locale"
   import { showGameGUI, showMapBorder, showInvisibleGrounds, grid } from "state/user"
+  import { setSmallLayout, setLargeLayout } from "state/layout"
 
 </script>
 
 
-<div class="form">
+<div class="form tabContent">
 
   <label>
     <span>{$_("show-game-gui")}</span>
     <Checkbox bind:checked={$showGameGUI}  />
   </label>
 
-  <div class="mb-2"></div>
-
   <label>
     <span>{$_("show-map-border")}</span>
     <Checkbox bind:checked={$showMapBorder}  />
   </label>
-
-  <div class="mb-2"></div>
 
   <label>
     <span>{$_("show-invisible-grounds")}</span>
@@ -49,12 +46,12 @@
     <div class="submenu" transition:fly={{duration: 80, y:-50}}>
       <div class="flex">
         <label>
-          <span>L</span>
+          <span class="incompressible w-6">L</span>
           <TextInput int min={1} sliderMax={800} bind:value={$grid.width} class="w-16"  bgColor="bg-gray-700"/>
         </label>
-        <div class="mr-3"></div>
+        <div class="w-2"></div>
         <label>
-          <span>H</span>
+          <span class="incompressible w-6">H</span>
           <TextInput int min={1} sliderMax={800} bind:value={$grid.height} class="w-16"  bgColor="bg-gray-700"/>
         </label>
       </div>
@@ -66,5 +63,17 @@
     </div>
   {/if}
 
-</div> 
+  <div class="mb-4"></div>
+
+  <label>
+    <span>{$_("layout")}</span>
+    <input type="checkbox" class="hidden"/>
+    <div class="flex">
+      <Button on:click={setSmallLayout} class="text-xs h-6">{$_("small")}</Button>
+      <div class="mr-1"></div>
+      <Button on:click={setLargeLayout} class="text-sm h-6">{$_("large")}</Button>
+    </div>
+  </label>
+
+</div>
 

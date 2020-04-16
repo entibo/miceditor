@@ -50,6 +50,7 @@
 
   let inputElement
   let internalValue
+  let temporaryValue = null
   let focused = false
   let invalid = false
 
@@ -62,6 +63,7 @@
   }
   async function onBlur() {
     focused = false
+    temporaryValue = null
     presentationValue = ""
     await tick()
     internalValue = value
@@ -83,7 +85,6 @@
       return
     }
   }
-  
 
   function onInput(e) {
     let str = e.target.value
@@ -93,6 +94,8 @@
       setNewValue(str)
       return
     }
+
+    temporaryValue = str
 
     let newValue
 
@@ -118,7 +121,7 @@
 
   function setNewValue(newValue) {
     invalid = false
-    console.log("setNewValue", newValue)
+    temporaryValue = null
     internalValue = newValue
     if(newValue !== value) {
       value = newValue
@@ -128,7 +131,9 @@
 
   $: presentationValue =
         focused 
-          ? internalValue 
+          ? temporaryValue !== null
+              ? temporaryValue
+              : internalValue 
           : (internalValue === undefined || internalValue === null) 
               ? "" 
               : float ? Math.round(internalValue*100)/100 
@@ -153,7 +158,6 @@
   {/if}
 
   <div class="material-input {className}" class:disabled={disabled} class:invalid={invalid} >
-
     <input type="text" 
       bind:this={inputElement} 
       value={presentationValue}

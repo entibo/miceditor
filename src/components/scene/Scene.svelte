@@ -80,7 +80,6 @@
   on:wheel={interaction.wheel}
   on:mousedown={interaction.backgroundMouseDown}  
   on:mousemove={interaction.backgroundMouseMove}
-  on:blur={interaction.windowMouseLeave}
   tabindex="-1"
 >
   <svg class="flex-grow" >

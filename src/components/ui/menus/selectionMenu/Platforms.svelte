@@ -61,14 +61,16 @@
     </div>
   </Tooltip>
 
-  <div class="mb-1"></div>
+  {#if props.radius.value !== undefined}
+    <div class="mb-1"></div>
 
-  <div class:disabled={props.radius.value === undefined}>
-    <label>
-      <span>Radius</span>
-      <TextInput int min={10} sliderMax={400} value={props.radius.value} set={props.radius.set} class="w-16"/>
-    </label>
-  </div>
+    <div class:disabled={props.radius.value === undefined}>
+      <label>
+        <span>Radius</span>
+        <TextInput int min={10} sliderMax={400} value={props.radius.value} set={props.radius.set} class="w-16"/>
+      </label>
+    </div>
+  {/if}
 
   <div class="mb-4"></div>
 
@@ -77,22 +79,6 @@
     <TextInput platform int min={0} value={props.type.value} set={props.type.set} class="w-16"/>
   </label>  
 
-  <div class="mb-1"></div>
-
-  <label>
-    <span>Z</span>
-    <TextInput int min={0} value={props.index.value} set={props.index.set} class="w-16"/>
-  </label>  
-
-  <div class="mb-1"></div>
-
-  <label class:disabled={props.foreground.value === undefined}>
-    <span>{$_("foreground")}</span>
-    <Checkbox checked={props.foreground.value} set={props.foreground.set} />
-  </label>
-
-  <div class="mb-4"></div>
-
   <div class:disabled={props.rotation.value === undefined}>
     <label>
       <span>{$_("rotation")}</span>
@@ -100,21 +86,20 @@
     </label>
   </div>
 
-  <div class="mb-1"></div>
-
-  <div class:disabled={props.color.value === undefined}>
-    <label>
-      <span>{$_("color")}</span>
-        <TextInput color value={props.color.value} set={props.color.set} class="w-16"/>
-    </label>
-  </div>
-
-  <div class="mb-1"></div>
-
   <label>
     <span>{$_("invisible")}</span>
     <Checkbox checked={props.invisible.value} set={props.invisible.set} />
   </label>
+
+  {#if props.color.value !== undefined}
+    <div class:disabled={props.color.value === undefined}>
+      <label>
+        <span>{$_("color")}</span>
+          <TextInput color value={props.color.value} set={props.color.set} class="w-16"/>
+      </label>
+    </div>
+  {/if}
+
   
   <div class="mb-4"></div>
   
@@ -195,7 +180,7 @@
     </label>   
   </div>
   
-  <div class="mb-2"></div>
+  <div class="mb-1"></div>
   
   <label>
     <span>nosync</span>
@@ -210,10 +195,6 @@
   </label> 
   {#if props.imageEnabled.value}
     <div class="submenu" transition:fly={{duration: 80, x:50}}>
-      <label>
-        <span class="incompressible">Url</span>
-        <TextInput value={props.imageValue.value} set={props.imageValue.set} />
-      </label> 
       <div class="flex">
         <label>
           <span class="incompressible">X</span>
@@ -225,10 +206,15 @@
           <TextInput int value={props.imageY.value} set={props.imageY.set} />
         </label>
       </div>
+      <div class="mb-1"></div>
+      <label>
+        <span class="incompressible">Url</span>
+        <TextInput value={props.imageValue.value} set={props.imageValue.set} />
+      </label> 
     </div>
   {/if}  
 
-  <div class="mb-2"></div>
+  <div class="mb-1"></div>
 
   <label>
     <span>lua</span>

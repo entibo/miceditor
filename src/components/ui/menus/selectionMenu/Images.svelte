@@ -32,12 +32,12 @@
 
   <div class="flex">
     <label>
-      <span>X</span>
+      <span class="incompressible w-6">X</span>
       <TextInput int value={props.x.value} set={props.x.set} />
     </label>
-    <div class="mr-3"></div>
+    <div class="w-2"></div>
     <label>
-      <span>Y</span>
+      <span class="incompressible w-6">Y</span>
       <TextInput int value={props.y.value} set={props.y.set} />
     </label>
   </div>
@@ -51,39 +51,32 @@
   
   <div class="mb-4"></div>
 
-  <label class:disabled={props.foreground.value === undefined}>
-    <span>{$_("foreground")}</span>
-    <Checkbox checked={props.foreground.value} set={props.foreground.set} />
-  </label>
-  
-  <div class="mb-2"></div>
-
   <label>
     <span>{$_("disappearing-images")}...</span>
     <Checkbox checked={props.disappearing.value} set={props.disappearing.set} />
   </label>
   {#if props.disappearing.value !== false}
-    <div class="submenu mt-1">
+    <div class="submenu">
       <div class="flex">
         <label>
-          <span>X</span>
+          <span class="incompressible w-6">X</span>
           <TextInput int value={props.rx.value} set={props.rx.set} />
         </label>
-        <div class="mr-3"></div>
+        <div class="w-2"></div>
         <label>
-          <span>Y</span>
+          <span class="incompressible w-6">Y</span>
           <TextInput int value={props.ry.value} set={props.ry.set} />
         </label>
       </div>
       <div class="mb-1"></div>
       <div class="flex">
         <label>
-          <span>L</span>
+          <span class="incompressible w-6">L</span>
           <TextInput int min={0} value={props.rw.value} set={props.rw.set} />
         </label>
-        <div class="mr-3"></div>
+        <div class="w-2"></div>
         <label>
-          <span>H</span>
+          <span class="incompressible w-6">H</span>
           <TextInput int min={0} value={props.rh.value} set={props.rh.set} />
         </label>
       </div>      

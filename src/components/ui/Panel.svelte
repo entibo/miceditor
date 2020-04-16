@@ -26,7 +26,7 @@
       : e.y - resizeActionPosition.y
     if(resize === "left" || resize === "top") delta = -delta
     let newPanelSize = panel.size + delta
-    if(newPanelSize >= 180) {
+    if(newPanelSize >= 100) {
       panel.size = newPanelSize
       resizeActionPosition = e
     }
@@ -67,7 +67,7 @@
           ></div>
         {/if}
 
-        <div class="group flex flex-col overflow-hidden" class:has-active-tab={group.activeTab}
+        <div class="group flex flex-col" class:has-active-tab={group.activeTab}
             class:target={$tabMovement.active && $tabMovement.target.type === "group" && $tabMovement.target.panelName === panelName && $tabMovement.target.groupIndex === groupIndex}
             on:mousemove={() => layout.setTabMovementTarget({ type: "group", panelName, groupIndex })}
         >

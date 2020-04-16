@@ -98,7 +98,7 @@
 
         <div class="p-2" >
           <label>
-            <span>Url</span>
+            <span class="incompressible">Url</span>
             <TextInput bind:value={activeImageUrl.value} on:input={updateActiveImageUrl} />
           </label>
         </div>
