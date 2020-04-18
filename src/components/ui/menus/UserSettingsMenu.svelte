@@ -47,12 +47,12 @@
       <div class="flex">
         <label>
           <span class="incompressible w-6">L</span>
-          <TextInput int min={1} sliderMax={800} bind:value={$grid.width} class="w-16"  bgColor="bg-gray-700"/>
+          <TextInput int min={1} sliderMax={800} bind:value={$grid.width} class="w-16" bgColor="bg-gray-700"/>
         </label>
         <div class="w-2"></div>
         <label>
           <span class="incompressible w-6">H</span>
-          <TextInput int min={1} sliderMax={800} bind:value={$grid.height} class="w-16"  bgColor="bg-gray-700"/>
+          <TextInput int min={1} sliderMax={800} bind:value={$grid.height} class="w-16" bgColor="bg-gray-700"/>
         </label>
       </div>
       <div class="mb-1"></div>

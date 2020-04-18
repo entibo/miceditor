@@ -90,7 +90,9 @@ export function clamp(v: number, a: number, b: number): number {
 }
 
 export function readInt(str: string): M.Maybe<number> {
-  return M.unless(isNaN)(parseInt(str))
+  let int = M.unless(isNaN)(parseInt(str))
+  if(M.is(int)) return int
+  return M.andThen(str, readFloat, M.unless(isFinite))
 }
 export function writeInt(x: number): string {
   return Math.round(x).toString()

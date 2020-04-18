@@ -2,7 +2,8 @@
 import { get } from "svelte/store"
 
 import { rotate } from "common"
-import { clamp } from "data/base/util"
+import { clamp, readInt } from "data/base/util"
+import * as Maybe from "maybe/Maybe"
 
 import * as Editor from "data/editor"
 
@@ -15,7 +16,7 @@ import { mapSettings } from "state/map"
 import * as sceneObjects from "state/sceneObjects"
 import { SceneObject } from "state/sceneObjects"
 
-import { zoom, brushPalette } from "state/user"
+import { zoom, brushPalette, Brush } from "state/user"
 import clipboard from "state/clipboard"
 
 import { undo, redo } from "state/history"
@@ -56,6 +57,7 @@ export const isKeyDown = store({
 })
 export function windowKeyDown(e: KeyboardEvent) {
   let key = e.key.toLowerCase()
+  let code = e.code.toLowerCase()
 
   if(e.shiftKey)    isKeyDown.update(() => (isKeyDown.shift = true, isKeyDown))
   if(e.ctrlKey)     isKeyDown.update(() => (isKeyDown.ctrl  = true, isKeyDown))
@@ -104,7 +106,22 @@ export function windowKeyDown(e: KeyboardEvent) {
       selection.move(dx, dy)
     }
   }
-  else if(key in keyActions) 
+
+  if(code.startsWith("digit")) {
+    let x = code[5]
+    if(x) {
+      let y = parseInt(x)
+      if(!isNaN(y)) {
+        let index = y - 1
+        let brush = (get(brushPalette) as Brush[])[index]
+        if(brush) {
+          Creation.setLine(brush)
+        }
+      }
+    }
+  }
+
+  if(key in keyActions) 
     keyActions[key](e)
 }
 export function windowKeyUp(e: KeyboardEvent) {

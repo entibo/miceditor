@@ -12,6 +12,10 @@
   export let hoverable = false
   export let noStyle = false
   export let noBorder = false
+  export let inDuration = 140
+  export let outDuration = 80
+  export let inDelay = 0
+  export let outDelay = 0
 
   export let top = false
   export let bottom = false
@@ -34,8 +38,16 @@
     right   ? { x: -flyOffset } :
     top     ? { y:  flyOffset } :
     bottom  ? { y: -flyOffset } : {}
-  $: flyInOptions  = { ...flyDirectionOptions, duration: 140 }
-  $: flyOutOptions = { ...flyDirectionOptions, duration: 80 }
+  $: flyInOptions  = { 
+    ...flyDirectionOptions, 
+    duration: inDuration,
+    delay: inDelay,
+  }
+  $: flyOutOptions = { 
+    ...flyDirectionOptions, 
+    duration: outDuration,
+    delay: outDelay,
+  }
 
   let targetElement
   let tooltipElement
@@ -158,20 +170,20 @@
 >
   <slot></slot>
   {#if visible}
-  <div bind:this={tooltipElement}
-       class="tooltip"
-       class:pointer-events-none={!hoverable}
-       class:border={!noBorder} 
-  >
-    <div class:inner={!noStyle} 
-         in:fly={flyInOptions}
-         out:fly={flyOutOptions}
+    <div bind:this={tooltipElement}
+        class="tooltip"
+        class:pointer-events-none={!hoverable}
+        class:border={!noBorder} 
     >
-      <slot name="tooltip">
-        <span class="pointer-events-all whitespace-no-wrap">{title}</span>
-      </slot>
+      <div class:inner={!noStyle} 
+          in:fly={flyInOptions}
+          out:fly={flyOutOptions}
+      >
+        <slot name="tooltip">
+          <span class="pointer-events-all whitespace-no-wrap">{title}</span>
+        </slot>
+      </div>
     </div>
-  </div>
   {/if}
 </div>
 

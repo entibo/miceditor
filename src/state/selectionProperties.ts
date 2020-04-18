@@ -317,10 +317,9 @@ const data = store<Data>({
     axisY: {
       path: ["axis", "y"]
     },
-    limit1: {},
-    limit1Enabled: {},
-    limit2: {},
-    limit2Enabled: {},
+    angle: {},
+    min: {},
+    max: {},
     power: {},
     speed: {},
   },

@@ -3,14 +3,11 @@
   import { slide, fly } from "svelte/transition"
 
   import Icon from "fa-svelte"
-  import { faPenNib } from "@fortawesome/free-solid-svg-icons/faPenNib"
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
   import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes"
 
-  import TextInput from "components/common/TextInput.svelte"
   import Tooltip from "components/common/Tooltip.svelte"
-  import Button from "components/common/Button.svelte"
-  import Checkbox from "components/common/Checkbox.svelte"
+  import BrushMenu from "components/ui/menus/BrushMenu.svelte"
 
   import * as Creation from "state/creation"
   import { creation } from "state/creation"
@@ -38,33 +35,46 @@
       Creation.disable()
   }
 
-  function updateActiveBrush() {
-    $brushPalette = $brushPalette
-    creation.invalidate()
-  }
+  let clientWidth = 0, clientHeight = 0
+  $: displaySettingsInTooltip = true
 
 </script>
 
-<div class="form">
 
+<div class="w-full h-full">
+    
   <div class="flex flex-wrap">
 
-    {#each $brushPalette as brush}
-      <div class="tile outline-outside dim-40 bg-tfm-blue rounded-sm overflow-hidden relative" 
-          class:active={brush === activeBrush}
-          on:click={() => Creation.setLine(brush)}
+    {#each $brushPalette as brush, index}
+      <Tooltip hoverable right noStyle
+               inDelay={500} outDelay={0}
+               active={displaySettingsInTooltip ? undefined : false}
       >
-        <div class="brush-preview" 
-            style="background: #{brush.color}; opacity: {brush.opacity}; width: {brush.thickness}px; height: {brush.thickness}px;"
-        ></div>
-        
-        <div class="brush-remove"
-            on:click|preventDefault|stopPropagation={() => removeBrush(brush)}
-        >
-          <Icon icon={faTimes} />
+      
+        <div slot="tooltip" class="opacity-95 hover:opacity-100 border-4 border-gray-800 tabContent">
+          <BrushMenu {brush} />
         </div>
-        
-      </div>
+
+        <div class="relative">
+          <div class="tile outline-outside dim-40 bg-tfm-blue rounded-sm overflow-hidden relative" 
+              class:active={brush === activeBrush}
+              on:click={() => Creation.setLine(brush)}
+          >
+            <div class="brush-preview" 
+                style="background: #{brush.color}; opacity: {brush.opacity}; width: {brush.thickness}px; height: {brush.thickness}px;"
+            ></div>
+            <div class="brush-remove"
+                on:click|preventDefault|stopPropagation={() => removeBrush(brush)}
+            >
+              <Icon icon={faTimes} />
+            </div>
+          </div>
+          {#if index <= 9}
+            <div class="brush-badge">{index+1}</div>
+          {/if}
+        </div>
+      
+      </Tooltip>
     {/each}
 
     <Tooltip title={$_("button-add")}>
@@ -77,56 +87,10 @@
 
   </div>
 
-  <div class="mb-2"></div>
-
-  {#if activeBrush}
-    <div class="" transition:fly={{duration: 80, y:-50}}>
-
-      <label>
-        <span>{$_("color")}</span>
-        <TextInput color bind:value={activeBrush.color} set={updateActiveBrush} class="w-16"/>
-      </label>
-
-      <div class="mb-1"></div>
-
-      <label>
-        <span>{$_("line-width")}</span>
-        <TextInput int min={1} max={250} bind:value={activeBrush.thickness} set={updateActiveBrush} class="w-16"/>
-      </label>
-
-      <div class="mb-1"></div>
-
-      <label>
-        <span>{$_("opacity")}</span>
-        <TextInput float min={0} max={1} step={0.01} bind:value={activeBrush.opacity} set={updateActiveBrush} class="w-16"/>
-      </label>
-
-      <div class="mb-1"></div>
-
-      <label >
-        <span>{$_("foreground")}</span>
-        <Checkbox bind:checked={activeBrush.foreground} set={updateActiveBrush} />
-      </label>
-
+  {#if activeBrush && !displaySettingsInTooltip}
+    <div class="w-full" transition:fly={{duration: 80, y:-50}}>
       <div class="mb-2"></div>
-
-      <label >
-        <span> 
-          <Icon icon={faPenNib} /> 
-          {$_("curve-tool")}
-        </span>
-        <Checkbox bind:checked={activeBrush.curveToolEnabled}  />
-      </label>
-
-      {#if activeBrush.curveToolEnabled}
-        <div class="submenu mt-1" transition:fly={{duration: 80, y:-50}}>
-          <label>
-            <span>{$_("fineness")}</span>
-            <TextInput int min={1} sliderMax={16} bind:value={activeBrush.fineness} class="w-16"/>
-          </label>
-        </div>
-      {/if}   
-
+      <BrushMenu brush={activeBrush} />
     </div>
   {/if}
 
@@ -134,6 +98,13 @@
 
 
 <style lang="postcss">
+  .brush-badge {
+    @apply pointer-events-none absolute z-10 bottom-0 left-0;
+    @apply w-4 h-4 rounded-full bg-gray-700b;
+    @apply flex justify-center items-center;
+    @apply text-xs font-mono text-gray-200;
+    /* transform: translate(-50%, 50%); */
+  }
   .brush-preview {
     @apply rounded-full absolute;
     left: 50%;

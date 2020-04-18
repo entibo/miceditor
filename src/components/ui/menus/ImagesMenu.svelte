@@ -49,12 +49,13 @@
       Creation.disable()
   }
 
-  function updateActiveImageUrl() {
-    let {value,url} = Editor.Image.readUrl(activeImageUrl.value)
-    activeImageUrl.value = value
-    activeImageUrl.url = url
+  function updateImageUrl(imageUrl, v) {
+    let {value,url} = Editor.Image.readUrl(v)
+    imageUrl.value = value
+    imageUrl.url = url
     $imagePalette = $imagePalette
-    creation.invalidate()
+    if(imageUrl === activeImageUrl)
+      creation.invalidate()
   }
 
 </script>
@@ -64,20 +65,35 @@
   <div class="flex flex-wrap justify-center">
 
     {#each $imagePalette as imageUrl}
-      <div class="tile outline-outside dim-40 bg-tfm-blue rounded-sm overflow-hidden relative" 
-          class:active={imageUrl === activeImageUrl}
-          on:click={() => Creation.setImage(imageUrl)}
+      <Tooltip hoverable right noStyle
+          inDelay={imageUrl.value === "" && imageUrl === activeImageUrl ? 0 : 500} 
+          active={imageUrl.value === "" && imageUrl === activeImageUrl ? true : undefined}
       >
-        
-        <img class="dim-max-40" src={imageUrl.url} alt={imageUrl.value} />
-        
-        <div class="image-remove"
-            on:click|preventDefault|stopPropagation={() => removeImageUrl(imageUrl)}
-        >
-          <Icon icon={faTimes} />
+
+        <div slot="tooltip" class="opacity-95 hover:opacity-100 border-4 border-gray-800 tabContent">
+          <div bind:this={editingElement} class="form" >
+            <label>
+              <span class="incompressible">Url</span>
+              <TextInput bind:value={imageUrl.value} set={v => updateImageUrl(imageUrl, v)} 
+                         class="w-64"
+              />
+            </label>
+          </div>
         </div>
         
-      </div>
+        <div class="tile outline-outside dim-40 bg-tfm-blue rounded-sm overflow-hidden relative" 
+            class:active={imageUrl === activeImageUrl}
+            on:click={() => Creation.setImage(imageUrl)}
+        >
+          <img class="dim-max-40" src={imageUrl.url} alt={imageUrl.value} />
+          <div class="image-remove"
+              on:click|preventDefault|stopPropagation={() => removeImageUrl(imageUrl)}
+          >
+            <Icon icon={faTimes} />
+          </div>
+        </div>
+
+      </Tooltip>
     {/each}
 
     <Tooltip title={$_("button-add")}>
@@ -90,31 +106,17 @@
 
   </div>
 
-  <div class="mb-2"></div>
-
-  <div bind:this={editingElement} >
-    {#if activeImageUrl}
-      <div transition:fly={{duration: 80, x:50}} class="flex flex-wrap justify-center items-center">
-
-        <div class="p-2" >
-          <label>
-            <span class="incompressible">Url</span>
-            <TextInput bind:value={activeImageUrl.value} on:input={updateActiveImageUrl} />
-          </label>
-        </div>
-
-        <a href="http://derpolino.alwaysdata.net/imagetfm/" target="_blank">
-          <Button class="text-xs flex items-center">
-            <span class="mr-1">Atelier801 Images Database</span>
-            <Icon icon={faExternalLinkAlt} />
-          </Button>
-        </a>
-
-      </div>
-    {/if}
-  </div>
-
 </div>
+
+
+<!-- 
+<a href="http://derpolino.alwaysdata.net/imagetfm/" target="_blank">
+  <Button class="text-xs flex items-center">
+    <span class="mr-1">Atelier801 Images Database</span>
+    <Icon icon={faExternalLinkAlt} />
+  </Button>
+</a>
+ -->
 
 
 <style lang="postcss">

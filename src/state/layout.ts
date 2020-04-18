@@ -4,6 +4,7 @@ import { clone } from "data/base/util"
 import { store, Store, persistentWritable } from "state/util"
 
 import { creation } from "state/creation"
+import { selection } from "state/selection"
 import shamanObjectMetadata from "metadata/shamanObject"
 
 
@@ -54,6 +55,7 @@ export const tabToLocaleKey: Record<TabName, LocaleKey> = {
 
 import smallLayout from "layouts/small"
 import largeLayout from "layouts/large"
+import { storeGet } from "common"
 
 const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
 const defaultLayout = 
@@ -113,6 +115,18 @@ export function selectTab(panelName: PanelName, groupIndex: number, tab: TabName
 }
 
 
+function findTabPanelGroup(targetTab: TabName): [Panel, Group] | undefined {
+  let cfg = storeGet(layoutConfig)
+  for(let panel of panels.map(k => cfg.panels[k])) {
+    for(let group of panel.groups) {
+      for(let tab of group.tabs) {
+        if(tab === targetTab)
+          return [panel, group]
+      }
+    }
+  }
+}
+
 
 creation.subscribe(() => {
   let metadata
@@ -143,6 +157,23 @@ creation.subscribe(() => {
   }
 })
 
+
+selection.subscribe(list => {
+  let r = findTabPanelGroup("selection")
+  if(!r) return
+  let [panel, group] = r
+  layoutConfig.update(cfg => {
+    if(list.length) {
+      group.activeTab = "selection"
+    }
+    else if(group.activeTab === "selection") {
+      let idx = group.tabs.indexOf("selection")
+      group.activeTab = group.tabs[idx-1] || group.tabs[0]
+    }
+    return cfg
+  })
+  
+})
 
 
 

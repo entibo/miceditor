@@ -171,7 +171,7 @@
   {/if}
 
   <!-- JP, JR -->
-  {#if props.limit1.value !== undefined}
+  {#if props.power.value !== undefined}
     <div class="mb-4"></div>
     {#if props.axisX.value !== undefined}
       <div class="flex">
@@ -191,32 +191,49 @@
       </div>
       <div class="mb-1"></div>
     {/if}
-    <label>
-      <span>{$_("power")}</span>
-      <TextInput float value={props.power.value} set={props.power.set} class="w-16"/>
-    </label>
-    <label>
-      <span>{$_("speed")}</span>
-      <TextInput float value={props.speed.value} set={props.speed.set} class="w-16"/>
-    </label>
-    <div class="mb-1"></div>
+    {#if props.angle.value !== undefined}
+      <label>
+        <span>{$_("rotation")}</span>
+        <div class="flex">
+          <label class="icon-btn text-xs mr-1" on:click={() => props.angle.set(0)} >
+            <Icon icon={faUndo} />
+          </label>
+          <TextInput float sliderMin={-180} sliderMax={180} value={props.angle.value} set={props.angle.set} class="w-16"/>
+        </div>
+      </label>
+      <div class="mb-1"></div>
+    {/if}
     <label>
       <span>{$_("limit")} 1</span>
       <div class="flex">
-        <Checkbox checked={props.limit1Enabled.value} set={props.limit1Enabled.set} class="mr-1" />
-        <TextInput int value={props.limit1.value} set={props.limit1.set} class="w-16"
-                   disabled={props.limit1Enabled.value === false}
-        />
+        <label class="icon-btn text-xs mr-1" on:click={() => props.min.set(-Infinity)} >
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput int value={props.min.value} set={props.min.set} class="w-16" />
       </div>
     </label>
     <label>
       <span>{$_("limit")} 2</span>
       <div class="flex">
-        <Checkbox checked={props.limit2Enabled.value} set={props.limit2Enabled.set} class="mr-1" />
-        <TextInput int value={props.limit2.value} set={props.limit2.set} class="w-16"
-                   disabled={props.limit2Enabled.value === false}
-        />
+        <label class="icon-btn text-xs mr-1" on:click={() => props.max.set(+Infinity)} >
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput int value={props.max.value} set={props.max.set} class="w-16" />
       </div>
+    </label>
+    <div class="mb-1"></div>
+    <label>
+      <span>{$_("power")}</span>
+      <div class="flex">
+        <label class="icon-btn text-xs mr-1" on:click={() => props.power.set(0)} >
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput float value={props.power.value} set={props.power.set} class="w-16"/>
+      </div>
+    </label>
+    <label>
+      <span>{$_("speed")}</span>
+      <TextInput float value={props.speed.value} set={props.speed.set} class="w-16"/>
     </label>
   {/if}
 

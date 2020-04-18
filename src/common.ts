@@ -17,6 +17,14 @@ export function debounce(fn: Function, ms: number) {
   fnToTimeout.set(fn, timeout)
 }
 
+import { Readable } from "svelte/store"
+export function storeGet<T>(store: Readable<T>): T {
+  let value: T
+  store.subscribe(v => value = v)()
+  return value!
+}
+
+
 /**
   - No values --> undefined
   - All values are the same --> value
@@ -64,6 +72,9 @@ export const bezier = (t: number, p1: Point, p2: Point, c1: Point, c2: Point) =>
   x: bezier1d(t, p1.x, p2.x, c1.x, c2.x),
   y: bezier1d(t, p1.y, p2.y, c1.y, c2.y),
 })
+
+export const deg = (v: number) => v * 180/Math.PI
+export const rad = (v: number) => v * Math.PI/180
 
 declare global {
   interface Array<T> {

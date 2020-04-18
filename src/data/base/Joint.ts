@@ -3,6 +3,7 @@ import * as M from "maybe/Maybe"
 import * as XML from "./XML"
 import * as util from "./util"
 import * as Common from "./Common"
+import { deg, rad } from "common"
 
 const attributes = [
   "c", "AMP", "HZ", "M1", "M2", "P1", "P2", "P3", "P4", "A", "AXIS", "LIM1", "LIM2", "MV", "R",
@@ -48,10 +49,8 @@ export type Joint
 
   | { type: "JP"
       axis: Point
-      limit1: number
-      limit1Enabled: boolean
-      limit2: number
-      limit2Enabled: boolean
+      min: number
+      max: number
       power: number
       speed: number
       angle: number
@@ -59,10 +58,8 @@ export type Joint
     & Base
     
   | { type: "JR"
-      limit1: number
-      limit1Enabled: boolean
-      limit2: number
-      limit2Enabled: boolean
+      min: number
+      max: number
       power: number
       speed: number
       point1: OptionalPoint
@@ -127,11 +124,9 @@ export const defaults = <T extends Type> (type: T) =>
         type === "JP" ?
           { type,
             axis: { x: 1, y: 0 },
-            limit1: 0,
-            limit1Enabled: false,
-            limit2: 0,
-            limit2Enabled: false,
-            power: Infinity,
+            min: -Infinity,
+            max: +Infinity,
+            power: 0,
             speed: 5,
             angle: 0,
             point1: optionalPointDefaults(),
@@ -139,11 +134,9 @@ export const defaults = <T extends Type> (type: T) =>
         :
         type === "JR" ?
           { type,
-            limit1: 0,
-            limit1Enabled: false,
-            limit2: 0,
-            limit2Enabled: false,
-            power: Infinity,
+            min: -Infinity,
+            max: +Infinity,
+            power: 0,
             speed: 5,
             point1: optionalPointDefaults(),
             point2: optionalPointDefaults(),
@@ -208,21 +201,22 @@ export function decode(xmlNode: XML.Node): Joint {
     setProp ("speed") (o.speed)
   })
 
-  setProp ("angle")     (getAttr ("A")   (util.readFloat, v => (v*180/Math.PI)%360))
+  setProp ("angle")     (getAttr ("A")   (util.readFloat, deg))
   setProp ("frequency") (getAttr ("HZ")  (util.readFloat))
   setProp ("damping")   (getAttr ("AMP") (util.readFloat))
   setProp ("ratio")     (getAttr ("R")   (util.readFloat))
 
   setProp ("axis") (getAttr ("AXIS") (readPoint))
 
-  getAttr ("LIM1") (util.readFloat, v => {
-    setProp ("limit1Enabled") (true)
-    setProp ("limit1") (v * 30)
-  })
-  getAttr ("LIM2") (util.readFloat, v => {
-    setProp ("limit2Enabled") (true)
-    setProp ("limit2") (v * 30)
-  })
+
+  let minMaxEnabled = !!(node.attributes.LIM1 || node.attributes.LIM2)
+  let minMaxTransform = type === "JR" ? deg : (v: number) => v*30
+
+  setProp ("min") (M.withDefault (minMaxEnabled ? 0 : -Infinity) 
+    (getAttr ("LIM1") (util.readFloat, minMaxTransform)))
+  setProp ("max") (M.withDefault (minMaxEnabled ? 0 : +Infinity) 
+    (getAttr ("LIM2") (util.readFloat, minMaxTransform)))
+
 
   setProp ("fineness") (getAttr ("f") (util.readInt, x => Math.max(1, x)))
   setProp ("controlPoint1") (getAttr ("C1") (readPoint))
@@ -241,6 +235,8 @@ export function encode(data: Joint): Node {
       ...data.unknownAttributes,
     }
   }
+
+  let type: Type = node.name
 
   const getProp = util.makeGetter<JointProps>(data)
   const setAttr = util.makeSetter(node.attributes)
@@ -276,15 +272,18 @@ export function encode(data: Joint): Node {
 
   setAttr ("AXIS") (getProp ("axis") (writePoint, util.omitOn("0,0")))
 
-  setAttr ("LIM1") (M.andThen(
-    getProp ("limit1Enabled") (M.iff(x => x === true)),
-    () => getProp ("limit1") (v => v / 30, util.writeFloat)
-  ))
-  setAttr ("LIM2") (M.andThen(
-    getProp ("limit2Enabled") (M.iff(x => x === true)),
-    () => getProp ("limit2") (v => v / 30, util.writeFloat)
-  ))
+
+  let minMaxEnabled 
+    =  M.is(getProp("min")(M.iff(v => v !== -Infinity))) 
+    || M.is(getProp("max")(M.iff(v => v !== Infinity)))
+  let minMaxTransform = type === "JR" ? rad : (v: number) => v/30
+
+  if(minMaxEnabled) {
+    setAttr ("LIM1") (getProp ("min") (minMaxTransform, util.writeFloat, util.omitOn("0")))
+    setAttr ("LIM2") (getProp ("max") (minMaxTransform, util.writeFloat, util.omitOn("0")))
+  }
   
+
   setAttr ("f") (getProp ("fineness") (util.writeInt))
   setAttr ("C1") (getProp ("controlPoint1") (writePoint))
   setAttr ("C2") (getProp ("controlPoint2") (writePoint))
