@@ -44,33 +44,37 @@
     </g>
   {/if}
 
-  {#if metadata.spritesheet}
+  <g filter={$obj.invisible ? 'url("#erode")' : ''}
+     class:opacity-50={$obj.ghost}
+  >
 
-    <foreignObject 
-      x={-metadata.width/2} y={-metadata.height/2}
-      width={metadata.width} height={metadata.height}
-      class="pointer-events-none" 
-      class:opacity-50={$obj.ghost}
-    >
-      <div style="background-image: url(dist/shamanObjects/{metadata.spritesheet}); 
-                  background-position: {-metadata.offset.x}px {-metadata.offset.y}px;
-                  background-repeat: no-repeat;"
-        class="w-full h-full"
-      ></div>
-    </foreignObject>
+    {#if metadata.spritesheet}
 
-  {:else}
+      <foreignObject 
+        x={-metadata.width/2} y={-metadata.height/2}
+        width={metadata.width} height={metadata.height}
+        class="pointer-events-none" 
+      >
+        <div style="background-image: url(dist/shamanObjects/{metadata.spritesheet}); 
+                    background-position: {-metadata.offset.x}px {-metadata.offset.y}px;
+                    background-repeat: no-repeat;"
+          class="w-full h-full"
+        ></div>
+      </foreignObject>
 
-    <image 
-      x={-metadata.width/2} y={-metadata.height/2}
-      width={metadata.width} height={metadata.height}
-      href="dist/shamanObjects/{metadata.sprite}"
-      on:mousedown|preventDefault
-      class="pointer-events-none" 
-      class:opacity-50={$obj.ghost}
-    />
+    {:else}
 
-  {/if}
+      <image 
+        x={-metadata.width/2} y={-metadata.height/2}
+        width={metadata.width} height={metadata.height}
+        href="dist/shamanObjects/{metadata.sprite}"
+        on:mousedown|preventDefault
+        class="pointer-events-none" 
+      />
+
+    {/if}
+
+  </g>
 
   {#if metadata.circle}
     <circle

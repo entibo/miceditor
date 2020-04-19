@@ -6,7 +6,6 @@
   import { platformResizeKnobMouseDown,
            platformBoosterVectorMouseDown,
            platformBoosterVectorMinLength, 
-           platformBoosterVectorSpeedLengthRatio, 
          } from "state/interaction"
 
   import SvgImage from "components/common/SvgImage.svelte"
@@ -43,12 +42,13 @@
   $: if($obj.booster && $obj.booster.enabled) {
     let angle = $obj.booster.angle
     let rad = angle * Math.PI / 180
-    let length = platformBoosterVectorMinLength 
-               + $obj.booster.speed * platformBoosterVectorSpeedLengthRatio
+    let length = platformBoosterVectorMinLength + $obj.booster.speed
     boosterVector = {
       angle,
+      length,
       x: length * Math.cos(rad),
       y: length * Math.sin(rad),
+      animationDuration: 1 / ($obj.booster.speed / 10000),
     }
   }
   else boosterVector = null
@@ -154,6 +154,9 @@
     >
       <line x1={0} x2={boosterVector.x}
             y1={0} y2={boosterVector.y}
+            class="pointer-events-none"
+            stroke-dasharray={boosterVector.length/5}
+            style="animation-duration: {boosterVector.animationDuration}s;"
       />
       <path class="arrowHead"
             transform="translate({boosterVector.x} {boosterVector.y})
@@ -176,24 +179,26 @@
   .booster-vector.zero-speed {
     opacity: 0.5;
   }
-  .booster-vector line {
-    stroke: yellow;
-    stroke-width: 2;
-    stroke-dasharray: 4;
-    animation: dash-animation 2s linear infinite;
-  }
   .booster-vector .arrowHead {
     /* fill: #0dff41; */
     /* stroke: white;
     stroke-width: 1; */
-    fill: yellow;
+    fill: #33ff44;
+  }
+  .booster-vector line {
+    stroke: #33ff44;
+    stroke-width: 1;
+    /* stroke-dasharray: 25; */
+    animation-name: dash-animation;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
   }
   @keyframes dash-animation {
     from {
       stroke-dashoffset: 0;
     }
     to {
-      stroke-dashoffset: -8;
+      stroke-dashoffset: -10000;
     }
   }
 

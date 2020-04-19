@@ -46,7 +46,10 @@
 
     <div class:disabled={props.rotation.value === undefined}>
       <label>
-        <span>{$_("rotation")}</span>
+        <span>
+          {$_("rotation")}
+          <span class="text-xs opacity-75">(deg)</span>
+        </span>
         <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
       </label>
     </div>
@@ -54,6 +57,11 @@
     <label class:disabled={props.ghost.value === undefined}>
       <span>{$_("ghost")}</span>
       <Checkbox checked={props.ghost.value} set={props.ghost.set} />
+    </label>
+
+    <label class:disabled={props.invisible.value === undefined}>
+      <span>{$_("invisible")}</span>
+      <Checkbox checked={props.invisible.value} set={props.invisible.set} />
     </label>
   {/if}
 

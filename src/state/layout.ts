@@ -56,6 +56,7 @@ export const tabToLocaleKey: Record<TabName, LocaleKey> = {
 import smallLayout from "layouts/small"
 import largeLayout from "layouts/large"
 import { storeGet } from "common"
+import { mapSettings } from "./map"
 
 const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
 const defaultLayout = 
@@ -135,7 +136,8 @@ creation.subscribe(() => {
       ( metadata = shamanObjectMetadata.get(creation.type),
         "variants" in metadata &&
         metadata.variants &&
-        metadata.variants.length
+        metadata.variants.length && 
+        !(metadata.defilanteVariant && mapSettings.defilante.enabled)
       )
   ) {
     layoutConfig.update(cfg => {

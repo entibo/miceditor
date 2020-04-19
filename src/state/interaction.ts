@@ -1,7 +1,7 @@
 
 import { get } from "svelte/store"
 
-import { rotate } from "common"
+import { rotate, deg, rad } from "common"
 import { clamp, readInt } from "data/base/util"
 import * as Maybe from "maybe/Maybe"
 
@@ -240,7 +240,7 @@ class Select extends MouseMovement {
   }
 }
 
-class JointAction extends MouseMovement {
+class JointPointAction extends MouseMovement {
   constructor(
     e: MouseEvent, 
     public obj: Store<Editor.Joint.Joint>, 
@@ -279,6 +279,54 @@ class JointAction extends MouseMovement {
     let point: Point = (this.obj as any)[this.startPoint.name]
     point.x = nx
     point.y = ny
+    this.obj.invalidate()
+  }
+}
+
+class JointPrismaticLimitAction extends MouseMovement {
+  constructor(
+    e: MouseEvent, 
+    public obj: Store<Extract<Editor.Joint.Joint,{type:"JP"}>>, 
+    public which: "min" | "max",
+    public origin: Point,
+    public angle: number)
+  {
+    super(e)
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let gamePosition = sceneToGameCoordinates(this.current)
+
+    let dx = gamePosition.x - this.origin.x
+    let dy = gamePosition.y - this.origin.y
+    let value = rotate(dx, dy, -this.angle)[0]
+
+    this.obj[this.which] = value
+    this.obj.invalidate()
+  }
+}
+
+class JointRotationLimitAction extends MouseMovement {
+  constructor(
+    e: MouseEvent, 
+    public obj: Store<Extract<Editor.Joint.Joint,{type:"JR"}>>, 
+    public which: "min" | "max",
+    public origin: Point,
+    public angle: number)
+  {
+    super(e)
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let gamePosition = sceneToGameCoordinates(this.current)
+
+    let dx = gamePosition.x - this.origin.x
+    let dy = gamePosition.y - this.origin.y
+    let value = - deg(Math.atan2(dy, dx)) + this.angle
+    if(value < 0 && this.which === "max") value += 360
+    if(value > 0 && this.which === "min") value -= 360
+
+    this.obj[this.which] = value
     this.obj.invalidate()
   }
 }
@@ -381,7 +429,6 @@ class PlatformRectangleResizeAction extends MouseMovement {
 }
 
 export const platformBoosterVectorMinLength = 30
-export const platformBoosterVectorSpeedLengthRatio = 5
 class PlatformBoosterVectorResizeAction extends MouseMovement {
   constructor(
     e: MouseEvent, 
@@ -405,7 +452,7 @@ class PlatformBoosterVectorResizeAction extends MouseMovement {
 
     this.obj.booster.angle = angle
     this.obj.booster.speed = 
-      Math.max(0, (length - platformBoosterVectorMinLength) / platformBoosterVectorSpeedLengthRatio)
+      Math.max(0, length - platformBoosterVectorMinLength)
     this.obj.invalidate()
   }
 }
@@ -498,11 +545,25 @@ export function objectMouseDown(e: MouseEvent, obj: SceneObject) {
   currentMouseMovement = new Move(e)
 }
 
-export function jointMouseDown(e: MouseEvent, obj: Store<Editor.Joint.Joint>, startPoint: Point & {name:Editor.Joint.PointName}) {
+export function jointPointMouseDown(e: MouseEvent, obj: Store<Editor.Joint.Joint>, startPoint: Point & {name:Editor.Joint.PointName}) {
   if(isKeyDown.space) return
   e.preventDefault()
 
-  currentMouseMovement = new JointAction(e, obj, startPoint)
+  currentMouseMovement = new JointPointAction(e, obj, startPoint)
+}
+
+export function jointPrismaticLimitMouseDown(e: MouseEvent, obj: Store<Editor.Joint.Joint>, which: "min" | "max", origin: Point, angle: number) {
+  if(isKeyDown.space) return
+  e.preventDefault()
+
+  currentMouseMovement = new JointPrismaticLimitAction(e, obj as any, which, origin, angle)
+}
+
+export function jointRotationLimitMouseDown(e: MouseEvent, obj: Store<Editor.Joint.Joint>, which: "min" | "max", origin: Point, angle: number) {
+  if(isKeyDown.space) return
+  e.preventDefault()
+
+  currentMouseMovement = new JointRotationLimitAction(e, obj as any, which, origin, angle)
 }
 
 export function platformResizeKnobMouseDown(e: MouseEvent, obj: Store<Editor.Platform.Platform>, knob: number, relativeToKnob = false) {

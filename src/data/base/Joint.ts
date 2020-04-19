@@ -123,11 +123,11 @@ export const defaults = <T extends Type> (type: T) =>
         :
         type === "JP" ?
           { type,
-            axis: { x: 1, y: 0 },
+            axis: { x: -1, y: 0 },
             min: -Infinity,
             max: +Infinity,
             power: 0,
-            speed: 5,
+            speed: 50,
             angle: 0,
             point1: optionalPointDefaults(),
           }
@@ -137,7 +137,7 @@ export const defaults = <T extends Type> (type: T) =>
             min: -Infinity,
             max: +Infinity,
             power: 0,
-            speed: 5,
+            speed: 45,
             point1: optionalPointDefaults(),
             point2: optionalPointDefaults(),
           }
@@ -196,11 +196,6 @@ export function decode(xmlNode: XML.Node): Joint {
     setProp ("foreground")    (values[3])
   })
 
-  getAttr ("MV") (readPowerSpeed, o => {
-    setProp ("power") (o.power)
-    setProp ("speed") (o.speed)
-  })
-
   setProp ("angle")     (getAttr ("A")   (util.readFloat, deg))
   setProp ("frequency") (getAttr ("HZ")  (util.readFloat))
   setProp ("damping")   (getAttr ("AMP") (util.readFloat))
@@ -218,6 +213,14 @@ export function decode(xmlNode: XML.Node): Joint {
     (getAttr ("LIM2") (util.readFloat, minMaxTransform)))
 
 
+  let speedTransform = type === "JR" ? deg : (v: number) => v*30
+
+  getAttr ("MV") (readPowerSpeed, o => {
+    setProp ("power") (o.power)
+    setProp ("speed") (M.andThen(o.speed, speedTransform))
+  })
+
+  
   setProp ("fineness") (getAttr ("f") (util.readInt, x => Math.max(1, x)))
   setProp ("controlPoint1") (getAttr ("C1") (readPoint))
   setProp ("controlPoint2") (getAttr ("C2") (readPoint))
@@ -259,12 +262,6 @@ export function encode(data: Joint): Node {
     ])
   ))
 
-  setAttr ("MV") (M.map(
-    (p,s) => p !== 0 ? writePowerSpeed(p,s) : M.None,
-    getProp ("power") (),
-    getProp ("speed") (),
-  ))
-  
   setAttr ("A")   (getProp ("angle")     (util.omitOn(0), v => (v%360)*Math.PI/180, util.writeFloat))
   setAttr ("HZ")  (getProp ("frequency") (util.omitOn(0), util.writeFloat))
   setAttr ("AMP") (getProp ("damping")   (util.omitOn(0), util.writeFloat))
@@ -282,6 +279,15 @@ export function encode(data: Joint): Node {
     setAttr ("LIM1") (getProp ("min") (minMaxTransform, util.writeFloat, util.omitOn("0")))
     setAttr ("LIM2") (getProp ("max") (minMaxTransform, util.writeFloat, util.omitOn("0")))
   }
+
+  
+  let speedTransform = type === "JR" ? rad : (v: number) => v/30
+  
+  setAttr ("MV") (M.map(
+    (p,s) => p !== 0 ? writePowerSpeed(p,s) : M.None,
+    getProp ("power") (),
+    getProp ("speed") (speedTransform),
+  ))
   
 
   setAttr ("f") (getProp ("fineness") (util.writeInt))

@@ -7,13 +7,23 @@ import shamanObjectMetadata from "metadata/shamanObject"
 
 export * from "data/base/ShamanObject"
 
-export type ShamanObject = Base.ShamanObject.ShamanObject & Common.Metadata & { objectType: "SHAMANOBJECT" }
+export type ShamanObject 
+  = Base.ShamanObject.ShamanObject 
+  & { invisible?: boolean }
+  & Common.Metadata 
+  & { objectType: "SHAMANOBJECT" }
 
-export const make: (obj: Base.ShamanObject.ShamanObject) => ShamanObject = obj =>
-  ({ objectType: "SHAMANOBJECT",
+export const make: (obj: Base.ShamanObject.ShamanObject) => ShamanObject = obj => {
+  let metadata = shamanObjectMetadata.get(obj.type)
+  let invisibleProps = "placeholderData" in metadata
+    ? { invisible: metadata.placeholder === true }
+    : {}
+  return { objectType: "SHAMANOBJECT",
     ...obj,
     ...Common.metadataDefaults(),
-  })
+    ...invisibleProps,
+  }
+}
 
 
 export const isForeground = (obj: ShamanObject) =>

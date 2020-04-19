@@ -231,6 +231,7 @@ const data = store<Data>({
     y: {},
     rotation: {},
     ghost: {},
+    invisible: {},
     power: {},
     speed: {},
     nosync: {},

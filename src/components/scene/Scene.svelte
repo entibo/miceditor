@@ -100,6 +100,10 @@
     <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
       <feDropShadow stdDeviation="4 5" in="SourceGraphic" dx="0" dy="5" flood-color="#0d161c" flood-opacity="0.7" x="0%" y="0%" width="100%" height="100%" result="dropShadow"/>
     </filter>
+    <filter id="erode" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feMorphology operator="erode" radius="2 2" in="SourceGraphic" result="morphology"/>
+      <feComposite in="SourceGraphic" in2="morphology" operator="out" result="composite1"/>
+    </filter>
 
 
     <g transform="translate({$pan.x}, {$pan.y}) scale({$zoom})">

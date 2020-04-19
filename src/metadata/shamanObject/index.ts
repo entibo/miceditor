@@ -19,7 +19,15 @@ type Spritesheet = Dimensions & {
   offset: Point
 }
 
-export type Metadata = (Sprite | Spritesheet) & { defilanteVariant?: Sprite }
+export type Metadata 
+  = (Sprite | Spritesheet) 
+  & { defilanteVariant?: Sprite } 
+  & { placeholder?: boolean
+      placeholderData?: { 
+        baseId: number
+        invisibleId: number
+      }
+    }
       
 
 const data = new Map<number, Metadata>()
@@ -27,6 +35,7 @@ const data = new Map<number, Metadata>()
 export default {
   get: (type: number) =>
     data.get(type)
+    || getPlaceholder(type)
     || {
       sprite: "unknown-shaman-object.png",
       width: 30,
@@ -37,6 +46,56 @@ export default {
   entries: () => [...data.entries()]
 }
 
+function getPlaceholder(t: number): Metadata | undefined {
+  if((t >= 100 && t <= 199) || (t >= 20000 && t <= 29999))
+    return {
+      ...data.get(1)!,
+      placeholder: true,
+    }
+  if((t >= 200 && t <= 299) || (t >= 30000 && t <= 32767))
+    return {
+      ...data.get(2)!,
+      placeholder: true,
+    }
+  if(t >= 300 && t <= 399)
+    return {
+      ...data.get(3)!,
+      placeholder: true,
+    }
+  if(t >= 400 && t <= 499)
+    return {
+      ...data.get(4)!,
+      placeholder: true,
+    }
+  if(t >= 600 && t <= 699)
+    return {
+      ...data.get(6)!,
+      placeholder: true,
+    }
+  if(t >= 700 && t <= 799)
+    return {
+      ...data.get(7)!,
+      placeholder: true,
+    }
+  if(t >= 1700 && t <= 1799)
+    return {
+      ...data.get(17)!,
+      placeholder: true,
+    }
+  if(t >= 2800 && t <= 3199)
+    return {
+      ...data.get(28)!,
+      placeholder: true,
+    }
+  let base = parseInt(t.toString().slice(0,2))
+  let meta = data.get(base)
+  if(meta) {
+    return {
+      ...meta,
+      placeholder: true,
+    }
+  }
+}
 
 function normalizeDimensions<T extends Dimensions>(value: T): T {
   if(value.boundingWidth === undefined)
@@ -78,6 +137,10 @@ setData([1, ...range(101,114)], type => {
     offset: { x: 68*variant, y: 0 },
     boundingWidth: 30,
     boundingHeight: 30,
+    placeholderData: { 
+      baseId: 1,
+      invisibleId: 100,
+    },
   }
 })
 setData([2, ...range(201, 217)], type => {
@@ -90,6 +153,10 @@ setData([2, ...range(201, 217)], type => {
     offset: { x: 118*variant, y: 0 },
     boundingWidth: 62,
     boundingHeight: 62,
+    placeholderData: { 
+      baseId: 2,
+      invisibleId: 200,
+    },
   }
 })
 setData([3, ...range(301, 312)], type => {
@@ -102,6 +169,10 @@ setData([3, ...range(301, 312)], type => {
     offset: { x: 0, y: 60*variant },
     boundingWidth: 100,
     boundingHeight: 10,
+    placeholderData: { 
+      baseId: 3,
+      invisibleId: 300,
+    },
   }
 })
 setData([4, ...range(401, 414)], type => {
@@ -114,6 +185,10 @@ setData([4, ...range(401, 414)], type => {
     offset: { x: 0, y: 60*variant },
     boundingWidth: 200,
     boundingHeight: 10,
+    placeholderData: { 
+      baseId: 4,
+      invisibleId: 400,
+    },
   }
 })
 setData([6, ...range(601, 614)], type => {
@@ -127,6 +202,10 @@ setData([6, ...range(601, 614)], type => {
     boundingWidth: 30,
     boundingHeight: 30,
     circle: true,
+    placeholderData: { 
+      baseId: 6,
+      invisibleId: 600,
+    },
   }
 })
 setData([7, 701], type => {
@@ -139,6 +218,10 @@ setData([7, 701], type => {
     offset: { x: 140*variant, y: 0 },
     boundingWidth: 100,
     boundingHeight: 20,
+    placeholderData: { 
+      baseId: 7,
+      invisibleId: 700,
+    },
   }
 })
 setData([10, ...range(1002, 1005)], type => {
@@ -151,6 +234,10 @@ setData([10, ...range(1002, 1005)], type => {
     offset: { x: 60*variant, y: 0 },
     boundingWidth: 30,
     boundingHeight: 30,
+    placeholderData: { 
+      baseId: 10,
+      invisibleId: 1000,
+    },
   }
 })
 setData([17, ...range(1701, 1711)], type => {
@@ -164,6 +251,10 @@ setData([17, ...range(1701, 1711)], type => {
     boundingWidth: 30,
     boundingHeight: 30,
     circle: true,
+    placeholderData: { 
+      baseId: 17,
+      invisibleId: 1700,
+    },
   }
 })
 setData([...range(28,31), ...range(2801, 2821)], type => {
@@ -177,6 +268,10 @@ setData([...range(28,31), ...range(2801, 2821)], type => {
     boundingWidth: 30,
     boundingHeight: 30,
     circle: true,
+    placeholderData: { 
+      baseId: 28,
+      invisibleId: 2800,
+    },
   }
 })
 setData([22, ...range(11, 16)], type => {
@@ -198,6 +293,10 @@ setData(32, {
   boundingWidth: 30,
   boundingHeight: 30,
   circle: true,
+  placeholderData: { 
+    baseId: 32,
+    invisibleId: 3200,
+  },
 })
 setData(62, {
   sprite: "stable-rune.png",
@@ -205,10 +304,18 @@ setData(62, {
   boundingWidth: 30,
   boundingHeight: 30,
   circle: true,
+  placeholderData: { 
+    baseId: 62,
+    invisibleId: 6200,
+  },
 })
 setData(54, {
   sprite: "icecube.png",
   width: 61, height: 61,
+  placeholderData: { 
+    baseId: 54,
+    invisibleId: 5400,
+  },
 })
 setData(23, {
   sprite: "bomb.png",
@@ -216,6 +323,10 @@ setData(23, {
   boundingWidth: 30,
   boundingHeight: 30,
   circle: true,
+  placeholderData: { 
+    baseId: 23,
+    invisibleId: 2300,
+  },
 })
 setData(33, {
   sprite: "chicken.png",
@@ -223,6 +334,10 @@ setData(33, {
   boundingWidth: 20,
   boundingHeight: 20,
   circle: true,
+  placeholderData: { 
+    baseId: 33,
+    invisibleId: 3300,
+  },
 })
 setData(34, {
   sprite: "snowball.png",
@@ -230,12 +345,20 @@ setData(34, {
   boundingWidth: 12,
   boundingHeight: 12,
   circle: true,
+  placeholderData: { 
+    baseId: 34,
+    invisibleId: 3400,
+  },
 })
 setData(63, {
   sprite: "fish.png",
   width: 40, height: 40,
   boundingWidth: 34,
   boundingHeight: 40,
+  placeholderData: { 
+    baseId: 63,
+    invisibleId: 6300,
+  },
 })
 setData(65, {
   sprite: "pufferfish.png",
@@ -243,6 +366,10 @@ setData(65, {
   boundingWidth: 22,
   boundingHeight: 22,
   circle: true,
+  placeholderData: { 
+    baseId: 65,
+    invisibleId: 6500,
+  },
 })
 setData(80, {
   sprite: "plane.png",
@@ -250,6 +377,10 @@ setData(80, {
   boundingWidth: 14,
   boundingHeight: 14,
   circle: true,
+  placeholderData: { 
+    baseId: 80,
+    invisibleId: 8000,
+  },
 })
 setData(89, {
   sprite: "pumpkin.png",
@@ -257,10 +388,18 @@ setData(89, {
   boundingWidth: 24,
   boundingHeight: 24,
   circle: true,
+  placeholderData: { 
+    baseId: 89,
+    invisibleId: 8900,
+  },
 })
 setData(90, {
   sprite: "tombstone.png",
   width: 42, height: 46,
+  placeholderData: { 
+    baseId: 90,
+    invisibleId: 9000,
+  },
 })
 setData(95, {
   sprite: "paperball.png",
@@ -268,6 +407,10 @@ setData(95, {
   boundingWidth: 16,
   boundingHeight: 16,
   circle: true,
+  placeholderData: { 
+    baseId: 95,
+    invisibleId: 9500,
+  },
 })
 setData(97, {
   sprite: "energyorb.png",
@@ -275,36 +418,60 @@ setData(97, {
   boundingWidth: 10,
   boundingHeight: 10,
   circle: true,
+  placeholderData: { 
+    baseId: 97,
+    invisibleId: 9700,
+  },
 })
 setData(39, {
   sprite: "apple.png",
   width: 40, height: 40,
   boundingWidth: 30,
   boundingHeight: 30,
+  placeholderData: { 
+    baseId: 39,
+    invisibleId: 3900,
+  },
 })
 setData(40, {
   sprite: "sheep.png",
   width: 56, height: 47,
   boundingWidth: 30,
   boundingHeight: 30,
+  placeholderData: { 
+    baseId: 40,
+    invisibleId: 4000,
+  },
 })
 setData(45, {
   sprite: "ice-plank.png",
   width: 120, height: 28,
   boundingWidth: 100,
   boundingHeight: 10,
+  placeholderData: { 
+    baseId: 45,
+    invisibleId: 4500,
+  },
 })
 setData(46, {
   sprite: "chocolate-plank.png",
   width: 120, height: 28,
   boundingWidth: 100,
   boundingHeight: 10,
+  placeholderData: { 
+    baseId: 46,
+    invisibleId: 4600,
+  },
 })
 setData(57, {
   sprite: "cloud.png",
   width: 100, height: 70,
   boundingWidth: 61,
   boundingHeight: 31,
+  placeholderData: { 
+    baseId: 57,
+    invisibleId: 5700,
+  },
 })
 setData(59, {
   sprite: "bubble.png",
@@ -312,36 +479,60 @@ setData(59, {
   boundingWidth: 30,
   boundingHeight: 30,
   circle: true,
+  placeholderData: { 
+    baseId: 59,
+    invisibleId: 5900,
+  },
 })
 setData(60, {
   sprite: "mini-plank.png",
   width: 70, height: 30,
   boundingWidth: 50,
   boundingHeight: 10,
+  placeholderData: { 
+    baseId: 60,
+    invisibleId: 6000,
+  },
 })
 setData(61, {
   sprite: "companion.png",
   width: 66, height: 66,
   boundingWidth: 55,
   boundingHeight: 55,
+  placeholderData: { 
+    baseId: 61,
+    invisibleId: 6100,
+  },
 })
 setData(68, {
   sprite: "triangle.png",
   width: 100, height: 100,
   boundingWidth: 80,
   boundingHeight: 80,
+  placeholderData: { 
+    baseId: 68,
+    invisibleId: 6800,
+  },
 })
 setData(69, {
   sprite: "s.png",
   width: 88, height: 88,
   boundingWidth: 71,
   boundingHeight: 71,
+  placeholderData: { 
+    baseId: 69,
+    invisibleId: 6900,
+  },
 })
 setData(35, {
   sprite: "cupid-arrow.png",
   width: 40, height: 40,
   boundingWidth: 25,
   boundingHeight: 9,
+  placeholderData: { 
+    baseId: 35,
+    invisibleId: 3500,
+  },
 })
 setData(24, {
   sprite: "spirit.png",
@@ -355,6 +546,10 @@ setData(67, {
   width: 306, height: 14,
   boundingWidth: 300,
   boundingHeight: 10,
+  placeholderData: { 
+    baseId: 67,
+    invisibleId: 6700,
+  },
 })
 
 setDefilanteVariant(6, {

@@ -16,7 +16,7 @@ const boosterDefaults: () => Booster = () => ({
   booster: {
     enabled: false,
     angle: 0,
-    speed: 10,
+    speed: 100,
   },
 })
 

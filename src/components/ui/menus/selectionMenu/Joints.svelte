@@ -172,7 +172,9 @@
 
   <!-- JP, JR -->
   {#if props.power.value !== undefined}
+
     <div class="mb-4"></div>
+
     {#if props.axisX.value !== undefined}
       <div class="flex">
         <label>
@@ -191,9 +193,13 @@
       </div>
       <div class="mb-1"></div>
     {/if}
+
     {#if props.angle.value !== undefined}
       <label>
-        <span>{$_("rotation")}</span>
+        <span>
+          {$_("rotation")}
+          <span class="text-xs opacity-75">(deg)</span>
+        </span>
         <div class="flex">
           <label class="icon-btn text-xs mr-1" on:click={() => props.angle.set(0)} >
             <Icon icon={faUndo} />
@@ -201,40 +207,67 @@
           <TextInput float sliderMin={-180} sliderMax={180} value={props.angle.value} set={props.angle.set} class="w-16"/>
         </div>
       </label>
-      <div class="mb-1"></div>
+      <div class="mb-2"></div>
     {/if}
-    <label>
-      <span>{$_("limit")} 1</span>
-      <div class="flex">
-        <label class="icon-btn text-xs mr-1" on:click={() => props.min.set(-Infinity)} >
-          <Icon icon={faUndo} />
-        </label>
-        <TextInput int value={props.min.value} set={props.min.set} class="w-16" />
-      </div>
-    </label>
-    <label>
-      <span>{$_("limit")} 2</span>
-      <div class="flex">
-        <label class="icon-btn text-xs mr-1" on:click={() => props.max.set(+Infinity)} >
-          <Icon icon={faUndo} />
-        </label>
-        <TextInput int value={props.max.value} set={props.max.set} class="w-16" />
-      </div>
-    </label>
-    <div class="mb-1"></div>
+
     <label>
       <span>{$_("power")}</span>
       <div class="flex">
-        <label class="icon-btn text-xs mr-1" on:click={() => props.power.set(0)} >
-          <Icon icon={faUndo} />
-        </label>
         <TextInput float value={props.power.value} set={props.power.set} class="w-16"/>
+        <Checkbox checked={props.power.value === Infinity ? true : props.power.value === 0 ? false : undefined}
+                  set={v => props.power.set(v ? Infinity : 0)}
+        />
+      </div>
+    </label>
+    <div class="submenu">
+      <label class:disabled={props.power.value === 0}>
+        <span>
+          {$_("speed")}
+          {#if props.type.value === "JR"}
+            <span class="text-xs opacity-75">(deg/s)</span>
+          {:else if props.type.value === "JP"}
+            <span class="text-xs opacity-75">(px/s)</span>
+          {/if}
+        </span>
+        <TextInput int value={props.speed.value} set={props.speed.set} class="w-16"/>
+      </label>
+    </div>
+  
+    <div class="mb-2"></div>
+
+    <label>
+      <span>
+        {$_("limit")} 1
+        {#if props.type.value === "JR"}
+          <span class="text-xs opacity-75">(deg)</span>
+        {:else if props.type.value === "JP"}
+          <span class="text-xs opacity-75">(px)</span>
+        {/if}
+      </span>
+      <div class="flex">
+        <TextInput int value={props.min.value} set={props.min.set} class="w-16" />
+        <Checkbox checked={props.min.value === -Infinity ? false : props.min.value === null ? null : true }
+                  set={v => props.min.set(v ? -45 : -Infinity)}
+        />
       </div>
     </label>
     <label>
-      <span>{$_("speed")}</span>
-      <TextInput float value={props.speed.value} set={props.speed.set} class="w-16"/>
+      <span>
+        {$_("limit")} 2
+        {#if props.type.value === "JR"}
+          <span class="text-xs opacity-75">(deg)</span>
+        {:else if props.type.value === "JP"}
+          <span class="text-xs opacity-75">(px)</span>
+        {/if}
+      </span>
+      <div class="flex">
+        <TextInput int value={props.max.value} set={props.max.set} class="w-16" />
+        <Checkbox checked={props.max.value === +Infinity ? false : props.max.value === null ? null : true }
+                  set={v => props.max.set(v ? +45 : +Infinity)}
+        />
+      </div>
     </label>
+  
   {/if}
 
 

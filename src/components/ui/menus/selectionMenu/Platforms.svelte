@@ -81,7 +81,10 @@
 
   <div class:disabled={props.rotation.value === undefined}>
     <label>
-      <span>{$_("rotation")}</span>
+      <span>
+        {$_("rotation")}
+        <span class="text-xs opacity-75">(deg)</span>
+      </span>
       <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
     </label>
   </div>
@@ -131,12 +134,18 @@
   {#if props.physics.value === "BOOSTER"}
     <div class="submenu">
       <label>
-        <span>Angle</span>
-        <TextInput class="w-16" float sliderMin={-180} sliderMax={180} value={props.boosterAngle.value} set={props.boosterAngle.set} />
+        <span>
+          {$_("rotation")}
+          <span class="text-xs opacity-75">(deg)</span>
+        </span>
+        <TextInput class="w-16" int sliderMin={-180} sliderMax={180} step={45} value={props.boosterAngle.value} set={props.boosterAngle.set} />
       </label>
       <label>
-        <span>Speed</span>
-        <TextInput class="w-16" float min={0} value={props.boosterSpeed.value} set={props.boosterSpeed.set} />
+        <span>
+          {$_("speed")}
+          <span class="text-xs opacity-75">(px/s)</span>
+        </span>
+        <TextInput class="w-16" int min={0} value={props.boosterSpeed.value} set={props.boosterSpeed.set} />
       </label>
     </div>
   {:else if props.physics.value === "DYNAMIC"}

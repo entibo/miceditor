@@ -78,8 +78,8 @@ export const setLine = (brush: Brush) =>
   set({ enabled: true, creationType: "LINE", brush })
 
 export const setMechanic = (type: Editor.Joint.BaseType, current?: Extract<Creation,{creationType:"MECHANIC"}>["current"]) => {
-  set({ enabled: true, creationType: "MECHANIC", type, current })
   highlight.set(new Set(sceneObjects.groups.platforms))
+  set({ enabled: true, creationType: "MECHANIC", type, current })
 }
 
 
@@ -150,7 +150,7 @@ export const create = (e: MouseEvent, x: number, y: number) => {
         Editor.Joint.move(obj, x, y)
 
         let store = sceneObjects.add(obj)
-        interaction.jointMouseDown(e, store, { name: "controlPoint1", ...store.controlPoint1 })
+        interaction.jointPointMouseDown(e, store, { name: "controlPoint1", ...store.controlPoint1 })
         selection.set([store])
       }
 
@@ -159,7 +159,7 @@ export const create = (e: MouseEvent, x: number, y: number) => {
           lastCurve.point2 = {x,y}
           lastCurve.controlPoint2 = {x,y}
           lastCurve.invalidate()
-          interaction.jointMouseDown(e, lastCurve, { name: "controlPoint2", ...lastCurve.controlPoint2 })
+          interaction.jointPointMouseDown(e, lastCurve, { name: "controlPoint2", ...lastCurve.controlPoint2 })
         }
 
         else {
@@ -174,7 +174,7 @@ export const create = (e: MouseEvent, x: number, y: number) => {
           obj.controlPoint1 = { x: px, y: py }
 
           let store = sceneObjects.add(obj)
-          interaction.jointMouseDown(e, store, { name: "controlPoint2", ...store.controlPoint2 })
+          interaction.jointPointMouseDown(e, store, { name: "controlPoint2", ...store.controlPoint2 })
           selection.set([store])
         }
       }
@@ -189,7 +189,7 @@ export const create = (e: MouseEvent, x: number, y: number) => {
       obj.point1.enabled = obj.point2.enabled = true
 
       let store = sceneObjects.add(obj)
-      interaction.jointMouseDown(e, store, { name: "point2", ...obj.point2 })
+      interaction.jointPointMouseDown(e, store, { name: "point2", ...obj.point2 })
       selection.set([store])      
     }
 

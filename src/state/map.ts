@@ -3,6 +3,7 @@ import { writable, Writable, derived, get } from "svelte/store"
 
 
 import * as Editor from "data/editor"
+import shamanObjectMetadata from "metadata/shamanObject"
 
 
 import * as sceneObjects from "state/sceneObjects"
@@ -14,6 +15,7 @@ import { clone } from "data/base/util"
 import * as history from "state/history"
 
 import { xml } from "state/xml"
+import shamanObject from "@/metadata/shamanObject"
 
 
 export const mapSettings = store(Editor.MapSettings.defaults())
@@ -98,13 +100,15 @@ export function exportXML(update=true) {
 
   let decorations = handleMouseSpawns([...sceneObjects.groups.decorations])
 
+  let shamanObjects = encodeShamanObjects([...sceneObjects.groups.shamanObjects])
+
   let [platforms, joints] = encodeBoosterPlatforms([...sceneObjects.groups.platforms], [...sceneObjects.groups.joints])
 
   let map: Editor.Map.Map = {
     mapSettings,
     platforms,
     decorations,
-    shamanObjects: sceneObjects.groups.shamanObjects,
+    shamanObjects,
     joints,
   }
 
@@ -235,4 +239,26 @@ export function updateMiceSpawn(type: "normal"|"multiple"|"randomX"|"randomY") {
   }
   
   mapSettings.invalidate()
+}
+
+
+function encodeShamanObjects(shamanObjects: Editor.ShamanObject.ShamanObject[]): Editor.ShamanObject.ShamanObject[] {
+  return shamanObjects.map(obj => {
+    if(obj.invisible === undefined) return obj
+    let metadata = shamanObjectMetadata.get(obj.type)
+    if(!metadata.placeholderData) return obj
+    if(obj.invisible) {
+      if(!metadata.placeholder) {
+        let _obj = clone(obj)
+        _obj.type = metadata.placeholderData.invisibleId
+        return _obj
+      }
+    }
+    else if(metadata.placeholder) {
+      let _obj = clone(obj)
+      _obj.type = metadata.placeholderData.baseId
+      return _obj
+    }
+    return obj
+  })
 }

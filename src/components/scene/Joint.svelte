@@ -1,12 +1,8 @@
 
 <script>
 
-  //import { encodeJointData } from "xml-utils.ts"
-  /* import {
-    joints, selection, buildXML, creation, bezier
-  } from "stores/stores.js" */
   import { bezier, rotate, deg, rad } from "common"
-  import { jointMouseDown } from "state/interaction"
+  import { jointPointMouseDown, jointPrismaticLimitMouseDown, jointRotationLimitMouseDown } from "state/interaction"
 
   import * as Editor from "data/editor/index"
   import * as sceneObjects from "state/sceneObjects"
@@ -109,21 +105,43 @@
 
   function computeRotationPreview(origin, pos) {
     if(!origin || !pos) return
-    let radius = Math.sqrt((origin.x-pos.x)**2 + (origin.y-pos.y)**2)
-    let points = [$obj.min, $obj.max]
-      .filter(isFinite)
-      .map(rad)
-      .map(a => -a)
-      .map(a => ({
+    let dx = pos.x - origin.x
+    let dy = pos.y - origin.y
+    let angle = deg(Math.atan2(dy,dx))
+    let radius = Math.sqrt(dx*dx + dy*dy)
+    let points = []
+    for(let name of ["min", "max"]) {
+      let a = $obj[name]
+      if(!isFinite(a)) continue
+      if(name === "min" && (a < -360 || a > 0)) continue
+      if(name === "max" && (a > +360 || a < 0)) continue
+      a = -rad(a) + rad(angle)
+      points.push({
         x: radius*Math.cos(a),
         y: radius*Math.sin(a),
-      }))
-    return { origin, radius, points }
+        name,
+      })
+    }
+
+    let animationDuration = 0, animationReverse = false
+    if($obj.power != 0 && $obj.speed != 0) {
+      animationReverse = Math.sign($obj.power * $obj.speed) === 1
+      animationDuration = 1 / ($obj.speed / 360)
+    }
+
+    return { 
+      origin, angle, radius, points, animationDuration, animationReverse,
+    }
   }
 
 
-  function computePrismaticLimitOffset(v) {
-    v = Math.sign(v)*Math.min(1e4, Math.abs(v))
+  $: prismaticPreview = $obj.type === "JP"
+    ? computePrismaticPreview(platform1)
+    : null
+
+  function computePrismaticPreview(platform1) {
+    if(!platform1) return
+
     let axisAngle = deg(Math.atan2($obj.axis.y, $obj.axis.x))
     let angle = axisAngle
     if(platform1.fixedRotation === false) {
@@ -131,8 +149,26 @@
       angle -= $obj.angle
     }
     angle += 180
-    let [x,y] = rotate(v, 0, angle)
-    return {x,y}
+
+    let points = [$obj.min, $obj.max]
+      .map((v,i) => {
+        v = Math.sign(v)*Math.min(5e3, Math.abs(v))
+        let [x,y] = rotate(v, 0, angle)
+        return { x, y, name: i===0?"min":"max" }
+      })
+
+    let animationDuration = 0, animationReverse = false
+    if($obj.power != 0 && $obj.speed != 0) {
+      animationReverse = Math.sign($obj.power * $obj.speed) === -1
+      animationDuration = 1 / ($obj.speed / 100)
+    }
+
+    return { 
+      origin: platform1,
+      angle,
+      points,
+      animationDuration, animationReverse,
+    }
   }
 
 
@@ -161,29 +197,45 @@
         />
       </g>
     {/if}
-    {#if active && platform1 && $obj.type === "JP"}
-      <g stroke={green} stroke-width="1" opacity="0.9" stroke-dasharray="4"
-         transform="translate({platform1.x},{platform1.y})"
-         class="pointer-events-none"
+    {#if active && prismaticPreview}
+    
+      <g opacity="0.9" 
+          transform="translate({platform1.x},{platform1.y})"
       >
-        <line x1={0} x2={computePrismaticLimitOffset($obj.min).x}
-              y1={0} y2={computePrismaticLimitOffset($obj.min).y}
-        />
-        <line x1={0} x2={computePrismaticLimitOffset($obj.max).x}
-              y1={0} y2={computePrismaticLimitOffset($obj.max).y}
-        />
+        <g stroke={green} stroke-width="1" class="pointer-events-none prismatic-line"
+           stroke-dasharray={prismaticPreview.animationDuration ? 25 : 8}
+           style="animation-duration: {prismaticPreview.animationDuration}s;
+                  animation-direction: {prismaticPreview.animationReverse ? 'reverse' : 'normal'};"
+        >
+          <line x1={prismaticPreview.points[0].x} x2={prismaticPreview.points[1].x}
+                y1={prismaticPreview.points[0].y} y2={prismaticPreview.points[1].y}
+          />
+        </g>
+        {#each prismaticPreview.points as {x,y,name}}
+          <g transform="translate({x},{y})" class="cursor-pointer"
+             on:mousedown|stopPropagation|preventDefault={e => jointPrismaticLimitMouseDown(e, obj, name, prismaticPreview.origin, prismaticPreview.angle)}
+          >
+            <circle r=6 fill="black" />
+            <text class="limit-index">{name === "min" ? "1" : "2"}</text>
+          </g>
+        {/each}
       </g>
     {/if}
-    {#if active && rotationPreview && $obj.type === "JR"}
+    {#if active && rotationPreview}
       <g opacity="0.9" 
          transform="translate({rotationPreview.origin.x},{rotationPreview.origin.y})"
-         class="pointer-events-none"
       >
-        <circle r={rotationPreview.radius} fill="none" stroke={green} stroke-dasharray="4" stroke-width="1" />
-        {#each rotationPreview.points as {x,y}, index}
-          <g transform="translate({x},{y})" >
+        <circle r={rotationPreview.radius} class="pointer-events-none rotation-circle" 
+                fill="none" stroke={green} stroke-width="1" 
+                stroke-dasharray={rotationPreview.animationDuration ? rotationPreview.radius*Math.PI/4 : 4}
+                style="animation-duration: {rotationPreview.animationDuration}s;
+                       animation-direction: {rotationPreview.animationReverse ? 'reverse' : 'normal'};"
+        />
+        {#each rotationPreview.points as {x,y,name}}
+          <g transform="translate({x},{y})" class="cursor-pointer"
+             on:mousedown|stopPropagation|preventDefault={e => jointRotationLimitMouseDown(e, obj, name, rotationPreview.origin, rotationPreview.angle)}>
             <circle r=6 fill="black" />
-            <text class="limit-index">{index+1}</text>
+            <text class="limit-index">{name === "min" ? "1" : "2"}</text>
           </g>
         {/each}
       </g>
@@ -209,7 +261,7 @@
         <circle fill="transparent" stroke="none"
           x={0} y={0}
           r={crosshairRadius}
-          on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
+          on:mousedown|stopPropagation|preventDefault={e => jointPointMouseDown(e, obj, {x,y,name})}
         />
       </g>
     {/each}
@@ -229,7 +281,7 @@
           <circle fill="transparent" stroke="none"
             x={0} y={0}
             r={crosshairRadius}
-            on:mousedown|stopPropagation|preventDefault={e => jointMouseDown(e, obj, {x,y,name})}
+            on:mousedown|stopPropagation|preventDefault={e => jointPointMouseDown(e, obj, {x,y,name})}
           />
         </g>
         <line fill="none" stroke={green} opacity="0.8" stroke-width="0.5"
@@ -245,6 +297,33 @@
 
 
 <style lang="text/postcss">
+  .rotation-circle {
+    animation-name: rotation-animation;
+    animation-duration: 0;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes rotation-animation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .prismatic-line {
+    animation-name: dash-animation;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes dash-animation {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -100;
+    }
+  }
 
   text {
     stroke-width: 1px;
