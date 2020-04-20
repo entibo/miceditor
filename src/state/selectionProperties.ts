@@ -128,14 +128,27 @@ const data = store<Data>({
     boosterSpeed: {
       path: ["booster", "speed"],
     },
+    stickyEnabled: {
+      path: ["sticky", "enabled"],
+    },
+    stickyPower: {
+      path: ["sticky", "power"],
+    },
     physics: {
       autoGet: false,
       autoSet: false,
       set: v => {
-        if(v === "BOOSTER")
+        if(v === "BOOSTER") {
           data.PLATFORM.boosterEnabled.set!(true)
+          data.PLATFORM.stickyEnabled.set!(false)
+        }
+        else if(v === "STICKY") {
+          data.PLATFORM.stickyEnabled.set!(true)
+          data.PLATFORM.boosterEnabled.set!(false)
+        }
         else {
           data.PLATFORM.boosterEnabled.set!(false)
+          data.PLATFORM.stickyEnabled.set!(false)
           if(v === "DYNAMIC")
             data.PLATFORM.dynamic.set!(true)
           else {
@@ -416,8 +429,9 @@ selection.selection.subscribe(list => {
 
   data.PLATFORM.physics.value =
     data.PLATFORM.boosterEnabled.value === true ? "BOOSTER" :
+    data.PLATFORM.stickyEnabled.value === true ? "STICKY" :
     data.PLATFORM.dynamic.value === true ? "DYNAMIC" :
-    (data.PLATFORM.boosterEnabled.value === false && data.PLATFORM.dynamic.value === false) ? "STATIC" :
+    (data.PLATFORM.boosterEnabled.value === false && data.PLATFORM.stickyEnabled.value === false && data.PLATFORM.dynamic.value === false) ? "STATIC" :
     ""
 
   data.IMAGE.disappearing.value =

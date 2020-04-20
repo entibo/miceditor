@@ -50,7 +50,12 @@
           {$_("rotation")}
           <span class="text-xs opacity-75">(deg)</span>
         </span>
-        <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
+        <div class="flex">
+          <label class="icon-btn text-xs mr-1" on:click={() => props.rotation.set(0)} >
+            <Icon icon={faUndo} />
+          </label>
+          <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
+        </div>
       </label>
     </div>
 

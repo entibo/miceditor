@@ -13,9 +13,9 @@
 
   let className = ""
   export { className as class }
+  export let outerClass = undefined
 
   export let textColor = "text-white"
-
 
   export let value
   export let set = null
@@ -145,7 +145,7 @@
 </script>
 
 
-<Tooltip noStyle top active={hasTooltip && focused}>
+<Tooltip noStyle top active={hasTooltip && focused} class={outerClass}>
 
   {#if preview && (color || platform)}
     <div class="preview-container w-6 h-6 flex items-center justify-center">

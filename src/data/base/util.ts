@@ -102,7 +102,7 @@ export function readFloat(str: string): M.Maybe<number> {
   return M.unless(isNaN)(parseFloat(str))
 }
 export function writeFloat(x: number): string {
-  return (Math.round(100*x)/100).toString()
+  return x.toString()
 }
 
 export function readBool(str: string): M.Maybe<boolean> {

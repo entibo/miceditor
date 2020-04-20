@@ -18,34 +18,31 @@ export default <Layout> {
       size: 200,
       groups: [
         {
-          tabs: ["basic"],
-          activeTab: "basic"
-        },
-        {
           tabs: ["platforms"],
           activeTab: "platforms",
         },
         {
-          tabs: ["images"],
-          activeTab: "images",
+          tabs: ["basic", "decorations"],
+          activeTab: "basic"
+        },
+        {
+          tabs: ["shamanObjects"],
+          activeTab: "shamanObjects",
         },
         {
           tabs: ["lines", "mechanics"],
           activeTab: "lines",
+        },
+        {
+          tabs: ["images"],
+          activeTab: "images",
         },
       ],
     },
     bottom: {
       size: 200,
       groups: [
-        {
-          tabs: ["decorations"],
-          activeTab: "decorations",
-        },
-        {
-          tabs: ["shamanObjects"],
-          activeTab: "shamanObjects",
-        },
+
       ],
     },
   },

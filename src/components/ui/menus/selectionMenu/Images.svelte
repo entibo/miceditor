@@ -45,8 +45,8 @@
   <div class="mb-4"></div>
 
   <label>
-    <span>Url</span>
-    <TextInput value={props.imageValue.value} set={props.imageValue.set} />
+    <span class="incompressible">Url</span>
+    <TextInput value={props.imageValue.value} set={props.imageValue.set} outerClass="flex-grow" class="w-full" />
   </label> 
   
   <div class="mb-4"></div>

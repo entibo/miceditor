@@ -85,7 +85,12 @@
         {$_("rotation")}
         <span class="text-xs opacity-75">(deg)</span>
       </span>
-      <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
+      <div class="flex">
+        <label class="icon-btn text-xs mr-1" on:click={() => props.rotation.set(0)} >
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput float sliderMin={-180} sliderMax={180} value={props.rotation.value} set={props.rotation.set} class="w-16"/>
+      </div>
     </label>
   </div>
 
@@ -109,11 +114,21 @@
   <div class:disabled={props.friction.value === undefined}>
     <label>
       <span>{$_("friction")}</span>
-      <TextInput float min={0} value={props.friction.value} set={props.friction.set} class="w-16"/>
+      <div class="flex">
+        <label class="icon-btn text-xs mr-1" on:click={props.friction.reset} >
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput float min={0} value={props.friction.value} set={props.friction.set} class="w-16"/>
+      </div>
     </label>
     <label>
       <span>{$_("restitution")}</span>
-      <TextInput float min={0} value={props.restitution.value} set={props.restitution.set} class="w-16"/>
+      <div class="flex">
+        <label class="icon-btn text-xs mr-1" on:click={props.restitution.reset} >
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput float min={0} value={props.restitution.value} set={props.restitution.set} class="w-16"/>
+      </div>
     </label>
   </div>
 
@@ -127,6 +142,7 @@
         <option value="STATIC">Static</option>
         <option value="DYNAMIC">{$_("dynamic")}</option>
         <option value="BOOSTER">Booster</option>
+        <option value="STICKY">Sticky</option>
       </select>
     </div>
   </label>
@@ -147,7 +163,18 @@
         </span>
         <TextInput class="w-16" int min={0} value={props.boosterSpeed.value} set={props.boosterSpeed.set} />
       </label>
+      <label>
+        <span>{$_("mass")}</span>
+        <TextInput float min={0} value={props.mass.value} set={props.mass.set} class="w-16" />
+      </label>
     </div>
+  {:else if props.physics.value === "STICKY"}
+  <div class="submenu">
+    <label>
+      <span>{$_("power")}</span>
+      <TextInput class="w-16" int min={1} max={10} sliderMin={1} sliderMax={5} value={props.stickyPower.value} set={props.stickyPower.set} />
+    </label>
+  </div>
   {:else if props.physics.value === "DYNAMIC"}
     <div class="submenu">
       <label >
@@ -156,15 +183,24 @@
       </label>
       <label>
         <span>{$_("mass")}</span>
-        <TextInput class="w-16" float value={props.mass.value} set={props.mass.set} />
+        <div class="flex">
+          <TextInput float value={props.mass.value} set={props.mass.set} class="w-16" />
+          <Checkbox checked={props.mass.value === null ? null : props.mass.value !== -1} set={v => props.mass.set(v ? 0 : -1)} />
+        </div>        
       </label>
       <label>
         <span>{$_("linear-damping")}</span>
-        <TextInput class="w-16" float min={0} value={props.linearDamping.value} set={props.linearDamping.set} />
+        <div class="flex">
+          <TextInput class="w-16" float min={0} sliderMin={0} sliderMax={100} value={props.linearDamping.value} set={props.linearDamping.set} />
+          <Checkbox checked={props.linearDamping.value === null ? null : props.linearDamping.value !== 0} set={v => props.linearDamping.set(v ? Infinity : 0)} />
+        </div>  
       </label>
       <label>
         <span>{$_("angular-damping")}</span>
-        <TextInput class="w-16" float min={0} value={props.angularDamping.value} set={props.angularDamping.set} />
+        <div class="flex">
+          <TextInput class="w-16" float min={0} value={props.angularDamping.value} set={props.angularDamping.set} />
+          <Checkbox checked={props.angularDamping.value === null ? null : props.angularDamping.value !== 0} set={v => props.angularDamping.set(v ? Infinity : 0)} />
+        </div>  
       </label>
     </div>
   {/if}
@@ -185,7 +221,10 @@
   <div class:disabled={props.vanish.value === undefined}>
     <label>
       <span>{$_("vanish")}</span>
-      <TextInput float min={0} value={props.vanish.value} set={props.vanish.set} class="w-16"/>
+      <div class="flex">
+        <TextInput int min={0} sliderMin={0} sliderMax={180000} value={props.vanish.value} set={props.vanish.set} class="w-16"/>
+        <Checkbox checked={props.vanish.value === null ? null : props.vanish.value !== 0 } set={v => props.vanish.set(v ? 5000 : 0)} />
+      </div>
     </label>   
   </div>
   
@@ -218,7 +257,7 @@
       <div class="mb-1"></div>
       <label>
         <span class="incompressible">Url</span>
-        <TextInput value={props.imageValue.value} set={props.imageValue.set} />
+        <TextInput value={props.imageValue.value} set={props.imageValue.set} outerClass="flex-grow" class="w-full" />
       </label> 
     </div>
   {/if}  

@@ -72,7 +72,6 @@
             <option value="random">{$_("random")}</option>
           </select>
         </div>
-        <div class="mr-1"></div>
         <Checkbox checked={props.reverse.value} set={props.reverse.set} />
       </div>
     </label>

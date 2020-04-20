@@ -193,7 +193,10 @@
 
   <label>
     <span>{$_("shaman_objects")}: {$_("mass")}</span>
-    <TextInput float bind:value={$mapSettings.shamanObjectsMass} class="w-16" />
+    <div class="flex">
+      <TextInput float bind:value={$mapSettings.shamanObjectsMass} class="w-16" />
+      <Checkbox checked={$mapSettings.shamanObjectsMass !== -1} set={v => $mapSettings.shamanObjectsMass = v ? 0 : -1} />
+    </div>
   </label>
 
   <div class="mb-4"></div>

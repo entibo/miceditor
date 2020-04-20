@@ -276,8 +276,8 @@ export function encode(data: Joint): Node {
   let minMaxTransform = type === "JR" ? rad : (v: number) => v/30
 
   if(minMaxEnabled) {
-    setAttr ("LIM1") (getProp ("min") (minMaxTransform, util.writeFloat, util.omitOn("0")))
-    setAttr ("LIM2") (getProp ("max") (minMaxTransform, util.writeFloat, util.omitOn("0")))
+    setAttr ("LIM1") (getProp ("min") (minMaxTransform, util.writeFloat))
+    setAttr ("LIM2") (getProp ("max") (minMaxTransform, util.writeFloat))
   }
 
   

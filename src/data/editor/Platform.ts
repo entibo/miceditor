@@ -20,8 +20,22 @@ const boosterDefaults: () => Booster = () => ({
   },
 })
 
+interface Sticky {
+  sticky: {
+    enabled: boolean
+    power: number
+  }
+}
+const stickyDefaults: () => Sticky = () => ({
+  sticky: {
+    enabled: false,
+    power: 1,
+  },
+})
+
+
 type _Platform 
-  = Extract<P.Platform, P.NonStatic> & Booster
+  = Extract<P.Platform, P.NonStatic> & Booster & Sticky
   | Exclude<P.Platform, P.NonStatic>
 
 export type Platform = _Platform & Common.Metadata & { objectType: "PLATFORM" }
@@ -32,6 +46,7 @@ export const make: (p: P.Platform) => Platform = p =>
   "miceCollision" in p ?
     { ...p,
       ...boosterDefaults(),
+      ...stickyDefaults(),
       ...Common.metadataDefaults(),
       objectType: "PLATFORM",
     }
@@ -43,7 +58,7 @@ export const make: (p: P.Platform) => Platform = p =>
 
 export function isStatic(p: Platform): p is Exclude<Platform, P.NonStatic> {
   return "dynamic" in p
-    ? p.dynamic === false && p.booster.enabled === false
+    ? p.dynamic === false && p.booster.enabled === false && p.sticky.enabled === false
     : true
 }
 
