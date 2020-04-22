@@ -73,7 +73,7 @@
   on:mouseleave={interaction.windowMouseLeave}
 />
 
-<div class="scene-container flex-grow bg-tfm-blue outline-none flex" 
+<div class="scene-container w-full h-full bg-tfm-blue outline-none flex" 
   class:target-inner={$tabMovement.active && $tabMovement.target.type === "window"}
   bind:this={svgContainerEl}
   bind:clientWidth={svgWidth} bind:clientHeight={svgHeight}

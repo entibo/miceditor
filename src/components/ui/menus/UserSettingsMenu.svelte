@@ -5,6 +5,8 @@
 
   import Icon from "fa-svelte"
   import { faUndo } from "@fortawesome/free-solid-svg-icons/faUndo"
+  import { faLink } from "@fortawesome/free-solid-svg-icons/faLink"
+  import { faUnlink } from "@fortawesome/free-solid-svg-icons/faUnlink"
 
   import TextInput from "components/common/TextInput.svelte"
   import Tooltip from "components/common/Tooltip.svelte"
@@ -13,8 +15,23 @@
 
 
   import { _ } from "state/locale"
-  import { showGameGUI, showMapBorder, showInvisibleGrounds, grid } from "state/user"
+  import { showGameGUI, showMapBorder, showInvisibleGrounds, highQuality, grid } from "state/user"
   import { setSmallLayout, setLargeLayout } from "state/layout"
+
+  function onSetWidth(v) {
+    if($grid.widthHeightLinked) {
+      let factor = v / $grid.width
+      $grid.height = $grid.height * factor
+    }
+    $grid.width = v
+  }
+  function onSetHeight(v) {
+    if($grid.widthHeightLinked) {
+      let factor = v / $grid.height
+      $grid.width = $grid.width * factor
+    }
+    $grid.height = v
+  }
 
 </script>
 
@@ -36,6 +53,11 @@
     <Checkbox bind:checked={$showInvisibleGrounds}  />
   </label>
 
+  <label>
+    <span>{$_("high-resolution")}</span>
+    <Checkbox bind:checked={$highQuality}  />
+  </label>
+
   <div class="mb-4"></div>
 
   <label>
@@ -47,12 +69,14 @@
       <div class="flex">
         <label>
           <span class="incompressible w-6">L</span>
-          <TextInput int min={1} sliderMax={800} bind:value={$grid.width} class="w-16" bgColor="bg-gray-700"/>
+          <TextInput int min={0} step={10} sliderMax={800} value={$grid.width} set={onSetWidth} class="w-16" bgColor="bg-gray-700"/>
         </label>
-        <div class="w-2"></div>
+        <label class="icon-btn text-xs mx-1" on:click={() => $grid.widthHeightLinked = !$grid.widthHeightLinked} >
+          <Icon icon={$grid.widthHeightLinked ? faLink : faUnlink} />
+        </label>
         <label>
           <span class="incompressible w-6">H</span>
-          <TextInput int min={1} sliderMax={800} bind:value={$grid.height} class="w-16" bgColor="bg-gray-700"/>
+          <TextInput int min={0} step={10} sliderMax={800} value={$grid.height} set={onSetHeight} class="w-16" bgColor="bg-gray-700"/>
         </label>
       </div>
       <div class="mb-1"></div>

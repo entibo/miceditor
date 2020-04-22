@@ -67,6 +67,25 @@ export function getBoundingBox(obj: Object): Box {
   return { p1: {x: obj.x, y: obj.y}, p2: {x: obj.x, y: obj.y} }
 }
 
+export function getPositionInformation(objects: Object[]): { box: Box, center: Point } {
+  let boxes = objects.map(getBoundingBox)
+  let p1 = {
+    x: Math.min(...boxes.map(bb => bb.p1.x)),
+    y: Math.min(...boxes.map(bb => bb.p1.y)),
+  }
+  let p2 = {
+    x: Math.max(...boxes.map(bb => bb.p2.x)),
+    y: Math.max(...boxes.map(bb => bb.p2.y)),
+  }
+  return {
+    box: { p1, p2 },
+    center: {
+      x: (p1.x + p2.x)/2,
+      y: (p1.y + p2.y)/2,
+    },
+  }
+}
+
 
 export function move(obj: Object, dx: number, dy: number) {
   if(isJoint(obj))
@@ -79,15 +98,24 @@ export function move(obj: Object, dx: number, dy: number) {
   obj.y += dy
 }
 
-export function flip(obj: Object, cx: number) {
+export function flipX(obj: Object, cx: number) {
   if("reverse" in obj)  obj.reverse = !obj.reverse
   if("rotation" in obj) obj.rotation = -obj.rotation
   if("booster" in obj) obj.booster.angle = -obj.booster.angle - 180
 
   if(isJoint(obj))
-    return Joint.flip(obj, cx)
+    return Joint.flipX(obj, cx)
 
   obj.x = 2*cx - obj.x
+}
+export function flipY(obj: Object, cy: number) {
+  if("rotation" in obj) obj.rotation = obj.rotation + 180
+  if("booster" in obj) obj.booster.angle = -obj.booster.angle
+
+  if(isJoint(obj))
+    return Joint.flipY(obj, cy)
+
+  obj.y = 2*cy - obj.y
 }
 
 export function rotate(obj: Object, a: number) {

@@ -26,6 +26,7 @@
 
   import TextInput from "components/common/TextInput.svelte"
   import Button from "components/common/Button.svelte"
+  import Slider from "components/common/Slider.svelte"
   import Tooltip from "components/common/Tooltip.svelte"
   import UserSettingsMenu from "components/ui/menus/UserSettingsMenu.svelte"
   import XmlEditor from "components/ui/XmlEditor.svelte"
@@ -210,15 +211,22 @@
 
   <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
     
-    <section>
+    <div class="form tabContent">
       <label>
-        <span>{$_("button-zoom")}</span>
-        <span class="w-12">
-          <TextInput number bind:value={$zoom} />
-        </span>
+        <span class="min-w-16">{$_("button-zoom")}</span>
+        <div class="flex">
+          <label class="icon-btn text-xs" on:click={() => $zoom = 1} >
+            <Icon icon={faUndo} />
+          </label>
+          <TextInput float bind:value={$zoom} class="w-16" />
+        </div>
       </label>
-      <input type=range bind:value={$zoom} min=0.1 max=5 step=0.1 />
-    </section>
+      <div class="mb-1"></div>
+      <Slider value={Math.log10($zoom)} set={v => $zoom = 10**v}
+              min={-1} max={1} step={0.1} 
+              widthClass=""
+      />
+    </div>
 
   </div>
 
@@ -253,22 +261,6 @@
 
 
 <style lang="text/postcss">
-  section {
-    @apply flex items-center;
-  }
-  label {
-    transition: 200ms;
-    @apply flex items-center justify-between;
-  }
-  label + label {
-    @apply ml-4;
-  }
-  label > span {
-    user-select: none;
-    white-space: nowrap;
-    @apply mr-3 text-sm text-gray-300;
-  }
-
   .lower-panel {
     transform: translateY(100%);
     bottom: 1px;

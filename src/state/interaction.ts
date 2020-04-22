@@ -134,7 +134,8 @@ export function windowKeyUp(e: KeyboardEvent) {
 const keyActions: { [key: string]: (e: KeyboardEvent) => void } = {
   "delete": selection.remove,
   "d":      selection.duplicate,
-  "f":      selection.flip,
+  "x":      selection.flipX,
+  "y":      selection.flipY,
   "g": () => {
     /* grid */
   },
@@ -702,9 +703,10 @@ export function wheel(e: WheelEvent) {
 
 function getSceneCoordinates(e: MouseEvent) {
   if(!svgContainer.el) return { x: 0, y: 0 }
+  let {left,top} = svgContainer.el.getBoundingClientRect()
   return {
-    x: e.clientX - svgContainer.el.offsetLeft,
-    y: e.clientY - svgContainer.el.offsetTop,
+    x: e.clientX - left,
+    y: e.clientY - top,
   }
 }
 export function sceneToGameCoordinates(p: Point): Point {

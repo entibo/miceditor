@@ -167,6 +167,7 @@
      class={className || "flex items-center"}
      on:mouseenter={() => hovering = true} 
      on:mouseleave={() => hovering = false} 
+     on:click
 >
   <slot></slot>
   {#if visible}
@@ -175,7 +176,7 @@
         class:pointer-events-none={!hoverable}
         class:border={!noBorder} 
     >
-      <div class:inner={!noStyle} 
+      <div class:tooltip-inner={!noStyle} 
           in:fly={flyInOptions}
           out:fly={flyOutOptions}
       >
@@ -196,13 +197,6 @@
   }
   .tooltip.border {
     border: 5px solid transparent;
-  }
-  .inner {
-    @apply border shadow-md rounded-sm;
-    @apply py-1 px-2;
-    @apply text-gray-100 text-xs;
-    background: rgba(0,0,0,0.8);
-    border-color: rgba(0,0,0,1.0);
   }
 
   .tooltip.bottom {

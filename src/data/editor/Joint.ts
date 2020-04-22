@@ -57,12 +57,20 @@ export function move(obj: Joint, dx: number, dy: number) {
   }
 }
 
-export function flip(obj: Object, cx: number) {
+export function flipX(obj: Object, cx: number) {
   for(let name of ["point1","point2","point3","point4","controlPoint1","controlPoint2"]) {
     if(name in obj){} else continue
 
     let q = (obj as any)[name] as Point
     q.x = 2*cx - q.x
+  }
+}
+export function flipY(obj: Object, cy: number) {
+  for(let name of ["point1","point2","point3","point4","controlPoint1","controlPoint2"]) {
+    if(name in obj){} else continue
+
+    let q = (obj as any)[name] as Point
+    q.y = 2*cy - q.y
   }
 }
 

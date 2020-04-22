@@ -8,6 +8,9 @@
   export let max = 100
   export let step = 1
   export let value
+  export let set = null
+
+  export let widthClass = "w-32"
 
   const dispatch = createEventDispatcher()
 
@@ -26,8 +29,11 @@
     let ratio = clamp((x-rect.left)/(rect.width), 0, 1)
     let newValue = ratio * (max-min) + min
     newValue = step * Math.round(newValue/step)
-    value = newValue
-    dispatch("input")
+    if(newValue !== value) {
+      value = newValue
+      if(set) set(newValue)
+      dispatch("input")
+    }
   }
 
   function onMouseUp(e) {
@@ -45,7 +51,7 @@
 />
 
 
-<div class="flex items-center px-2 w-32 h-4"
+<div class="flex items-center px-2 h-4 {widthClass}"
      on:mousedown={onMouseDown}
 >
   <div class="relative h-1 rounded-sm flex-grow flex"

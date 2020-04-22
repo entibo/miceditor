@@ -9,9 +9,11 @@ import * as Editor from "data/editor"
 export const showGameGUI = persistentWritable("showGameGUI", true)
 export const showMapBorder = persistentWritable("showMapBorder", true)
 export const showInvisibleGrounds = persistentWritable("showInvisibleGrounds", true)
+export const highQuality = persistentWritable("highQuality", true)
 
 export const grid = persistentWritable("grid", {
   enabled: false,
+  widthHeightLinked: true,
   width: 40, height: 40,
   sticky: false,
   color: "3D4253",

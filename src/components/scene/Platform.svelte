@@ -2,7 +2,7 @@
 <script>
 
   import * as Platform from "data/editor/Platform"
-  import { showInvisibleGrounds } from "state/user"
+  import { showInvisibleGrounds, highQuality } from "state/user"
   import { platformResizeKnobMouseDown,
            platformBoosterVectorMouseDown,
            platformBoosterVectorMinLength, 
@@ -92,14 +92,25 @@
             class="object-outline"
           />
         {:else if ["wood", "ice", "trampoline", "chocolate", "cloud"].includes(typeName)}
-          <image 
-            x={-width/2} y={-height/2}
-            width={width} height={height} 
-            preserveAspectRatio="none" 
-            href="dist/grounds/{ typeName }.png"
-            on:mousedown|preventDefault
-            class="object-outline"
-          />
+          {#if $highQuality}
+            <image
+              x={-width/2} y={-height/2}
+              width={width} height={height} 
+              preserveAspectRatio="none" 
+              href="dist/grounds/{ typeName }.svg"
+              on:mousedown|preventDefault
+              class="object-outline"
+            />
+          {:else}
+            <image
+              x={-width/2} y={-height/2}
+              width={width} height={height} 
+              preserveAspectRatio="none" 
+              href="dist/grounds/{ typeName }.png"
+              on:mousedown|preventDefault
+              class="object-outline"
+            />
+          {/if}
         {:else if typeName === "invisible"}
           <rect
             x={-width/2} y={-height/2}

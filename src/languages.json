@@ -1,5 +1,10 @@
 {
     "en": {
+        "horizontal-alignment": "Horizontal alignment",
+        "vertical-alignment": "Vertical alignment",
+        "flip-horizontally-button": "Flip horizontally",
+        "flip-vertically-button": "Flip vertically",
+        "reverse": "Reverse",
         "small": "Small",
         "large": "Large",
         "layout": "Layout",

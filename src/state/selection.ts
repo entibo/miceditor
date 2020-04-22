@@ -134,16 +134,93 @@ export function shiftIndex(dz: number) {
   }
 }
 
-export function flip() {
+export function flipX() {
   if(selectionMap.size <= 0) return
 
-  let x1 = Math.min( ...[...selectionMap.keys()].map(Editor.getBoundingBox).map(bb => bb.p1.x) )
-  let x2 = Math.max( ...[...selectionMap.keys()].map(Editor.getBoundingBox).map(bb => bb.p2.x) )
-
-  let cx = x1 + (x2-x1)/2
+  let cx = Editor.getPositionInformation([...selectionMap.keys()]).center.x
 
   for(let obj of selectionMap.keys()) {
-    Editor.flip(obj, cx)
+    Editor.flipX(obj, cx)
+    obj.invalidate()
+  }
+}
+export function flipY() {
+  if(selectionMap.size <= 0) return
+
+  let cy = Editor.getPositionInformation([...selectionMap.keys()]).center.y
+
+  for(let obj of selectionMap.keys()) {
+    Editor.flipY(obj, cy)
+    obj.invalidate()
+  }
+}
+
+export function alignXLeft() {
+  if(selectionMap.size <= 0) return
+
+  let left = Editor.getPositionInformation([...selectionMap.keys()]).box.p1.x
+
+  for(let obj of selectionMap.keys()) {
+    let dx = left - Editor.getBoundingBox(obj).p1.x
+    Editor.move(obj, dx, 0)
+    obj.invalidate()
+  }
+}
+export function alignXRight() {
+  if(selectionMap.size <= 0) return
+
+  let right = Editor.getPositionInformation([...selectionMap.keys()]).box.p2.x
+
+  for(let obj of selectionMap.keys()) {
+    let dx = right - Editor.getBoundingBox(obj).p2.x
+    Editor.move(obj, dx, 0)
+    obj.invalidate()
+  }
+}
+export function alignXCenter() {
+  if(selectionMap.size <= 0) return
+
+  let center = Editor.getPositionInformation([...selectionMap.keys()]).center.x
+
+  for(let obj of selectionMap.keys()) {
+    let box = Editor.getBoundingBox(obj)
+    let dx = center - (box.p1.x + box.p2.x)/2
+    Editor.move(obj, dx, 0)
+    obj.invalidate()
+  }
+}
+
+export function alignYTop() {
+  if(selectionMap.size <= 0) return
+
+  let top = Editor.getPositionInformation([...selectionMap.keys()]).box.p1.y
+
+  for(let obj of selectionMap.keys()) {
+    let dy = top - Editor.getBoundingBox(obj).p1.y
+    Editor.move(obj, 0, dy)
+    obj.invalidate()
+  }
+}
+export function alignYBottom() {
+  if(selectionMap.size <= 0) return
+
+  let bottom = Editor.getPositionInformation([...selectionMap.keys()]).box.p2.y
+
+  for(let obj of selectionMap.keys()) {
+    let dy = bottom - Editor.getBoundingBox(obj).p2.y
+    Editor.move(obj, 0, dy)
+    obj.invalidate()
+  }
+}
+export function alignYCenter() {
+  if(selectionMap.size <= 0) return
+
+  let center = Editor.getPositionInformation([...selectionMap.keys()]).center.y
+
+  for(let obj of selectionMap.keys()) {
+    let box = Editor.getBoundingBox(obj)
+    let dy = center - (box.p1.y + box.p2.y)/2
+    Editor.move(obj, 0, dy)
     obj.invalidate()
   }
 }
@@ -155,7 +232,8 @@ export function rotate(a: number) {
   }
 }
 
-export function rotateAround(a: number, p: Point) {
+export function rotateAround(a: number, p?: Point) {
+  if(!p) p = Editor.getPositionInformation([...selectionMap.keys()]).center
   for(let obj of selectionMap.keys()) {
     Editor.rotateAround(obj, a, p)
     obj.invalidate()

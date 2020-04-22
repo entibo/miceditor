@@ -7,6 +7,7 @@
   //import BottomPanel from "components/ui/BottomPanel.svelte"
   import Panel from "components/ui/Panel.svelte"
   import TabMovement from "components/ui/TabMovement.svelte"
+  import Toolbar from "components/ui/Toolbar.svelte"
 
   import { layoutConfig } from "state/layout"
 
@@ -20,7 +21,10 @@
 
   <div class="flex-grow flex flex-col-reverse">
     <Panel panelName="bottom" bind:panel={$layoutConfig.panels.bottom} direction="horizontal" resize="top" />
-    <Scene/>
+    <div class="relative w-full h-full">
+      <Scene/>
+      <Toolbar />
+    </div>
     <Header/>
   </div>
 
