@@ -82,7 +82,27 @@ export type Joint
       controlPoint2: Point }
     & Base & Renderable
 
-export type JointProps = UnionToIntersection<Joint>
+export type JointProps 
+  = Base & Renderable
+  & {
+    type: Type
+    frequency: number
+    damping:   number
+    angle: number
+    axis: Point
+    ratio: number
+    min: number
+    max: number
+    power: number
+    speed: number
+    fineness: number
+    point1: Point & { enabled?: boolean }
+    point2: Point & { enabled?: boolean }
+    point3: Point
+    point4: Point
+    controlPoint1: Point
+    controlPoint2: Point
+  }
 
 export type PointName = 
   "point1" | "point2" | "point3" | "point4" | "controlPoint1" | "controlPoint2"
@@ -247,8 +267,8 @@ export function encode(data: Joint): Node {
   setAttr ("M1") (getProp ("platform1") (util.omitOn(0), util.writeInt))
   setAttr ("M2") (getProp ("platform2") (util.omitOn(0), util.writeInt))
 
-  setAttr ("P1") (getProp ("point1") (M.iff(p => "enabled" in p ? p.enabled : true), writePoint))
-  setAttr ("P2") (getProp ("point2") (M.iff(p => "enabled" in p ? p.enabled : true), writePoint))
+  setAttr ("P1") (getProp ("point1") (M.iff(p => p.enabled !== undefined ? p.enabled : true), writePoint))
+  setAttr ("P2") (getProp ("point2") (M.iff(p => p.enabled !== undefined ? p.enabled : true), writePoint))
   setAttr ("P3") (getProp ("point3") (writePoint))
   setAttr ("P4") (getProp ("point4") (writePoint))
 

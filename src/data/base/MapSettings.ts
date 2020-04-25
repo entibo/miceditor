@@ -13,6 +13,7 @@ const attributes = [
   "DS", "defilante", "theme", 
   "P", "C", "A", "N", "aie",
   "Ca", "mc", "bh", "dodue",
+  "MEDATA",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
@@ -21,6 +22,8 @@ export interface Node extends XML.Node {
   children: [],
   attributes: Partial<Record<typeof attributes[number], string>>
 }
+
+
 
 
 export interface MapSettings extends Common.UnknownAttributes {
@@ -67,6 +70,15 @@ export interface MapSettings extends Common.UnknownAttributes {
   upwardsCannonballs: boolean
   dodue: boolean
   aie: boolean
+
+  MEDATA: {
+    PLATFORM:     Record<number, number>,
+    DECORATION:   Record<number, number>,
+    SHAMANOBJECT: Record<number, number>,
+    JOINT:        Record<number, number>,
+    IMAGE:        Record<number, number>,
+    ANIMATION:    Record<number, number>,
+  }
 
 }
 
@@ -129,6 +141,15 @@ export const defaults: () => MapSettings = () => ({
   upwardsCannonballs: false,
   dodue: false,
   aie: false,
+
+  MEDATA: {
+    PLATFORM: {},
+    DECORATION: {},
+    SHAMANOBJECT: {},
+    JOINT: {},
+    IMAGE: {},
+    ANIMATION: {},
+  },
 })
 
 export function decode(xmlNode: XML.Node): MapSettings {
@@ -170,6 +191,8 @@ export function decode(xmlNode: XML.Node): MapSettings {
   setProp ("upwardsCannonballs") (getAttr ("bh")    (() => true))               
   setProp ("dodue")              (getAttr ("dodue") (() => true)) 
   setProp ("aie")                (getAttr ("aie")   (() => true))
+
+  setProp ("MEDATA") (getAttr ("MEDATA") (readMedata))
 
   return data
 }
@@ -219,6 +242,8 @@ export function encode(data: MapSettings): Node {
   setAttr ("bh")    (getProp ("upwardsCannonballs") (util.omitOn(false), () => ""))
   setAttr ("dodue") (getProp ("dodue")              (util.omitOn(false), () => ""))
   setAttr ("aie")   (getProp ("aie")                (util.omitOn(false), () => ""))
+
+  setAttr ("MEDATA") (getProp ("MEDATA") (writeMedata))
 
   return node
 }
@@ -370,4 +395,53 @@ function writeDefilante(defilante: MapSettings["defilante"]): M.Maybe<string> {
     util.writeFloat(defilante.maxSpeed),
     util.writeBool(defilante.freeScroll),
   ].join(",")
+}
+
+/**
+ * Format: "i,f;i,f;i,f;i,f-i,f;i,f-..."
+ * Order: PLATFORM, DECORATION, SHAMANOBJECT, JOINT, IMAGE, ANIMATION
+ **/
+function readMedata(str: string): MapSettings["MEDATA"] {
+  let groups = str.split("-")
+  return {
+    PLATFORM:     M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
+    DECORATION:   M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
+    SHAMANOBJECT: M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
+    JOINT:        M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
+    IMAGE:        M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
+    ANIMATION:    M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
+  }
+}
+
+function readMedataGroup(str: string): Record<number, number> {
+  let objects = str.split(";")
+  let r = {} as Record<number, number>
+  for(let object of objects) {
+    let parts = object.split(",")
+    let index = M.andThen(parts.shift(), M.iffDefined, util.readInt)
+    let flags = M.andThen(parts.shift(), M.iffDefined, util.readInt)
+    if(M.is(index) && M.is(flags))
+      r[index] = flags
+  }
+  return r
+}
+
+function writeMedata(medata: MapSettings["MEDATA"]): string {
+  return [
+    medata.PLATFORM,
+    medata.DECORATION,
+    medata.SHAMANOBJECT,
+    medata.JOINT,
+    medata.IMAGE,
+    medata.ANIMATION,
+  ]
+  .map(writeMedataGroup)
+  .join("-")
+}
+
+function writeMedataGroup(group: Record<number, number>): string {
+  return Object.entries(group)
+    .map(([index, flags]) =>
+      [index, flags].join(","))
+    .join(";")
 }

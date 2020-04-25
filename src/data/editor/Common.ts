@@ -1,11 +1,13 @@
 
 export interface Metadata {
+  ignore: boolean
   visible: boolean
   interactive: boolean
   index: number
   selected: boolean
 }
 export const metadataDefaults: () => Metadata = () => ({
+  ignore: false,
   visible: true,
   interactive: true,
   index: 0,

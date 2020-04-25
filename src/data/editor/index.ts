@@ -6,7 +6,6 @@ import * as util from "data/base/util"
 import * as Base from "data/base"
 export * from "data/base"
 
-type Foo <K extends string> = K extends "A" | "B" ? K : never
 
 import * as Map from "./Map"
 export { Map }
