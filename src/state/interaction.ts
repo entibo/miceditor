@@ -82,6 +82,8 @@ export function windowKeyDown(e: KeyboardEvent) {
 
     if(key === "c")
       clipboard.copy()
+    else if(key === "x")
+      clipboard.cut()
     else if(key === "v")
       clipboard.paste()
 

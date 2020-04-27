@@ -492,36 +492,34 @@ export enum MedataFlag {
 
 
 function loadMedata(map: Map) {
-  for(let [_index, flags] of Object.entries(map.mapSettings.MEDATA.PLATFORM)) {
-    let index = parseInt(_index)
-    if(!map.platforms[index]) continue
-    loadFlags(map.platforms[index], flags)
-  }
-  for(let [_index, flags] of Object.entries(map.mapSettings.MEDATA.DECORATION)) {
-    let index = parseInt(_index)
-    if(!map.decorations[index]) continue
-    loadFlags(map.decorations[index], flags)
-  }
-  for(let [_index, flags] of Object.entries(map.mapSettings.MEDATA.SHAMANOBJECT)) {
-    let index = parseInt(_index)
-    if(!map.shamanObjects[index]) continue
-    loadFlags(map.shamanObjects[index], flags)
-  }
-  for(let [_index, flags] of Object.entries(map.mapSettings.MEDATA.JOINT)) {
-    let index = parseInt(_index)
-    if(!map.joints[index]) continue
-    loadFlags(map.joints[index], flags)
-  }
-  for(let [_index, flags] of Object.entries(map.mapSettings.MEDATA.IMAGE)) {
-    let index = parseInt(_index)
-    if(!map.images[index]) continue
-    loadFlags(map.images[index], flags)
-  }
-  for(let [_index, flags] of Object.entries(map.mapSettings.MEDATA.ANIMATION)) {
+  Object.entries(map.mapSettings.MEDATA.FLAGS.PLATFORM)
+    .forEach(([index,flags]) => loadFlags(map.platforms[index as unknown as number], flags))
 
-  }
+  Object.entries(map.mapSettings.MEDATA.FLAGS.DECORATION)
+    .forEach(([index,flags]) => loadFlags(map.decorations[index as unknown as number], flags))
+
+  Object.entries(map.mapSettings.MEDATA.FLAGS.SHAMANOBJECT)
+    .forEach(([index,flags]) => loadFlags(map.shamanObjects[index as unknown as number], flags))
+
+  Object.entries(map.mapSettings.MEDATA.FLAGS.JOINT)
+    .forEach(([index,flags]) => loadFlags(map.joints[index as unknown as number], flags))
+
+  Object.entries(map.mapSettings.MEDATA.FLAGS.IMAGE)
+    .forEach(([index,flags]) => loadFlags(map.images[index as unknown as number], flags))
+
+  /* Object.entries(map.mapSettings.MEDATA.IMAGE) */
+
+  map.mapSettings.layers = map.mapSettings.MEDATA.LAYERS.list
+  map.mapSettings.currentLayerId = map.mapSettings.MEDATA.LAYERS.current
+  map.mapSettings.MEDATA.LAYERS.list.forEach(({indices, id}) => {
+    for(let idx of indices) {
+      if(!map.joints[idx]) continue
+      map.joints[idx].layerId = id
+    }
+  })
 }
 function loadFlags(obj: Editor.Object, flags: number) {
+  if(!obj) return
   if(flags & MedataFlag.IGNORE)
     obj.ignore = true
   if(flags & MedataFlag.HIDDEN)
@@ -534,20 +532,24 @@ function loadFlags(obj: Editor.Object, flags: number) {
 
 
 function saveMedata(map: Map) {
-  for(let [index,obj] of map.platforms.entries()) {
-    map.mapSettings.MEDATA.PLATFORM[index] = saveFlags(obj)
-  }
-  for(let [index,obj] of map.decorations.entries()) {
-    map.mapSettings.MEDATA.DECORATION[index] = saveFlags(obj)
-  }
-  for(let [index,obj] of map.shamanObjects.entries()) {
-    map.mapSettings.MEDATA.SHAMANOBJECT[index] = saveFlags(obj)
-  }
-  for(let [index,obj] of map.joints.entries()) {
-    map.mapSettings.MEDATA.JOINT[index] = saveFlags(obj)
-  }
-  for(let [index,obj] of map.images.entries()) {
-    map.mapSettings.MEDATA.IMAGE[index] = saveFlags(obj)
+  map.mapSettings.MEDATA = {
+    FLAGS: {
+      PLATFORM    : Object.fromEntries(map.platforms.map(saveFlags).entries()),
+      DECORATION  : Object.fromEntries(map.decorations.map(saveFlags).entries()),
+      SHAMANOBJECT: Object.fromEntries(map.shamanObjects.map(saveFlags).entries()),
+      JOINT       : Object.fromEntries(map.joints.map(saveFlags).entries()),
+      IMAGE       : Object.fromEntries(map.images.map(saveFlags).entries()),
+      ANIMATION   : {},
+    },
+    LAYERS: {
+      current: map.mapSettings.currentLayerId,
+      list: map.mapSettings.layers.map((layer) => ({
+        ...layer, 
+        indices: map.joints
+          .filter(obj => obj.layerId === layer.id)
+          .map(obj => obj.index)
+      })),
+    },
   }
 }
 function saveFlags(obj: Editor.Object) {

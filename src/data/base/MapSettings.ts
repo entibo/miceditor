@@ -71,16 +71,31 @@ export interface MapSettings extends Common.UnknownAttributes {
   dodue: boolean
   aie: boolean
 
+  currentLayerId: number
+  layers: Layer[]
+  animations: Animation[]
+
   MEDATA: {
-    PLATFORM:     Record<number, number>,
-    DECORATION:   Record<number, number>,
-    SHAMANOBJECT: Record<number, number>,
-    JOINT:        Record<number, number>,
-    IMAGE:        Record<number, number>,
-    ANIMATION:    Record<number, number>,
+    FLAGS: Record<string, Record<number, number>>
+    LAYERS: {
+      current: number
+      list: Array<Layer & { indices: number[] }>
+    }
   }
 
 }
+
+export type Layer = {
+  id: number
+  name: string
+  opacity: number
+}
+export type Animation = {
+  id: number
+  name: string
+  layerIds: number[]
+}
+
 
 export interface DisappearingImage extends Image.Image {
   rx: number
@@ -142,13 +157,28 @@ export const defaults: () => MapSettings = () => ({
   dodue: false,
   aie: false,
 
+  currentLayerId: 0,
+  layers: [],
+  animations: [],
+
   MEDATA: {
-    PLATFORM: {},
-    DECORATION: {},
-    SHAMANOBJECT: {},
-    JOINT: {},
-    IMAGE: {},
-    ANIMATION: {},
+    FLAGS: {
+      PLATFORM: {},
+      DECORATION: {},
+      SHAMANOBJECT: {},
+      JOINT: {},
+      IMAGE: {},
+      ANIMATION: {},
+    },
+    LAYERS: {
+      current: 0,
+      list: [{
+        id: 0,
+        name: "",
+        opacity: 1,
+        indices: [],
+      }],
+    },
   },
 })
 
@@ -402,46 +432,88 @@ function writeDefilante(defilante: MapSettings["defilante"]): M.Maybe<string> {
  * Order: PLATFORM, DECORATION, SHAMANOBJECT, JOINT, IMAGE, ANIMATION
  **/
 function readMedata(str: string): MapSettings["MEDATA"] {
-  let groups = str.split("-")
+  let parts = str.split("-")
   return {
-    PLATFORM:     M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
-    DECORATION:   M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
-    SHAMANOBJECT: M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
-    JOINT:        M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
-    IMAGE:        M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
-    ANIMATION:    M.withDefault ({}) (M.andThen(groups.shift(), M.iffDefined, readMedataGroup)),
+    FLAGS: readMedataFlags(parts[0]),
+    LAYERS: readMedataLayers(parts[1]),
   }
 }
 
-function readMedataGroup(str: string): Record<number, number> {
-  let objects = str.split(";")
-  let r = {} as Record<number, number>
-  for(let object of objects) {
-    let parts = object.split(",")
-    let index = M.andThen(parts.shift(), M.iffDefined, util.readInt)
-    let flags = M.andThen(parts.shift(), M.iffDefined, util.readInt)
-    if(M.is(index) && M.is(flags))
-      r[index] = flags
+function readMedataFlags(str: string): MapSettings["MEDATA"]["FLAGS"] {
+  let parts = str.split(";")
+  return Object.fromEntries(
+    ["PLATFORM","DECORATION","SHAMANOBJECT","JOINT","IMAGE","ANIMATION"]
+      .map((k,i) => [k, readMedataFlagsGroup(parts[i])])
+  )
+}
+function readMedataFlagsGroup(str: string): Record<number, number> {
+  let parts = str.split(":")
+  return Object.fromEntries(
+    parts.map(str => {
+      let parts = str.split(",")
+      return [
+        parseInt(parts[0]),
+        parseInt(parts[1]),
+      ]
+    })
+  )
+}
+
+function readMedataLayers(str: string): MapSettings["MEDATA"]["LAYERS"] {
+  let parts = str.split(";")
+  return {
+    current: parseInt(parts[0]),
+    list: parts.slice(1).map(str => {
+      let parts = str.split(":")
+      return {
+        id: parseInt(parts[0]),
+        name: parts[1],
+        indices: parts[2].split(",").map(x => parseInt(x)),
+        opacity: parseFloat(parts[2]),
+      }
+    })
   }
-  return r
 }
 
 function writeMedata(medata: MapSettings["MEDATA"]): string {
   return [
-    medata.PLATFORM,
-    medata.DECORATION,
-    medata.SHAMANOBJECT,
-    medata.JOINT,
-    medata.IMAGE,
-    medata.ANIMATION,
-  ]
-  .map(writeMedataGroup)
-  .join("-")
+    writeMedataFlags(medata.FLAGS),
+    writeMedataLayers(medata.LAYERS),
+  ].join("-")
 }
 
-function writeMedataGroup(group: Record<number, number>): string {
+function writeMedataFlags(FLAGS: MapSettings["MEDATA"]["FLAGS"]): string {
+  return [
+    FLAGS.PLATFORM,
+    FLAGS.DECORATION,
+    FLAGS.SHAMANOBJECT,
+    FLAGS.JOINT,
+    FLAGS.IMAGE,
+    FLAGS.ANIMATION,
+  ]
+  .map(writeMedataFlagsGroup)
+  .join(";")
+}
+function writeMedataFlagsGroup(group: Record<number, number>): string {
   return Object.entries(group)
+    .filter(([_,flags]) => flags !== 0)
     .map(([index, flags]) =>
       [index, flags].join(","))
-    .join(";")
+    .join(":")
+}
+
+
+function writeMedataLayers(LAYERS: MapSettings["MEDATA"]["LAYERS"]): string {
+  return [
+    LAYERS.current,
+    ...LAYERS.list.map(layer => {
+      return [
+        layer.id,
+        layer.name,
+        layer.indices.join(","),
+        layer.opacity
+      ].join(":")
+    })
+  ]
+  .join(";")
 }

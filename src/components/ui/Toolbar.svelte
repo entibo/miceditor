@@ -9,6 +9,7 @@
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
   import { faClone } from "@fortawesome/free-solid-svg-icons/faClone"
   import { faCopy } from "@fortawesome/free-solid-svg-icons/faCopy"
+  import { faCut } from "@fortawesome/free-solid-svg-icons/faCut"
   import { faPaste } from "@fortawesome/free-solid-svg-icons/faPaste"
   import { faUndo } from "@fortawesome/free-solid-svg-icons/faUndo"
   import { faRedo } from "@fortawesome/free-solid-svg-icons/faRedo"
@@ -59,6 +60,11 @@
              title='{$_("button-copy")} (Ctrl+C)' on:click={clipboard.copy}
     >
       <Icon icon={faCopy} />
+    </Tooltip>
+    <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
+             title='{$_("cut")} (Ctrl+X)' on:click={clipboard.cut}
+    >
+      <Icon icon={faCut} />
     </Tooltip>
 
     <div class="mb-2"></div>

@@ -3,6 +3,7 @@ import { store, Store } from "state/util"
 import { eq } from "data/base/util"
 import { rotate } from "common"
 
+import { mapSettings } from "state/map"
 import * as sceneObjects from "state/sceneObjects"
 import * as interaction from "state/interaction"
 
@@ -134,6 +135,7 @@ export const create = (e: MouseEvent, x: number, y: number) => {
       obj.thickness = creation.brush.thickness
       obj.opacity = creation.brush.opacity
       obj.foreground = creation.brush.foreground
+      obj.layerId = mapSettings.currentLayerId
     }
 
     if(creation.brush.curveToolEnabled) {
@@ -145,8 +147,8 @@ export const create = (e: MouseEvent, x: number, y: number) => {
       if(!lastCurve) {
         let obj = Editor.Joint.make(Editor.Joint.defaults("VC")) as Extract<Editor.Joint.Joint,{type:"VC"}>
 
-        obj.fineness = creation.brush.fineness
         setRenderProperties(obj)
+        obj.fineness = creation.brush.fineness
         Editor.Joint.move(obj, x, y)
 
         let store = sceneObjects.add(obj)

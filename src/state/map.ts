@@ -27,6 +27,43 @@ setTimeout(() => {
   importXML(get(xml))
 }, 50)
 
+function findFirstAvailableId() {
+  let id = 0
+  let list = mapSettings.layers.map(layer => layer.id).sort()
+  while(id < list.length && id === list[id]) 
+    id++
+  return id
+}
+export function newLayer() {
+  let id = findFirstAvailableId()
+  mapSettings.layers.push({
+    id,
+    name: "",
+    opacity: 1,
+  })
+  mapSettings.currentLayerId = id
+  mapSettings.invalidate()
+}
+
+export function removeLayer(layerId: number) {
+  if(mapSettings.layers.length <= 1) return
+  let srcLayerIndex = mapSettings.layers.findIndex(layer => layer.id === layerId)!
+  let newId = (mapSettings.layers[srcLayerIndex-1] || mapSettings.layers[srcLayerIndex+1]).id
+  sceneObjects.groups.joints
+    .filter(obj => obj.layerId === layerId)
+    .forEach(obj => {
+      obj.layerId = newId
+      obj.invalidate()
+    })
+  mapSettings.layers.splice(srcLayerIndex, 1)
+  if(mapSettings.currentLayerId === layerId)
+    mapSettings.currentLayerId = newId
+  mapSettings.invalidate()
+}
+
+
+
+
 /*
   Loads map settings and all objects into memory.
   Platforms need to be added before joints.

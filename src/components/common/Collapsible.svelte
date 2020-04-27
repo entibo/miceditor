@@ -14,23 +14,18 @@
 
 <div class="flex flex-col {className}" on:mouseover>
 
-  <div class="flex items-center text-gray-200 hover:text-white cursor-pointer" class:active={!collapsed}
-       on:click={() => active = !active}
-  >
-    <div class="w-3 h-3 mr-1 arrow relative"></div>
-    <div class="flex-grow relative leading-4">
+  <div class="flex items-center text-gray-200 hover:text-white cursor-pointer" class:active={!collapsed}>
+    <div class="w-5 h-5 arrow relative" on:click={() => active = !active}></div>
+    <div class="flex-grow leading-4">
       <slot name="title">
         <span class="text-sm">{title}</span>
       </slot>
-      <div class="actions pl-2 absolute top-0 right-0 bottom-0">
-        <slot name="actions"></slot>
-      </div>
     </div>
   </div>
 
   {#if !collapsed}
     <div class="flex">
-      <div class="w-3 mr-1 guide relative"></div>
+      <div class="w-5 guide relative"></div>
       <div class="flex-grow">
         <slot></slot>
       </div>
@@ -41,14 +36,11 @@
 
 
 <style>
-  .actions {
-    background: inherit;
-  }
   .arrow:after {
     content: "";
     @apply absolute border-b border-r border-gray-400;
-    width: 70%;
-    height: 70%;
+    width: 40%;
+    height: 40%;
     transform-origin: 50% 50%;
     top: 50%;
     left: 50%;

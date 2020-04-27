@@ -13,7 +13,7 @@ module.exports = {
 
   mode: 'development',
   
-  devtool: false,
+  devtool: '#@eval-source-map',
 
   devServer: {
     host: '0.0.0.0',
@@ -58,7 +58,7 @@ module.exports = {
       },
       {
         test: /\.svelte$/,
-        exclude: /node_modules/,
+        // exclude: /node_modules/,
         loader: 'svelte-loader-hot',
         options: {
           dev: true,

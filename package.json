@@ -36,6 +36,7 @@
     "svelte-loader-hot": "^0.3.0",
     "svelte-preprocess": "^2.9.0",
     "svelte-preprocess-postcss": "^1.0.0",
+    "svelte-sortable-list": "^1.1.0",
     "tailwindcss": "^1.0.1",
     "ts-jest": "^24.3.0",
     "ts-loader": "^6.2.2",

@@ -34,7 +34,6 @@ export function isJoint(obj: Object): obj is Joint.Joint {
   return obj.objectType === "JOINT"
 }
 
-
 import * as Image from "./Image"
 export { Image }
 export function isImage(obj: Object): obj is Image.Image {

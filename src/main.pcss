@@ -250,6 +250,9 @@ img, image {
   margin-top: -1px;
   margin-bottom: -1px;
 }
+.form.dense label {
+  min-height: 1.25rem;
+}
 .form label:hover {
   background: rgba(0, 7, 20, 0.36);
 }
@@ -282,6 +285,9 @@ img, image {
 
 .form span, .form .icon-btn, .form .checkbox {
   @apply px-2;
+}
+.form.dense span, .form.dense .icon-btn, .form.dense .checkbox {
+  @apply px-1;
 }
 
 .form div.disabled, .form label.disabled {

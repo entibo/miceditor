@@ -14,12 +14,14 @@ export type Joint = Base.Joint.Joint & Common.Metadata & { objectType: "JOINT" }
   & {
     platform1Ref?: Store<Editor.Platform.Platform>
     platform2Ref?: Store<Editor.Platform.Platform>
+    layerId: number
   }
 
 export const make: (obj: Base.Joint.Joint) => Joint = obj =>
   ({ objectType: "JOINT",
     ...obj,
     ...Common.metadataDefaults(),
+    layerId: 0,
   })
 
 

@@ -13,7 +13,7 @@ module.exports = {
 
   mode: 'production',
   
-  devtool: false,
+  devtool: 'source-map',
 
   entry: path.resolve(root, 'src', 'main.js'),
 
