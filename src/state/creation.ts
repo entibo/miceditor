@@ -209,6 +209,7 @@ export function createMechanic(platformIndex: number) {
 
     let joint = Editor.Joint.make(Editor.Joint.defaults(creation.type))
     joint.platform1 = joint.platform2 = platformIndex
+    joint.layerId = mapSettings.currentLayerId
 
     if(joint.type === "JPL") {
       let p1 = sceneObjects.groups.platforms[joint.platform1]

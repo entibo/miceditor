@@ -80,7 +80,8 @@ export interface MapSettings extends Common.UnknownAttributes {
     LAYERS: {
       current: number
       list: Array<Layer & { indices: number[] }>
-    }
+    },
+    ANIMATIONS: Array<Animation>
   }
 
 }
@@ -93,7 +94,13 @@ export type Layer = {
 export type Animation = {
   id: number
   name: string
-  layerIds: number[]
+  type: "linear" | "circular"
+  frames: Frame[]
+}
+export type Frame = {
+  layerId: number
+  duration: number
+  /* background */
 }
 
 
@@ -168,7 +175,6 @@ export const defaults: () => MapSettings = () => ({
       SHAMANOBJECT: {},
       JOINT: {},
       IMAGE: {},
-      ANIMATION: {},
     },
     LAYERS: {
       current: 0,
@@ -179,6 +185,7 @@ export const defaults: () => MapSettings = () => ({
         indices: [],
       }],
     },
+    ANIMATIONS: []
   },
 })
 
@@ -436,13 +443,14 @@ function readMedata(str: string): MapSettings["MEDATA"] {
   return {
     FLAGS: readMedataFlags(parts[0]),
     LAYERS: readMedataLayers(parts[1]),
+    ANIMATIONS: [],
   }
 }
 
 function readMedataFlags(str: string): MapSettings["MEDATA"]["FLAGS"] {
   let parts = str.split(";")
   return Object.fromEntries(
-    ["PLATFORM","DECORATION","SHAMANOBJECT","JOINT","IMAGE","ANIMATION"]
+    ["PLATFORM","DECORATION","SHAMANOBJECT","JOINT","IMAGE"]
       .map((k,i) => [k, readMedataFlagsGroup(parts[i])])
   )
 }
@@ -489,7 +497,6 @@ function writeMedataFlags(FLAGS: MapSettings["MEDATA"]["FLAGS"]): string {
     FLAGS.SHAMANOBJECT,
     FLAGS.JOINT,
     FLAGS.IMAGE,
-    FLAGS.ANIMATION,
   ]
   .map(writeMedataFlagsGroup)
   .join(";")

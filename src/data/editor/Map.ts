@@ -539,7 +539,6 @@ function saveMedata(map: Map) {
       SHAMANOBJECT: Object.fromEntries(map.shamanObjects.map(saveFlags).entries()),
       JOINT       : Object.fromEntries(map.joints.map(saveFlags).entries()),
       IMAGE       : Object.fromEntries(map.images.map(saveFlags).entries()),
-      ANIMATION   : {},
     },
     LAYERS: {
       current: map.mapSettings.currentLayerId,
@@ -550,6 +549,7 @@ function saveMedata(map: Map) {
           .map(obj => obj.index)
       })),
     },
+    ANIMATIONS: []
   }
 }
 function saveFlags(obj: Editor.Object) {

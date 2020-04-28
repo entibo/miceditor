@@ -3,6 +3,7 @@
   import Icon from "fa-svelte"
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
 
+  // import SortableList from "components/common/SortableList.svelte"
   import SortableList from "svelte-sortable-list"
 
   import Tooltip from "components/common/Tooltip.svelte"
@@ -11,147 +12,99 @@
   import Collapsible from "components/common/Collapsible.svelte"
 
   /* import LayerGroup from "./layersMenu/LayerGroup.svelte" */
-  import Actions from "./layersMenu/Actions.svelte"
+  import Layer from "components/ui/menus/layersMenu/Layer.svelte"
+  import AnimationListEntry from "components/ui/menus/layersMenu/AnimationListEntry.svelte"
+  import Actions from "components/ui/menus/layersMenu/Actions.svelte"
 
   import { _ } from "state/locale"
 
 
-  import { mapSettings, newLayer, removeLayer } from "state/map"
+  import { mapSettings, makeNewLayer, removeLayer, makeNewAnimation } from "state/map"
   import { groups, joints } from "state/sceneObjects"
   import highlight from "state/highlight"
   import * as selection from "state/selection"
 
 
-  const resetHighlight = () => 
-    $highlight.size > 0 && ($highlight = new Set())
-
-  function setHighlight(e, list) {
-    e.preventDefault()
-    e.stopPropagation()
-    $highlight = new Set(list)
-  }
-
-  function onTitleClick(e, layerId) {
-    e.stopPropagation()
-    $mapSettings.currentLayerId = layerId
-  }
-
-  function onEntryClick(e, obj) {
-    selection.clear()
-    selection.select(obj)
-  }
-
   function onSort(e) {
-    let newList = e.detail
-    console.log([
-      $mapSettings.layers,
-      newList
-    ].map(list => list.map(layer => layer.id)))
-    $mapSettings.layers = newList
+    /* let fromIndex = items.findIndex(layer => layer.id === from.id)
+    let toIndex   = items.findIndex(layer => layer.id === to.id)
+    let tmp = $mapSettings.layer[from]
+    $mapSettings */
+    
+    $mapSettings.layers = e.detail.flatMap(item =>
+      item.layer
+        ? item.layer
+        : item.animation.frames
+            .map(frame => $mapSettings.layers.find(layer => layer.id === frame.layerId)))
   }
 
-  $: lists = $mapSettings.layers.map(layer =>
-        $joints.all.filter(obj => obj.layerId === layer.id))
-
-  function getLayerName(layer) {
-    return layer.name ? layer.name : `Layer${layer.id}`
+  $: items = getItems($mapSettings.layers, $mapSettings.animations)
+  function getItems(layers, animations) {
+    let animationStartMap = {}
+    for(let animation of animations) {
+      let start = animation.frames[0].layerId
+      animationStartMap[start] = animation
+    }
+    let items = []
+    for(let i=0; i < layers.length;) {
+      let layer = layers[i]
+      let animation = animationStartMap[layer.id]
+      if(animation) {
+        items.push({
+          animation,
+          key: "root-"+animation.id,
+        })
+        i += animation.frames.length
+        continue
+      }
+      items.push({
+        layer,
+        key: "root-"+layer.id,
+      })
+      i++
+    }
+    return items
   }
+  
 
 </script>
 
 
 
-<div class="root"
-     on:mouseleave={resetHighlight}
->
+<div class="root">
 
-  <!-- {#each $mapSettings.layers as layer, layerIndex} -->
-  <SortableList
-    list={$mapSettings.layers}
-    key="id"
-    let:item={layer}
-    let:index={layerIndex}
+  <div class="flex justify-between">
+    <Button on:click={() => makeNewLayer()} class="flex items-center">
+      <Icon icon={faPlus} class="text-xs"/>
+      <span class="ml-1">Layer</span>
+    </Button>
+    <Button on:click={() => makeNewAnimation()} class="flex items-center">
+      <Icon icon={faPlus} class="text-xs"/>
+      <span class="ml-1">Animation</span>
+    </Button>
+  </div>
+
+  <div class="mt-2"></div>
+
+  <!-- <SortableList
+    list={items}
+    key="key"
+    let:item={item}
     on:sort={onSort}
   >
-    <div class="layer">
-      <Collapsible  on:mouseover={e => setHighlight(e, lists[layerIndex])}>
-        <div slot="title" class="relative">
-          <div class="title" on:click={e => onTitleClick(e, layer.id)}>
-            <span class="title-text" class:current={$mapSettings.currentLayerId === layer.id}
-                  contenteditable="true"
-                  on:input={e => $mapSettings.layers[layerIndex].name = e.target.textContent}
-            >
-              {getLayerName(layer)}
-            </span>
-            <span class="count" class:hidden={!lists[layerIndex].length}>{lists[layerIndex].length}</span>
-          </div>
-          <Actions list={lists[layerIndex]} group={groups.joints} on:remove={() => removeLayer(layer.id)}/>
-        </div>
-        <ol>
-          {#each lists[layerIndex] as obj}
-            <li on:mouseover={e => setHighlight(e, [obj])} class="entry-li">
-              <div on:click={e => onEntryClick(e, obj)} class="flex items-center">
-                {#if obj.color}
-                  <span class="w-2 h-2 rounded-full mr-1" style="background: #{obj.color}"></span>
-                {/if}
-                <span class="entry-text">[{obj.type}]: {obj.platform1} -> {obj.platform2}</span>
-              </div>
-              <Actions list={[obj]} group={groups.joints}/>
-            </li>
-          {/each}
-        </ol>
-      </Collapsible>      
-    </div>
-  </SortableList>
-  <!-- {/each} -->
-  
-  <Button on:click={newLayer} class="mt-2 flex items-center">
-    <Icon icon={faPlus} class="text-xs"/>
-    <span class="ml-1">Layer</span>
-  </Button>
+  </SortableList> -->
+  {#each items as item}
+    {#if item.layer}
+      <Layer layer={item.layer} />
+    {:else}
+      <AnimationListEntry animation={item.animation} />
+    {/if}
+    <div class="mb-1"></div>
+  {/each}
 
 </div>
 
 
 <style>
-  .layer {
-    background: rgba(0, 7, 20, 0.26);
-    border: 1px solid rgba(0, 10, 26, 0.20);
-    @apply rounded-sm;
-    margin-top: -1px;
-    margin-bottom: -1px;
-  }
-  .layer:hover {
-    background: rgba(0, 7, 20, 0.36);
-  }
   
-  .title {
-    @apply flex justify-between py-1;
-  }
-  .title-text {
-    @apply font-cursive text-sm font-thin text-gray-300;
-  }
-  .title:hover .title-text {
-    @apply text-white font-bold;
-  }
-  .title-text.current {
-    @apply text-white font-bold text-base;
-  }
-  .count {
-    @apply text-xs font-mono text-gray-200 mr-2;
-  }
-  .layer:hover .count {
-    display: none;
-  }
-
-  .entry-li {
-    @apply leading-4 cursor-pointer relative;
-    padding: 0.1rem 0;
-  }
-  .entry-text {
-    @apply font-mono text-xs text-gray-300;
-  }
-  .entry-li:hover .entry-text {
-    @apply text-white;
-  }
 </style>

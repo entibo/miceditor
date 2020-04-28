@@ -10,7 +10,7 @@ import shamanObjectMetadata from "metadata/shamanObject"
 import * as sceneObjects from "state/sceneObjects"
 import * as selection from "state/selection"
 import * as util from "state/util"
-import { store, persistentWritable } from "state/util"
+import { store, Store, persistentWritable } from "state/util"
 import { clone } from "data/base/util"
 
 import * as history from "state/history"
@@ -18,6 +18,7 @@ import * as history from "state/history"
 import { xml } from "state/xml"
 import shamanObject from "@/metadata/shamanObject"
 import { objectMouseDown } from "./interaction"
+import { Layer } from "data/base/MapSettings"
 
 
 export const mapSettings = store(Editor.MapSettings.defaults())
@@ -27,40 +28,106 @@ setTimeout(() => {
   importXML(get(xml))
 }, 50)
 
+
+
 function findFirstAvailableId() {
   let id = 0
-  let list = mapSettings.layers.map(layer => layer.id).sort()
+  let list = mapSettings.animations.map(animation => animation.id)
+    .concat( mapSettings.layers.map(layer => layer.id) )
+    .sort()
   while(id < list.length && id === list[id]) 
     id++
   return id
 }
-export function newLayer() {
-  let id = findFirstAvailableId()
-  mapSettings.layers.push({
-    id,
+export function makeNewLayer(index?: number) {
+  let newLayer = {
+    id: findFirstAvailableId(),
     name: "",
     opacity: 1,
-  })
-  mapSettings.currentLayerId = id
+  }
+  if(index !== undefined)
+    mapSettings.layers = [...mapSettings.layers.slice(0,index), newLayer, ...mapSettings.layers.slice(index)]
+  else
+    mapSettings.layers.push(newLayer)
+  mapSettings.currentLayerId = newLayer.id
   mapSettings.invalidate()
+  return newLayer
 }
 
 export function removeLayer(layerId: number) {
   if(mapSettings.layers.length <= 1) return
-  let srcLayerIndex = mapSettings.layers.findIndex(layer => layer.id === layerId)!
-  let newId = (mapSettings.layers[srcLayerIndex-1] || mapSettings.layers[srcLayerIndex+1]).id
+
   sceneObjects.groups.joints
     .filter(obj => obj.layerId === layerId)
-    .forEach(obj => {
-      obj.layerId = newId
-      obj.invalidate()
-    })
-  mapSettings.layers.splice(srcLayerIndex, 1)
-  if(mapSettings.currentLayerId === layerId)
+    .forEach(sceneObjects.remove)
+
+  let srcLayerIndex = mapSettings.layers.findIndex(layer => layer.id === layerId)!
+
+  if(mapSettings.currentLayerId === layerId) {
+    let newId = (mapSettings.layers[srcLayerIndex-1] || mapSettings.layers[srcLayerIndex+1]).id
     mapSettings.currentLayerId = newId
+  }
+  
+  mapSettings.layers.splice(srcLayerIndex, 1)
   mapSettings.invalidate()
 }
 
+export function duplicateLayer(layerId: number) {
+  let srcLayerIndex = mapSettings.layers.findIndex(layer => layer.id === layerId)
+  if(srcLayerIndex < 0) return
+  let srcName = mapSettings.layers[srcLayerIndex].name
+  let newLayer = makeNewLayer(srcLayerIndex+1)
+  if(srcName) newLayer.name = srcName + " - Copy"
+  let toBeDuplicated = sceneObjects.groups.joints.filter(obj => obj.layerId === layerId)
+  let duplicates = [] as Store<Editor.Joint.Joint>[]
+  for(let obj of toBeDuplicated) {
+    let joint = clone(obj)
+    joint.layerId = newLayer.id
+    joint.selected = false
+    duplicates.push(
+      sceneObjects.add(joint, joint.index+1)
+    )
+  }
+  selection.set(duplicates)
+  return newLayer
+}
+
+
+export function makeNewAnimation(index?: number) {
+  let frame0 = makeNewLayer()
+  mapSettings.animations.push({
+    id: findFirstAvailableId(),
+    name: "",
+    type: "circular",
+    frames: [{
+      duration: 300,
+      layerId: frame0.id,
+    }]
+  })
+  mapSettings.invalidate()
+}
+
+export function removeAnimation(animationId: number) {
+  if(mapSettings.animations.length <= 1) return
+
+  let srcAnimationIndex = mapSettings.animations.findIndex(animation => animation.id === animationId)!
+  let animation = mapSettings.animations[srcAnimationIndex]
+  animation.frames.map(frame => frame.layerId).forEach(removeLayer)
+
+  mapSettings.animations.splice(srcAnimationIndex, 1)
+  mapSettings.invalidate()
+}
+
+export function addAnimationFrame(animationId: number) {
+  let animation = mapSettings.animations.find(animation => animation.id === animationId)!
+  let lastFrame = animation.frames[animation.frames.length-1]
+  let lastFrameLayerIndex = mapSettings.layers.findIndex(layer => layer.id === lastFrame.layerId)!
+  let newLayer = makeNewLayer(lastFrameLayerIndex+1)
+  animation.frames.push({
+    layerId: newLayer.id,
+    duration: lastFrame.duration,
+  })
+}
 
 
 
