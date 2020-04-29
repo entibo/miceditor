@@ -66,7 +66,7 @@ export interface NonStatic {
   miceCollision: boolean
   objectCollision: boolean
 }
-interface Colored {
+export interface Colored {
   color: string
 }
 export interface Rectangle {
@@ -302,7 +302,7 @@ export function encode(data: Platform): Node {
     getProp ("objectCollision") (),
   ))
 
-  setAttr ("o")   (getProp ("color")      (util.omitOn("000000")))
+  setAttr ("o")   (getProp ("color")      ())
   setAttr ("N")   (getProp ("foreground") (util.omitOn(false), () => ""))
   setAttr ("m")   (getProp ("invisible")  (util.omitOn(false), () => ""))
   setAttr ("nosync") (getProp ("nosync")  (util.omitOn(false), () => ""))

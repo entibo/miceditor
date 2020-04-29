@@ -34,7 +34,7 @@ function findFirstAvailableId() {
   let id = 0
   let list = mapSettings.animations.map(animation => animation.id)
     .concat( mapSettings.layers.map(layer => layer.id) )
-    .sort()
+    .sort((a,b) => a-b)
   while(id < list.length && id === list[id]) 
     id++
   return id
@@ -79,13 +79,16 @@ export function duplicateLayer(layerId: number) {
   let newLayer = makeNewLayer(srcLayerIndex+1)
   if(srcName) newLayer.name = srcName + " - Copy"
   let toBeDuplicated = sceneObjects.groups.joints.filter(obj => obj.layerId === layerId)
+  if(!toBeDuplicated.length)
+    return newLayer
   let duplicates = [] as Store<Editor.Joint.Joint>[]
-  for(let obj of toBeDuplicated) {
-    let joint = clone(obj)
+  let lastIndex = toBeDuplicated[toBeDuplicated.length-1].index
+  for(let k=0; k < toBeDuplicated.length; k++) {
+    let joint = clone(toBeDuplicated[k])
     joint.layerId = newLayer.id
     joint.selected = false
     duplicates.push(
-      sceneObjects.add(joint, joint.index+1)
+      sceneObjects.add(joint, lastIndex+1+k)
     )
   }
   selection.set(duplicates)
@@ -108,8 +111,6 @@ export function makeNewAnimation(index?: number) {
 }
 
 export function removeAnimation(animationId: number) {
-  if(mapSettings.animations.length <= 1) return
-
   let srcAnimationIndex = mapSettings.animations.findIndex(animation => animation.id === animationId)!
   let animation = mapSettings.animations[srcAnimationIndex]
   animation.frames.map(frame => frame.layerId).forEach(removeLayer)

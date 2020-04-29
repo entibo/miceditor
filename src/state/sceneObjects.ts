@@ -7,6 +7,7 @@ import { store, Store } from "state/util"
 
 import { clamp } from "data/base/util"
 
+import { mapSettings } from "state/map"
 import * as history from "state/history"
 import * as selection from "state/selection"
 
@@ -192,8 +193,30 @@ export function linkJointToPlatform(joint: J, which: "platform1"|"platform2", pl
 
 
 function onJointAdded(joint: J) {
+  ensureLayerConstraint(joint)
   linkJointToPlatform(joint, "platform1", joint.platform1)
   linkJointToPlatform(joint, "platform2", joint.platform2)
+}
+
+function ensureLayerConstraint(joint: J) {
+  let layerIndex = mapSettings.layers.findIndex(layer => layer.id === joint.layerId)
+  let layerJoints = groups.joints.filter(obj => obj !== joint && obj.layerId === joint.layerId)
+  if(!layerJoints.length) {
+    for(let k=layerIndex+1; k < mapSettings.layers.length; k++) {
+      let nextLayer = mapSettings.layers[k]
+      let first = groups.joints.find(obj => obj.layerId === nextLayer.id)
+      if(!first) continue
+      setIndex(joint, first.index-1)
+      return
+    }
+    return
+  }
+  let first = layerJoints[0]
+  let last = layerJoints[layerJoints.length-1]
+  if(joint.index > last.index+1)
+    setIndex(joint, last.index+1)
+  else if(joint.index < first.index-1)
+    setIndex(joint, last.index-1)
 }
 
 function onPlatformAdded(platform: P) {

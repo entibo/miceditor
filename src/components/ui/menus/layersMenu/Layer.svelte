@@ -27,6 +27,7 @@
 
 
   export let layer
+  export let defaultName = null
 
   $: current = $mapSettings.currentLayerId === layer.id
   $: list = $joints.all.filter(obj => obj.layerId === layer.id)
@@ -81,9 +82,9 @@
 
         <Options list={list} group={groups.joints} />
         <div class="title flex-grow ml-1" on:click={e => onTitleClick(e, layer.id)}>
-          <LayerName name={layer.name || `Layer${layer.id}`} 
+          <LayerName name={layer.name || defaultName || `Layer${layer.id}`} 
                      {current}
-                     on:name={name => (layer.name = name, mapSettings.invalidate())}
+                     on:name={e => (layer.name = e.detail, mapSettings.invalidate())}
           />
           <span class="count" class:hidden={!list.length}>{list.length}</span>
         </div>
@@ -94,8 +95,8 @@
 
       </div>
     </div>
-    <ol>
-      {#each list as obj}
+    <ol class="mt-1">
+      {#each list.reverse() as obj}
         <li class="entry-li flex" 
             on:mouseover={e => setHighlight(e, [obj])} 
             draggable="true"

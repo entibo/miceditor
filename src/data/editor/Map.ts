@@ -48,6 +48,7 @@ export function parse(str: string): Map {
   ;[map.platforms, map.joints] = decodeBoosterPlatforms(map.platforms, map.joints)
     map.joints                 = removeCurveSegments(map.joints)
     map.decorations            = decodeMouseSpawns(map.mapSettings.miceSpawn, map.decorations)
+    map.joints                 = decodeAnimations(map.mapSettings, map.platforms, map.joints)
 
   return map
 }
@@ -57,11 +58,12 @@ export function parse(str: string): Map {
 
 export function serialize(map: Map): string {
     map.mapSettings            = encodeImages(map.mapSettings, map.images)
-    map.joints                 = encodeLines(map.platforms, map.joints)
     map.decorations            = encodeMouseSpawns(map.mapSettings.miceSpawn, map.decorations)
     map.shamanObjects          = encodeShamanObjects(map.shamanObjects)
   ;[map.platforms, map.joints] = encodeBoosterPlatforms(map.platforms, map.joints)
   ;[map.platforms, map.joints] = encodeStickyPlatforms(map.platforms, map.joints)
+  ;[map.platforms, map.joints] = encodeAnimations(map.mapSettings, map.platforms, map.joints)
+    map.joints                 = encodeLines(map.platforms, map.joints)
 
   saveMedata(map)
   return Base.Map.serialize(map)
@@ -69,6 +71,187 @@ export function serialize(map: Map): string {
 
 
 
+
+
+
+
+const animationDrawingOffset = 400
+
+function decodeAnimations(mapSettings: Editor.MapSettings.MapSettings, platforms: Editor.Platform.Platform[], joints: Editor.Joint.Joint[]) {
+  for(let animation of mapSettings.animations) {
+    if(animation.frames.length < 2) continue
+    for(let frame of animation.frames) {
+      joints = joints.map(obj =>
+        obj.layerId === frame.layerId
+          ? (Editor.Joint.move(obj, 0, animationDrawingOffset), obj)
+          : obj)
+    }
+  }
+  return joints
+}
+
+/**
+ * *Adds platforms, joints*
+ */
+function encodeAnimations(mapSettings: Editor.MapSettings.MapSettings, platforms: Editor.Platform.Platform[], joints: Editor.Joint.Joint[]) {
+  let layers = mapSettings.layers
+  let animations = mapSettings.animations
+  if(!animations.length) return [platforms, joints] as const
+
+  let staticPlatformIdx = platforms.findIndex(Editor.Platform.isStatic)
+  if(staticPlatformIdx < 0) {
+    throw "encodeAnimations: No static platform was found..."
+  }
+
+  function makeDynamicRectangle() {
+    let p = 
+      <Extract<Editor.Platform.Platform, Editor.Platform.NonStatic&Editor.Platform.Rectangle&Editor.Platform.Colored>>
+      Editor.Platform.make(Editor.Platform.defaults(Editor.Platform.Type.Rectangle)) 
+    
+    p.dynamic = true
+    p.fixedRotation = true
+    p.ignore = true
+    p.miceCollision = false
+    p.objectCollision = false
+    p.friction = 0
+    p.restitution = 0
+    //p.invisible = true
+    return p
+  }
+  function makeDynamicCircle() {
+    let p = 
+      <Extract<Editor.Platform.Platform, Editor.Platform.NonStatic&Editor.Platform.Circle&Editor.Platform.Colored>>
+      Editor.Platform.make(Editor.Platform.defaults(Editor.Platform.Type.Circle)) 
+    
+    p.dynamic = true
+    p.fixedRotation = true
+    p.ignore = true
+    p.miceCollision = false
+    p.objectCollision = false
+    p.friction = 0
+    p.restitution = 0
+    //p.invisible = true
+    return p
+  }
+
+  const makeJoint = <T extends Editor.Joint.Type> (type: T) => {
+    let j = Editor.Joint.make(Editor.Joint.defaults(type))
+    j.ignore = true
+    return <Extract<Editor.Joint.Joint,{type:T}>> j
+  }
+
+  function getActivatorRadiusAndOffset(r0: number, y: number, t: number) {
+    let a = 1 - Math.cos(t*Math.PI)
+    let r1 = ( 2*r0*r0*a + 2*r0*y*a + y*y ) / ( 2*r0*a + 2*y )
+    let c1 = r0 - r1 + y
+    return { r1, c1 }
+  }
+
+
+  for(let [animationIdx,animation] of animations.entries()) {
+
+    function getFrameIndex(frame: Editor.MapSettings.Frame) {
+      return layers.findIndex(layer => layer.id === frame.layerId)
+    }
+    let frames = animation.frames.sort((a,b) => getFrameIndex(a) - getFrameIndex(b))
+    if(frames.length < 2) continue
+    
+    let location = {
+      x: 240 + 300*animationIdx,
+      y: 160,
+    }
+    let radius = 100
+
+    let totalDuration = frames.reduce((ms, frame) => ms + frame.duration, 0)
+
+    let mover = makeDynamicRectangle()
+    mover.mass = 1e6
+    mover.color = "0000ff"
+    let moverIdx = platforms.length + 2*frames.filter(frame => !!joints.find(obj => obj.layerId === frame.layerId)).length
+    
+    for(let [frameIdx,frame] of frames.entries()) {
+
+      let empty = !joints.find(obj => obj.layerId === frame.layerId)
+      if(empty) continue
+
+      let button = makeDynamicRectangle()
+      button.mass = 1e6
+      button.miceCollision = true
+      button.objectCollision = true
+      button.width = 20
+      button.height = 20
+      button.x = location.x
+      button.y = location.y + radius + button.height/2
+      Editor.rotateAround(button, (frameIdx/frames.length)*360, location)
+      button.color = "ff0000"
+      let buttonIdx = platforms.push(button) - 1
+
+      let teleporter = makeDynamicRectangle()
+      teleporter.mass = 1
+      teleporter.color = "00ff00"
+      let teleporterIdx = platforms.push(teleporter) - 1
+
+      for(let [p1,p2] of [
+        [staticPlatformIdx, buttonIdx],
+        [teleporterIdx, moverIdx],
+        [buttonIdx, teleporterIdx],
+      ]) {
+        let jr = makeJoint("JR")
+        jr.platform1 = p1
+        jr.platform2 = p2
+        joints.push(jr)
+      }
+
+      joints = joints.map(obj => {
+        if(obj.layerId !== frame.layerId) return obj
+        obj = clone(obj)
+        obj.platform1 = teleporterIdx
+        obj.platform2 = teleporterIdx
+        Editor.Joint.move(obj, 0, -animationDrawingOffset)
+        return obj
+      })
+
+    }
+
+    platforms.push(mover)
+
+    let jp = makeJoint("JP")
+    jp.platform1 = staticPlatformIdx
+    jp.platform2 = moverIdx
+    jp.axis = { x: 0, y: 1 }
+    jp.power = Infinity
+    jp.speed = -1e5
+    jp.min = animationDrawingOffset
+    joints.push(jp)
+
+    // Activator mechanism
+    let activator = makeDynamicCircle()
+    activator.mass = 0
+    activator.objectCollision = true
+    activator.fixedRotation = false
+    activator.color = "ffffff"
+    activator.x = location.x
+    let { r1, c1 } = getActivatorRadiusAndOffset(radius, 1, 1/(frames.length-1))
+    activator.y = location.y + c1
+    activator.radius = r1
+    let activatorIdx = platforms.push(activator) - 1
+
+    let jr = makeJoint("JR")
+    jr.platform1 = staticPlatformIdx
+    jr.platform2 = activatorIdx
+    jr.point1 = {
+      enabled: true,
+      x: location.x,
+      y: location.y,
+    }
+    jr.power = Infinity
+    jr.speed = 360 / (totalDuration/1000)
+    joints.push(jr)
+
+  }
+  
+  return [platforms, joints] as const
+}
 
 
 
@@ -97,14 +280,18 @@ function encodeImages(mapSettings: Editor.MapSettings.MapSettings, images: reado
 
 
 function encodeLines(platforms: readonly Editor.Platform.Platform[], joints: Editor.Joint.Joint[]) {
- joints = joints.flatMap(obj =>
+  joints = joints.flatMap(obj =>
     obj.type === "VC"
       ? generateCurveSegments(obj, platforms[obj.platform1], platforms[obj.platform2])
         .concat(obj)
       : obj)
 
- joints = joints.map(obj =>
-    obj.type === "JD" && obj.point1.enabled && eq(obj.point1)(obj.point2)
+  const isPointsEqual = (p1: Point, p2: Point) =>
+    Math.floor(p1.x) == Math.floor(p2.x) &&
+    Math.floor(p1.y) == Math.floor(p2.y)
+
+  joints = joints.map(obj =>
+    obj.type === "JD" && obj.point1.enabled && isPointsEqual(obj.point1, obj.point2)
       ? (_=>{ 
           let newObj = clone(obj)
           newObj.point2.y += 1
@@ -517,6 +704,7 @@ function loadMedata(map: Map) {
       map.joints[idx].layerId = id
     }
   })
+  map.mapSettings.animations = map.mapSettings.MEDATA.ANIMATIONS
 }
 function loadFlags(obj: Editor.Object, flags: number) {
   if(!obj) return
@@ -549,7 +737,7 @@ function saveMedata(map: Map) {
           .map(obj => obj.index)
       })),
     },
-    ANIMATIONS: []
+    ANIMATIONS: map.mapSettings.animations,
   }
 }
 function saveFlags(obj: Editor.Object) {

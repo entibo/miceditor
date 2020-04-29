@@ -6,6 +6,7 @@
 
 
   import Tooltip from "components/common/Tooltip.svelte"
+  import TextInput from "components/common/TextInput.svelte"
   import Checkbox from "components/common/Checkbox.svelte"
   import Button from "components/common/Button.svelte"
   import Collapsible from "components/common/Collapsible.svelte"
@@ -20,6 +21,7 @@
   import { _ } from "state/locale"
 
 
+  import { combine } from "common"
   import { mapSettings } from "state/map"
   import * as map from "state/map"
   import { groups, joints } from "state/sceneObjects"
@@ -34,6 +36,14 @@
   $: current = layerIds.includes($mapSettings.currentLayerId)
   $: layers = $mapSettings.layers.filter(layer => layerIds.includes(layer.id))
   $: list = $joints.all.filter(obj => layerIds.includes(obj.layerId))
+
+  $: frameDuration = combine(animation.frames.map(frame => frame.duration))
+  function setFrameDuration(ms) {
+    for(let frame of animation.frames) {
+      frame.duration = ms
+    }
+    mapSettings.invalidate()
+  }
 
   
   function onSort(e) {
@@ -55,9 +65,12 @@
     e.stopPropagation()
   }
 
-  function onLayerRemoved() {
-    if(animation.frames.length === 1)
+  function onLayerRemoved(e) {
+    let removedLayer = e.detail
+    animation.frames = animation.frames.filter(frame => frame.layerId !== removedLayer.id)
+    if(!animation.frames.length) {
       map.removeAnimation(animation.id)
+    }
   }
   function onLayerDuplicated(e) {
     let {layer, newLayer} = e.detail
@@ -73,16 +86,16 @@
 
 <div class="animation" on:mouseleave={resetHighlight}>
   <Collapsible active on:mouseover={e => setHighlight(e, list)}>
-    <div slot="title" class="relative">
+    <div slot="title" class="">
       <div class="flex">
 
         <Options list={list} group={groups.joints} />
         <div class="title flex-grow ml-1" on:click={e => onTitleClick(e)}>
           <LayerName name={animation.name || `Anim${animation.id}`} 
                      {current}
-                     on:name={name => (animation.name = name, mapSettings.invalidate())}
+                     on:name={e => (animation.name = e.detail, mapSettings.invalidate())}
           />
-          <span class="count" class:hidden={!list.length}>{list.length}</span>
+          <span class="count" class:hidden={!animation.frames.length}>{animation.frames.length}</span>
         </div>
         <Actions list={list}
                 on:remove={() => map.removeAnimation(animation.id)}
@@ -90,15 +103,29 @@
         />
 
       </div>
+      <div class="form">
+        <label>
+          <span>
+            Frame duration
+            <span class="text-xs opacity-75">(ms)</span>
+          </span>
+          <div class="flex">
+            <TextInput int min={10} sliderMin={20} sliderMax={5000} class="w-16" 
+                       value={frameDuration} set={setFrameDuration}
+            />
+          </div>
+        </label>
+      </div>
     </div>
 
+    <div class="mb-1"></div>
 
-
-    {#each layers as layer}
-      <Layer {layer} 
+    {#each [...layers].reverse() as layer, idx (layer.id)}
+      <Layer {layer} defaultName={`Frame${layers.length-1-idx}`}
              on:duplicate={e => onLayerDuplicated(e)}
              on:remove={e => onLayerRemoved(e)}
       />
+      <div class="mb-1"></div>
     {/each}
   </Collapsible>      
 </div>

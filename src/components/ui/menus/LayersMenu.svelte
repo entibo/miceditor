@@ -52,14 +52,14 @@
       if(animation) {
         items.push({
           animation,
-          key: "root-"+animation.id,
+          key: animation.id,
         })
         i += animation.frames.length
         continue
       }
       items.push({
         layer,
-        key: "root-"+layer.id,
+        key: layer.id,
       })
       i++
     }
@@ -93,7 +93,7 @@
     on:sort={onSort}
   >
   </SortableList> -->
-  {#each items as item}
+  {#each items.reverse() as item (item.key)}
     {#if item.layer}
       <Layer layer={item.layer} />
     {:else}

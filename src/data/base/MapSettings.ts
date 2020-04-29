@@ -434,16 +434,14 @@ function writeDefilante(defilante: MapSettings["defilante"]): M.Maybe<string> {
   ].join(",")
 }
 
-/**
- * Format: "i,f;i,f;i,f;i,f-i,f;i,f-..."
- * Order: PLATFORM, DECORATION, SHAMANOBJECT, JOINT, IMAGE, ANIMATION
- **/
+
+
 function readMedata(str: string): MapSettings["MEDATA"] {
   let parts = str.split("-")
   return {
     FLAGS: readMedataFlags(parts[0]),
     LAYERS: readMedataLayers(parts[1]),
-    ANIMATIONS: [],
+    ANIMATIONS: readMedataAnimations(parts[2]),
   }
 }
 
@@ -483,10 +481,31 @@ function readMedataLayers(str: string): MapSettings["MEDATA"]["LAYERS"] {
   }
 }
 
+function readMedataAnimations(str: string): MapSettings["MEDATA"]["ANIMATIONS"] {
+  let parts = str.split(";")
+  return parts.filter(s => s !== "").map(str => {
+    let parts = str.split(":")
+    return {
+      id: parseInt(parts[0]),
+      name: parts[1],
+      frames: parts[2].split(",").map(readMedataAnimationsFrame),
+      type: parts[3] as Animation["type"],
+    }
+  })
+}
+function readMedataAnimationsFrame(str: string): Frame {
+  let parts = str.split("/")
+  return {
+    layerId: parseInt(parts[0]),
+    duration: parseInt(parts[1]),
+  }
+}
+
 function writeMedata(medata: MapSettings["MEDATA"]): string {
   return [
     writeMedataFlags(medata.FLAGS),
     writeMedataLayers(medata.LAYERS),
+    writeMedataAnimations(medata.ANIMATIONS),
   ].join("-")
 }
 
@@ -509,7 +528,6 @@ function writeMedataFlagsGroup(group: Record<number, number>): string {
     .join(":")
 }
 
-
 function writeMedataLayers(LAYERS: MapSettings["MEDATA"]["LAYERS"]): string {
   return [
     LAYERS.current,
@@ -523,4 +541,24 @@ function writeMedataLayers(LAYERS: MapSettings["MEDATA"]["LAYERS"]): string {
     })
   ]
   .join(";")
+}
+
+function writeMedataAnimations(ANIMATIONS: MapSettings["MEDATA"]["ANIMATIONS"]): string {
+  return ANIMATIONS.map(animation => {
+    return [
+      animation.id,
+      animation.name,
+      animation.frames.map(writeMedataAnimationsFrame).join(","),
+      animation.type,
+    ].join(":")
+  })
+  .join(";")
+}
+
+function writeMedataAnimationsFrame(frame: Frame): string {
+  return [
+    frame.layerId,
+    frame.duration,
+  ]
+  .join("/")
 }
