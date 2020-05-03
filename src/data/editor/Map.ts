@@ -75,16 +75,24 @@ export function serialize(map: Map): string {
 
 
 
-const animationDrawingOffset = 400
+const animationDrawingOffset = 2000
 
 function decodeAnimations(mapSettings: Editor.MapSettings.MapSettings, platforms: Editor.Platform.Platform[], joints: Editor.Joint.Joint[]) {
   for(let animation of mapSettings.animations) {
     if(animation.frames.length < 2) continue
     for(let frame of animation.frames) {
-      joints = joints.map(obj =>
-        obj.layerId === frame.layerId
-          ? (Editor.Joint.move(obj, 0, animationDrawingOffset), obj)
-          : obj)
+      joints = joints.map(obj => {
+        if(obj.layerId !== frame.layerId) return obj
+        Editor.Joint.move(obj, 0, animationDrawingOffset)
+        obj.platform1 = 0
+        obj.platform2 = 0
+        return obj
+      })
+      if(frame.platform !== null) {
+        let p = platforms[frame.platform]
+        // set mode (frame)
+        p.y += animationDrawingOffset
+      }
     }
   }
   return joints
@@ -140,11 +148,27 @@ function encodeAnimations(mapSettings: Editor.MapSettings.MapSettings, platforms
     return <Extract<Editor.Joint.Joint,{type:T}>> j
   }
 
+  /**
+   * 
+   * @param r0 Radius of the mechanism circle; the buttons will be tangential to this circle
+   * @param y How many pixels should the activator "stick out" of the circle
+   * @param t How much of the circumference of the circle should the activator cover
+   * @returns Radius and position of the activator
+   */
   function getActivatorRadiusAndOffset(r0: number, y: number, t: number) {
     let a = 1 - Math.cos(t*Math.PI)
     let r1 = ( 2*r0*r0*a + 2*r0*y*a + y*y ) / ( 2*r0*a + 2*y )
     let c1 = r0 - r1 + y
     return { r1, c1 }
+  }
+
+  function appendPlatform(p: Editor.Platform.Platform) {
+    return platforms.push(p) - 1
+  }
+
+  function isFrameEmpty(frame: Editor.MapSettings.Frame) {
+    let hasJoints = !!joints.find(obj => obj.layerId === frame.layerId)
+    return !hasJoints && frame.platform === null
   }
 
 
@@ -157,40 +181,59 @@ function encodeAnimations(mapSettings: Editor.MapSettings.MapSettings, platforms
     if(frames.length < 2) continue
     
     let location = {
-      x: 240 + 300*animationIdx,
+      x: -240 + 300*animationIdx,
       y: 160,
     }
     let radius = 100
 
     let totalDuration = frames.reduce((ms, frame) => ms + frame.duration, 0)
 
-    let mover = makeDynamicRectangle()
-    mover.mass = 1e6
-    mover.color = "0000ff"
-    let moverIdx = platforms.length + 2*frames.filter(frame => !!joints.find(obj => obj.layerId === frame.layerId)).length
+
+    let frameData = frames
+      .map((frame, frameIdx) => [frame, frameIdx] as const)
+      .filter(([frame,_]) => !isFrameEmpty(frame))
+      .map(([frame, frameIdx]) => {
+
+        let button = makeDynamicRectangle()
+        button.mass = 1e9
+        button.miceCollision = true
+        button.objectCollision = true
+        button.width = 20
+        button.height = 20
+        button.x = location.x
+        button.y = location.y + radius + button.height/2
+        Editor.rotateAround(button, (frameIdx/frames.length)*360, location)
+        button.color = "ff0000"
+
+        let teleporterIdx
+        if(frame.platform !== null) {
+          teleporterIdx = frame.platform
+          let teleporter = clone(platforms[frame.platform])
+          teleporter.y -= animationDrawingOffset
+          platforms[frame.platform] = teleporter
+        }
+        else {
+          let teleporter = makeDynamicRectangle()
+          teleporter.mass = 1000
+          teleporter.color = "00ff00"
+          teleporterIdx = appendPlatform(teleporter)
+        }
+
+        return {
+          frame, 
+          teleporterIdx,
+          buttonIdx: appendPlatform(button), 
+        }
+      })
     
-    for(let [frameIdx,frame] of frames.entries()) {
 
-      let empty = !joints.find(obj => obj.layerId === frame.layerId)
-      if(empty) continue
+    let mover = makeDynamicRectangle()
+    mover.mass = 1e9
+    mover.color = "0000ff"
+    let moverIdx = appendPlatform(mover)
+  
 
-      let button = makeDynamicRectangle()
-      button.mass = 1e6
-      button.miceCollision = true
-      button.objectCollision = true
-      button.width = 20
-      button.height = 20
-      button.x = location.x
-      button.y = location.y + radius + button.height/2
-      Editor.rotateAround(button, (frameIdx/frames.length)*360, location)
-      button.color = "ff0000"
-      let buttonIdx = platforms.push(button) - 1
-
-      let teleporter = makeDynamicRectangle()
-      teleporter.mass = 1
-      teleporter.color = "00ff00"
-      let teleporterIdx = platforms.push(teleporter) - 1
-
+    for(let {frame, buttonIdx, teleporterIdx} of frameData) {
       for(let [p1,p2] of [
         [staticPlatformIdx, buttonIdx],
         [teleporterIdx, moverIdx],
@@ -202,19 +245,19 @@ function encodeAnimations(mapSettings: Editor.MapSettings.MapSettings, platforms
         joints.push(jr)
       }
 
+      // Link drawing to teleporter
       joints = joints.map(obj => {
         if(obj.layerId !== frame.layerId) return obj
         obj = clone(obj)
         obj.platform1 = teleporterIdx
         obj.platform2 = teleporterIdx
         Editor.Joint.move(obj, 0, -animationDrawingOffset)
+        console.log("(encode) moving -"+animationDrawingOffset)
         return obj
       })
-
     }
 
-    platforms.push(mover)
-
+    // Mover joint
     let jp = makeJoint("JP")
     jp.platform1 = staticPlatformIdx
     jp.platform2 = moverIdx
@@ -231,10 +274,10 @@ function encodeAnimations(mapSettings: Editor.MapSettings.MapSettings, platforms
     activator.fixedRotation = false
     activator.color = "ffffff"
     activator.x = location.x
-    let { r1, c1 } = getActivatorRadiusAndOffset(radius, 1, 1/(frames.length-1))
+    let { r1, c1 } = getActivatorRadiusAndOffset(radius, 1, 1/(frames.length))
     activator.y = location.y + c1
     activator.radius = r1
-    let activatorIdx = platforms.push(activator) - 1
+    let activatorIdx = appendPlatform(activator)
 
     let jr = makeJoint("JR")
     jr.platform1 = staticPlatformIdx

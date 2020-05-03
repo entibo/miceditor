@@ -34,8 +34,14 @@
 
   $: layerIds = animation.frames.map(frame => frame.layerId)
   $: current = layerIds.includes($mapSettings.currentLayerId)
-  $: layers = $mapSettings.layers.filter(layer => layerIds.includes(layer.id))
+  // $: layers = $mapSettings.layers.filter(layer => layerIds.includes(layer.id))
   $: list = $joints.all.filter(obj => layerIds.includes(obj.layerId))
+
+  $: items = $mapSettings.layers.flatMap(layer => {
+    let frame = animation.frames.find(frame => frame.layerId === layer.id)
+    if(!frame) return []
+    return { frame, layer }
+  })
 
   $: frameDuration = combine(animation.frames.map(frame => frame.duration))
   function setFrameDuration(ms) {
@@ -43,6 +49,11 @@
       frame.duration = ms
     }
     mapSettings.invalidate()
+  }
+
+  function setFramePlatform(frame, v) {
+    if(v) map.addFrameBackgroundPlatform(frame)
+    else map.removeFrameBackgroundPlatform(frame)
   }
 
   
@@ -120,11 +131,20 @@
 
     <div class="mb-1"></div>
 
-    {#each [...layers].reverse() as layer, idx (layer.id)}
-      <Layer {layer} defaultName={`Frame${layers.length-1-idx}`}
+    {#each [...items].reverse() as { layer, frame }, idx (layer.id)}
+
+      <Layer {layer} defaultName={`Frame${items.length-1-idx}`}
              on:duplicate={e => onLayerDuplicated(e)}
              on:remove={e => onLayerRemoved(e)}
-      />
+      >
+        <div slot="extra" class="form">
+          <label>
+            <span>Use platform</span>
+            <Checkbox checked={frame.platform !== null} set={v => setFramePlatform(frame, v)}  />
+          </label>
+        </div>
+      </Layer>
+
       <div class="mb-1"></div>
     {/each}
   </Collapsible>      

@@ -78,7 +78,7 @@
     </Tooltip>
   </div>
 
-  <div class="mx-2 bg-gray-800 rounded-t py-1 pl-1 pr-2 flex items-center">
+  <div class="mx-2 bg-gray-700b-65 rounded-t-sm py-1 pl-1 pr-2 flex items-center">
     <Tooltip top title="Atelier801">
       <a href="https://atelier801.com/topic?f=6&t=884238" target="_blank">
           <img src="dist/atelier801.png" alt="Atelier801" />
@@ -90,7 +90,7 @@
 
 <style lang="text/postcss">
   .section {
-    @apply bg-gray-800 rounded-t px-3 py-1 mx-2;
+    @apply bg-gray-700b-65 rounded-t-sm px-3 py-1 mx-2;
   }
   a {
     text-decoration: none;

@@ -100,7 +100,7 @@ export type Animation = {
 export type Frame = {
   layerId: number
   duration: number
-  /* background */
+  platform: null | number
 }
 
 
@@ -498,6 +498,7 @@ function readMedataAnimationsFrame(str: string): Frame {
   return {
     layerId: parseInt(parts[0]),
     duration: parseInt(parts[1]),
+    platform: M.withDefault<null|number> (null) (util.readInt(parts[2])),
   }
 }
 
@@ -559,6 +560,7 @@ function writeMedataAnimationsFrame(frame: Frame): string {
   return [
     frame.layerId,
     frame.duration,
+    frame.platform === null ? "" : frame.platform,
   ]
   .join("/")
 }

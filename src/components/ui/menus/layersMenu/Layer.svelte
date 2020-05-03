@@ -94,6 +94,7 @@
         />
 
       </div>
+      <slot name="extra"></slot>
     </div>
     <ol class="mt-1">
       {#each list.reverse() as obj}
