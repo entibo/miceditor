@@ -105,6 +105,15 @@ export function resize(dx: number, dy: number) {
   }
 }
 
+export function scale(fX: number, fY: number) {
+  console.log("scale:", fX, fY)
+  let p = Editor.getPositionInformation([...selectionMap.keys()]).center
+  for(let obj of selectionMap.keys()) {
+    Editor.scaleAround(obj, fX, fY, p)
+    obj.invalidate()
+  }
+}
+
 export function shiftIndex(dz: number) {
   let groupToListMap = new Map<ReturnType<typeof sceneObjects.getGroup>, SceneObject[]>()
   for(let obj of selectionMap.keys()) {

@@ -96,3 +96,10 @@ export function resize(obj: Platform, dx: number, dy: number) {
   obj.width = Math.max(dx + obj.width, 10)
   obj.height = Math.max(dy + obj.height, 10)
 }
+
+export function scale(obj: Platform, fX: number, fY: number) {
+  if(isCircle(obj))
+    return obj.radius *= fX !== 1 ? fX : fY
+  obj.width *= fX
+  obj.height *= fY
+}

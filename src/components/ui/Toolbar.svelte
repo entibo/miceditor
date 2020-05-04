@@ -5,6 +5,8 @@
   import { fly, slide } from "svelte/transition"
   
   import Icon from "fa-svelte"
+  import { faLink } from "@fortawesome/free-solid-svg-icons/faLink"
+  import { faUnlink } from "@fortawesome/free-solid-svg-icons/faUnlink"
   import { faTrashAlt as faTrash } from "@fortawesome/free-solid-svg-icons/faTrashAlt"
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
   import { faClone } from "@fortawesome/free-solid-svg-icons/faClone"
@@ -13,11 +15,13 @@
   import { faPaste } from "@fortawesome/free-solid-svg-icons/faPaste"
   import { faUndo } from "@fortawesome/free-solid-svg-icons/faUndo"
   import { faRedo } from "@fortawesome/free-solid-svg-icons/faRedo"
+  import { faArrowsAlt } from "@fortawesome/free-solid-svg-icons/faArrowsAlt"
   import { faArrowsAltH } from "@fortawesome/free-solid-svg-icons/faArrowsAltH"
   import { faArrowsAltV } from "@fortawesome/free-solid-svg-icons/faArrowsAltV"
   import { faSyncAlt } from "@fortawesome/free-solid-svg-icons/faSyncAlt"
   import { faStepBackward } from "@fortawesome/free-solid-svg-icons/faStepBackward"
   import { faStepForward } from "@fortawesome/free-solid-svg-icons/faStepForward"
+  import { faExpandAlt } from "@fortawesome/free-solid-svg-icons/faExpandAlt"
   import FaStepBackwardForward from "components/icons/FaStepBackwardForward.svelte"
 
   import Button from "components/common/Button.svelte"
@@ -36,6 +40,36 @@
   function rotate(v) {
     Selection.rotateAround(v - rotation)
     rotation = v
+  }
+
+  let movementX = null, movementY = null
+  function moveX(v) {
+    Selection.move(v - movementX, 0)
+    movementX = v
+  }
+  function moveY(v) {
+    Selection.move(0, v - movementY)
+    movementY = v
+  }
+
+  let scaleX = 1, scaleY = 1
+  let scaleXYLinked = true
+  function doScaleX(v) {
+    if(Math.abs(v) <= 0.000001) return
+    if(scaleXYLinked) {
+      Selection.scale(v / scaleX, v / scaleY)
+      scaleY = v
+    }
+    else Selection.scale(v / scaleX, 1)
+    scaleX = v
+  }
+  function doScaleY(v) {
+    if(scaleXYLinked) {
+      Selection.scale(v / scaleX, v / scaleY)
+      scaleX = v
+    }
+    else Selection.scale(1, v / scaleY)
+    scaleY = v
   }
 
 </script>
@@ -68,7 +102,52 @@
     </Tooltip>
 
     <div class="mb-2"></div>
+
+    <label class="relative">
+      <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
+               title='{$_("rotate")} (Shift+Scroll)' on:click={() => rotation = null}
+      >
+        <Icon icon={faSyncAlt} />
+      </Tooltip>
+      <div class="floating-input">
+        <TextInput int value={rotation} min={-180} max={180} step={15} set={rotate} class="w-12" />
+      </div>
+    </label>
     
+    <label class="relative">
+      <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
+               title='{$_("move-selection")} (Arrows)' on:click={() => movementX = movementY = null}
+      >
+        <Icon icon={faArrowsAlt} />
+      </Tooltip>
+      <div class="floating-input flex">
+        <TextInput int value={movementX} sliderMin={-400} sliderMax={400} step={10} set={moveX} class="w-12" />
+        <div class="w-6"></div>
+        <TextInput int value={movementY} sliderMin={-400} sliderMax={400} step={10} set={moveY} class="w-12" />
+      </div>
+    </label>
+    
+    <label class="relative">
+      <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
+               title='{$_("scale-selection")}' on:click={() => scaleX = scaleY = 1}
+      >
+        <Icon icon={faExpandAlt} />
+      </Tooltip>
+      <div class="floating-input flex">
+        <TextInput float value={scaleX} sliderMin={0.1} sliderMax={10} step={0.1} set={doScaleX} class="w-12" />
+        <div class="icon-btn w-4 h-6 bg-gray-900 border-blue-400  text-xs flex items-center justify-center" 
+          class:border-b-2={scaleXYLinked}
+          on:mousedown|preventDefault|stopPropagation 
+          on:click|preventDefault|stopPropagation={() => scaleXYLinked = !scaleXYLinked} 
+        >
+          <Icon icon={scaleXYLinked ? faLink : faUnlink} />
+        </div>
+        <TextInput float value={scaleY} sliderMin={0.1} sliderMax={10} step={0.1} set={doScaleY} class="w-12" />
+      </div>
+    </label>
+
+    <div class="mb-2"></div>
+        
     <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
              title='{$_("flip-horizontally-button")} (X)' on:click={Selection.flipX}
     >
@@ -81,19 +160,6 @@
       <Icon icon={faArrowsAltV} />
     </Tooltip>
 
-    <div class="mb-2"></div>
-
-    <label class="relative">
-      <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
-               title='{$_("rotate")} (Shift+Scroll)' on:click={() => rotation = null}
-      >
-        <Icon icon={faSyncAlt} />
-      </Tooltip>
-      <div class="rotation-input">
-        <TextInput int value={rotation} min={-180} max={180} step={15} set={rotate} class="w-12" />
-      </div>
-    </label>
-    
     <div class="mb-2"></div>
 
     <label class="relative">
@@ -176,7 +242,7 @@
     opacity: 0;
     /* visibility: hidden; */
   }
-  .rotation-input {
+  .floating-input {
     position: absolute;
     pointer-events: none;
     opacity: 0;
@@ -186,7 +252,7 @@
     transform: translateX(-50%);
     z-index: 40;
   }
-  .rotation-input:focus-within {
+  .floating-input:focus-within {
     pointer-events: all;
     opacity: 1;
   }

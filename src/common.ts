@@ -61,6 +61,13 @@ export function rotate(x: number, y: number, deg: number, cx=0, cy=0) {
   return [nx, ny]
 }
 
+export function scale(x: number, y: number, fX: number, fY: number, cx=0, cy=0) {
+  return [
+    (x-cx)*fX + cx,
+    (y-cy)*fY + cy,
+  ]
+}
+
 export const bezier1d = (t: number, a: number, b: number, c: number, d: number) => {
   let v = a * ((1-t)**3) + 
           c * 3*((1-t)**2)*t +

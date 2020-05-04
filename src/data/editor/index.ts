@@ -1,5 +1,5 @@
 
-import { rotate as _rotate } from "common"
+import { rotate as _rotate, scale as _scale } from "common"
 import * as util from "data/base/util"
 
 
@@ -127,6 +127,18 @@ export function rotateAround(obj: Object, a: number, p: Point) {
     return Joint.rotateAround(obj, a, p)
 
   let [x,y] = _rotate(obj.x, obj.y, a, p.x, p.y)
+  obj.x = x
+  obj.y = y
+}
+
+export function scaleAround(obj: Object, fX: number, fY: number, p: Point) {
+  if(isPlatform(obj))
+    Platform.scale(obj, fX, fY)
+
+  if(isJoint(obj))
+    return Joint.scaleAround(obj, fX, fY, p)
+
+  let [x,y] = _scale(obj.x, obj.y, fX, fY, p.x, p.y)
   obj.x = x
   obj.y = y
 }

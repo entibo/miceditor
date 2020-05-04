@@ -1,5 +1,5 @@
 
-import { rotate as _rotate } from "common"
+import { rotate as _rotate, scale as _scale } from "common"
 
 import * as Base from "data/base"
 import * as Editor from "data/editor"
@@ -85,6 +85,17 @@ export function rotateAround(obj: Joint, a: number, p: Point) {
     q.x = x
     q.y = y
   }
+}
+
+export function scaleAround(obj: Joint, fX: number, fY: number, p: Point) {
+  for(let name of ["point1","point2","point3","point4","controlPoint1","controlPoint2"]) {
+    if(name in obj){} else continue
+
+    let q = (obj as any)[name] as Point
+    let [x,y] = _scale(q.x, q.y, fX, fY, p.x, p.y)
+    q.x = x
+    q.y = y
+  } 
 }
 
 export function getBoundingBox(obj: Joint): Box {
