@@ -647,7 +647,7 @@ export function decodeDecorationData(decoration, index) {
     decoration._type = decoration.T
 
     let metadata = decorationMetadata[decoration._type]
-    let defaultColors = metadata.filters.map(x => x.defaultColor)
+    let defaultColors = metadata ? metadata.filters.map(x => x.defaultColor) : []
     let userColors = decoration.C ? decoration.C.split(",").map(parseXMLColorHex) : []
     decoration._numColors = defaultColors.length
     for(let i=0; i < 5; i++) {

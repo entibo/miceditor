@@ -56,6 +56,7 @@
 
   $: filters = getFilters(decoration)
   function getFilters() {
+    if(!metadata) return []
     return metadata.filters.map(({name,defaultColor}, index) => {
       let color = decoration["_displayColor"+index]
       let matrix = getColorMatrix(color)
@@ -94,6 +95,7 @@
   class="decoration" class:active={active} 
   transform="translate({decoration._x}, {decoration._y}) {decoration._reverse ? 'scale(-1, 1)' : ''}"
 >
+  {#if metadata}
   <g transform="translate(-{metadata.offset.x}, -{metadata.offset.y})">
 
     {#if filters.length}
@@ -115,6 +117,13 @@
     {/if}
 
   </g>
+  {:else}
+    <rect class="selectable"
+    x={-20} y={-20}
+    width={40} height={40}
+    fill="orange"
+    />
+  {/if}
 </g>
 
 <style lang="text/postcss">
