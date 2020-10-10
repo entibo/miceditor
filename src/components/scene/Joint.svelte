@@ -3,6 +3,7 @@
 
   import { bezier, rotate, deg, rad } from "common"
   import { jointPointMouseDown, jointPrismaticLimitMouseDown, jointRotationLimitMouseDown } from "state/interaction"
+  import { showMechanics } from "state/user"
 
   import * as Editor from "data/editor/index"
   import * as sceneObjects from "state/sceneObjects"
@@ -178,6 +179,7 @@
 
 </script>
 
+{#if isRendered || $showMechanics}
 <g>
   <g class="joint" 
     on:mousedown on:mousemove on:mouseleave
@@ -293,6 +295,7 @@
   </g>
 
 </g>
+{/if}
 
 
 

@@ -475,7 +475,7 @@ function readMedataLayers(str: string): MapSettings["MEDATA"]["LAYERS"] {
         id: parseInt(parts[0]),
         name: parts[1],
         indices: parts[2].split(",").map(x => parseInt(x)),
-        opacity: parseFloat(parts[2]),
+        opacity: parseFloat(parts[3]),
       }
     })
   }

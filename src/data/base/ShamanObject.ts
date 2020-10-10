@@ -11,8 +11,16 @@ const attributes = [
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
 export type Type = number
-const anchorTypes = [12, 13, 15, 16]
-type AnchorType = 12 | 13 | 15 | 16
+export enum Anchor {
+  Red = 11,
+  Green = 14,
+  Yellow = 22,
+  GreenClockwise = 15,
+  GreenCounterClockwise = 16,
+  RedClockwise = 12,
+  RedCounterClockwise = 13,
+}
+const anchorTypes = [Anchor.Red, Anchor.Green, Anchor.Yellow, Anchor.GreenClockwise, Anchor.GreenCounterClockwise, Anchor.RedClockwise, Anchor.RedCounterClockwise]
 
 export interface Node extends XML.Node {
   name: "O",
@@ -33,7 +41,10 @@ export type ShamanObject
       ghost: boolean }
     & Base
 
-  | { type: AnchorType
+  | { type: Anchor.Yellow }
+    & Base
+
+  | { type: Exclude<Anchor, Anchor.Yellow>
       power: number
       speed: number }
     & Base
@@ -46,7 +57,7 @@ export interface ShamanObjectProps extends Base {
   speed: number
 }
 
-export const isAnchor = (data: ShamanObject): data is Extract<ShamanObject, {type: AnchorType}> =>
+export const isAnchor = (data: ShamanObject): data is Extract<ShamanObject, {type: Anchor}> =>
   anchorTypes.includes(data.type)
   
 
@@ -60,8 +71,11 @@ const baseDefaults: () => Base = () => ({
 export const defaults: (t: Type) => ShamanObject = type =>
  ({ ...baseDefaults(),
     ...(
+      type === Anchor.Yellow ?
+        { type: Anchor.Yellow }
+      :
       anchorTypes.includes(type) ?
-        { type: type as AnchorType,
+        { type: type as Exclude<Anchor, Anchor.Yellow>,
           power: 0,
           speed: 0 }
       :
@@ -93,8 +107,6 @@ export function decode(xmlNode: XML.Node): ShamanObject {
     setProp ("rotation") (r.rotation)
     setProp ("ghost")    (r.ghost)
   })
-
-  console.log(data)
 
   return data
 }

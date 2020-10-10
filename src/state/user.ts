@@ -9,6 +9,7 @@ import * as Editor from "data/editor"
 export const showGameGUI = persistentWritable("showGameGUI", true)
 export const showMapBorder = persistentWritable("showMapBorder", true)
 export const showInvisibleGrounds = persistentWritable("showInvisibleGrounds", true)
+export const showMechanics = persistentWritable("showMechanics", true)
 export const highQuality = persistentWritable("highQuality", true)
 
 export const grid = persistentWritable("grid", {

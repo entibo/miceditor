@@ -15,7 +15,7 @@
 
 
   import { _ } from "state/locale"
-  import { showGameGUI, showMapBorder, showInvisibleGrounds, highQuality, grid } from "state/user"
+  import { showGameGUI, showMapBorder, showInvisibleGrounds, showMechanics, highQuality, grid } from "state/user"
   import { setSmallLayout, setLargeLayout } from "state/layout"
 
   function onSetWidth(v) {
@@ -51,6 +51,11 @@
   <label>
     <span>{$_("show-invisible-grounds")}</span>
     <Checkbox bind:checked={$showInvisibleGrounds}  />
+  </label>
+
+  <label>
+    <span>{$_("show-mechanics")}</span>
+    <Checkbox bind:checked={$showMechanics}  />
   </label>
 
   <label>

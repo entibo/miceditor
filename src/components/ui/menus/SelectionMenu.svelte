@@ -32,7 +32,6 @@
 
 
   import { properties, common, groups } from "state/selectionProperties"
-  console.log("properties", $properties, "groups", $groups)
 
   $: numCategories = Object.values($groups)
         .map(g => g.length)

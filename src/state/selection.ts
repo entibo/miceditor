@@ -63,14 +63,15 @@ export function remove() {
   for(let unsubscribe of selectionMap.values())
     unsubscribe()
 
-  let all = [...selectionMap.keys()].sort((a,b) => b.index-a.index)
-  let platforms = all.filter(Editor.isPlatform)
+  let toBeRemoved = [...selectionMap.keys()].sort((a,b) => b.index-a.index)
+
+/*   let platforms = toBeRemoved.filter(Editor.isPlatform)
   let joints = sceneObjects.groups.joints
     .filter(obj => !obj.selected)
     .filter(obj => (platforms.includes(obj.platform1 as any) && (obj.platform1 as any).index > 0)
-                || (platforms.includes(obj.platform2 as any) && (obj.platform2 as any).index > 0))
+                || (platforms.includes(obj.platform2 as any) && (obj.platform2 as any).index > 0)) */
 
-  for(let obj of all.concat(joints))
+  for(let obj of toBeRemoved)
     sceneObjects.remove(obj)
   selectionMap.clear()
   blank.invalidate()

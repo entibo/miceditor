@@ -27,7 +27,7 @@ export const make: (obj: Base.ShamanObject.ShamanObject) => ShamanObject = obj =
 
 
 export const isForeground = (obj: ShamanObject) =>
-  Base.ShamanObject.isAnchor(obj)
+  false
 
 
 export function getBoundingBox(obj: ShamanObject): Box {

@@ -83,7 +83,7 @@
       <Icon icon={faTrash} />
     </Tooltip>
     
-    <div class="mb-2"></div>
+    <div class="mb-4"></div>
     
     <Tooltip left inDelay={500} class="toolbar-action text-green-400"
              title='{$_("button-duplicate")} (D)' on:click={Selection.duplicate}
@@ -101,7 +101,7 @@
       <Icon icon={faCut} />
     </Tooltip>
 
-    <div class="mb-2"></div>
+    <div class="mb-4"></div>
 
     <label class="relative">
       <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
@@ -146,7 +146,7 @@
       </div>
     </label>
 
-    <div class="mb-2"></div>
+    <div class="mb-4"></div>
         
     <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
              title='{$_("flip-horizontally-button")} (X)' on:click={Selection.flipX}
@@ -160,7 +160,7 @@
       <Icon icon={faArrowsAltV} />
     </Tooltip>
 
-    <div class="mb-2"></div>
+    <div class="mb-4"></div>
 
     <label class="relative">
       <Tooltip left inDelay={500} title={$_("horizontal-alignment")}>

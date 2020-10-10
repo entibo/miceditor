@@ -148,7 +148,7 @@
   && selected}    
 
   <g class="pointer-events-none"
-    stroke="white" stroke-width="4" stroke-dasharray="8"
+    stroke="white" stroke-width="2" stroke-dasharray="6"
   >
     {#if $mapSettings.miceSpawn.axis === "x"}
       <line 

@@ -6,7 +6,7 @@ import { debounce } from "common"
 import { importXML, exportXML } from "state/map"
 import { xml } from "state/xml"
 
-export const invalidate = () => debounce(exportXML, 1000)
+export const invalidate = () => debounce(exportXML, 100)
 
 export const canUndo = writable(false)
 export const canRedo = writable(false)
@@ -15,27 +15,42 @@ export const canRedo = writable(false)
 let stack: string[] = []
 let stackIndex = -1
 
+function printStack(action = "INIT") {
+  let s = `${action}  -  Stack[${stackIndex}/${stack.length-1}]: `
+  if(stackIndex < 0)
+    s += "(+) " + "- ".repeat(stack.length)
+  else
+    s += "( ) " + "- ".repeat(stackIndex) + "+ " + "- ".repeat(stack.length-stackIndex-1)
+  console.log(s)
+  console.log(stack[stackIndex])
+  console.log("")
+}
+printStack()
+
 function push(value: string) {
   if(value === stack[stackIndex]) return
   stackIndex++
   stack = stack.slice(0, stackIndex)
   stack.push(value)
   updateStores()
+  printStack("PUSH")
 }
 xml.subscribe(push)
 
 export function undo() {
-  synchronize()
+  // synchronize()
   if(stackIndex <= 0) return
   importXML(stack[--stackIndex])
   updateStores()
+  printStack("UNDO")
 }
 
 export function redo() {
-  synchronize()
+  // synchronize()
   if(stackIndex >= stack.length-1) return
   importXML(stack[++stackIndex])
   updateStores()
+  printStack("REDO")
 }
 
 function synchronize() {

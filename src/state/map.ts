@@ -30,16 +30,6 @@ setTimeout(() => {
 
 
 
-
-
-
-
-
-
-
-
-
-
 /*
   Loads map settings and all objects into memory.
   Platforms need to be added before joints.
@@ -98,19 +88,19 @@ export function updateMiceSpawn(type: "normal"|"multiple"|"randomX"|"randomY") {
 
   if(type !== "multiple") {
     let spawn
-    for(let obj of [...sceneObjects.groups.decorations].reverse())
+    for(let obj of [...sceneObjects.groups.decorations].reverse()) {
       if(Editor.Decoration.isMouseSpawn(obj)) {
-        spawn = obj
-        sceneObjects.remove(obj)
+        if(spawn)
+          sceneObjects.remove(obj)
+        else
+          spawn = obj
       }
-    if(spawn) sceneObjects.add(clone(spawn))
-    if(type.startsWith("random")) {
-      if(!spawn) {
-        spawn = Editor.Decoration.make(Editor.Decoration.defaults("DS"))
-        spawn.x = -30
-        spawn.y = 200
-        spawn = sceneObjects.add(spawn)
-      }
+    }
+    if(!spawn && type.startsWith("random")) {
+      spawn = Editor.Decoration.make(Editor.Decoration.defaults("DS"))
+      spawn.x = -30
+      spawn.y = 200
+      spawn = sceneObjects.add(spawn)
     }
   }
   

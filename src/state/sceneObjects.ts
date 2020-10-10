@@ -110,6 +110,9 @@ export function add(obj: Editor.Object, index?: number) {
   else if(Editor.isPlatform(s))
     onPlatformAdded(s as P)
 
+  else if(Editor.isDecoration(s))
+    onDecorationAdded(s as Editor.Decoration.Decoration)
+
   return s
 }
 
@@ -179,9 +182,14 @@ export function linkJointToPlatform(joint: J, which: "platform1"|"platform2", pl
   }
   value[which] = {
     obj: platform,
-    unsubscribe: platform.subscribe(obj => {
-      joint[which] = obj.index
-      ;(joint as any)[which+"Ref"] = obj
+    unsubscribe: platform.subscribe(() => {
+      if(which === "platform1") {
+        joint.platform1 = platform.index
+        joint.platform1Ref = platform
+      } else {
+        joint.platform2 = platform.index
+        joint.platform2Ref = platform
+      }
       joint.invalidate()
     }),
   }
@@ -189,6 +197,18 @@ export function linkJointToPlatform(joint: J, which: "platform1"|"platform2", pl
   if(!jointSet) links.platforms.set(platform, jointSet = new Set())
   jointSet.add(joint)
 
+}
+
+
+function onDecorationAdded(decoration: Editor.Decoration.Decoration) {
+  if( (decoration.type === "DS" && mapSettings.miceSpawn.type !== "multiple")
+   || (decoration.type === "DC")
+   || (decoration.type === "DC2"))
+
+    groups.decorations
+      .filter(obj => obj.type === decoration.type)
+      .filter(obj => obj !== decoration)
+      .forEach(remove)    
 }
 
 
