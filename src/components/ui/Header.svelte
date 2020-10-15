@@ -1,4 +1,3 @@
-
 <script>
 
   import clipboardCopy from "clipboard-copy"
@@ -15,42 +14,53 @@
   import { faSearchPlus } from "@fortawesome/free-solid-svg-icons/faSearchPlus"
   import { faQuestion } from "@fortawesome/free-solid-svg-icons/faQuestion"
 
-  import { debounce } from "/utils.js"
+  import { debounce } from "common"
 
-  import { 
+/*   import { 
     xml, settings, 
     undo, redo, canUndo, canRedo,
     highQuality, parkour, showGameGUI, showMapBorder, zoom, firstVisit,
     language, _, localeFlag
-  } from "/stores/stores.js"
+  } from "stores/stores.js" */
 
-  import TextInput from "/components/common/TextInput.svelte"
-  import Button from "/components/common/Button.svelte"
-  import Tooltip from "/components/common/Tooltip.svelte"
-  import UserSettings from "/components/ui/UserSettings.svelte"
-  import XmlEditor from "/components/ui/XmlEditor.svelte"
-  import HelpMenu from "/components/ui/HelpMenu.svelte"
-  import LanguageMenu from "/components/ui/LanguageMenu.svelte"
+  import TextInput from "components/common/TextInput.svelte"
+  import Button from "components/common/Button.svelte"
+  import Slider from "components/common/Slider.svelte"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import UserSettingsMenu from "components/ui/menus/UserSettingsMenu.svelte"
+  import XmlEditor from "components/ui/XmlEditor.svelte"
+  import HelpMenu from "components/ui/menus/HelpMenu.svelte"
+  import LanguageMenu from "components/ui/menus/LanguageMenu.svelte"
+
+
+  import { xml, defaultXML } from "state/xml"
+  import { importXML, exportXML } from "state/map"
+  import { localeFlag, language, _ } from "state/locale"
+  import { undo, redo, canUndo, canRedo } from "state/history"
+  import { zoom } from "state/user"
+
 
   let copyIconActive = false
   function removeCopyIconActive() {
     copyIconActive = false
   }
   async function copyXML() {
+    exportXML()
     try {
       await clipboardCopy($xml)
       copyIconActive = true
       debounce(removeCopyIconActive, 500)
-    } catch(e) {}
+    } catch(e) { console.error("copyXML; error.") }
   }
-  async function selectXML({target}) {
-    target.select()
+  async function selectXML(e) {
+    exportXML()
+    e.target.select()
     await tick()
-    target.select()
+    e.target.select()
   }
 
   // let currentMenu = firstVisit ? "help" : null
-  let currentMenu = null
+  let currentMenu = null // null | "help" | "language" | "settings" | "zoom" | "xmlEditor"
   function selectMenu(which) {
     if(currentMenu === which)
       currentMenu = null
@@ -63,13 +73,15 @@
     }
   }
 
+  
+
 </script>
 
 <svelte:window
   on:keydown={onKeydown}
 />
 
-<header class="relative flex justify-between items-center px-4 py-2 bg-gray-800 shadow-lg text-white z-10">
+<header class="relative flex justify-between items-center px-4 py-2 bg-gray-800 shadow-lg text-white z-50">
 
   <div class="flex flex-wrap items-center">
 
@@ -80,7 +92,7 @@
       </div>
     </Button>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <Tooltip inline bottom title="H" >
       <Button class="text-sm" on:click={selectMenu.bind(null, "help")}>
@@ -93,7 +105,7 @@
       </Button>
     </Tooltip>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <Tooltip inline bottom title={$_("editor-settings")} >
       <Button class="text-sm" on:click={selectMenu.bind(null, "settings")}>
@@ -106,7 +118,7 @@
       </Button>
     </Tooltip>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <Tooltip inline bottom title="Ctrl+Scroll" >
       <Button class="text-sm" on:click={selectMenu.bind(null, "zoom")}>
@@ -131,17 +143,24 @@
         <div class="flex justify-center items-center" >
           <span class="icon" class:active={currentMenu === "xmlEditor"}>
             <Icon icon={faEdit}/> 
-              </span>
+          </span>
           <span class="ml-2 hidden xl:inline">{$_("button-edit")}</span>
         </div>
       </Button>
     </Tooltip>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
-    <TextInput value={$xml} on:input={e => $xml = e.target.value} on:click={selectXML} />
+    <div class="flex">
+      <label class="icon-btn mx-1" on:click={() => importXML(defaultXML)} >
+        <Icon icon={faUndo} class="text-sm"/>
+      </label>
+      <TextInput value={$xml} set={importXML} on:click={selectXML} 
+                bgColor="bg-gray-700" textColor="text-gray-300"
+      />
+    </div>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <Tooltip inline bottom title={$_("copy-map-to-clipboard")} >
       <Button class="text-sm" on:click={copyXML}>
@@ -167,7 +186,7 @@
         </div>
       </Button>
     </Tooltip>
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
     <Tooltip inline bottom end title="Ctrl+Shift+Z / Ctrl+Y" >
       <Button class="text-sm" disabled={!$canRedo} on:click={redo}>
         <div class="flex justify-center items-center">
@@ -183,7 +202,7 @@
 
   <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
 
-    <UserSettings />
+    <UserSettingsMenu />
 
   </div>
 
@@ -191,15 +210,22 @@
 
   <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
     
-    <section>
+    <div class="form tabContent">
       <label>
-        <span>{$_("button-zoom")}</span>
-        <span class="w-12">
-          <TextInput number bind:value={$zoom} />
-        </span>
+        <span class="min-w-16">{$_("button-zoom")}</span>
+        <div class="flex">
+          <label class="icon-btn text-xs" on:click={() => $zoom = 1} >
+            <Icon icon={faUndo} />
+          </label>
+          <TextInput float bind:value={$zoom} class="w-16" />
+        </div>
       </label>
-      <input type=range bind:value={$zoom} min=0.1 max=5 step=0.1 />
-    </section>
+      <div class="mb-1"></div>
+      <Slider value={Math.log10($zoom)} set={v => $zoom = 10**v}
+              min={-1} max={1} step={0.1} 
+              widthClass=""
+      />
+    </div>
 
   </div>
 
@@ -234,28 +260,11 @@
 
 
 <style lang="text/postcss">
-  section {
-    @apply flex items-center;
-  }
-  label {
-    transition: 200ms;
-    @apply flex items-center justify-between;
-  }
-  label + label {
-    @apply ml-4;
-  }
-  label > span, small-text {
-    user-select: none;
-    white-space: nowrap;
-    @apply mr-3 text-sm text-gray-300;
-  }
-
   .lower-panel {
     transform: translateY(100%);
     bottom: 1px;
     @apply absolute;
-    @apply z-20 shadow-lg rounded-b text-gray-300 whitespace-no-wrap;
-    background-color: #2b3e50;
+    @apply shadow-lg rounded-b text-gray-300 whitespace-no-wrap bg-gray-800;
   }
   .lower-panel.xml {
     @apply left-0 right-0 w-full rounded-none;

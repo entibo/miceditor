@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="27.5px" width="124.4px" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1.0, 0.0, 0.0, 1.0, 62.45, 27.5)">
+    <use height="27.5" transform="matrix(1.0, 0.0, 0.0, 1.0, -62.45, -27.5)" width="124.4" xlink:href="#decoration163-shape0"/>
+  </g>
+  <defs>
+    <g id="decoration163-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 62.45, 27.5)">
+      <path d="M-6.7 -23.5 Q-1.85 -26.25 2.5 -27.1 17.35 -30.05 26.2 -12.1 L28.4 -13.45 Q31.05 -14.8 33.35 -15.2 40.75 -16.25 41.7 -6.55 46.8 -7.1 54.9 -3.6 58.95 -1.85 61.95 0.0 L-62.45 0.0 Q-36.5 -3.35 -35.5 -9.7 -34.55 -16.15 -25.55 -12.4 -24.3 -21.05 -19.05 -22.9 -15.6 -24.2 -10.2 -21.65 -10.25 -21.5 -6.7 -23.5" fill="#ffffff" fill-opacity="0.4" fill-rule="evenodd" stroke="none"/>
+    </g>
+  </defs>
+</svg>

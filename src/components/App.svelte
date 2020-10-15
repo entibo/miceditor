@@ -1,43 +1,37 @@
 <script>
-  import Header from "/components/ui/Header.svelte"
-  import Footer from "/components/ui/Header.svelte"
-  import ObjectPalette from "/components/ui/ObjectPalette.svelte"
-  import MainPanel from "/components/ui/MainPanel.svelte"
-  import Scene from "/components/scene/Scene.svelte"
+  import Scene from "components/scene/Scene.svelte"
+  import Header from "components/ui/Header.svelte"
+  //import ObjectPalette from "components/ui/ObjectPalette.svelte"
+  //import MainPanel from "components/ui/MainPanel.svelte"
+  //import LeftPanel from "components/ui/LeftPanel.svelte"
+  //import BottomPanel from "components/ui/BottomPanel.svelte"
+  import Panel from "components/ui/Panel.svelte"
+  import TabMovement from "components/ui/TabMovement.svelte"
+  import Toolbar from "components/ui/Toolbar.svelte"
 
-  import { undo, redo, hasChanged } from "/stores/stores.js"
+  import { layoutConfig } from "state/layout"
 
-  function onKeydown({ctrlKey, shiftKey, key}) {
-    if(ctrlKey) {
-      if(key.toLowerCase() === "z") {
-        if(shiftKey) redo()
-        else undo()
-      }
-      if(key.toLowerCase() === "y") redo()
-    }
-  }
-
-  function unloadConfirmation() {
-    if(!confirm("Exit ?")) return false
-    return true
-  }
-  $: hasChangedChanged($hasChanged)
-  function hasChangedChanged(v) {
-    window.onbeforeunload = v ? unloadConfirmation : null
-  }
+  console.info("App loaded")
 </script>
 
-<svelte:window 
-  on:keydown={onKeydown}
-/>
 
 <main class="flex h-screen">
-  <ObjectPalette />
+
+  <Panel panelName="left" bind:panel={$layoutConfig.panels.left} direction="vertical" resize="right" />
+
   <div class="flex-grow flex flex-col-reverse">
-    <Scene />
+    <Panel panelName="bottom" bind:panel={$layoutConfig.panels.bottom} direction="horizontal" resize="top" />
+    <div class="relative w-full h-full">
+      <Scene/>
+      <Toolbar />
+    </div>
     <Header/>
   </div>
-  <MainPanel />
+
+  <Panel panelName="right" bind:panel={$layoutConfig.panels.right} direction="vertical" resize="left" />
+
+  <TabMovement/>
+
 </main>
 
 <style lang="text/postcss">

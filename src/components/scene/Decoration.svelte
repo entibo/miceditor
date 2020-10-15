@@ -2,81 +2,46 @@
 <script>
   import cc from "color-convert"
   import { onMount } from "svelte"
-  import { getUniqueId } from "/utils.js"
-  import decorationMetadata from "/decorationMetadata.js"
+  import { getUniqueId } from "common"
+  import decorationMetadata from "metadata/decoration/index"
 
-  import SvgImage from "/components/common/SvgImage.svelte"
+  import SvgImage from "components/common/SvgImage.svelte"
   
-  import { settings } from "/stores/stores.js"
+  import { mapSettings } from "state/map"
 
-  export let decoration
-  export let active
+  export let obj
 
-  let instanceId = getUniqueId()
 
-  $: metadata = getDecorationMetadata(decoration)
-  const specialMetadataOffset = {
-    T: { x: 21, y: 31 },
-    "T-1": { x: 25, y: 35 },
-    "T-2": { x: 25, y: 35 },
-    F: { x: 23, y: 21 },
-    "F-triple": { x: 23+12, y: 21+7 },
-    "F-candy": { x: 23+12, y: 21+7 },
-    DS: { x: 26, y: 43 },
-    DC: { x: 26, y: 43 },
-    DC2: { x: 26, y: 43 },
-  }
-  function getDecorationMetadata(decoration) {
-  	let type = decoration._type
-    if(decoration.name === "P") {
-      return decorationMetadata[type]
-    }
-    else if(decoration.name === "F") {
-      if($settings._dodue) {
-        type = "F-triple"
-        if($settings._theme === "halloween") {
-          type = "F-candy"
-        }
-      }
-    }
-    else if(decoration.name === "T") {
-      if(decoration._holeColor) {
-        let newType = "T-" + decoration._holeColor
-        if(specialMetadataOffset[newType]) {
-          type = newType
-        }
-      }
-    }
-    return { 
-      type, 
-      filters: [],
-      offset: specialMetadataOffset[type],
-    }
-  }
+  $: selected = $obj.selected
+  $: type = $obj.type
+  $: x = $obj.x
+  $: y = $obj.y
+  $: reverse = $obj.reverse
+  $: holeColor = $obj.holeColor
 
-  $: filters = getFilters(decoration)
-  function getFilters() {
-    if(!metadata) return []
-    return metadata.filters.map(({name,defaultColor}, index) => {
-      let color = decoration["_displayColor"+index]
-      let matrix = getColorMatrix(color)
-      return { name, matrix }
-    })
-  }
+  $: specialType = 
+    type === "F"
+      ? $mapSettings.dodue
+          ? $mapSettings.theme === "halloween"
+              ? "F-candy"
+              : "F-triple"
+          : type
+      : type === "T"
+          ? holeColor !== ""
+              ? "T-" + holeColor
+              : type
+          : type
 
-  function withInstancedFilterIds(xml) {
-    for(let {name} of filters) {
-      xml = xml.replace(new RegExp(name, "g"), name+"-"+instanceId)
-    }
-    return xml
-  }
 
-  $: filtersLength = filters.length
-  
-  let promise
-  $: if(filtersLength)
-      promise = fetch(`dist/decorations/${decoration._type}.svg`).then(r => r.text()).then(withInstancedFilterIds)
+  $: metadata = decorationMetadata.get(specialType)
 
+
+  $: filters = metadata.svg
+    ? metadata.filters.map(({name}, index) => {
+        let matrix = getColorMatrix("#" + $obj.colors[index])
+        return { name, matrix }
+      })
+    : []
   function getColorMatrix(hex) {
     let [r,g,b] = cc.hex.rgb(hex).map(x => x/255)
     return `
@@ -86,60 +51,116 @@
       0 0 0 1 0`.trim()
   }
 
+  
+  let instanceId = getUniqueId()
+
+  let promise, currentFile = null
+  $: if(metadata.svg && metadata.file !== currentFile) {
+    currentFile = metadata.file
+    promise = fetch(`dist/decorations/${metadata.file}`)
+      .then(r => r.text())
+      .then(withInstancedFilterIds)
+  }
+  function withInstancedFilterIds(xml) {
+    for(let {name} of filters) {
+      xml = xml.replace(new RegExp(name, "g"), name+"-"+instanceId)
+    }
+    return xml
+  }
+
+
 </script>
 
 
 
 
-<g on:mousedown 
-  class="decoration" class:active={active} 
-  transform="translate({decoration._x}, {decoration._y}) {decoration._reverse ? 'scale(-1, 1)' : ''}"
+<g 
+  transform="translate({x}, {y}) {reverse ? 'scale(-1, 1)' : ''}"
 >
-  {#if metadata}
   <g transform="translate(-{metadata.offset.x}, -{metadata.offset.y})">
 
-    {#if filters.length}
+    {#if metadata.svg}
 
       {#each filters as filter}
-      <filter id="{filter.name}-{instanceId}" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-        <feColorMatrix type="matrix" values={filter.matrix} x="0%" y="0%" width="100%" height="100%" in="colormatrix" result="colormatrix1"/>
-      </filter>
+        <filter id="{filter.name}-{instanceId}" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+          <feColorMatrix type="matrix" values={filter.matrix} x="0%" y="0%" width="100%" height="100%" in="colormatrix" result="colormatrix1"/>
+        </filter>
       {/each}
 
-      {#await promise then svg}
-        {@html svg}
-      {/await}
+      <g class="object-outline cursor-pointer">
+        {#await promise then svg}
+          {@html svg}
+        {/await}
+      </g>
 
     {:else}
+      {#if type == "DS" || type == "DC" || type == "DC2"}
 
-      <SvgImage href="dist/decorations/{metadata.type}.png"/>
+        <SvgImage href="dist/decorations/{metadata.file}" class="pointer-events-none"/>
+        <circle
+          transform="translate({metadata.offset.x} {metadata.offset.y})"
+          r="15"
+          fill="transparent"
+          class="object-outline-stroke cursor-pointer"
+        />
 
+      {:else if type == "F"}
+
+        <SvgImage href="dist/decorations/{metadata.file}" class="pointer-events-none"/>
+        <g transform="translate({metadata.offset.x} {metadata.offset.y})">
+          <circle
+            r="20"
+            fill="transparent"
+            class="object-outline-stroke cursor-pointer"
+          />
+          {#if selected}
+            <circle r="5" fill="none" stroke="#ff00ff" stroke-width="1" class="pointer-events-none"/>
+          {/if}
+        </g>
+
+      {:else if type == "T"}
+
+        <SvgImage href="dist/decorations/{metadata.file}" class="pointer-events-none"/>
+        <g transform="translate({metadata.offset.x} {metadata.offset.y - 15})">
+          <circle
+            r="20"
+            fill="transparent"
+            class="object-outline-stroke cursor-pointer"
+          />
+          {#if selected}
+            <circle r="5" fill="none" stroke="#ff00ff" stroke-width="1" class="pointer-events-none"/>
+          {/if}
+        </g>        
+
+      {:else}
+
+        <SvgImage href="dist/decorations/{metadata.file}" class="object-outline cursor-pointer"/>
+
+      {/if}
     {/if}
 
   </g>
-  {:else}
-    <rect class="selectable"
-    x={-20} y={-20}
-    width={40} height={40}
-    fill="orange"
-    />
-  {/if}
 </g>
 
-<style lang="text/postcss">
-  :global(.decoration > g > *) {
-    transition: fill 100ms, outline-color 50ms;
-    outline-width: 4px;
-    outline-offset: -4px;
-    outline-style: dashed;
-    outline-color: rgba(255,255,255,0.0);
-  }
-  :global(.decoration > g > *:hover) {
-    cursor: pointer;
-    outline-color: rgba(255,255,255,0.5);
-  }
-  :global(.decoration.active > g > *) {
-    outline-color: rgba(255,255,255,0.95);
-  }
 
-</style>
+{#if $mapSettings.miceSpawn.type === "random" 
+  && type === "DS"
+  && selected}    
+
+  <g class="pointer-events-none"
+    stroke="white" stroke-width="2" stroke-dasharray="6"
+  >
+    {#if $mapSettings.miceSpawn.axis === "x"}
+      <line 
+        x1={0} y1={y}
+        x2={$mapSettings.width} y2={y}
+      />
+    {:else}
+      <line 
+        x1={x} y1={0} 
+        x2={x} y2={$mapSettings.height} 
+      />
+    {/if}
+  </g>
+
+{/if}

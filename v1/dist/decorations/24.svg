@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="69.35px" width="133.95px" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1.0, 0.0, 0.0, 1.0, 65.45, 68.65)">
+    <use height="69.25" transform="matrix(1.0, 0.0, 0.0, 1.0, -65.45, -68.65)" width="133.95" xlink:href="#decoration24-shape0"/>
+    <use height="32.45" id="decoration24-Couleur0_46788E" filter="url(#decoration24-filter0)" transform="matrix(1.0, 0.0, 0.0, 1.0, -21.05, -38.35)" width="83.1" xlink:href="#decoration24-sprite0"/>
+    <use height="51.25" transform="matrix(1.0, 0.0, 0.0, 1.0, -36.5, -50.55)" width="101.7" xlink:href="#decoration24-shape2"/>
+    <use height="29.55" id="decoration24-R" transform="matrix(1.0, 0.0, 0.0, 1.0, -59.0, -36.3)" width="116.85" xlink:href="#decoration24-sprite1"/>
+  </g>
+  <defs>
+    <g id="decoration24-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 65.45, 68.65)">
+      <path d="M61.6 -48.35 Q65.65 -49.9 68.5 -48.35 L67.95 0.6 61.25 0.6 61.25 -3.25 -55.4 -3.25 -55.4 0.45 -60.95 0.45 -60.95 -66.15 Q-57.05 -67.95 -54.65 -65.3 L-54.8 -56.25 Q-36.25 -54.3 -30.8 -44.65 L-30.1 -37.7 Q40.25 -44.55 59.85 -35.7 L61.6 -48.35" fill="#000000" fill-opacity="0.3019608" fill-rule="evenodd" stroke="none"/>
+      <path d="M-58.75 -48.85 L-58.75 -29.2 Q-62.8 -19.9 -61.9 -9.5 -61.5 -4.15 -58.75 -1.55 L-58.75 0.25 -65.2 0.25 -65.2 -13.2 Q-64.75 -32.1 -58.75 -48.85 M-65.2 -42.65 L-65.2 -67.75 Q-63.35 -68.55 -61.5 -68.35 -61.35 -53.55 -65.2 -42.65" fill="#795531" fill-rule="evenodd" stroke="none"/>
+      <path d="M-61.5 -68.35 L-58.75 -67.75 -58.75 -48.85 Q-64.75 -32.1 -65.2 -13.2 L-65.2 -42.65 Q-61.35 -53.55 -61.5 -68.35 M-58.75 -29.2 L-58.75 -1.55 Q-61.5 -4.15 -61.9 -9.5 -62.8 -19.9 -58.75 -29.2" fill="#664626" fill-rule="evenodd" stroke="none"/>
+      <path d="M-61.5 -68.35 L-58.75 -67.75 -58.75 -48.85 -58.75 -29.2 -58.75 -1.55 -58.75 0.25 -65.2 0.25 -65.2 -13.2 -65.2 -42.65 -65.2 -67.75 Q-63.35 -68.55 -61.5 -68.35" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.5"/>
+      <path d="M-61.5 -68.35 Q-61.35 -53.55 -65.2 -42.65 M-58.75 -29.2 Q-62.8 -19.9 -61.9 -9.5 -61.5 -4.15 -58.75 -1.55 M-58.75 -48.85 Q-64.75 -32.1 -65.2 -13.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.14901961" stroke-width="0.30000000000000004"/>
+      <path d="M62.15 -12.0 L62.1 -8.0 -4.1 -8.35 Q29.4 -13.7 62.15 -12.0 M-50.8 -8.6 L-58.75 -8.65 -58.7 -12.65 Q-48.7 -13.35 -42.2 -16.5 L-6.15 -16.3 Q-31.1 -14.75 -50.8 -8.6" fill="#4d341b" fill-rule="evenodd" stroke="none"/>
+      <path d="M-6.15 -16.3 L62.15 -15.95 62.15 -12.0 Q29.4 -13.7 -4.1 -8.35 L-50.8 -8.6 Q-31.1 -14.75 -6.15 -16.3 M-58.7 -12.65 L-58.7 -16.6 -42.2 -16.5 Q-48.7 -13.35 -58.7 -12.65" fill="#664626" fill-rule="evenodd" stroke="none"/>
+      <path d="M-6.15 -16.3 L62.15 -15.95 62.15 -12.0 62.1 -8.0 -4.1 -8.35 -50.8 -8.6 -58.75 -8.65 -58.7 -12.65 -58.7 -16.6 -42.2 -16.5 -6.15 -16.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.5"/>
+      <path d="M-6.15 -16.3 Q-31.1 -14.75 -50.8 -8.6 M-58.7 -12.65 Q-48.7 -13.35 -42.2 -16.5 M-4.1 -8.35 Q29.4 -13.7 62.15 -12.0" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.14901961" stroke-width="0.30000000000000004"/>
+      <path d="M62.1 -25.6 L62.1 -18.1 Q61.75 -16.5 58.3 -16.7 L-55.75 -16.7 Q-58.65 -16.4 -58.75 -19.15 L-58.75 -27.2 Q-58.25 -28.7 -57.45 -28.5 L59.65 -28.5 Q61.6 -27.95 62.1 -25.6" fill="#9a8f83" fill-rule="evenodd" stroke="none"/>
+      <path d="M62.1 -25.6 L62.1 -18.1 Q61.75 -16.5 58.3 -16.7 L-55.75 -16.7 Q-58.65 -16.4 -58.75 -19.15 L-58.75 -27.2 Q-58.25 -28.7 -57.45 -28.5 L59.65 -28.5 Q61.6 -27.95 62.1 -25.6 Z" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.5"/>
+      <path d="M-32.65 -33.05 L-33.0 -31.1 Q-29.75 -30.1 -32.4 -28.8 L-44.45 -28.8 Q-54.75 -27.7 -57.05 -34.95 -59.35 -42.3 -57.2 -54.6 -58.4 -56.7 -57.55 -59.15 -56.85 -55.4 -53.6 -53.55 -52.8 -44.4 -47.5 -40.65 -42.05 -36.7 -35.9 -38.85 -37.8 -36.0 -40.4 -36.15 -37.7 -33.15 -32.65 -33.05 M-55.65 -52.8 L-57.2 -54.6 -55.65 -52.8" fill="#9a8f83" fill-rule="evenodd" stroke="none"/>
+      <path d="M-57.55 -59.15 L-57.2 -60.05 Q-54.95 -59.35 -53.05 -56.85 -38.85 -56.6 -33.0 -42.75 -32.0 -37.55 -32.65 -33.05 -37.7 -33.15 -40.4 -36.15 -37.8 -36.0 -35.9 -38.85 -42.05 -36.7 -47.5 -40.65 -52.8 -44.4 -53.6 -53.55 -56.85 -55.4 -57.55 -59.15" fill="#e0d7ce" fill-rule="evenodd" stroke="none"/>
+      <path d="M-57.55 -59.15 L-57.2 -60.05 Q-54.95 -59.35 -53.05 -56.85 -38.85 -56.6 -33.0 -42.75 -32.0 -37.55 -32.65 -33.05 L-33.0 -31.1 Q-29.75 -30.1 -32.4 -28.8 L-44.45 -28.8 Q-54.75 -27.7 -57.05 -34.95 -59.35 -42.3 -57.2 -54.6 -58.4 -56.7 -57.55 -59.15 M-57.2 -54.6 L-55.65 -52.8" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.30980393" stroke-width="0.4"/>
+    </g>
+    <g id="decoration24-sprite0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
+      <use height="32.45" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="83.1" xlink:href="#decoration24-shape1"/>
+    </g>
+    <g id="decoration24-shape1" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
+      <path d="M81.5 3.25 Q83.55 13.4 82.95 23.1 L82.95 32.45 0.0 32.45 0.0 11.15 0.5 11.45 1.25 11.85 Q7.2 14.75 21.45 14.9 37.3 12.45 60.65 6.0 47.0 13.85 42.55 13.9 70.5 14.6 81.5 3.25" fill="#5d5957" fill-rule="evenodd" stroke="none"/>
+      <path d="M0.0 11.15 L0.0 1.65 Q39.75 -2.3 81.5 3.25 70.5 14.6 42.55 13.9 47.0 13.85 60.65 6.0 37.3 12.45 21.45 14.9 7.2 14.75 1.25 11.85 L0.5 11.45 0.0 11.15" fill="url(#decoration24-gradient0)" fill-rule="evenodd" stroke="none"/>
+    </g>
+    <linearGradient gradientTransform="matrix(-0.0109, -0.0272, 0.0084, -0.0034, 32.8, -3.55)" gradientUnits="userSpaceOnUse" id="decoration24-gradient0" spreadMethod="pad" x1="-819.2" x2="819.2">
+      <stop offset="0.0" stop-color="#808080"/>
+      <stop offset="0.9882352941176471" stop-color="#a8a5a5"/>
+    </linearGradient>
+    <g id="decoration24-shape2" transform="matrix(1.0, 0.0, 0.0, 1.0, 36.5, 50.55)">
+      <path d="M-21.05 -5.9 Q-28.45 -4.9 -36.3 -5.9 L-36.3 -34.25 Q-31.5 -29.65 -21.05 -27.15 L-21.05 -5.9" fill="#afa59a" fill-rule="evenodd" stroke="none"/>
+      <path d="M-36.3 -34.25 Q-29.25 -38.7 -21.05 -36.7 L-21.05 -27.15 Q-31.5 -29.65 -36.3 -34.25" fill="#d2c9bf" fill-rule="evenodd" stroke="none"/>
+      <path d="M-21.05 -36.7 Q18.7 -40.65 60.45 -35.1 62.5 -24.95 61.9 -15.25 L61.9 -5.9 -21.05 -5.9 Q-28.45 -4.9 -36.3 -5.9 L-36.3 -34.25 Q-29.25 -38.7 -21.05 -36.7 L-21.05 -27.15 -21.05 -5.9" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3882353" stroke-width="0.4"/>
+      <path d="M64.95 -35.85 L64.95 -21.35 Q60.9 -14.45 61.8 -6.8 62.2 -2.8 64.95 -0.9 L64.95 0.45 58.5 0.45 58.5 -9.5 Q58.95 -23.5 64.95 -35.85 M58.5 -31.3 L58.5 -49.8 62.2 -50.3 Q62.35 -39.3 58.5 -31.3" fill="#795531" fill-rule="evenodd" stroke="none"/>
+      <path d="M62.2 -50.3 L64.95 -49.8 64.95 -35.85 Q58.95 -23.5 58.5 -9.5 L58.5 -31.3 Q62.35 -39.3 62.2 -50.3 M64.95 -21.35 L64.95 -0.9 Q62.2 -2.8 61.8 -6.8 60.9 -14.45 64.95 -21.35" fill="#664626" fill-rule="evenodd" stroke="none"/>
+      <path d="M62.2 -50.3 L64.95 -49.8 64.95 -35.85 64.95 -21.35 64.95 -0.9 64.95 0.45 58.5 0.45 58.5 -9.5 58.5 -31.3 58.5 -49.8 62.2 -50.3" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.5"/>
+      <path d="M62.2 -50.3 Q62.35 -39.3 58.5 -31.3 M64.95 -21.35 Q60.9 -14.45 61.8 -6.8 62.2 -2.8 64.95 -0.9 M64.95 -35.85 Q58.95 -23.5 58.5 -9.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.14901961" stroke-width="0.30000000000000004"/>
+    </g>
+    <g id="decoration24-sprite1" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
+      <use height="2.2" transform="matrix(2.0941, 0.0, 0.0, 13.4318, 0.0, 0.0)" width="55.8" xlink:href="#decoration24-shape3"/>
+    </g>
+    <g id="decoration24-shape3" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
+      <path d="M55.8 2.2 L0.0 2.2 0.0 0.0 55.8 0.0 55.8 2.2" fill="#0066ff" fill-opacity="0.0" fill-rule="evenodd" stroke="none"/>
+    </g>
+  </defs>
+</svg>

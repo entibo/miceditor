@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="280.3px" width="490.3px" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1.0, 0.0, 0.0, 1.0, 245.15, 140.15)">
+    <use height="270.0" id="decoration89-Couleur0_FDFDFD" filter="url(#decoration89-filter0)" transform="matrix(1.0, 0.0, 0.0, 1.0, -240.0, -135.0)" width="479.95" xlink:href="#decoration89-sprite0"/>
+    <use height="280.3" transform="matrix(1.0, 0.0, 0.0, 1.0, -245.15, -140.15)" width="490.3" xlink:href="#decoration89-shape1"/>
+  </g>
+  <defs>
+    <g id="decoration89-sprite0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
+      <use height="270.0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="479.95" xlink:href="#decoration89-shape0"/>
+    </g>
+    <g id="decoration89-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
+      <path d="M479.95 270.0 L0.0 270.0 0.0 0.0 479.95 0.0 479.95 270.0" fill="url(#decoration89-gradient0)" fill-rule="evenodd" stroke="none"/>
+    </g>
+    <linearGradient gradientTransform="matrix(0.2298, 0.1887, -0.1044, 0.1272, 230.75, 125.75)" gradientUnits="userSpaceOnUse" id="decoration89-gradient0" spreadMethod="pad" x1="-819.2" x2="819.2">
+      <stop offset="0.0" stop-color="#808080"/>
+      <stop offset="0.2823529411764706" stop-color="#706d6d"/>
+      <stop offset="0.5843137254901961" stop-color="#808080"/>
+      <stop offset="1.0" stop-color="#747474"/>
+    </linearGradient>
+    <g id="decoration89-shape1" transform="matrix(1.0, 0.0, 0.0, 1.0, 245.15, 140.15)">
+      <path d="M239.95 -135.0 L-240.05 -135.0 -240.05 135.0 239.95 135.0 239.95 -135.0 M245.0 -140.0 L245.0 140.0 -245.0 140.0 -245.0 -140.0 245.0 -140.0" fill="#2a1811" fill-rule="evenodd" stroke="none"/>
+      <path d="M245.0 -140.0 L245.0 140.0 -245.0 140.0 -245.0 -140.0 245.0 -140.0 Z" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.30000000000000004"/>
+    </g>
+  </defs>
+</svg>

@@ -1,96 +1,100 @@
 
 <script>
+  import { readable } from "svelte/store"
 
-  import { parkour, shamanObjects, settings } from "/stores/stores.js"
+  import * as Editor from "data/editor/index"
+  import shamanObjectMetadata from "metadata/shamanObject/index"
 
-  export let shamanObject
-  export let active
+  import { parkourMode } from "state/mapExtra"
+  import { mapSettings } from "state/map"
+  import { shamanObjects } from "state/sceneObjects"
 
-  $: spriteData = getSpriteData(shamanObject, $settings)
-  function getSpriteData() {
-    if(!shamanObject._spriteData) return
-    if($settings._defilanteEnabled && shamanObject._spriteData.defilanteVariant) {
-      return shamanObject._spriteData.defilanteVariant
-    }
-    return shamanObject._spriteData
+  import Decoration from "./Decoration.svelte"
+
+  export let obj
+
+  $: rotation = $obj.rotation || 0
+
+  $: metadata = getMetadata($obj, $mapSettings)
+  function getMetadata(shamanObject, mapSettings) {
+    let metadata = shamanObjectMetadata.get(shamanObject.type)
+    return mapSettings.defilante.enabled && metadata.defilanteVariant
+      ? metadata.defilanteVariant
+      : metadata
   }
 
-  function getParkourCheckpointIndex() {
-    return $shamanObjects.filter(o => o._type == "22").indexOf(shamanObject) + 1
-  }
+
+  $: parkourCheckpointIndex = $parkourMode && 
+        $shamanObjects.all.filter(o => o.type === 22).indexOf($obj) + 1
+
+  $: parkourMouseSpawn = $parkourMode && 
+      readable(Editor.Decoration.make(Editor.Decoration.defaults("DS")))
 
 </script>
 
 
-<g on:mousedown
-  class="platform" class:active={active} 
-  transform="translate({shamanObject._x}, {shamanObject._y}) 
-             rotate({shamanObject._rotation || 0})"
+<g transform="translate({$obj.x}, {$obj.y}) 
+              rotate({rotation})"
 >
 
-  {#if spriteData && spriteData.spritesheet}
-
-  <foreignObject class="pointer-events-none" class:opacity50={shamanObject._ghost}
-    x={-spriteData.width/2} y={-spriteData.height/2}
-    width={spriteData.width} height={spriteData.height}
-  >
-    <div style="background-image: url(dist/shamanObjects/{spriteData.spritesheet}); 
-                background-position: {-spriteData.offset.x}px {-spriteData.offset.y}px;
-                background-repeat: no-repeat;"
-      class="w-full h-full"
-    ></div>
-  </foreignObject>
-
-  <rect fill="transparent" class="selectable" 
-    x={-spriteData.boundingWidth/2} y={-spriteData.boundingHeight/2}
-    width={spriteData.boundingWidth} height={spriteData.boundingHeight}
-  />
-
-  {:else if spriteData && spriteData.sprite}
-
-  <image class="selectable" class:opacity50={shamanObject._ghost}
-    x={-spriteData.width/2} y={-spriteData.height/2}
-    width={spriteData.width} height={spriteData.height}
-    href="dist/shamanObjects/{spriteData.sprite}"
-    on:mousedown|preventDefault
-  />
-
-  {:else}
-
-  <rect class="selectable" class:opacity50={shamanObject._ghost}
-    x={-20} y={-20}
-    width={40} height={40}
-    fill="red"
-  />
-
+  {#if $parkourMode && $obj.type == 22}
+    <g class="pointer-events-none" transform="rotate({-rotation})">
+      <Decoration obj={parkourMouseSpawn} />
+      <text y="-32">{parkourCheckpointIndex}</text>
+    </g>
   {/if}
 
-  {#if $parkour && shamanObject._type == "22"}
-  <text class="pointer-events-none" y="-8">{getParkourCheckpointIndex()}</text>
+  <g filter={$obj.invisible ? 'url("#erode")' : ''}
+     class:opacity-50={$obj.ghost}
+  >
+
+    {#if metadata.spritesheet}
+
+      <foreignObject 
+        x={-metadata.width/2} y={-metadata.height/2}
+        width={metadata.width} height={metadata.height}
+        class="pointer-events-none" 
+      >
+        <div style="background-image: url(dist/shamanObjects/{metadata.spritesheet}); 
+                    background-position: {-metadata.offset.x}px {-metadata.offset.y}px;
+                    background-repeat: no-repeat;"
+          class="w-full h-full"
+        ></div>
+      </foreignObject>
+
+    {:else}
+
+      <image 
+        x={-metadata.width/2} y={-metadata.height/2}
+        width={metadata.width} height={metadata.height}
+        href="dist/shamanObjects/{metadata.sprite}"
+        on:mousedown|preventDefault
+        class="pointer-events-none" 
+      />
+
+    {/if}
+
+  </g>
+
+  {#if metadata.circle}
+    <circle
+      r={metadata.boundingWidth/2}
+      fill="transparent"
+      class="object-outline-stroke cursor-pointer"
+    />
+  {:else}
+    <rect 
+      x={-metadata.boundingWidth/2} y={-metadata.boundingHeight/2}
+      width={metadata.boundingWidth} height={metadata.boundingHeight}
+      fill="transparent"
+      class="object-outline cursor-pointer"
+    />
   {/if}
 
 </g>
 
 
 <style lang="text/postcss">
-  .opacity50 {
-    opacity: 0.5;
-  }
-
-  .selectable {
-    transition: fill 100ms, outline-color 50ms;
-    outline-width: 4px;
-    outline-offset: -4px;
-    outline-style: dashed;
-    outline-color: rgba(255,255,255,0.0);
-  }
-  .selectable:hover {
-    cursor: pointer;
-    outline-color: rgba(255,255,255,0.5);
-  }
-  .active .selectable {
-    outline-color: rgba(255,255,255,0.95);
-  }
 
   text {
     fill: black;

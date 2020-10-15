@@ -6,11 +6,11 @@
 */
 
 .cm-s-lucario.CodeMirror, .cm-s-lucario .CodeMirror-gutters {
-  background-color: #2b3e50 !important;
+  background-color: transparent !important;
   color: #f8f8f2 !important;
   border: none;
 }
-.cm-s-lucario .CodeMirror-gutters { color: #2b3e50; }
+.cm-s-lucario .CodeMirror-gutters { color: transparent; }
 .cm-s-lucario .CodeMirror-cursor { border-left: solid thin #E6C845; }
 .cm-s-lucario .CodeMirror-linenumber { color: #f8f8f2; }
 .cm-s-lucario .CodeMirror-selected { background: #243443; }

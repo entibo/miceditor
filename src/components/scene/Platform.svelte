@@ -1,195 +1,182 @@
 
-<script context="module">
-
-  import { get as storeGet } from "svelte/store"
-  import { zoom } from "/stores/stores.js"
-
-  let resizeInfo = null
-
-  window.addEventListener("mousemove", resizeMove)
-  window.addEventListener("mouseup", resizeStop)
-  window.addEventListener("mouseleave", resizeStop)
-
-  // 0 1 2
-  // 7   3
-  // 6 5 4
-  function resizeMove(e) {
-    if(!resizeInfo) return
-    let {k, start, platform, platformStart} = resizeInfo
-
-    let rotation = platform._rotation || 0
-
-    let isCircle = platform._typeName === "circle"
-
-    let scale = 1 / storeGet(zoom)
-    let dx = scale * (e.clientX - start.x)
-    let dy = scale * (e.clientY - start.y)
-
-    let [rdx,rdy] = rotate(dx, dy, -rotation)
-    if([1,5].includes(k)) rdx = 0
-    if([3,7].includes(k)) rdy = 0
-
-    let sign = { x: 1, y: 1 }
-    if([4,5,6].includes(k)) sign.y = -1
-    if([6,7,0].includes(k)) sign.x = -1
-    if(isCircle) {
-      sign.x /= 2
-      sign.y /= 2
-    }
-
-    let newWidth = platformStart._width   + sign.x*(+rdx)
-    let newHeight = platformStart._height + sign.y*(-rdy)
-    let extraWidth = newWidth < 10 ? 10 - newWidth : 0
-    let extraHeight = newHeight < 10 ? 10 - newHeight : 0
-    platform._width = Math.max(10, newWidth)
-    platform._height = Math.max(10, newHeight)
-
-    let [a,b] = rotate(rdx + sign.x*extraWidth, rdy - sign.y*extraHeight, rotation||0)
-    platform._x = Math.round(platformStart._x + a/2)
-    platform._y = Math.round(platformStart._y + b/2)
-
-    encodePlatformData(platform)
-    platforms.update(v => v)
-    selection.update(v => v)
-    buildXML()
-  }
-
-  function resizeStop() {
-    resizeInfo = null
-  }
-
-</script>
-
 <script>
 
-  import { encodePlatformData } from "/xml-utils.js"
-  import { 
-    highQuality, showInvisibleGrounds,
-    platforms, selection, buildXML 
-  } from "/stores/stores.js"
+  import * as Platform from "data/editor/Platform"
+  import { showInvisibleGrounds, highQuality } from "state/user"
+  import { platformResizeKnobMouseDown,
+           platformBoosterVectorMouseDown,
+           platformBoosterVectorMinLength, 
+         } from "state/interaction"
 
-  import SvgImage from "/components/common/SvgImage.svelte"
+  import SvgImage from "components/common/SvgImage.svelte"
 
-  export let platform
-  export let active = false
+  export let obj
 
-  $: isCircle = platform._typeName === "circle"
+  $: selected = $obj.selected
 
-  function rotate(x, y, angle, cx=0, cy=0) {
-    var radians = (Math.PI / 180) * angle,
-        cos = Math.cos(radians),
-        sin = -Math.sin(radians),
-        nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
-        ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
-    return [nx, ny];
-  }
+  $: typeName = Platform.typeNames[$obj.type]
 
+  $: isCircle = typeName === "circle"
+
+  $: x = $obj.x
+  $: y = $obj.y
+
+  $: width  = isCircle ? $obj.radius*2 : $obj.width
+  $: height = isCircle ? $obj.radius*2 : $obj.height
+
+  $: rotation = $obj.rotation || 0
+
+  // Resize points dimensions
   $: rs = 6
-  $: rw = rs/2 + (isCircle ? platform._width : platform._width/2)
-  $: rh = rs/2 + (isCircle ? platform._width : platform._height/2)
+  $: rw = rs/2 + width/2
+  $: rh = rs/2 + height/2
+  //
 
-  function resizeStart(e, k) {
-    resizeInfo = { 
-      k,
-      start: { x: e.clientX, y: e.clientY },
-      platformStart: Object.assign({}, platform),
-      platform,
+  $: opacityLevel = Platform.isInvisible($obj)
+      ? $showInvisibleGrounds 
+          ? "half" 
+          : "zero"
+      : "full"
+
+  let boosterVector 
+  $: if($obj.booster && $obj.booster.enabled) {
+    let angle = $obj.booster.angle
+    let rad = angle * Math.PI / 180
+    let length = platformBoosterVectorMinLength + $obj.booster.speed
+    boosterVector = {
+      angle,
+      length,
+      x: length * Math.cos(rad),
+      y: length * Math.sin(rad),
+      animationDuration: 1 / ($obj.booster.speed / 10000),
     }
   }
-
-  $: isInvisible = platform._invisible || platform._typeName === "invisible"
-  $: invisibilityClass = isInvisible ?
-    ($showInvisibleGrounds ? "half-opacity" : "zero-opacity") :
-    ""
+  else boosterVector = null
 
 </script>
 
-<g 
-  transform="translate({platform._x}, {platform._y}) 
-             rotate({platform._rotation || 0})"
+<g transform="translate({x}, {y}) 
+              rotate({rotation})"
 >
-  <g class="platform"
-    on:mousedown on:mousemove on:mouseleave
-  >
 
-    {#if platform._groundImageEnabled}
-    <SvgImage class="pointer-events-none"
-      x={-platform._width/2 + platform._groundImageX} 
-      y={-platform._height/2 + platform._groundImageY}
-      href={platform._groundImageFullUrl}
-    />}
-    <rect
-      x={-platform._width/2} y={-platform._height/2}
-      width={platform._width} height={platform._height}
-      fill="transparent"
-      class="selectable"
-      class:active
-    />
+  <g class="cursor-pointer">
+
+    {#if $obj.image.enabled}
+
+      <SvgImage class="pointer-events-none"
+        x={-width/2  + $obj.image.x} 
+        y={-height/2 + $obj.image.y}
+        href={$obj.image.imageUrl.url}
+      />
+      <rect
+        x={-width/2} y={-height/2}
+        width={width} height={height}
+        fill="transparent"
+      />
+
     {:else}
 
-    <g class="selectable" class:active >
-      <g class={invisibilityClass} >
+      <g class={opacityLevel === "full" ? "opacity-100" : opacityLevel === "half" ? "opacity-50" : "opacity-0"} >
 
-        {#if platform._typeName === "circle"}
+        {#if typeName === "circle"}
           <circle
-            r={platform._radius}
-            fill={platform._displayColor}
+            r={$obj.radius}
+            fill="#{$obj.color}"
+            class="object-outline-stroke"
           />
-        {:else if platform._typeName === "rectangle"}
+        {:else if typeName === "rectangle"}
           <rect
-            x={-platform._width/2} y={-platform._height/2}
-            width={platform._width} height={platform._height}
-            fill={platform._displayColor}
+            x={-width/2} y={-height/2}
+            width={width} height={height}
+            fill="#{$obj.color}"
+            class="object-outline"
           />
-        {:else if ["wood", "ice", "trampoline", "chocolate", "cloud"].includes(platform._typeName)}
-          <image 
-            x={-platform._width/2} y={-platform._height/2}
-            width={platform._width} height={platform._height} 
-            preserveAspectRatio="none" 
-            href="dist/grounds/{ platform._typeName }{ $highQuality? "-high" : "" }.png"
-            on:mousedown|preventDefault
-          />
-        {:else if platform._typeName === "invisible"}
+        {:else if ["wood", "ice", "trampoline", "chocolate", "cloud"].includes(typeName)}
+          {#if $highQuality}
+            <image
+              x={-width/2} y={-height/2}
+              width={width} height={height} 
+              preserveAspectRatio="none" 
+              href="dist/grounds/{ typeName }.svg"
+              on:mousedown|preventDefault
+              class="object-outline"
+            />
+          {:else}
+            <image
+              x={-width/2} y={-height/2}
+              width={width} height={height} 
+              preserveAspectRatio="none" 
+              href="dist/grounds/{ typeName }.png"
+              on:mousedown|preventDefault
+              class="object-outline"
+            />
+          {/if}
+        {:else if typeName === "invisible"}
           <rect
-            x={-platform._width/2} y={-platform._height/2}
-            width={platform._width} height={platform._height}
+            x={-width/2} y={-height/2}
+            width={width} height={height}
             fill="white"
+            class="object-outline"
           />
         {:else}
           <foreignObject
-            x={-platform._width/2} y={-platform._height/2}
-            width={platform._width} height={platform._height} 
+            x={-width/2} y={-height/2}
+            width={width} height={height} 
+            class="object-outline"
           >
             <div
-              class="w-full h-full {platform._typeName !== 'invisible' ? platform._typeName : ''}"
-              class:sides={platform._width%40===0}
-              class:highQuality={$highQuality}
+              class="w-full h-full {typeName !== 'invisible' ? typeName : ''}"
+              class:sides={width%40===0}
             >
             </div>
           </foreignObject>
         {/if}
 
       </g>
-    </g>
 
     {/if}
 
   </g>
 
-  <g transform="translate({-rs/2}, {-rs/2})" 
-    class="resize-knobs" class:active
-  >
-    {#each 
-    isCircle ? [[+rw,0,3],[-rw,0,7]] : [
-      [-rw,-rh], [0,-rh], [+rw,-rh], [+rw,0],
-      [+rw,+rh], [0,+rh], [-rw,+rh], [-rw,0],
-    ].map(([x,y], k) => [x,y,k])
-    as [x,y,k]}
-    <rect fill="white" width={rs} height={rs} {x} {y}
-      on:mousedown|stopPropagation|preventDefault={e => resizeStart(e, k)}
-    />
-    {/each}
-  </g>
+  {#if selected}
+    <g transform="translate({-rs/2}, {-rs/2})" 
+       class="cursor-crosshair"
+    >
+      {#each 
+      isCircle 
+        ? [[+rw, 0], [-rw,0], [0,-rh], [0,+rh]] 
+        : [
+            [-rw,-rh], [0,-rh], [+rw,-rh], [+rw,0],
+            [+rw,+rh], [0,+rh], [-rw,+rh], [-rw,0],
+          ]
+          .map(([x,y], k) => [x,y,k])
+      as [x,y,k]}
+        <rect fill="white" width={rs} height={rs} {x} {y}
+          on:mousedown|stopPropagation|preventDefault={e => platformResizeKnobMouseDown(e, obj, k)}
+        />
+      {/each}
+    </g>
+  {/if}
+
+  {#if selected && boosterVector}
+    <g class="booster-vector cursor-pointer" 
+       class:zero-speed={$obj.booster.speed <= 0.1}
+       transform="rotate({-rotation})"
+    >
+      <line x1={0} x2={boosterVector.x}
+            y1={0} y2={boosterVector.y}
+            class="pointer-events-none"
+            stroke-dasharray={boosterVector.length/5}
+            style="animation-duration: {boosterVector.animationDuration}s;"
+      />
+      <path class="arrowHead"
+            transform="translate({boosterVector.x} {boosterVector.y})
+                       rotate({boosterVector.angle})" 
+            d="M 0 -5 L 10 0 L 0 5 z" 
+            on:mousedown|stopPropagation|preventDefault={e => platformBoosterVectorMouseDown(e, obj)}
+      />
+    </g>
+  {/if}
 
 </g>
 
@@ -197,109 +184,55 @@
 
 <style lang="text/postcss">
 
-  .half-opacity {
-    opacity: 0.4;
+  .booster-vector {
+    opacity: 0.9;
   }
-  .zero-opacity {
-    opacity: 0;
+  .booster-vector.zero-speed {
+    opacity: 0.5;
   }
-
-  .resize-knobs {
-    visibility: hidden;
-    cursor: crosshair;
+  .booster-vector .arrowHead {
+    /* fill: #0dff41; */
+    /* stroke: white;
+    stroke-width: 1; */
+    fill: #33ff44;
   }
-  .resize-knobs.active {
-    visibility: visible;
+  .booster-vector line {
+    stroke: #33ff44;
+    stroke-width: 1;
+    /* stroke-dasharray: 25; */
+    animation-name: dash-animation;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
   }
-
-  .platform rect, .platform circle {
-    transition: fill 100ms;
-  }
-  .selectable {
-    /* transition: outline-color 50ms; */
-    outline-width: 4px;
-    outline-offset: -4px;
-    outline-style: dashed;
-    outline-color: rgba(255,255,255,0.0);
-  }
-  .selectable:hover {
-    cursor: pointer;
-    outline-color: rgba(255,255,255,0.5);
-  }
-  .selectable.active {
-    outline-color: rgba(255,255,255,0.95);
+  @keyframes dash-animation {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -10000;
+    }
   }
 
-  /* 
-  .invisible {
-    visibility: initial !important;
-  } 
-  */
+
+
 
   .cobweb { background: url(grounds/cobweb.png); }
+
   .sand { background: url(grounds/sand.png); }
 
-  .water { background: url(grounds/water.png); }
-  .highQuality.water { background: url(grounds/water-high.png); }
+  .water { background: url(grounds/water-high.png); }
 
-  .lava { background: url(grounds/lava.png); }
-  .highQuality.lava { background: url(grounds/lava-high.png); }
+  .lava { background: url(grounds/lava-high.png); }
 
-  .earth { background: url(grounds/earth.png); }
-  .highQuality.earth { background: url(grounds/earth-high.png); }
+  .earth { background: url(grounds/earth-high.png); }
   
-  .grass3 {
-    background: 
-      url(grounds/grass3-top.png) repeat-x, 
-      url(grounds/earth.png);
-  }
-  .grass3.sides {
-    background: 
-      url(grounds/grass3-corner.png) no-repeat,
-      url(grounds/grass3-corner-flipped.png) no-repeat right top,
-      url(grounds/grass3-top.png) repeat-x, 
-      url(grounds/earth.png);
-  }
-  .highQuality.grass3 {
-    background: 
-      url(grounds/grass3-top.png) repeat-x, 
-      url(grounds/earth-high.png);
-  }
-  .highQuality.grass3.sides {
-    background: 
-      url(grounds/grass3-corner.png) no-repeat,
-      url(grounds/grass3-corner-flipped.png) no-repeat right top,
-      url(grounds/grass3-top.png) repeat-x, 
-      url(grounds/earth-high.png);
-  }
-  .grass3.sides:before {
-    content: "";
-    /* z-index: -1; */
-    @apply absolute w-full h-full top-0 right-0 bottom-0 left-0;
-    top: 8px;
-    background: 
-      url(grounds/grass3-side.png) repeat-y,
-      url(grounds/grass3-side-flipped.png) repeat-y right top;
-  }
 
   .grass2 {
     background: 
       url(grounds/grass2-top.png) repeat-x, 
-      url(grounds/earth.png);
-  }
-  .grass2.sides {
-    background: 
-      url(grounds/grass2-corner.png) no-repeat,
-      url(grounds/grass2-corner-flipped.png) no-repeat right top,
-      url(grounds/grass2-top.png) repeat-x, 
-      url(grounds/earth.png);
-  }
-  .highQuality.grass2 {
-    background: 
-      url(grounds/grass2-top.png) repeat-x, 
       url(grounds/earth-high.png);
   }
-  .highQuality.grass2.sides {
+  .grass2.sides {
     background: 
       url(grounds/grass2-corner.png) no-repeat,
       url(grounds/grass2-corner-flipped.png) no-repeat right top,
@@ -314,26 +247,36 @@
     background: 
       url(grounds/grass2-side.png) repeat-y,
       url(grounds/grass2-side-flipped.png) repeat-y right top;
-  }
+  }  
+
+.grass3 {
+  background: 
+    url(grounds/grass3-top.png) repeat-x, 
+    url(grounds/earth-high.png);
+}
+.grass3.sides {
+  background: 
+    url(grounds/grass3-corner.png) no-repeat,
+    url(grounds/grass3-corner-flipped.png) no-repeat right top,
+    url(grounds/grass3-top.png) repeat-x, 
+    url(grounds/earth-high.png);
+}
+.grass3.sides:before {
+  content: "";
+  /* z-index: -1; */
+  @apply absolute w-full h-full top-0 right-0 bottom-0 left-0;
+  top: 8px;
+  background: 
+    url(grounds/grass3-side.png) repeat-y,
+    url(grounds/grass3-side-flipped.png) repeat-y right top;
+}
 
   .grass {
     background: 
       url(grounds/grass-top.png) repeat-x, 
-      url(grounds/earth.png);
-  }
-  .grass.sides {
-    background: 
-      url(grounds/grass-corner.png) no-repeat,
-      url(grounds/grass-corner-flipped.png) no-repeat right top,
-      url(grounds/grass-top.png) repeat-x, 
-      url(grounds/earth.png);
-  }
-  .highQuality.grass {
-    background: 
-      url(grounds/grass-top.png) repeat-x, 
       url(grounds/earth-high.png);
   }
-  .highQuality.grass.sides {
+  .grass.sides {
     background: 
       url(grounds/grass-corner.png) no-repeat,
       url(grounds/grass-corner-flipped.png) no-repeat right top,
@@ -353,21 +296,9 @@
   .snow {
     background: 
       url(grounds/snow-top.png) repeat-x, 
-      url(grounds/earth.png);
-  }
-  .snow.sides {
-    background: 
-      url(grounds/snow-top.png) repeat-x, 
-      url(grounds/grass-side.png) repeat-y,
-      url(grounds/grass-side-flipped.png) repeat-y right top,
-      url(grounds/earth.png);
-  }
-  .highQuality.snow {
-    background: 
-      url(grounds/snow-top.png) repeat-x, 
       url(grounds/earth-high.png);
   }
-  .highQuality.snow.sides {
+  .snow.sides {
     background: 
       url(grounds/snow-top.png) repeat-x, 
       url(grounds/grass-side.png) repeat-y,
@@ -378,21 +309,9 @@
   .stone {
     background: 
       url(grounds/stone-top.png) repeat-x, 
-      url(grounds/stone.png);
-  }
-  .stone.sides {
-    background: 
-      url(grounds/stone-side.png) repeat-y, 
-      url(grounds/stone-side.png) repeat-y right top, 
-      url(grounds/stone-top.png) repeat-x, 
-      url(grounds/stone.png);
-  }
-  .highQuality.stone {
-    background: 
-      url(grounds/stone-top.png) repeat-x, 
       url(grounds/stone-high.png);
   }
-  .highQuality.stone.sides {
+  .stone.sides {
     background: 
       url(grounds/stone-side.png) repeat-y, 
       url(grounds/stone-side.png) repeat-y right top, 

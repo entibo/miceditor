@@ -79,7 +79,7 @@ for(let dir of originalDirs.filter(s => s.includes("$P"))) {
 }
 
 fs.writeFileSync(
-  path.join(__dirname, "src", "decorationMetadata.json"), 
+  path.join(__dirname, "src", "metadata", "decoration", "decorationMetadata.json"), 
   JSON.stringify(decorationMetadata)
 )
 

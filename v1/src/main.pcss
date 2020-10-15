@@ -1,0 +1,77 @@
+@custom-selector :--links a:link,a:visited,a:hover,a:focus,a:active;
+@custom-selector :--headings h1, h2, h3, h4, h5, h6;
+
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+*,*:before,*:after {
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100%;
+    height: 100%;
+    margin: 0;
+    user-select: none;
+}
+
+body {
+    font-family: system-ui;
+    font-size: 1em;
+    line-height: 1.5;
+    overflow: hidden;
+}
+
+:--links {
+    color: blue;
+    text-decoration: underline;
+}
+
+:--headings {
+    margin: .75rem 0;
+}
+
+
+img, image {
+    user-select: none;
+    user-drag: none;
+}
+
+div.material-input {
+    position: relative;
+    @apply text-sm;
+}
+div.material-input.disabled {
+    position: relative;
+}
+div.material-input:focus-within:before {
+    width: 100%;
+}
+div.material-input:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 0%;
+    height: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: width 300ms cubic-bezier(.25,.8,.5,1), all 150ms;
+    @apply bg-blue-400;
+}
+div.material-input.invalid:before {
+    @apply bg-red-400;
+}
+div.material-input select, div.material-input input {
+    outline: none;
+    @apply bg-gray-800 w-full h-full;
+    @apply border-b border-gray-400;
+    @apply rounded-t-sm;
+    @apply text-white px-2;
+    min-height: 1.4rem;
+}
+div.material-input input {
+    @apply appearance-none;
+}

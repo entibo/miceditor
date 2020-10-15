@@ -2,66 +2,83 @@
 <script>
   import { fly } from "svelte/transition"
 
-  import { selection } from "/stores/stores.js"
-  import Tooltip from "/components/common/Tooltip.svelte"
+  import { selection } from "state/selection"
+  import * as Creation from "state/creation"
+  import { creation } from "state/creation"
+  import Tooltip from "components/common/Tooltip.svelte"
+  import Button from "components/common/Button.svelte"
+  
+  import { _ } from "state/locale"
+
 
   export let position
-  export let selectionArea
+  export let selectionBox
 
   $: [x,y] = [position.x, position.y].map(v => Math.round(v))
   let sw, sh
-  $: if(selectionArea) {
-    sw = Math.round(selectionArea.x2-selectionArea.x1)
-    sh = Math.round(selectionArea.y2-selectionArea.y1)
+  $: if(selectionBox.box) {
+    sw = Math.round(selectionBox.box.p2.x - selectionBox.box.p1.x)
+    sh = Math.round(selectionBox.box.p2.y - selectionBox.box.p1.y)
   }
 
 </script>
 
-<div class="absolute z-40 bottom-0 px-4 pointer-events-none flex">
+<div class="absolute z-20 bottom-0 px-2 flex h-7 pointer-events-none">
 
-  <div class="section">
-    <span class="text-gray-500 text-xs">X</span>
-    <span class="text-gray-100 w-8 text-right inline-block">{x}</span>
-    <span class="text-gray-500 text-xs ml-2">Y</span>
-    <span class="text-gray-100 w-8 text-right inline-block">{y}</span>
-  </div>
-
-  {#if $selection.length}
-  <div class="ml-4 section" >
-    <span class="text-gray-100">{$selection.length}</span>
-    <span class="text-gray-500 text-xs ml-1">selected</span>
+  {#if $creation.enabled}
+  <div class="section flex" on:mousedown|preventDefault|stopPropagation >
+    <span class="text-gray-200 text-sm">{$_("creation-mode")}</span>
+    <Tooltip top title={$_("escape-key")} class="pointer-events-auto ml-2 -mt-1 -mr-3">
+      <Button on:click={Creation.disable} class="text-sm h-7">
+        {$_("cancel")}
+      </Button>
+    </Tooltip>
   </div>
   {/if}
 
-  {#if selectionArea}
-  <div class="ml-4 section" >
+  <div class="section flex items-baseline">
+    <span class="text-gray-500 text-xs">X</span>
+    <span class="text-gray-100 text-sm w-8 text-right inline-block">{x}</span>
+    <span class="text-gray-500 text-xs ml-2">Y</span>
+    <span class="text-gray-100 text-sm w-8 text-right inline-block">{y}</span>
+  </div>
+
+
+  {#if $selection.length > 0}
+  <div class="section flex items-baseline" >
+    <span class="text-gray-100 text-sm">{$selection.length}</span>
+    <span class="text-gray-500 text-xs ml-1">{$_("selected")}</span>
+  </div>
+  {/if}
+
+  {#if selectionBox.box}
+  <div class="section flex items-baseline" >
     <span class="text-gray-500 text-xs">L</span>
-    <span class="text-gray-100 w-8 text-right inline-block">{sw}</span>
+    <span class="text-gray-100 text-sm w-8 text-right inline-block">{sw}</span>
     <span class="text-gray-500 text-xs ml-2">H</span>
-    <span class="text-gray-100 w-8 text-right inline-block">{sh}</span>
+    <span class="text-gray-100 text-sm w-8 text-right inline-block">{sh}</span>
   </div>
   {/if}
 
 </div>
 
-<div class="right-0 absolute z-30 bottom-0 px-4 flex">
+<div class="right-0 absolute z-10 bottom-0 px-2 flex h-7">
 
-  <div class="section">
-    <span class="text-gray-100">Miceditor</span>
-    <span class="text-gray-500 text-xs ml-1">v1.3.5</span>
-    <span class="text-gray-500 text-xs ml-2">by</span>
-    <span class="text-gray-100 ml-1">entibo</span>
+  <div class="section flex items-baseline pointer-events-none">
+    <span class="text-gray-100 font-cursive font-bold">Miceditor</span>
+    <span class="text-gray-500 font-mono text-xs ml-1">v2.0.0</span>
+    <span class="text-gray-300 font-sans text-sm ml-2">by <span class="font-medium">entibo</span></span>
   </div>
 
-  <div class="ml-2 section">
+  <div class="section flex items-center">
     <Tooltip top title="Github">
       <a href="https://github.com/entibo/miceditor" target="_blank">
-        <img src="dist/github.png" alt="Github" style="width: 24px" />
+        <img src="dist/github.png" alt="Github" style="width: 20px" />
       </a>
     </Tooltip>
   </div>
 
-  <div class="ml-2 section flex items-center">
+  <div class="mx-2 bg-gray-700b-65 rounded-t-sm py-1 pl-1 pr-2 flex items-center">
     <Tooltip top title="Atelier801">
       <a href="https://atelier801.com/topic?f=6&t=884238" target="_blank">
           <img src="dist/atelier801.png" alt="Atelier801" />
@@ -73,7 +90,7 @@
 
 <style lang="text/postcss">
   .section {
-    @apply bg-gray-800 rounded-t px-3 py-1;
+    @apply bg-gray-700b-65 rounded-t-sm px-3 py-1 mx-2;
   }
   a {
     text-decoration: none;

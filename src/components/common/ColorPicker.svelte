@@ -3,7 +3,7 @@
 
   import cc from "color-convert"
 
-  export let value
+  export let value = "000000"
 
   let hsv
   let lastSetValue
@@ -11,7 +11,7 @@
     hsv = [h, s, v]
     lastSetValue = value = cc.hsv.hex(h, s, v)
   }
-  $: if(value !== lastSetValue) hsv = cc.hex.hsv(value)
+  $: if(value !== lastSetValue) hsv = cc.hex.hsv(value || "000000")
 
   $: onlyHue = `hsl(${hsv[0]}, 100%, 50%)`
   $: hStyle = `

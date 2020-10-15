@@ -1,10 +1,11 @@
+
+const svelte_preprocess_postcss = require('svelte-preprocess-postcss')
+
 module.exports = {
-   preprocess: {
-      style: async ({content, attributes}) => {
-         if (attributes.type !== 'text/postcss') return;
-         return new Promise((resolve, reject) => {
-            resolve({code: '', map: ''});
-         });
-      },
-   },
+  css: css => {
+    css.write('dist/components.css');
+  },
+  preprocess: {
+    style: svelte_preprocess_postcss(),
+  },
 };

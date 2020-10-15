@@ -8,7 +8,8 @@
 
   import { tick, onMount } from "svelte"
   
-  import { xml } from "/stores/stores.js"
+  import { xml } from "state/xml"
+  import { importXML } from "state/map"
 
   let currentXML = null
   let prettyXML
@@ -31,13 +32,14 @@
     })
     cm.on("change", cm => {
       if(cm.getValue() === prettyXML) return
-      $xml = currentXML = cm.getValue().replace(/>[\t\n ]+</g, "><")
+      currentXML = cm.getValue().replace(/>[\t\n ]+</g, "><")
+      importXML(currentXML)
     })
   })
 
 </script>
 
-<pre>
+<pre on:keydown|stopPropagation>
   <code>
     <textarea 
       bind:this={textareaElement}
