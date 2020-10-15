@@ -3,40 +3,18 @@
   import Icon from "fa-svelte"
   import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus"
 
-  // import SortableList from "components/common/SortableList.svelte"
-  import SortableList from "svelte-sortable-list"
 
-  import Tooltip from "components/common/Tooltip.svelte"
-  import Checkbox from "components/common/Checkbox.svelte"
   import Button from "components/common/Button.svelte"
-  import Collapsible from "components/common/Collapsible.svelte"
 
   import Layer from "components/ui/menus/layersMenu/Layer.svelte"
   import AnimationListEntry from "components/ui/menus/layersMenu/AnimationListEntry.svelte"
-  import Actions from "components/ui/menus/layersMenu/Actions.svelte"
 
   import { _ } from "state/locale"
 
 
   import { mapSettings } from "state/map"
   import { addLayer, addAnimation } from "state/layers"
-  import { groups, joints } from "state/sceneObjects"
-  import highlight from "state/highlight"
-  import * as selection from "state/selection"
 
-
-  function onSort(e) {
-    /* let fromIndex = items.findIndex(layer => layer.id === from.id)
-    let toIndex   = items.findIndex(layer => layer.id === to.id)
-    let tmp = $mapSettings.layer[from]
-    $mapSettings */
-    
-    $mapSettings.layers = e.detail.flatMap(item =>
-      item.layer
-        ? item.layer
-        : item.animation.frames
-            .map(frame => $mapSettings.layers.find(layer => layer.id === frame.layerId)))
-  }
 
   $: items = getItems($mapSettings.layers, $mapSettings.animations)
   function getItems(layers, animations) {
@@ -86,13 +64,6 @@
 
   <div class="mt-2"></div>
 
-  <!-- <SortableList
-    list={items}
-    key="key"
-    let:item={item}
-    on:sort={onSort}
-  >
-  </SortableList> -->
   {#each items.reverse() as item (item.key)}
     {#if item.layer}
       <Layer layer={item.layer} />

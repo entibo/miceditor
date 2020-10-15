@@ -29,7 +29,7 @@ $: titleName = $_(layout.tabToLocaleKey[window.tab])
      on:wheel|stopPropagation
      on:mousedown|stopPropagation={() => windowPanelMouseDown(window)}
 >
-  <div class="flex items-center justify-between items-center cursor-move bg-gray-800 rounded-t-sm px-1"
+  <div class="flex items-center justify-between cursor-move bg-gray-800 rounded-t-sm px-1"
        on:mousedown={e => windowTitleMouseDown(e, window)}
   >
 

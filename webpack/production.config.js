@@ -2,7 +2,9 @@
 
 const path = require('path')
 
+const TerserJSPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const purgecss = require('@fullhuman/postcss-purgecss')
 
 
@@ -12,6 +14,10 @@ const root = path.resolve(__dirname, '..')
 module.exports = {
 
   mode: 'production',
+  
+  optimization: {
+    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+  },
   
   devtool: 'source-map',
 
@@ -34,12 +40,17 @@ module.exports = {
 
   module: {
     rules: [
-      {
+      /* {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         options: {
           
         }
+      }, */
+      {
+        test: /\.(ts|js)$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
       },
       {
         test: /\.mjs$/,

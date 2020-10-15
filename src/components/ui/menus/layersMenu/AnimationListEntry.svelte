@@ -10,7 +10,6 @@
   import Checkbox from "components/common/Checkbox.svelte"
   import Button from "components/common/Button.svelte"
   import Collapsible from "components/common/Collapsible.svelte"
-  import SortableList from "svelte-sortable-list"
 
   import Options from "components/ui/menus/layersMenu/Options.svelte"
   import Actions from "components/ui/menus/layersMenu/Actions.svelte"
