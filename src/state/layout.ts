@@ -11,7 +11,7 @@ import shamanObjectMetadata from "metadata/shamanObject"
 const panels = ["left", "right", "bottom"] as const
 type PanelName = (typeof panels)[number]
 
-const tabs = ["basic","platforms","decorations","shamanObjects","shamanObjectVariants","lines","mechanics","images","layers","mapSettings","selection"] as const
+const tabs = ["basic","platforms","decorations","shamanObjects","shamanObjectVariants","lines","mechanics","images","layers","tree","mapSettings","selection"] as const
 type TabName = (typeof tabs)[number]
 
 export interface Layout {
@@ -48,8 +48,9 @@ export const tabToLocaleKey: Record<TabName, LocaleKey> = {
   "mechanics": "category-mechanics",
   "images": "category-images",
   "layers": "layers",
+  "tree": "tree-menu",
   "mapSettings": "map-settings",
-  "selection": "select-all",
+  "selection": "selection-menu",
 }
 
 

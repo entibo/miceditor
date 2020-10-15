@@ -9,7 +9,6 @@
   import Button from "components/common/Button.svelte"
   import Collapsible from "components/common/Collapsible.svelte"
 
-  /* import LayerGroup from "./layersMenu/LayerGroup.svelte" */
   import Options from "components/ui/menus/layersMenu/Options.svelte"
   import Actions from "components/ui/menus/layersMenu/Actions.svelte"
   import LayerName from "components/ui/menus/layersMenu/LayerName.svelte"
@@ -19,6 +18,7 @@
 
   import { mapSettings } from "state/map"
   import * as map from "state/map"
+  import * as layers from "state/layers"
   import { groups, joints } from "state/sceneObjects"
   import * as sceneObjects from "state/sceneObjects"
   import highlight from "state/highlight"
@@ -53,11 +53,11 @@
   }
 
   function removeLayer() {
-    map.removeLayer(layer.id)
+    layers.removeLayer(layer.id)
     dispatch("remove", layer)
   }
   function duplicateLayer() {
-    let newLayer = map.duplicateLayer(layer.id)
+    let newLayer = layers.duplicateLayer(layer.id)
     dispatch("duplicate", { layer, newLayer })
   }
 
@@ -65,7 +65,10 @@
     console.log(srcIndex, tgtIndex)
     let srcJoint = sceneObjects.groups.joints[srcIndex]
     srcJoint.layerId = layer.id
-    sceneObjects.setIndex(srcJoint, tgtIndex)
+    if(tgtIndex) {
+      sceneObjects.setIndex(srcJoint, tgtIndex)
+    }
+    mapSettings.invalidate()
   }
 
 </script>
@@ -77,7 +80,7 @@
       <div class="flex"
            on:dragenter|preventDefault
            on:dragover|preventDefault
-           on:drop|preventDefault={e => onDrop(e.dataTransfer.getData("source"), list[0].index)}
+           on:drop|preventDefault={e => onDrop(e.dataTransfer.getData("source"), list.length && list[0].index)}
       >
 
         <Options list={list} group={groups.joints} />
@@ -126,9 +129,7 @@
 </div>
 
 
-<style>
-
-
+<style type="text/postcss">
   .layer {
     background: rgba(0, 7, 20, 0.26);
     border: 1px solid rgba(0, 10, 26, 0.20);

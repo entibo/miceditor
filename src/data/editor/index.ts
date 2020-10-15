@@ -103,6 +103,8 @@ export function flipX(obj: Object, cx: number) {
 
   if(isJoint(obj))
     return Joint.flipX(obj, cx)
+  if(isImage(obj))
+    return Image.flipX(obj, cx)
 
   obj.x = 2*cx - obj.x
 }
@@ -112,6 +114,8 @@ export function flipY(obj: Object, cy: number) {
 
   if(isJoint(obj))
     return Joint.flipY(obj, cy)
+  if(isImage(obj))
+    return Image.flipY(obj, cy)
 
   obj.y = 2*cy - obj.y
 }

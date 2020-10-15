@@ -12,7 +12,6 @@
   import Collapsible from "components/common/Collapsible.svelte"
   import SortableList from "svelte-sortable-list"
 
-  /* import LayerGroup from "./layersMenu/LayerGroup.svelte" */
   import Options from "components/ui/menus/layersMenu/Options.svelte"
   import Actions from "components/ui/menus/layersMenu/Actions.svelte"
   import LayerName from "components/ui/menus/layersMenu/LayerName.svelte"
@@ -24,6 +23,7 @@
   import { combine } from "common"
   import { mapSettings } from "state/map"
   import * as map from "state/map"
+  import * as layers from "state/layers"
   import { groups, joints } from "state/sceneObjects"
   import highlight from "state/highlight"
   import * as selection from "state/selection"
@@ -52,8 +52,8 @@
   }
 
   function setFramePlatform(frame, v) {
-    if(v) map.addFrameBackgroundPlatform(frame)
-    else map.removeFrameBackgroundPlatform(frame)
+    if(v) layers.addAnimationFrameBackgroundPlatform(frame)
+    else layers.removeAnimationFrameBackgroundPlatform(frame)
   }
 
   
@@ -78,18 +78,11 @@
 
   function onLayerRemoved(e) {
     let removedLayer = e.detail
-    animation.frames = animation.frames.filter(frame => frame.layerId !== removedLayer.id)
-    if(!animation.frames.length) {
-      map.removeAnimation(animation.id)
-    }
+    layers.removeAnimationFrame(animation, removedLayer.id)
   }
   function onLayerDuplicated(e) {
     let {layer, newLayer} = e.detail
-    let duration = animation.frames.find(frame => frame.layerId === layer.id).duration
-    animation.frames.push({
-      layerId: newLayer.id,
-      duration,
-    })
+    layers.addAnimationFrameFromDuplicateLayer(animation, layer, newLayer)
   }
 
 </script>
@@ -109,15 +102,15 @@
           <span class="count" class:hidden={!animation.frames.length}>{animation.frames.length}</span>
         </div>
         <Actions list={list}
-                on:remove={() => map.removeAnimation(animation.id)}
-                add on:add={() => map.addAnimationFrame(animation.id)}
+                on:remove={() => layers.removeAnimation(animation.id)}
+                add on:add={() => layers.addAnimationFrame(animation.id)}
         />
 
       </div>
       <div class="form">
         <label>
           <span>
-            Frame duration
+            {$_("frame-duration")}
             <span class="text-xs opacity-75">(ms)</span>
           </span>
           <div class="flex">
@@ -139,7 +132,7 @@
       >
         <div slot="extra" class="form">
           <label>
-            <span>Use platform</span>
+            <span>{$_("use-platform")}</span>
             <Checkbox checked={frame.platform !== null} set={v => setFramePlatform(frame, v)}  />
           </label>
         </div>

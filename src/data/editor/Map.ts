@@ -252,7 +252,6 @@ function encodeAnimations(mapSettings: Editor.MapSettings.MapSettings, platforms
         obj.platform1 = teleporterIdx
         obj.platform2 = teleporterIdx
         Editor.Joint.move(obj, 0, -animationDrawingOffset)
-        console.log("(encode) moving -"+animationDrawingOffset)
         return obj
       })
     }

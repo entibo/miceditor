@@ -42,14 +42,14 @@
 <div class="form">
 
   <label>
-    <span>Type</span>
+    <span>{$_("type")}</span>
     <TextInput disabled value={props.type.value} class="w-16" />
   </label>
 
   <div class="mb-1"></div>
 
   <label>
-    <span>Platform 1</span>
+    <span>{$_("platform")} 1</span>
     <div class="flex">
       <label class="icon-btn text-xs mr-1" on:click={() => selectPlatform("platform1")} >
         <Icon icon={faCrosshairs} />
@@ -58,7 +58,7 @@
     </div>
   </label>
   <label>
-    <span>Platform 2</span>
+    <span>{$_("platform")} 2</span>
     <div class="flex">
       <label class="icon-btn text-xs mr-1" on:click={() => selectPlatform("platform2")} >
         <Icon icon={faCrosshairs} />
@@ -70,7 +70,7 @@
   <div class="mb-4"></div>
 
   <label class:disabled={props.controlPoint1X.value !== undefined || props.renderEnabled.value === undefined}>
-    <span>Draw...</span>
+    <span>{$_("draw")}...</span>
     <Checkbox checked={props.renderEnabled.value} set={props.renderEnabled.set} />
   </label>
   {#if props.renderEnabled.value !== undefined && props.renderEnabled.value !== false}

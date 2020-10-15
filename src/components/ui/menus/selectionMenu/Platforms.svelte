@@ -139,10 +139,10 @@
               on:change={e => props.physics.set(e.target.value)}
       >
         <option hidden value=""></option>
-        <option value="STATIC">Static</option>
+        <option value="STATIC">{$_("static")}</option>
         <option value="DYNAMIC">{$_("dynamic")}</option>
-        <option value="BOOSTER">Booster</option>
-        <option value="STICKY">Sticky</option>
+        <option value="BOOSTER">{$_("booster")}</option>
+        <option value="STICKY">{$_("sticky")}</option>
       </select>
     </div>
   </label>

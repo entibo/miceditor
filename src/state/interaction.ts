@@ -59,10 +59,10 @@ export function windowKeyDown(e: KeyboardEvent) {
   let key = e.key.toLowerCase()
   let code = e.code.toLowerCase()
 
-  if(e.shiftKey)    isKeyDown.update(() => (isKeyDown.shift = true, isKeyDown))
-  if(e.ctrlKey)     isKeyDown.update(() => (isKeyDown.ctrl  = true, isKeyDown))
-  if(e.altKey)      isKeyDown.update(() => (isKeyDown.alt   = true, isKeyDown))
-  if(key === " ")   isKeyDown.update(() => (isKeyDown.space = true, isKeyDown))
+  if(e.shiftKey)    isKeyDown.update(o => ({...o, shift: true}))
+  if(e.ctrlKey)     isKeyDown.update(o => ({...o, ctrl: true}))
+  if(e.altKey)      isKeyDown.update(o => ({...o, alt: true}))
+  if(key === " ")   isKeyDown.update(o => ({...o, space: true}))
 
 
   let target = e.target as Node
@@ -127,10 +127,11 @@ export function windowKeyDown(e: KeyboardEvent) {
     keyActions[key](e)
 }
 export function windowKeyUp(e: KeyboardEvent) {
-  if     (e.key === "Shift")   isKeyDown.update(() => (isKeyDown.shift = false, isKeyDown))
-  else if(e.key === "Control") isKeyDown.update(() => (isKeyDown.ctrl = false, isKeyDown))
-  else if(e.key === "Alt")     isKeyDown.update(() => (isKeyDown.alt = false, isKeyDown))
-  else if(e.key === " ")       isKeyDown.update(() => (isKeyDown.space = false, isKeyDown))
+  let key = e.key.toLowerCase()
+  if     (key === "shift")   isKeyDown.update(o => ({...o, shift: false}))
+  else if(key === "control") isKeyDown.update(o => ({...o, ctrl: false}))
+  else if(key === "alt")     isKeyDown.update(o => ({...o, alt: false}))
+  else if(key === " ")       isKeyDown.update(o => ({...o, space: false}))
 }
 
 const keyActions: { [key: string]: (e: KeyboardEvent) => void } = {
@@ -201,7 +202,7 @@ class Pan extends MouseMovement {
 class Move extends MouseMovement {
   update(e: MouseEvent) {
     super.update(e)
-    let $zoom = get(zoom)
+    let $zoom = get(zoom) as number
     let delta = this.deltaLast()
     selection.move(delta.x/$zoom, delta.y/$zoom)
   }
@@ -253,7 +254,7 @@ class JointPointAction extends MouseMovement {
   }
   update(e: MouseEvent) {
     super.update(e)
-    let $zoom = get(zoom)
+    let $zoom = get(zoom) as number
     let delta = this.deltaStart()
     
     let dx = delta.x/$zoom
@@ -378,7 +379,7 @@ class PlatformRectangleResizeAction extends MouseMovement {
   }
   update(e: MouseEvent) {
     super.update(e)
-    let $zoom = get(zoom)
+    let $zoom = get(zoom) as number
     
     let delta = this.deltaStart()
     let dx = delta.x/$zoom
@@ -501,6 +502,13 @@ class WindowResizeAction extends MouseMovement {
 let currentMouseMovement: MouseMovement | null = null
 
 export function backgroundMouseDown(e: MouseEvent) {
+  if(e.button === 2) {
+    cancel()
+    e.preventDefault()
+    e.stopPropagation()
+    return false
+  }
+
   if(e.defaultPrevented) {
     let activeElement = document.activeElement as HTMLElement
     activeElement && activeElement.blur && activeElement.blur()
@@ -521,6 +529,12 @@ export function backgroundMouseDown(e: MouseEvent) {
       selection.clear()
     currentMouseMovement = new Select(e)
   }
+}
+
+export function backgroundContextMenu(e: MouseEvent) {
+  e.preventDefault()
+  e.stopPropagation()
+  return false
 }
 
 
@@ -712,14 +726,14 @@ function getSceneCoordinates(e: MouseEvent) {
   }
 }
 export function sceneToGameCoordinates(p: Point): Point {
-  let $zoom = get(zoom)
+  let $zoom = get(zoom) as number
   return {
     x: (p.x - pan.x) / $zoom,
     y: (p.y - pan.y) / $zoom,
   }
 }
 export function gameToSceneCoordinates(p: Point): Point {
-  let $zoom = get(zoom)
+  let $zoom = get(zoom) as number
   return {
     x: p.x * $zoom + pan.x,
     y: p.y * $zoom + pan.y,

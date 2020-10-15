@@ -17,6 +17,7 @@
 <style type="text/postcss">
   button {
     transition: 60ms;
+    min-height: 1.25rem;
   }
   button[disabled] {
     opacity: 0.6;

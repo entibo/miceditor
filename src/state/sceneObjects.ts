@@ -266,6 +266,14 @@ function onJointRemoved(joint: J) {
 }
 
 function onPlatformRemoved(platform: P) {
+
+  for(let frame of mapSettings.animations.flatMap(animation => animation.frames)) {
+    if(frame.platform === platform.index) {
+      frame.platform = null
+      return
+    }
+  }
+
   let joints = links.platforms.get(platform) || []
 
   if(!Editor.Platform.isStatic(platform)) {

@@ -141,6 +141,25 @@ export function addAnimationFrame(animationId: number) {
   mapSettings.invalidate()
 }
 
+export function removeAnimationFrame(animation: Animation, layerId: number) {
+  let frame =  animation.frames.find(frame => frame.layerId === layerId)!
+  if(frame.platform !== null) {
+    removeAnimationFrameBackgroundPlatform(frame)
+  }
+  animation.frames.splice(animation.frames.indexOf(frame), 1)
+  mapSettings.invalidate()
+}
+
+export function addAnimationFrameFromDuplicateLayer(animation: Animation, oldLayer: Layer, newLayer: Layer) {
+  let duration = animation.frames.find(frame => frame.layerId === oldLayer.id)!.duration
+  animation.frames.push({
+    layerId: newLayer.id,
+    duration,
+    platform: null,
+  })
+  mapSettings.invalidate()
+}
+
 export function addAnimationFrameBackgroundPlatform(frame: Editor.MapSettings.Frame) {
   if(frame.platform !== null) return
   let p = Editor.Platform.make(Editor.Platform.defaults(0)) as Extract<Editor.Platform.Platform, Editor.Platform.NonStatic&Editor.Platform.Rectangle>

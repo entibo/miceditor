@@ -5,12 +5,12 @@ export default <Layout> {
       size: 200,
       groups: [
         {
-          tabs: ["mapSettings", "selection"],
-          activeTab: "mapSettings",
+          tabs: ["tree", "layers", "images"],
+          activeTab: "images",
         },
         {
-          tabs: ["images", "layers"],
-          activeTab: "images",
+          tabs: ["mapSettings", "selection"],
+          activeTab: "mapSettings",
         },
       ],
     },

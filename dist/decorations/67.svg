@@ -24,7 +24,7 @@
       <use height="4.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="35.4" xlink:href="#decoration67-shape1"/>
     </g>
     <g id="decoration67-shape1" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
-      <path d="M0.0 4.6 L0.0 0.0 35.4 0.0 35.4 4.6 0.0 4.6" fill="#738a7e" fill-opacity="0.0" fill-rule="evenodd" stroke="none"/>
+      <path d="M35.4 4.6 L0.0 4.6 0.0 0.0 35.4 0.0 35.4 4.6" fill="#738a7e" fill-opacity="0.0" fill-rule="evenodd" stroke="none"/>
     </g>
   </defs>
 </svg>

@@ -72,7 +72,7 @@
   .form > .item {
     opacity: 0.33;
   }
-  *:hover > .form:not(.empty-list) > .item, .form:not(.empty-list) > .item.non-default {
+  :global(*:hover) > .form:not(.empty-list) > .item, .form:not(.empty-list) > .item.non-default {
     opacity: 1;
   }
 </style>

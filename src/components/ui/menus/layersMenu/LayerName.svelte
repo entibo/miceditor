@@ -45,11 +45,11 @@
   {/if}
 </div>
 
-<style>
+<style type="text/postcss">
   .title-text {
     @apply font-cursive text-sm font-thin text-gray-400;
   }
-  *:hover > .title-text {
+  :global(*:hover) > .title-text {
     @apply text-white;
   }
   .title-text.current {

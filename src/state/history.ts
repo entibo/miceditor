@@ -16,6 +16,7 @@ let stack: string[] = []
 let stackIndex = -1
 
 function printStack(action = "INIT") {
+  return
   let s = `${action}  -  Stack[${stackIndex}/${stack.length-1}]: `
   if(stackIndex < 0)
     s += "(+) " + "- ".repeat(stack.length)

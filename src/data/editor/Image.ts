@@ -66,3 +66,12 @@ function performRequest(url: string) {
     hasBeenRequested.delete(url)
   img.src = url
 }
+
+export function flipX(obj: Image, cx: number) {
+  let dimensions = getDimensions(obj.imageUrl.url)
+  obj.x = 2*cx - obj.x - dimensions.x
+}
+export function flipY(obj: Image, cy: number) {
+  let dimensions = getDimensions(obj.imageUrl.url)
+  obj.y = 2*cy - obj.y - dimensions.y
+}

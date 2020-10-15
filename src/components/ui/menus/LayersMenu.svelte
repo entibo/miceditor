@@ -11,7 +11,6 @@
   import Button from "components/common/Button.svelte"
   import Collapsible from "components/common/Collapsible.svelte"
 
-  /* import LayerGroup from "./layersMenu/LayerGroup.svelte" */
   import Layer from "components/ui/menus/layersMenu/Layer.svelte"
   import AnimationListEntry from "components/ui/menus/layersMenu/AnimationListEntry.svelte"
   import Actions from "components/ui/menus/layersMenu/Actions.svelte"
@@ -19,7 +18,8 @@
   import { _ } from "state/locale"
 
 
-  import { mapSettings, makeNewLayer, removeLayer, makeNewAnimation } from "state/map"
+  import { mapSettings } from "state/map"
+  import { addLayer, addAnimation } from "state/layers"
   import { groups, joints } from "state/sceneObjects"
   import highlight from "state/highlight"
   import * as selection from "state/selection"
@@ -74,13 +74,13 @@
 <div class="root">
 
   <div class="flex justify-between">
-    <Button on:click={() => makeNewLayer()} class="flex items-center">
+    <Button on:click={() => addLayer()} class="flex items-center">
       <Icon icon={faPlus} class="text-xs"/>
-      <span class="ml-1">Layer</span>
+      <span class="ml-1">{$_("layer")}</span>
     </Button>
-    <Button on:click={() => makeNewAnimation()} class="flex items-center">
+    <Button on:click={() => addAnimation()} class="flex items-center">
       <Icon icon={faPlus} class="text-xs"/>
-      <span class="ml-1">Animation</span>
+      <span class="ml-1">{$_("animation")}</span>
     </Button>
   </div>
 

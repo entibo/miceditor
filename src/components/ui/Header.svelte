@@ -1,5 +1,4 @@
-
-<script lang="ts">
+<script>
 
   import clipboardCopy from "clipboard-copy"
 
@@ -93,7 +92,7 @@
       </div>
     </Button>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <Tooltip inline bottom title="H" >
       <Button class="text-sm" on:click={selectMenu.bind(null, "help")}>
@@ -106,7 +105,7 @@
       </Button>
     </Tooltip>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <Tooltip inline bottom title={$_("editor-settings")} >
       <Button class="text-sm" on:click={selectMenu.bind(null, "settings")}>
@@ -119,7 +118,7 @@
       </Button>
     </Tooltip>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <Tooltip inline bottom title="Ctrl+Scroll" >
       <Button class="text-sm" on:click={selectMenu.bind(null, "zoom")}>
@@ -150,18 +149,18 @@
       </Button>
     </Tooltip>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <div class="flex">
-      <label class="icon-btn text-xs mr-2" on:click={() => importXML(defaultXML)} >
-        <Icon icon={faUndo} />
+      <label class="icon-btn mx-1" on:click={() => importXML(defaultXML)} >
+        <Icon icon={faUndo} class="text-sm"/>
       </label>
       <TextInput value={$xml} set={importXML} on:click={selectXML} 
                 bgColor="bg-gray-700" textColor="text-gray-300"
       />
     </div>
 
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
 
     <Tooltip inline bottom title={$_("copy-map-to-clipboard")} >
       <Button class="text-sm" on:click={copyXML}>
@@ -187,7 +186,7 @@
         </div>
       </Button>
     </Tooltip>
-    <div class="mr-2"></div>
+    <div class="mr-1"></div>
     <Tooltip inline bottom end title="Ctrl+Shift+Z / Ctrl+Y" >
       <Button class="text-sm" disabled={!$canRedo} on:click={redo}>
         <div class="flex justify-center items-center">

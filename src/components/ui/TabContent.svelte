@@ -4,6 +4,7 @@
 import MapSettingsMenu from "components/ui/menus/MapSettingsMenu.svelte"
 import SelectionMenu from "components/ui/menus/SelectionMenu.svelte"
 import LayersMenu from "components/ui/menus/LayersMenu.svelte"
+import TreeMenu from "components/ui/menus/TreeMenu.svelte"
 import PlatformsMenu from "components/ui/menus/PlatformsMenu.svelte"
 import BasicMenu from "components/ui/menus/BasicMenu.svelte"
 import DecorationsMenu from "components/ui/menus/DecorationsMenu.svelte"
@@ -25,6 +26,7 @@ const tabToComponent = {
   "mechanics": MechanicsMenu,
   "images": ImagesMenu,
   "layers": LayersMenu,
+  "tree": TreeMenu,
 }
 
 export let tab

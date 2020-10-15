@@ -48,7 +48,7 @@
 </div>
 
 <style>
-  *:hover > .hidden {
+  :global(*:hover) > .hidden {
     display: flex;
   }
 </style>
