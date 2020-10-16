@@ -26,7 +26,7 @@
   </g>
   <defs>
     <g id="decoration5-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 13.05, 3.3)">
-      <path d="M15.85 -3.3 L15.85 1.35 -13.05 1.35 -13.05 -3.3 15.85 -3.3" fill="#799414" fill-rule="evenodd" stroke="none"/>
+      <path d="M15.85 1.35 L-13.05 1.35 -13.05 -3.3 15.85 -3.3 15.85 1.35" fill="#799414" fill-rule="evenodd" stroke="none"/>
     </g>
     <g id="decoration5-sprite0" transform="matrix(1.0, 0.0, 0.0, 1.0, 18.45, 117.2)">
       <use height="138.9" transform="matrix(1.0, 0.0, 0.0, 1.0, -18.45, -117.2)" width="37.25" xlink:href="#decoration5-sprite1"/>

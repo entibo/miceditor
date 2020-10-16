@@ -18,7 +18,7 @@
       <stop offset="1.0" stop-color="#747474"/>
     </linearGradient>
     <g id="decoration90-shape1" transform="matrix(1.0, 0.0, 0.0, 1.0, 105.0, 60.0)">
-      <path d="M-100.0 -55.0 L-100.0 55.0 100.0 55.0 100.0 -55.0 -100.0 -55.0 M-105.0 -60.0 L105.0 -60.0 105.0 60.0 -105.0 60.0 -105.0 -60.0" fill="#2a1811" fill-rule="evenodd" stroke="none"/>
+      <path d="M100.0 -55.0 L-100.0 -55.0 -100.0 55.0 100.0 55.0 100.0 -55.0 M105.0 -60.0 L105.0 60.0 -105.0 60.0 -105.0 -60.0 105.0 -60.0" fill="#2a1811" fill-rule="evenodd" stroke="none"/>
     </g>
   </defs>
 </svg>

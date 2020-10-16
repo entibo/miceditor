@@ -534,7 +534,7 @@ function decodeStickyPlatforms(platforms: Editor.Platform.Platform[], joints: Ed
   function itLooksSticky(platform: Editor.Platform.Platform): platform is Extract<Editor.Platform.Platform,{dynamic:boolean}> {
     return "dynamic" in platform
         && platform.dynamic
-        && platform.mass <= 0.0001
+        && platform.mass > 0 && platform.mass <= 0.00001
         && platform.fixedRotation
   }
 
@@ -547,11 +547,21 @@ function decodeStickyPlatforms(platforms: Editor.Platform.Platform[], joints: Ed
 
   for(let k=0; k < platforms.length; k++) {
     let platform = platforms[k]
+
     if(!itLooksSticky(platform)) continue
 
-    // Remove associated JR(s)
-    // Abort if no JR was found for the first platform
-    if(!removeJRs(k)) return [platforms, joints] as const
+    // Make sure it's really a sticky ground
+    {
+      let jrs = joints.filter(j => j.type === "JR" && (j.platform1 === k || j.platform2 === k))
+      if(jrs.length !== 1) continue
+      let otherIndex = jrs[0].platform1 === k ? jrs[0].platform2 : jrs[0].platform1
+      if(otherIndex === k) continue
+      let otherPlatform = platforms[otherIndex]
+      if("dynamic" in otherPlatform && otherPlatform.dynamic === true)
+        continue
+    }
+
+    removeJRs(k)
 
     // Find and remove the other platforms (if power > 1)
     let count = 0
