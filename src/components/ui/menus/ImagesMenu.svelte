@@ -60,7 +60,7 @@
 
 </script>
 
-<div class="form">
+<div class="form flex flex-col justify-between">
 
   <div class="flex flex-wrap justify-center">
 
@@ -106,17 +106,22 @@
 
   </div>
 
+  <div class="flex flex-wrap justify-center">
+    <a href="http://derpolino.alwaysdata.net/imagetfm/" target="_blank">
+      <Tooltip title="Atelier801 Images Database">
+        <Button class="text-xs flex items-center">
+          Browse
+          <Icon icon={faExternalLinkAlt} class="ml-1"/>
+        </Button>
+      </Tooltip>
+    </a>
+  </div>
+
 </div>
 
 
-<!-- 
-<a href="http://derpolino.alwaysdata.net/imagetfm/" target="_blank">
-  <Button class="text-xs flex items-center">
-    <span class="mr-1">Atelier801 Images Database</span>
-    <Icon icon={faExternalLinkAlt} />
-  </Button>
-</a>
- -->
+
+
 
 
 <style lang="postcss">

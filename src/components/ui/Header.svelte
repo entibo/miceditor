@@ -38,6 +38,7 @@
   import { localeFlag, language, _ } from "state/locale"
   import { undo, redo, canUndo, canRedo } from "state/history"
   import { zoom } from "state/user"
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt";
 
 
   let copyIconActive = false
@@ -151,10 +152,16 @@
 
     <div class="mr-1"></div>
 
+
+
     <div class="flex">
-      <label class="icon-btn mx-1" on:click={() => importXML(defaultXML)} >
-        <Icon icon={faUndo} class="text-sm"/>
-      </label>
+      <Tooltip inline bottom title={$_("reset")} >
+        <Button red class="text-sm mr-1" on:click={() => importXML(defaultXML)}>
+          <span class="icon">
+            <Icon icon={faTrashAlt} class="text-sm"/>
+          </span>
+        </Button>
+      </Tooltip>
       <TextInput value={$xml} set={importXML} on:click={selectXML} 
                 bgColor="bg-gray-700" textColor="text-gray-300"
       />
