@@ -66,6 +66,7 @@
 </script>
 
 <svelte:window 
+  on:blur={interaction.windowBlur}
   on:keydown={interaction.windowKeyDown}
   on:keyup={interaction.windowKeyUp} 
   on:mousemove={interaction.windowMouseMove}

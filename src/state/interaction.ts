@@ -55,6 +55,14 @@ export const isKeyDown = store({
   ctrl:  false,
   alt:   false,
 })
+export function windowBlur() {
+  isKeyDown.set({
+    space: false,
+    shift: false,
+    ctrl:  false,
+    alt:   false,
+  })
+}
 export function windowKeyDown(e: KeyboardEvent) {
   let key = e.key.toLowerCase()
   let code = e.code.toLowerCase()
