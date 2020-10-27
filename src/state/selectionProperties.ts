@@ -248,6 +248,7 @@ const data = store<Data>({
     power: {},
     speed: {},
     nosync: {},
+    stop: {},
   },
   JOINT: {
     index: {

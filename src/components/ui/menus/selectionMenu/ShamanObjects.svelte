@@ -20,6 +20,7 @@
 
 
   import { _ } from "state/locale"
+  import { parkourMode } from "state/mapExtra"
 
 
   export let props
@@ -91,5 +92,15 @@
     <span>nosync</span>
     <Checkbox checked={props.nosync.value} set={props.nosync.set} />
   </label>
+
+  
+  {#if props.stop.value !== undefined && $parkourMode}
+    <div class="mb-4"></div>
+
+    <label>
+      <span>stop</span>
+      <Checkbox checked={props.stop.value} set={props.stop.set} />
+    </label>
+  {/if}
 
 </div>

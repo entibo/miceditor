@@ -6,7 +6,8 @@ import * as Common from "./Common"
 
 const attributes = [
   "X", "Y", 
-  "C", "nosync", "Mp", "Mv", "P"
+  "C", "nosync", "Mp", "Mv", "P",
+  "stop",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
@@ -41,7 +42,8 @@ export type ShamanObject
       ghost: boolean }
     & Base
 
-  | { type: Anchor.Yellow }
+  | { type: Anchor.Yellow
+      stop: boolean }
     & Base
 
   | { type: Exclude<Anchor, Anchor.Yellow>
@@ -55,6 +57,7 @@ export interface ShamanObjectProps extends Base {
   ghost: boolean
   power: number
   speed: number
+  stop: boolean
 }
 
 export const isAnchor = (data: ShamanObject): data is Extract<ShamanObject, {type: Anchor}> =>
@@ -72,7 +75,8 @@ export const defaults: (t: Type) => ShamanObject = type =>
  ({ ...baseDefaults(),
     ...(
       type === Anchor.Yellow ?
-        { type: Anchor.Yellow }
+        { type: Anchor.Yellow,
+          stop: false, }
       :
       anchorTypes.includes(type) ?
         { type: type as Exclude<Anchor, Anchor.Yellow>,
@@ -108,6 +112,8 @@ export function decode(xmlNode: XML.Node): ShamanObject {
     setProp ("ghost")    (r.ghost)
   })
 
+  setProp ("stop") (getAttr ("stop") (() => true))
+
   return data
 }
 
@@ -139,6 +145,8 @@ export function encode(data: ShamanObject): Node {
       getProp ("rotation") (),
       getProp ("ghost") (),
   )))
+  
+  setAttr ("stop") (getProp ("stop") (util.omitOn(false), () => ""))
 
   return node
 }
