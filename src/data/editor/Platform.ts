@@ -66,7 +66,7 @@ export const isForeground = (p: Platform) =>
   "foreground" in p ? p.foreground : true
 
 export const isInvisible = (p: Platform) =>
-  p.type === P.Type.Invisible || p.invisible
+  p.type === P.Type.Invisible || p.invisible || ("color" in p && !!p.color.match(/^f{8,}$/i))
 
 export function isCircle(p: Platform): p is Extract<Platform, P.Circle> {
   return p.type === P.Type.Circle

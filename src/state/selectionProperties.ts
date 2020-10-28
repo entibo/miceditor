@@ -233,6 +233,31 @@ const data = store<Data>({
     rh: {},
   },
   SHAMANOBJECT: {
+    type: {
+      autoSet: false,
+      set: (type: number) => {
+        let isAnchor = Editor.ShamanObject.isAnchor({type} as Editor.ShamanObject.ShamanObject)
+        for(let obj of groups.SHAMANOBJECT) {
+          if(obj.type === type) continue
+          if(isAnchor) {
+            if(!Editor.ShamanObject.isAnchor(obj as any)) continue
+            let defaults = Editor.ShamanObject.make(Editor.ShamanObject.defaults(type))
+            for(let [k,v] of Object.entries(defaults)) {
+              if(k in obj) continue
+              (obj as any)[k] = v
+            }
+            for(let [k,v] of Object.entries(obj)) {
+              if(k in defaults) continue
+              else delete (obj as any)[k]
+            }
+          } else {
+            if(Editor.ShamanObject.isAnchor(obj as any)) continue
+          }
+          obj.type = type
+          obj.invalidate()
+        }
+      },
+    },
     index: {
       autoSet: false,
       set: (v: number) => {

@@ -41,10 +41,15 @@
       <TextInput int value={props.y.value} set={props.y.set} />
     </label>
   </div>
+
+  <div class="mb-4"></div>
+
+  <label>
+    <span>{$_("type")}</span>
+    <TextInput shamanObject int min={0} value={props.type.value} set={props.type.set} class="w-16"/>
+  </label>  
   
   {#if props.rotation.value !== undefined}
-    <div class="mb-4"></div>
-
     <div class:disabled={props.rotation.value === undefined}>
       <label>
         <span>

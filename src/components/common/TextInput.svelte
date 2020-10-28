@@ -5,11 +5,13 @@
   import Tooltip from "./Tooltip.svelte"
   import ColorPicker from "./ColorPicker.svelte"
   import Slider from "./Slider.svelte"
+  import ShamanObjectsMenu from "components/ui/menus/ShamanObjectsMenu.svelte"
+  import ShamanObjectVariantsMenu from "components/ui/menus/ShamanObjectVariantsMenu.svelte"
 
   import * as M from "maybe/Maybe"
   import * as util from "data/base/util"
-  import { typeNames } from "data/editor/Platform"
-
+  import * as Platform from "data/editor/Platform"
+  import shamanObjectMetadata from "metadata/shamanObject/index"
 
   let className = ""
   export { className as class }
@@ -41,12 +43,13 @@
   export let step = 1
 
   export let platform = false
+  export let shamanObject = false
 
 
   export let preview = true
 
 
-  $: hasValidation = int || float || color || platform
+  $: hasValidation = int || float || color || platform || shamanObject
 
   let inputElement
   let internalValue
@@ -100,7 +103,7 @@
     let newValue
 
     if(color) {
-      M.andThen( util.readColor(str), 
+      M.andThen( Platform.readColor(str), 
                  v => newValue = v)
     }
 
@@ -152,7 +155,7 @@
       {#if color}
         <div class="preview rounded-full" style="background: #{internalValue}"></div>
       {:else if platform && internalValue !== undefined && internalValue !== null}
-        <img class="preview shadow" src="dist/grounds/{typeNames[internalValue]}.png" alt={typeNames[internalValue]} />
+        <img class="preview shadow" src="dist/grounds/{Platform.typeNames[internalValue]}.png" alt={Platform.typeNames[internalValue]} />
       {/if}
     </div>
   {/if}
@@ -184,13 +187,21 @@
       <ColorPicker bind:value={internalValue} on:input={() => setNewValue(internalValue)} on:input />
     {:else if platform}
       <div class="flex flex-wrap justify-center p-2 ">
-        {#each typeNames as name, type}
+        {#each Platform.typeNames as name, type}
           <div class="tile dim-40" class:active={type == internalValue}
               on:click={() => setNewValue(type)}
           >
             <img class="rounded-sm" src="dist/grounds/{name}.png" alt={name}/>
           </div>
         {/each}
+      </div>
+    {:else if shamanObject}
+      <div class="p-2 ">
+        {#if shamanObjectMetadata.get(internalValue||0).variants}
+          <ShamanObjectVariantsMenu typeProp={internalValue} onSelect={type => setNewValue(type)}/>
+        {:else}
+          <ShamanObjectsMenu typeProp={internalValue} onSelect={type => setNewValue(type)}/>
+        {/if}
       </div>
     {:else if (sliderMin !== null && sliderMax !== null)}
       <div class="p-2">

@@ -249,7 +249,7 @@ export function decode(xmlNode: XML.Node): Platform {
     setProp ("angularDamping")  (dynamicValues[7])
   })
 
-  setProp ("color")  (getAttr ("o") (util.readColor))
+  setProp ("color")  (getAttr ("o") (readColor))
   setProp ("vanish") (getAttr ("v") (util.readInt))
   setProp ("lua")    (getAttr ("lua") ())
 
@@ -411,4 +411,11 @@ export function readCollision(str: string): M.Maybe<{ miceCollision: boolean, ob
 export function writeCollision(miceCollision: boolean, objectCollision: boolean): string {
   let n = 4 - (miceCollision?1:0) - (objectCollision?2:0)
   return n.toString()
+}
+
+export function readColor(str: string): M.Maybe<string> {
+  if(str.match(/^f{8,}$/i)) {
+    return str
+  }
+  return util.readColor(str)
 }
