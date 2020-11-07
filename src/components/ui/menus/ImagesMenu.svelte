@@ -110,7 +110,7 @@
     <a href="http://derpolino.alwaysdata.net/imagetfm/" target="_blank">
       <Tooltip title="Atelier801 Images Database">
         <Button class="text-xs flex items-center">
-          Browse
+          {$_("browse")}
           <Icon icon={faExternalLinkAlt} class="ml-1"/>
         </Button>
       </Tooltip>

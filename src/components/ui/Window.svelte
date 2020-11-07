@@ -16,7 +16,7 @@ import { _ } from "state/locale"
 export let window
 export let z
 
-$: titleName = $_(layout.tabToLocaleKey[window.tab])
+$: titleName = $_(layout.tabToTranslationId[window.tab])
 
 </script>
 

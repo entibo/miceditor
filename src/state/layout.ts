@@ -36,9 +36,8 @@ export interface Window {
   y: number
 }
 
-import _languages from "languages.json"
-type LocaleKey = keyof (typeof _languages)["en"]
-export const tabToLocaleKey: Record<TabName, LocaleKey> = {
+import { TranslationId } from "state/locale"
+export const tabToTranslationId: Record<TabName, TranslationId> = {
   "platforms": "category-grounds",
   "basic": "mice-stuff",
   "decorations": "category-decorations",

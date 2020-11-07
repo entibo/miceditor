@@ -6,7 +6,8 @@
     "dev": "webpack-dev-server --config webpack/development.config.js --hot",
     "dev:check": "TYPECHECK=1 webpack-dev-server --config webpack/development.config.js --hot",
     "serve": "http-server",
-    "translations": "curl 'https://localise.biz/api/export/all.json?format=multi&key=_KwQn345xaZK8iQ3yj3JkzfGbzjIWAgk' -o ./src/languages.json"
+    "translations": "node ./scripts/translations.js",
+    "assets": "node ./scripts/prepareSvgAssets.js"
   },
   "devDependencies": {
     "@babel/core": "^7.12.0",
@@ -15,6 +16,7 @@
     "@babel/preset-typescript": "^7.12.0",
     "@fullhuman/postcss-purgecss": "^1.2.0",
     "@pyoner/svelte-ts-preprocess": "^1.2.1",
+    "@types/got": "^9.6.11",
     "@types/jest": "^24.0.25",
     "@types/webpack": "^4.41.10",
     "autoprefixer": "^9.7.5",
@@ -22,6 +24,7 @@
     "chokidar": "^3.0.0",
     "css-loader": "^3.4.2",
     "cssnano": "^4.1.10",
+    "got": "^11.8.0",
     "http-server": "^0.12.1",
     "jest": "^24.9.0",
     "mini-css-extract-plugin": "^0.9.0",

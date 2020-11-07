@@ -1,6 +1,6 @@
 
 <script>
-  import { language, _, localeFlag, localeTranslators } from "state/locale"
+  import { userLocale, _, locales, translators } from "state/locale"
 
   import Tooltip from "components/common/Tooltip.svelte"
 
@@ -12,21 +12,21 @@
 </script>
 
 <div class="container">
-  {#each Object.entries(localeFlag) as [locale, flag]}
+  {#each locales as locale}
     <Tooltip bottom
-      active={ localeTranslators[locale] !== undefined ? null : false }
-      title={ formatTranslatorsTooltipTitle(localeTranslators[locale]) }
+      active={ translators[locale] !== undefined ? null : false }
+      title={ formatTranslatorsTooltipTitle(translators[locale]) }
       class="inline"
     >
-      <div class="m-1 cursor-pointer flag flag-{flag}"
-        on:click={() => $language = locale}
+      <div class="m-1 cursor-pointer flag flag-{locale}"
+        on:click={() => $userLocale = locale}
       ></div>
     </Tooltip>
   {/each}
-  <div class="mt-2 text-sm text-center">
-    <Tooltip bottom title="Send me an email with the language(s) you want to translate!">
-      <a href="mailto:thibautguenedal@gmail.com">
-        Help translate!
+  <div class="ml-1 text-sm text-center">
+    <Tooltip bottom title="Request to be editor and tell me which language you want to translate!">
+      <a href="https://docs.google.com/spreadsheets/d/1Hfjn9HaykT3OxKRfR3psSnK9LqLPDkwYMk3EJnU3CnY">
+        Translation spreadsheet
       </a>
     </Tooltip>
   </div>

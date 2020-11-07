@@ -16,13 +16,6 @@
 
   import { debounce } from "common"
 
-/*   import { 
-    xml, settings, 
-    undo, redo, canUndo, canRedo,
-    highQuality, parkour, showGameGUI, showMapBorder, zoom, firstVisit,
-    language, _, localeFlag
-  } from "stores/stores.js" */
-
   import TextInput from "components/common/TextInput.svelte"
   import Button from "components/common/Button.svelte"
   import Slider from "components/common/Slider.svelte"
@@ -35,7 +28,7 @@
 
   import { xml, defaultXML } from "state/xml"
   import { importXML, exportXML } from "state/map"
-  import { localeFlag, language, _ } from "state/locale"
+  import { userLocale, _ } from "state/locale"
   import { undo, redo, canUndo, canRedo } from "state/history"
   import { zoom } from "state/user"
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt";
@@ -89,7 +82,7 @@ import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt";
     <Button class="text-sm" on:click={selectMenu.bind(null, "language")}>
       <div class="flex justify-center items-center">
         <span class="icon" class:active={currentMenu === "language"}>
-          <span class="m-1 flag flag-{localeFlag[$language]}"></span>
+          <span class="m-1 flag flag-{$userLocale}"></span>
       </div>
     </Button>
 

@@ -20,6 +20,6 @@
 <div class="tab active pointer-events-none absolute z-50 bg-gray-900 rounded shadow-md"
      style="transform: translate({x}px, {y}px) translate(-50%, -50%);"
 >
-  {$_(layout.tabToLocaleKey[$tabMovement.source.tab])}
+  {$_(layout.tabToTranslationId[$tabMovement.source.tab])}
 </div>
 {/if}

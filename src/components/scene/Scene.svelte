@@ -181,8 +181,9 @@
 
       {#if $showGameGUI}
       <g class="playerView" transform="translate({playerView.x}, {playerView.y})">
-        <rect width="800" height="20" />
-        <rect y="400" width="800" height="200" />
+        <rect class="playerView-full" width="800" height="600" />
+        <rect class="playerView-top" width="800" height="20" />
+        <rect class="playerView-bottom" y="400" width="800" height="200" />
       </g>
       {/if}
       
@@ -236,25 +237,28 @@
 
   .mapBorder {
     fill: none;
-    outline: 1px solid #00c4ffab;
-  }
-
-  .playerView rect {
-    fill: rgba(0, 0, 0, 0.2);
+    stroke: #00c4ffab;
+    stroke-width: 1px;
   }
 
   .playerView {
     pointer-events: none;
-    width: 800px;
-    height: 600px;
+  }
+  .playerView-full {
     fill: none;
-    outline: 1px solid rgba(0, 0, 0, 0.2);
+    stroke: rgba(0, 0, 0, 0.2);
+    stroke-width: 1px;
+  }
+  .playerView-top, .playerView-bottom {
+    stroke: none;
+    fill: rgba(0, 0, 0, 0.2);
   }
 
   .selectionBox {
     fill: none;
-    stroke: none;
-    outline-offset: -1px;
-    outline: 2px dashed rgba(255,255,255,0.95);
+    outline: none;
+    stroke: rgba(255,255,255,0.95);
+    stroke-dasharray: 6;
+    stroke-width: 2px;
   }
 </style>

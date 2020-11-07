@@ -9,6 +9,7 @@
   import Button from "components/common/Button.svelte"
   
   import { _ } from "state/locale"
+  import { currentVersion } from "state/user"
 
 
   export let position
@@ -66,7 +67,7 @@
 
   <div class="section flex items-baseline pointer-events-none">
     <span class="text-gray-100 font-cursive font-bold">Miceditor</span>
-    <span class="text-gray-500 font-mono text-xs ml-1">v2.0.6</span>
+    <span class="text-gray-500 font-mono text-xs ml-1">v{currentVersion}</span>
     <span class="text-gray-300 font-sans text-sm ml-2">by <span class="font-medium">entibo</span></span>
   </div>
 

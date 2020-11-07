@@ -14,6 +14,7 @@ const fs = require("fs")
 const path = require("path")
 const rimraf = require("rimraf")
 
+const root = path.resolve(__dirname, "..")
 
 let decorationMetadata = []
 
@@ -64,7 +65,7 @@ function processSvg(svg, type) {
   return [svg, data]
 }
 
-let destination = path.join(__dirname, "dist", "decorations")
+let destination = path.join(root, "dist", "decorations")
 let originalDirs = fs.readdirSync(path.join(destination, "sprites"))
 for(let dir of originalDirs.filter(s => s.includes("$P"))) {
   let type = dir.split("$P_")[1]
@@ -79,7 +80,7 @@ for(let dir of originalDirs.filter(s => s.includes("$P"))) {
 }
 
 fs.writeFileSync(
-  path.join(__dirname, "src", "metadata", "decoration", "decorationMetadata.json"), 
+  path.join(root, "src", "metadata", "decoration", "decorationMetadata.json"), 
   JSON.stringify(decorationMetadata)
 )
 

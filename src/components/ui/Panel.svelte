@@ -77,7 +77,7 @@
                 on:click={() => layout.selectTab(panelName,groupIndex,tab)}
                 on:mousedown={e => layout.tabMouseDown(e, panelName,groupIndex,tab)}
             >
-              {$_(layout.tabToLocaleKey[tab])}
+              {$_(layout.tabToTranslationId[tab])}
             </div>
             {/each}
           </div>

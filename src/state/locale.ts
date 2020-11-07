@@ -1,51 +1,29 @@
 
-import { locale, dictionary, getClientLocale, _ } from "svelte-i18n"
-
 import { persistentWritable } from "state/util"
-import languages from "languages.json"
-type Locale = keyof typeof languages
+import { previousVersion, currentVersion } from "state/user"
 
+import { locale, dictionary, getClientLocale, _ } from "svelte-i18n"
 export { dictionary, _ }
 
+import languages from "languages.json"
 
-export const localeFlag: Record<Locale, string> = {
-  "en": "gb",
-  "fr": "fr",
-  "hu": "hu",
-  "br": "br",
-  "lv": "lv",
-  "pl": "pl",
-  "bg": "bg",
-  "ro": "ro",
-  "es": "es",
-}
-export const localeTranslators: Record<Locale, string[]> = {
-  "hu": ["Lemax#7166"],
-  "lv": ["Syrius#8114"],
-  "pl": ["Lament"],
-  "bg": ["Silence#5339"],
-  "br": ["Ikke"],
-  "ro": ["Narcis"],
-  "es": ["Tanu23"],
-  "en": ["entibo"],
-  "fr": ["entibo"],
-}
+export type Locale = keyof typeof languages["translators"]
+export type TranslationId = keyof (typeof languages)["translations"]["en"]
 
-{ let _languages = languages as any
-  for(let cc of Object.keys(_languages)) {
-    if(cc.length > 2) {
-      _languages[cc.slice(0,2)] = _languages[cc]
-      delete _languages[cc]
-    }
-  }
-  for(let cc of Object.keys(_languages).filter(s => s != "en")) {
-    for(let k of Object.keys(_languages.en)) {
-      _languages[cc][k] = _languages[cc][k] || _languages.en[k]
+export const locales = languages.locales as Locale[]
+export const translators: Record<Locale, string[]> = languages.translators
+
+for(let locale of locales) {
+  if(locale === "en") continue
+  for(let _id of Object.keys(languages.translations.en)) {
+    let id = _id as TranslationId
+    if(languages.translations[locale][id] === "") {
+      languages.translations[locale][id] = languages.translations.en[id]
     }
   }
 }
 
-dictionary.set(languages)
+dictionary.set(languages.translations)
 
 
 let initLocale: Locale = getClientLocale({
@@ -54,15 +32,19 @@ let initLocale: Locale = getClientLocale({
 })
 if(initLocale) {
   initLocale = initLocale.slice(0, 2) as Locale
-  if(!(initLocale in localeFlag)) {
+  if(!languages.locales.includes(initLocale)) {
     initLocale = "en"
   }
 } else {
   initLocale = "en"
 }
 
-export const language = persistentWritable("userLocale", initLocale)
+if(previousVersion !== currentVersion) {
+  localStorage.removeItem("userLocale")
+}
 
-language.subscribe(v => {
+export const userLocale = persistentWritable("userLocale", initLocale)
+
+userLocale.subscribe(v => {
   locale.set(v)
 })
