@@ -545,9 +545,12 @@ function decodeStickyPlatforms(platforms: Editor.Platform.Platform[], joints: Ed
     return jrs.length > 0
   }
 
+  let platformsToBeRemoved = [] as Editor.Platform.Platform[]
+
   for(let k=0; k < platforms.length; k++) {
     let platform = platforms[k]
 
+    if(platformsToBeRemoved.includes(platform)) continue
     if(!itLooksSticky(platform)) continue
 
     // Make sure it's really a sticky ground
@@ -576,8 +579,7 @@ function decodeStickyPlatforms(platforms: Editor.Platform.Platform[], joints: Ed
       if("height" in p && "height" in platform && p.height != platform.height) continue
       if("radius" in p && "radius" in platform && p.radius != platform.radius) continue
       removeJRs(i)
-      platforms.splice(i, 1)
-      i-- // to account for the splice
+      platformsToBeRemoved.push(p)
       count++
     }
     
@@ -588,6 +590,9 @@ function decodeStickyPlatforms(platforms: Editor.Platform.Platform[], joints: Ed
     platform.sticky.enabled = true
     platform.sticky.power = 1 + count
   }
+  
+  platforms = platforms.filter(p => !platformsToBeRemoved.includes(p))
+
   return [platforms, joints] as const
 }
 
