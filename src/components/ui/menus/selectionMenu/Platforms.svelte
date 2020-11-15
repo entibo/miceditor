@@ -94,16 +94,19 @@
     </label>
   </div>
 
-  <label>
+  <label class:disabled={props.color.value === ""}>
     <span>{$_("invisible")}</span>
     <Checkbox checked={props.invisible.value} set={props.invisible.set} />
   </label>
 
   {#if props.color.value !== undefined}
-    <div class:disabled={props.color.value === undefined}>
+    <div>
       <label>
         <span>{$_("color")}</span>
+        <div class="flex">
           <TextInput color value={props.color.value} set={props.color.set} class="w-16"/>
+          <Checkbox checked={props.color.value === null ? null : props.color.value !== ""} set={v => props.color.set(v ? "324650" : "")} />
+        </div>
       </label>
     </div>
   {/if}

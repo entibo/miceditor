@@ -414,7 +414,7 @@ export function writeCollision(miceCollision: boolean, objectCollision: boolean)
 }
 
 export function readColor(str: string): M.Maybe<string> {
-  if(str.match(/^f{8,}$/i)) {
+  if(str === "" || str.match(/^f{8,}$/i)) {
     return str
   }
   return util.readColor(str)
