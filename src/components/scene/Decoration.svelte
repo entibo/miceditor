@@ -8,8 +8,11 @@
   import SvgImage from "components/common/SvgImage.svelte"
   
   import { mapSettings } from "state/map"
+  import { parkourMode } from "state/mapExtra"
 
   export let obj
+
+  export let parkourCheckpointIndex = 1
 
 
   $: selected = $obj.selected
@@ -97,12 +100,18 @@
       {#if type == "DS" || type == "DC" || type == "DC2"}
 
         <SvgImage href="dist/decorations/{metadata.file}" class="pointer-events-none"/>
-        <circle
-          transform="translate({metadata.offset.x} {metadata.offset.y})"
-          r="15"
-          fill="transparent"
-          class="object-outline-stroke cursor-pointer"
-        />
+        <g transform="translate({metadata.offset.x} {metadata.offset.y})">
+          <circle
+            r="15"
+            fill="transparent"
+            class="object-outline-stroke cursor-pointer"
+          />
+          {#if type == "DS" && $parkourMode}
+            <g class="pointer-events-none">
+              <text y="-32">{parkourCheckpointIndex}</text>
+            </g>
+          {/if}
+        </g>
 
       {:else if type == "F"}
 

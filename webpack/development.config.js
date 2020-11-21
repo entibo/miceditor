@@ -68,6 +68,11 @@ module.exports = {
             noPreserveState: true,
             optimistic: true,
           },
+          onwarn: (warning, handleWarning) => {
+            if(warning.code === "a11y-label-has-associated-control") return
+            if(warning.code === "a11y-no-onchange") return
+            handleWarning(warning)
+          }
         },
       },
       {
