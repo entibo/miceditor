@@ -249,7 +249,7 @@ export function decode(xmlNode: XML.Node): Platform {
     setProp ("angularDamping")  (dynamicValues[7])
   })
 
-  setProp ("color")  (getAttr ("o") (readColor))
+  setProp ("color")  (M.withDefault ("") (getAttr ("o") (readColor)))
   setProp ("vanish") (getAttr ("v") (util.readInt))
   setProp ("lua")    (getAttr ("lua") ())
 
@@ -306,7 +306,7 @@ export function encode(data: Platform): Node {
     getProp ("objectCollision") (),
   ))
 
-  setAttr ("o")   (getProp ("color")      ())
+  setAttr ("o")   (getProp ("color")      (util.omitOn("")))
   setAttr ("N")   (getProp ("foreground") (util.omitOn(false), () => ""))
   setAttr ("m")   (getProp ("invisible")  (util.omitOn(false), () => ""))
   setAttr ("nosync") (getProp ("nosync")  (util.omitOn(false), () => ""))
