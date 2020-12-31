@@ -60,7 +60,6 @@
         "Content-Type": "application/json",
       },
     }).then(async res => {
-      window.res = res
       if(res.status === 200) {
         let raw = res.headers.get("Content-Type").includes("png")
         let url = raw ? URL.createObjectURL(await res.blob()) : await res.text()
