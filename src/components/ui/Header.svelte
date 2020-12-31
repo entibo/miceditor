@@ -13,6 +13,8 @@
   import { faEdit } from "@fortawesome/free-solid-svg-icons/faEdit"
   import { faSearchPlus } from "@fortawesome/free-solid-svg-icons/faSearchPlus"
   import { faQuestion } from "@fortawesome/free-solid-svg-icons/faQuestion"
+  import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt"
+  import { faCamera } from "@fortawesome/free-solid-svg-icons/faCamera"
 
   import { debounce } from "common"
 
@@ -24,6 +26,7 @@
   import XmlEditor from "components/ui/XmlEditor.svelte"
   import HelpMenu from "components/ui/menus/HelpMenu.svelte"
   import LanguageMenu from "components/ui/menus/LanguageMenu.svelte"
+  import ScreenshotMenu from "components/ui/menus/ScreenshotMenu.svelte"
 
 
   import { xml, defaultXML } from "state/xml"
@@ -31,7 +34,6 @@
   import { userLocale, _ } from "state/locale"
   import { undo, redo, canUndo, canRedo } from "state/history"
   import { zoom } from "state/user"
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt";
 
 
   let copyIconActive = false
@@ -54,7 +56,7 @@ import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt";
   }
 
   // let currentMenu = firstVisit ? "help" : null
-  let currentMenu = null // null | "help" | "language" | "settings" | "zoom" | "xmlEditor"
+  let currentMenu = null // null | "help" | "language" | "settings" | "zoom" | "xmlEditor" | "screenshot"
   function selectMenu(which) {
     if(currentMenu === which)
       currentMenu = null
@@ -121,6 +123,18 @@ import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt";
             <Icon icon={faSearchPlus}/> 
               </span>
             <span class="ml-2 hidden xl:inline">{$_("button-zoom")}</span>
+        </div>
+      </Button>
+    </Tooltip>
+
+    <div class="mr-1"></div>
+
+    <Tooltip inline bottom title="Screenshot" >
+      <Button class="text-sm" on:click={selectMenu.bind(null, "screenshot")}>
+        <div class="flex justify-center items-center">
+          <span class="icon" class:active={currentMenu === "screenshot"}>
+            <Icon icon={faCamera}/> 
+          </span>
         </div>
       </Button>
     </Tooltip>
@@ -250,6 +264,14 @@ import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt";
   <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
     
     <LanguageMenu />
+
+  </div>
+
+  {:else if currentMenu === "screenshot"}
+
+  <div class="lower-panel p-2 xl:p-4" transition:slide={{duration: 100}}>
+    
+    <ScreenshotMenu />
 
   </div>
 

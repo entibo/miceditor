@@ -12,6 +12,8 @@ export const showInvisibleGrounds = persistentWritable("showInvisibleGrounds", t
 export const showMechanics = persistentWritable("showMechanics", true)
 export const highQuality = persistentWritable("highQuality", true)
 
+export const screenshotUpload = persistentWritable("screenshotUpload", true)
+
 export const grid = persistentWritable("grid", {
   enabled: false,
   widthHeightLinked: true,
@@ -59,6 +61,6 @@ export const brushPalette = persistentWritable("brushPalette", [brushDefaults()]
 export const imagePalette = persistentWritable("imagePalette", [Editor.Image.readUrl("x_transformice/x_inventaire/17.jpg")])
 
 
-export const currentVersion = "2.0.16"
+export const currentVersion = "2.0.17"
 export const previousVersion = localStorage.getItem("version")
 localStorage.setItem("version", currentVersion)
