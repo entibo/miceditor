@@ -184,7 +184,7 @@
   <g class="joint" 
     on:mousedown on:mousemove on:mouseleave
   >
-    {#if renderFullPolyline}
+    {#if renderFullPolyline && $showMechanics}
       <g class="selectable" class:active>
         <polyline points={fullPolyline} class="dashed-line" />
       </g>
