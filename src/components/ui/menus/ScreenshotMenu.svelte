@@ -178,7 +178,7 @@
 
       <div class="mb-2"></div>
     {/if}
-    <img src={status.url}/>
+    <img src={status.url} alt="result"/>
   {/if}
 </div>
 {/if}

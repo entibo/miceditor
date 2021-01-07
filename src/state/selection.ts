@@ -5,6 +5,7 @@ import * as Editor from "data/editor"
 import * as sceneObjects from "state/sceneObjects"
 import { SceneObject } from "state/sceneObjects"
 import { store, Store } from "state/util"
+import { Joint } from "@/data/base"
 
 const blank = store({})
 let selectionMap = new Map<SceneObject, ()=>void>()
@@ -260,6 +261,35 @@ export function invertLH() {
   }
 }
 
+export function turnLinesIntoPlatforms() {
+  console.log("turnLinesIntoPlatforms")
+  for(let obj of selectionMap.keys()) {
+    if(!Editor.isJoint(obj)) continue
+    if(obj.type != "JD" && obj.type != "JPL") continue
+    if(!Editor.Joint.isRendered(obj)) continue
+    
+    if(obj.type === "JD") {
+      console.log("doing a JD:", obj)
+      let p1 = obj.point1, p2 = obj.point2
+      if(!p1.enabled || !p2.enabled) continue
+      let platform = Editor.Platform.make(Editor.Platform.defaults(Editor.Platform.Type.Ice)) as Editor.Platform.Platform & {type:Editor.Platform.Type.Ice}
+      let dx = p2.x - p1.x, dy = p2.y - p1.y
+      platform.rotation = Math.atan2(dy, dx) * 180/Math.PI
+      platform.x = Math.round((p1.x+p2.x)/2)
+      platform.y = Math.round((p1.y+p2.y)/2)
+      platform.height = Math.max(10, obj.thickness)
+      platform.width = Math.sqrt(dx*dx + dy*dy)
+      //platform = Editor.Platform.make(platform)
+      sceneObjects.add(platform)
+    }
+    else if(obj.type === "JPL") {
+
+    }
+    else continue
+
+    obj.invalidate()
+  }
+}
 
 export const selection = derived(blank, getAll)
 

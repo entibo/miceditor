@@ -77,7 +77,7 @@ export interface Rectangle {
 export interface Circle {
   radius: number
 }
-interface Rotatable {
+export interface Rotatable {
   rotation: number
 }
 

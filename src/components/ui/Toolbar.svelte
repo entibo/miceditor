@@ -31,9 +31,12 @@
 
   import { _ } from "state/locale"
 
+  import * as Editor from "data/editor"
   import * as Selection from "state/selection"
   import { selection } from "state/selection"
   import clipboard from "state/clipboard"
+import Actions from "./menus/layersMenu/Actions.svelte"
+import XmlEditor from "./XmlEditor.svelte"
 
 
   let rotation = null
@@ -74,7 +77,7 @@
 
 </script>
 
-<div class="toolbar bg-gray-700b-65 absolute top-0 right-0 mt-6 py-2 px-2 rounded-l-sm flex flex-col">
+<div class="toolbar">
   {#if $selection.length}
 
     <Tooltip left inDelay={500} class="toolbar-action text-red-400"
@@ -83,7 +86,7 @@
       <Icon icon={faTrash} />
     </Tooltip>
     
-    <div class="mb-4"></div>
+    <div class="divider"></div>
     
     <Tooltip left inDelay={500} class="toolbar-action text-green-400"
              title='{$_("button-duplicate")} (D)' on:click={Selection.duplicate}
@@ -101,7 +104,7 @@
       <Icon icon={faCut} />
     </Tooltip>
 
-    <div class="mb-4"></div>
+    <div class="divider"></div>
 
     <label class="relative">
       <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
@@ -146,7 +149,7 @@
       </div>
     </label>
 
-    <div class="mb-4"></div>
+    <div class="divider"></div>
         
     <Tooltip left inDelay={500} class="toolbar-action text-gray-200"
              title='{$_("flip-horizontally-button")} (X)' on:click={Selection.flipX}
@@ -160,7 +163,7 @@
       <Icon icon={faArrowsAltV} />
     </Tooltip>
 
-    <div class="mb-4"></div>
+    <div class="divider"></div>
 
     <label class="relative">
       <Tooltip left inDelay={500} title={$_("horizontal-alignment")}>
@@ -206,6 +209,14 @@
       </div>
     </label>
 
+    {#if false && $selection.find(Editor.isJoint)}
+      <div class="divider"></div>
+
+      <Tooltip left inDelay={500} title={$_("lines-to-grounds")}  
+        class="toolbar-action" on:click={Selection.turnLinesIntoPlatforms}>
+        <img class="w-4 h-4 rounded-sm " src="dist/grounds/ice.png" alt="ice" />
+      </Tooltip>
+    {/if}
 
   {:else}
   <Tooltip left inDelay={500} class="toolbar-action text-gray-100"
@@ -217,6 +228,27 @@
 </div>
 
 <style lang="text/postcss">
+  .toolbar {
+    @apply bg-gray-700b-65 absolute top-0 right-0 mt-6 py-2 rounded-l-sm flex flex-col;
+  }
+  :global(.toolbar-action) {
+    @apply w-6 h-6 mx-2 flex justify-center items-center;
+    @apply cursor-pointer;
+    opacity: 0.85;
+    transition: 60ms;
+  }
+  :global(.toolbar-action:hover) {
+    opacity: 1;
+  }
+  :global(.toolbar-action:active > svg) {
+    transform: scale(1.3);
+  }
+  .divider {
+    @apply my-1;
+    width: 100%;
+    height: 1px;
+    background: rgba(0,0,0,0.2);
+  }
   .rotated {
     transform: rotate(90deg);
   }
@@ -255,18 +287,5 @@
   .floating-input:focus-within {
     pointer-events: all;
     opacity: 1;
-  }
-
-  :global(.toolbar-action) {
-    @apply w-6 h-6 flex justify-center items-center;
-    @apply cursor-pointer;
-    opacity: 0.85;
-    transition: 60ms;
-  }
-  :global(.toolbar-action:hover) {
-    opacity: 1;
-  }
-  :global(.toolbar-action:active > svg) {
-    transform: scale(1.3);
   }
 </style>
