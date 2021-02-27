@@ -101,7 +101,11 @@ export function writeInt(x: number): string {
 export function readFloat(str: string): M.Maybe<number> {
   return M.unless(isNaN)(parseFloat(str))
 }
-export function writeFloat(x: number): string {
+export function writeFloat(x: number, decimals?: number): string {
+  if(decimals) {
+    let f = (10**decimals)
+    x = Math.round(x*f)/f
+  }
   return x.toString()
 }
 

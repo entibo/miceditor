@@ -367,7 +367,7 @@ function readPoint(str: string): Point {
 }
 function writePoint({x,y}: Point): string {
   return [
-    util.writeFloat(x),
-    util.writeFloat(y),
+    util.writeFloat(x, 2),
+    util.writeFloat(y, 2),
   ].join(",")
 }

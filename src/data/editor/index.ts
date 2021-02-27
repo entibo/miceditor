@@ -88,12 +88,8 @@ export function getPositionInformation(objects: Object[]): { box: Box, center: P
 export function move(obj: Object, dx: number, dy: number) {
   if(isJoint(obj))
     return Joint.move(obj, dx, dy)
-  /* if(isPlatform(obj) && obj.image.enabled) {
-    obj.image.x += dx
-    obj.image.y += dy
-  } */
-  obj.x += dx
-  obj.y += dy
+  obj.x = Math.round(obj.x + dx)
+  obj.y = Math.round(obj.y + dy)
 }
 
 export function flipX(obj: Object, cx: number) {

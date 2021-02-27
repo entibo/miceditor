@@ -358,7 +358,7 @@ class PlatformCircleResizeAction extends MouseMovement {
     let dy = gamePosition.y - this.obj.y
 
     let dist = Math.sqrt(dx**2 + dy**2)
-    this.obj.radius = Math.max(10, dist)
+    this.obj.radius = Math.round(Math.max(10, dist))
     this.obj.invalidate()
   }
 }
@@ -429,8 +429,8 @@ class PlatformRectangleResizeAction extends MouseMovement {
     
     let extraWidth = newWidth < 10 ? 10 - newWidth : 0
     let extraHeight = newHeight < 10 ? 10 - newHeight : 0
-    this.obj.width = Math.max(10, newWidth)
-    this.obj.height = Math.max(10, newHeight)
+    this.obj.width = Math.round(Math.max(10, newWidth))
+    this.obj.height = Math.round(Math.max(10, newHeight))
 
     let [a,b] = rotate(rdx + sign.x*extraWidth, rdy - sign.y*extraHeight, rotation)
     this.obj.x = Math.round(this.startPosition.x + a/2)
