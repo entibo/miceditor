@@ -61,6 +61,6 @@ export const brushPalette = persistentWritable("brushPalette", [brushDefaults()]
 export const imagePalette = persistentWritable("imagePalette", [Editor.Image.readUrl("x_transformice/x_inventaire/17.jpg")])
 
 
-export const currentVersion = "2.0.23"
+export const currentVersion = "2.0.24"
 export const previousVersion = localStorage.getItem("version")
 localStorage.setItem("version", currentVersion)
