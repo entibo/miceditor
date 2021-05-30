@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="114.65px" width="85.8px" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(1.0, 0.0, 0.0, 1.0, 46.9, 0.5)">
+    <use height="40.95" transform="matrix(1.0, 0.0, 0.0, 1.0, -17.0, 69.5)" width="18.1" xlink:href="#decoration247-shape0"/>
+    <use height="25.6" transform="matrix(-0.3884, 0.0, 0.0, 0.3574, -2.2223, 104.9785)" width="24.75" xlink:href="#decoration247-sprite0"/>
+    <use height="25.6" transform="matrix(-0.5098, 0.2408, 0.2942, 0.4172, 5.8431, 92.8184)" width="24.75" xlink:href="#decoration247-sprite0"/>
+    <use height="25.6" transform="matrix(0.338, 0.2766, 0.3405, -0.2786, -7.0357, 83.4504)" width="24.75" xlink:href="#decoration247-sprite0"/>
+    <use height="25.6" transform="matrix(0.5779, 0.147, -0.1032, 0.3665, -22.9949, 77.2973)" width="24.75" xlink:href="#decoration247-sprite0"/>
+    <use height="25.6" transform="matrix(-0.0802, 0.6407, -0.5626, 0.0, 2.2785, 43.8719)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(-0.6974, -0.2877, 0.3028, -0.6626, 18.2289, 66.8401)" width="24.75" xlink:href="#decoration247-sprite0"/>
+    <use height="25.6" transform="matrix(-0.6795, 0.0598, -0.0549, -0.5636, 13.4469, 61.3008)" width="24.75" xlink:href="#decoration247-sprite0"/>
+    <use height="25.6" transform="matrix(-0.2788, 0.6721, -0.7073, -0.265, -3.3028, 53.5686)" width="24.75" xlink:href="#decoration247-sprite0"/>
+    <use height="76.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -26.5, -0.5)" width="51.35" xlink:href="#decoration247-shape3"/>
+    <use height="25.6" transform="matrix(-0.5578, 0.0, 0.0, -0.4587, 0.5116, 59.3417)" width="24.75" xlink:href="#decoration247-sprite0"/>
+    <use height="45.85" transform="matrix(1.0, 0.0, 0.0, 1.0, 1.45, 53.45)" width="24.25" xlink:href="#decoration247-shape4"/>
+    <use height="25.6" transform="matrix(-0.6216, 0.0, 0.0, 0.606, 32.9743, 80.3788)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(-0.5288, -0.1381, -0.1146, 0.4172, 23.2787, 98.7942)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(-0.4262, 0.2399, 0.2018, 0.3408, 27.6449, 61.8839)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(-0.3324, -0.324, -0.3383, 0.3299, 14.5341, 90.5988)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(-0.417, -0.2347, -0.1738, 0.2936, 17.9182, 76.1382)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(0.1608, 0.5854, 0.6004, -0.1568, 19.5478, 49.5643)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="21.75" transform="matrix(1.0, 0.0, 0.0, 1.0, -37.35, 55.95)" width="21.15" xlink:href="#decoration247-shape5"/>
+    <use height="25.6" transform="matrix(-0.4966, -0.1474, -0.1329, 0.5505, -22.6241, 74.8694)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(-0.5141, 0.0, 0.0, 0.3392, -14.8972, 67.6322)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(-0.1495, 0.3996, -0.429, -0.1973, -32.2343, 56.0095)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(0.4606, 0.4377, -0.3861, 0.3669, -16.6149, 51.0891)" width="24.75" xlink:href="#decoration247-sprite1"/>
+    <use height="25.6" transform="matrix(-0.1266, 0.449, -0.6531, -0.1663, 16.9559, 51.7935)" width="24.75" xlink:href="#decoration247-sprite1"/>
+  </g>
+  <defs>
+    <g id="decoration247-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 17.0, -69.5)">
+      <path d="M-16.5 82.55 Q-13.6 78.2 -9.05 76.5 -7.85 73.2 -5.95 70.0 M-9.05 76.5 Q-11.45 82.85 -11.55 89.35 L-6.7 89.55 Q-0.7 90.05 -1.25 86.2 M-6.7 89.55 Q-0.5 91.05 0.6 100.0 M-5.95 109.95 L-6.2 109.5 Q-11.6 99.25 -11.55 89.35" fill="none" stroke="#3e571f" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.0"/>
+    </g>
+    <g id="decoration247-sprite0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.2, 0.2)">
+      <use height="25.6" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.2, -0.2)" width="24.75" xlink:href="#decoration247-shape1"/>
+    </g>
+    <g id="decoration247-shape1" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.2, 0.2)">
+      <path d="M8.65 14.45 L9.85 10.8 12.05 6.0 14.1 10.2 12.05 6.0 9.85 10.8 12.55 18.3 9.85 10.8 8.65 14.45 7.1 19.7 5.6 25.2 7.1 19.7 8.65 14.45 4.2 17.85 8.65 14.45 M12.05 6.0 Q12.55 4.85 13.25 4.15 12.55 4.85 12.05 6.0 M5.6 25.2 Q2.0 19.0 1.0 13.75 -3.6 -7.6 13.25 4.15 26.85 2.45 23.75 9.1 20.55 15.6 10.85 22.5 L5.6 25.2" fill="#466816" fill-rule="evenodd" stroke="none"/>
+      <path d="M14.1 10.2 L12.05 6.0 9.85 10.8 12.55 18.3 M5.6 25.2 L7.1 19.7 8.65 14.45 4.2 17.85 M13.25 4.15 Q12.55 4.85 12.05 6.0 M9.85 10.8 L8.65 14.45" fill="none" stroke="#2b3f12" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.2"/>
+      <path d="M5.6 25.2 L10.85 22.5 Q20.55 15.6 23.75 9.1 26.85 2.45 13.25 4.15 -3.6 -7.6 1.0 13.75 2.0 19.0 5.6 25.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3882353" stroke-width="0.4"/>
+    </g>
+    <g id="decoration247-sprite1" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.2, 0.2)">
+      <use height="25.6" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.2, -0.2)" width="24.75" xlink:href="#decoration247-shape2"/>
+    </g>
+    <g id="decoration247-shape2" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.2, 0.2)">
+      <path d="M4.2 17.85 L8.65 14.45 4.2 17.85 M12.05 6.0 L9.85 10.8 8.65 14.45 7.1 19.7 5.6 25.2 Q2.0 19.0 1.0 13.75 -3.6 -7.6 13.25 4.15 12.55 4.85 12.05 6.0" fill="#5c8622" fill-rule="evenodd" stroke="none"/>
+      <path d="M14.1 10.2 L12.05 6.0 14.1 10.2 M9.85 10.8 L12.05 6.0 Q12.55 4.85 13.25 4.15 26.85 2.45 23.75 9.1 20.55 15.6 10.85 22.5 L5.6 25.2 7.1 19.7 8.65 14.45 9.85 10.8 12.55 18.3 9.85 10.8" fill="#75b32e" fill-rule="evenodd" stroke="none"/>
+      <path d="M8.65 14.45 L4.2 17.85 M12.05 6.0 L14.1 10.2 M12.05 6.0 L9.85 10.8 12.55 18.3 M9.85 10.8 L8.65 14.45 7.1 19.7 5.6 25.2 M13.25 4.15 Q12.55 4.85 12.05 6.0" fill="none" stroke="#3e571f" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.2"/>
+      <path d="M5.6 25.2 L10.85 22.5 Q20.55 15.6 23.75 9.1 26.85 2.45 13.25 4.15 -3.6 -7.6 1.0 13.75 2.0 19.0 5.6 25.2" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3882353" stroke-width="0.4"/>
+    </g>
+    <g id="decoration247-shape3" transform="matrix(1.0, 0.0, 0.0, 1.0, 26.5, 0.5)">
+      <path d="M23.85 58.3 L0.15 0.0 -25.8 58.3" fill="none" stroke="#151515" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.0"/>
+      <path d="M23.15 61.5 Q23.3 67.5 16.3 74.1 L15.65 75.35 -17.2 75.35 -17.95 74.0 -9.7 74.1 -5.25 74.05 7.25 73.25 Q11.05 68.85 10.3 64.05 -0.65 62.05 -24.5 62.9 L-24.5 61.5 23.15 61.5" fill="#151515" fill-rule="evenodd" stroke="none"/>
+      <path d="M-17.95 74.0 Q-24.0 69.35 -24.5 62.9 -0.65 62.05 10.3 64.05 11.05 68.85 7.25 73.25 L-5.25 74.05 -9.7 74.1 -17.95 74.0 M-24.5 61.5 L-25.6 61.5 Q-27.0 59.5 -25.6 58.3 L24.05 58.3 Q25.25 60.05 24.05 61.5 L23.15 61.5 -24.5 61.5" fill="#272727" fill-rule="evenodd" stroke="none"/>
+      <path d="M23.15 61.5 Q23.3 67.5 16.3 74.1 L15.65 75.35 -17.2 75.35 -17.95 74.0 Q-24.0 69.35 -24.5 62.9 L-24.5 61.5 -25.6 61.5 Q-27.0 59.5 -25.6 58.3 L24.05 58.3 Q25.25 60.05 24.05 61.5 L23.15 61.5 -24.5 61.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.2784314" stroke-width="0.4"/>
+    </g>
+    <g id="decoration247-shape4" transform="matrix(1.0, 0.0, 0.0, 1.0, -1.45, -53.45)">
+      <path d="M7.9 90.95 Q9.6 84.6 13.7 78.25 L14.05 77.65 Q15.45 75.6 16.3 73.5 14.15 68.5 11.35 76.0 M25.2 84.45 Q16.85 71.9 20.7 61.6 19.25 58.5 17.35 56.65 15.45 54.8 13.1 54.2 20.3 63.85 16.3 73.5 M23.0 68.4 Q22.05 64.5 20.7 61.6 M13.7 78.25 Q17.1 87.95 16.45 89.3 L15.05 92.8 Q14.4 95.0 15.9 98.8 M17.35 56.65 Q22.95 59.75 24.0 56.65 M13.1 54.2 Q8.4 53.0 1.95 57.9" fill="none" stroke="#3e571f" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.0"/>
+    </g>
+    <g id="decoration247-shape5" transform="matrix(1.0, 0.0, 0.0, 1.0, 37.35, -55.95)">
+      <path d="M-16.7 58.0 Q-22.55 55.1 -25.85 57.6 -20.9 63.15 -22.15 72.75 M-29.75 77.2 Q-30.3 68.15 -29.0 63.05 -32.9 66.95 -36.85 59.6 M-25.85 57.6 Q-27.95 59.2 -29.0 63.05" fill="none" stroke="#3e571f" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.0"/>
+    </g>
+  </defs>
+</svg>
