@@ -14,57 +14,34 @@ export type ImageUrl
   = { value: string
       url: string }
 
+/**
+ * @param str can be a full url or a relative path
+ */
 export function readUrl(str: string): ImageUrl {
   let url = str.match(/^https?:/i) ? str : getAbsoluteUrl(str)
   url = url.split("?")[0]
   let info = new URL(url)
-  if(info.hostname === "images.atelier801.com") {
-    return {
-      value: cleanValue(info.pathname),
-      url: url,
-    }
-  }
-  else if(info.hostname === "data.atelier801.com") {
-    return {
-      value: cleanValue(info.pathname),
-      url: url,
-    }
-  }
-  else if(info.hostname === "transformice.com") {
-    let match = info.pathname.match(/^\/?([^\/]+)\/?(.*)/)
-    if(match === null) {
-      return {
-        value: cleanValue(info.pathname),
-        url: url,
-      }
-    }
-    let [first,rest] = [match[1],match[2]]
-    if(first === "images") {
-      return {
-        value: cleanValue(rest),
-        url: `https://data.atelier801.com/${rest}`,
-      }
-    }
-    else if(first === "godspaw") {
-      return {
-        value: cleanValue(info.pathname),
-        url: `https://data.atelier801.com/godspaw/${rest}`,
-      }
-    }
+  let value = str
 
-    /**
-     * Fallback to http://transformice.com
-     * https doesn't work (redirects to the root)
-     * http doesn't work on some browsers (passive mixed content)
-     */
-    return {
-      value: "../" + cleanValue(info.pathname),
-      url: `http://transformice.com/${cleanValue(info.pathname)}`,
+  if(info.hostname === "images.atelier801.com" || info.hostname === "data.atelier801.com" || info.hostname === "transformice.com") {
+    value = info.pathname
+  }
+
+  if(info.hostname === "transformice.com") {
+    info.protocol = "http:"
+    let match = info.pathname.match(/^\/?([^\/]+)\/?(.*)/)
+    if(match !== null) {
+      if(match[1] !== "images") {
+        value = ".."+info.pathname
+      } else {
+        value = match[2]
+      }
     }
   }
+
   return {
-    value: str,
-    url: url,
+    value: cleanValue(value),
+    url: "https://images.weserv.nl/?url="+info.toString()
   }
 }
 
