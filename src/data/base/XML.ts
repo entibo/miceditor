@@ -102,7 +102,7 @@ export function generate<T extends Node>(node: T): string {
   return `<${node.name}${attributes}>${children}</${node.name}>`
 }
 
-
+const identifierRegex = /[_a-z0-9]/i
 
 function tokenize(str: string): Token[] {
   let tokens = [] as Token[]
@@ -150,11 +150,11 @@ function tokenize(str: string): Token[] {
       tokens.push({ type: "STRING", value })
       continue
     }
-    if(c.match(/[a-z0-9]/i)){
+    if(c.match(identifierRegex)){
       let value = ""
       do {
         value += str[k++]
-      } while(k < str.length && str[k].match(/[a-z0-9]/i))
+      } while(k < str.length && str[k].match(identifierRegex))
       tokens.push({ type: "IDENTIFIER", value })
       continue
     }

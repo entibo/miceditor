@@ -13,6 +13,7 @@ const attributes = [
   "DS", "defilante", "theme", 
   "P", "C", "A", "N", "aie",
   "Ca", "mc", "bh", "dodue",
+  "shaman_tools",
   "MEDATA",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
@@ -70,6 +71,8 @@ export interface MapSettings extends Common.UnknownAttributes {
   upwardsCannonballs: boolean
   dodue: boolean
   aie: boolean
+
+  shamanTools: number[]
 
   currentLayerId: number
   layers: Layer[]
@@ -164,6 +167,8 @@ export const defaults: () => MapSettings = () => ({
   dodue: false,
   aie: false,
 
+  shamanTools: [],
+
   currentLayerId: 0,
   layers: [],
   animations: [],
@@ -228,6 +233,8 @@ export function decode(xmlNode: XML.Node): MapSettings {
   setProp ("upwardsCannonballs") (getAttr ("bh")    (() => true))               
   setProp ("dodue")              (getAttr ("dodue") (() => true)) 
   setProp ("aie")                (getAttr ("aie")   (() => true))
+  
+  setProp ("shamanTools") (getAttr ("shaman_tools") (readShamanTools))
 
   setProp ("MEDATA") (getAttr ("MEDATA") (readMedata))
 
@@ -279,6 +286,8 @@ export function encode(data: MapSettings): Node {
   setAttr ("bh")    (getProp ("upwardsCannonballs") (util.omitOn(false), () => ""))
   setAttr ("dodue") (getProp ("dodue")              (util.omitOn(false), () => ""))
   setAttr ("aie")   (getProp ("aie")                (util.omitOn(false), () => ""))
+
+  setAttr ("shaman_tools") (getProp ("shamanTools") (writeShamanTools, util.omitOn("")))
 
   setAttr ("MEDATA") (getProp ("MEDATA") (writeMedata))
 
@@ -434,7 +443,12 @@ function writeDefilante(defilante: MapSettings["defilante"]): M.Maybe<string> {
   ].join(",")
 }
 
-
+function readShamanTools(str: string): number[] {
+  return str.split(",").map(util.readInt).filter(M.is)
+}
+function writeShamanTools(shamanTools: number[]): string {
+  return shamanTools.join(",")
+}
 
 function readMedata(str: string): MapSettings["MEDATA"] {
   let parts = str.split("-")
