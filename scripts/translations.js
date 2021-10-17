@@ -9,8 +9,13 @@ const root = path.resolve(__dirname, "..")
   let resp = await got("https://docs.google.com/spreadsheets/d/1Hfjn9HaykT3OxKRfR3psSnK9LqLPDkwYMk3EJnU3CnY/gviz/tq?tqx=out:csv")
   let csv = resp.body.split("\n")
     .map(line => line.replace(/""([^",]+)""/g, "\\\"$1\\\""))
+    .map(line => line.replace(/\\/g, "\\\\"))
     .map(line => {
-      return JSON.parse("["+line+"]")
+      try { return JSON.parse("["+line+"]") }
+      catch(e) {
+        console.error("Failed to parse line:", line)
+        process.exit(1)
+      }
     })
 
   let languages = {}
