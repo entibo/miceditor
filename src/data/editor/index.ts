@@ -96,6 +96,7 @@ export function flipX(obj: Object, cx: number) {
   if("reverse" in obj)  obj.reverse = !obj.reverse
   if("rotation" in obj) obj.rotation = -obj.rotation
   if("booster" in obj) obj.booster.angle = -obj.booster.angle - 180
+  if("spin" in obj) obj.spin.speed = -obj.spin.speed
 
   if(isJoint(obj))
     return Joint.flipX(obj, cx)
@@ -107,6 +108,7 @@ export function flipX(obj: Object, cx: number) {
 export function flipY(obj: Object, cy: number) {
   if("rotation" in obj) obj.rotation = obj.rotation + 180
   if("booster" in obj) obj.booster.angle = -obj.booster.angle
+  if("spin" in obj) obj.spin.speed = -obj.spin.speed
 
   if(isJoint(obj))
     return Joint.flipY(obj, cy)

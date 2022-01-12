@@ -134,6 +134,12 @@ const data = store<Data>({
     stickyPower: {
       path: ["sticky", "power"],
     },
+    spinEnabled: {
+      path: ["spin", "enabled"],
+    },
+    spinSpeed: {
+      path: ["spin", "speed"],
+    },
     physics: {
       autoGet: false,
       autoSet: false,
@@ -141,14 +147,22 @@ const data = store<Data>({
         if(v === "BOOSTER") {
           data.PLATFORM.boosterEnabled.set!(true)
           data.PLATFORM.stickyEnabled.set!(false)
+          data.PLATFORM.spinEnabled.set!(false)
         }
         else if(v === "STICKY") {
           data.PLATFORM.stickyEnabled.set!(true)
           data.PLATFORM.boosterEnabled.set!(false)
+          data.PLATFORM.spinEnabled.set!(false)
+        }
+        else if(v === "SPIN") {
+          data.PLATFORM.spinEnabled.set!(true)
+          data.PLATFORM.boosterEnabled.set!(false)
+          data.PLATFORM.stickyEnabled.set!(false)
         }
         else {
           data.PLATFORM.boosterEnabled.set!(false)
           data.PLATFORM.stickyEnabled.set!(false)
+          data.PLATFORM.spinEnabled.set!(false)
           if(v === "DYNAMIC")
             data.PLATFORM.dynamic.set!(true)
           else {
@@ -456,8 +470,13 @@ selection.selection.subscribe(list => {
   data.PLATFORM.physics.value =
     data.PLATFORM.boosterEnabled.value === true ? "BOOSTER" :
     data.PLATFORM.stickyEnabled.value === true ? "STICKY" :
+    data.PLATFORM.spinEnabled.value === true ? "SPIN" :
     data.PLATFORM.dynamic.value === true ? "DYNAMIC" :
-    (data.PLATFORM.boosterEnabled.value === false && data.PLATFORM.stickyEnabled.value === false && data.PLATFORM.dynamic.value === false) ? "STATIC" :
+    ( data.PLATFORM.boosterEnabled.value === false && 
+      data.PLATFORM.stickyEnabled.value === false && 
+      data.PLATFORM.spinEnabled.value === false && 
+      data.PLATFORM.dynamic.value === false
+    ) ? "STATIC" :
     ""
 
   data.IMAGE.disappearing.value =

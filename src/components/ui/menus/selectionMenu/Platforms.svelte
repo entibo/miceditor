@@ -145,6 +145,7 @@
         <option value="STATIC">{$_("static")}</option>
         <option value="DYNAMIC">{$_("dynamic")}</option>
         <option value="BOOSTER">{$_("booster")}</option>
+        <option value="SPIN">{$_("spin")}</option>
         <option value="STICKY">{$_("sticky")}</option>
       </select>
     </div>
@@ -169,6 +170,16 @@
       <label>
         <span>{$_("mass")}</span>
         <TextInput float min={0} value={props.mass.value} set={props.mass.set} class="w-16" />
+      </label>
+    </div>
+  {:else if props.physics.value === "SPIN"}
+    <div class="submenu">
+      <label>
+        <span>
+          {$_("speed")}
+          <span class="text-xs opacity-75">(deg/s)</span>
+        </span>
+        <TextInput class="w-16" value={props.spinSpeed.value} set={props.spinSpeed.set} />
       </label>
     </div>
   {:else if props.physics.value === "STICKY"}

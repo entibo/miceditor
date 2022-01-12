@@ -45,6 +45,7 @@ export function parse(str: string): Map {
   loadMedata(map)
 
   ;[map.platforms, map.joints] = decodeStickyPlatforms(map.platforms, map.joints)
+  ;[map.platforms, map.joints] = decodeSpinPlatforms(map.platforms, map.joints)
   ;[map.platforms, map.joints] = decodeBoosterPlatforms(map.platforms, map.joints)
     map.joints                 = removeCurveSegments(map.joints)
     map.decorations            = decodeMouseSpawns(map.mapSettings.miceSpawn, map.decorations)
@@ -61,6 +62,7 @@ export function serialize(map: Map): string {
     map.decorations            = encodeMouseSpawns(map.mapSettings.miceSpawn, map.decorations)
     map.shamanObjects          = encodeShamanObjects(map.shamanObjects)
   ;[map.platforms, map.joints] = encodeBoosterPlatforms(map.platforms, map.joints)
+  ;[map.platforms, map.joints] = encodeSpinPlatforms(map.platforms, map.joints)
   ;[map.platforms, map.joints] = encodeStickyPlatforms(map.platforms, map.joints)
   ;[map.platforms, map.joints] = encodeAnimations(map.mapSettings, map.platforms, map.joints)
     map.joints                 = encodeLines(map.platforms, map.joints)
@@ -514,6 +516,69 @@ function encodeBoosterPlatforms(platforms: Editor.Platform.Platform[], joints: E
   return [platforms, joints] as const
 }
 
+
+
+
+
+
+/**
+ * *Removes joints*
+ */
+ function decodeSpinPlatforms(platforms: Editor.Platform.Platform[], joints: Editor.Joint.Joint[]) {
+  let jointIdx = 0
+  while(jointIdx < joints.length) {
+    let jr = joints[jointIdx]
+
+    let platform = platforms[jr.platform2]
+    if( jr.type === "JR" && 
+        platform && 
+        "spin" in platform &&
+        platform.mass == 987654
+    ) {
+      platform.dynamic = false
+
+      platform.spin.enabled = true
+      platform.spin.speed = jr.speed
+
+      joints.splice(jointIdx, 1)
+      continue
+    }
+
+    jointIdx++
+  }
+  
+  return [platforms, joints] as const
+}
+
+/**
+ * *Adds joints*
+ */
+function encodeSpinPlatforms(platforms: Editor.Platform.Platform[], joints: Editor.Joint.Joint[]) {
+  for(let k=0; k < platforms.length; k++) {
+    let _platform = platforms[k]
+    if(!("spin" in _platform) || !_platform.spin.enabled) continue
+
+    let platform = clone(_platform)
+
+    // Ensure a few properties
+    platform.dynamic = true
+    platform.fixedRotation = false
+    platform.linearDamping = platform.angularDamping = 0
+    platform.mass = 987654
+
+    // Create a rotation joint
+    let jr = Editor.Joint.defaults("JR")
+    jr.platform1 = platforms.findIndex(Editor.Platform.isStatic)
+    jr.platform2 = platform.index
+    jr.power = Infinity
+    jr.speed = platform.spin.speed
+    joints.push(Editor.Joint.make(jr))
+
+    platforms[k] = platform
+  }
+
+  return [platforms, joints] as const
+}
 
 
 

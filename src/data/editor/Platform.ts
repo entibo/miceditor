@@ -33,9 +33,23 @@ const stickyDefaults: () => Sticky = () => ({
   },
 })
 
+interface Spin {
+  spin: {
+    enabled: boolean
+    speed: number
+  }
+}
+const spinDefaults: () => Spin = () => ({
+  spin: {
+    enabled: false,
+    speed: 100,
+  },
+})
+
+
 
 type _Platform 
-  = Extract<P.Platform, P.NonStatic> & Booster & Sticky
+  = Extract<P.Platform, P.NonStatic> & Booster & Sticky & Spin
   | Exclude<P.Platform, P.NonStatic>
 
 export type Platform = _Platform & Common.Metadata & { objectType: "PLATFORM" }
@@ -47,6 +61,7 @@ export const make: (p: P.Platform) => Platform = p =>
     { ...p,
       ...boosterDefaults(),
       ...stickyDefaults(),
+      ...spinDefaults(),
       ...Common.metadataDefaults(),
       objectType: "PLATFORM",
     }
@@ -58,7 +73,7 @@ export const make: (p: P.Platform) => Platform = p =>
 
 export function isStatic(p: Platform): p is Exclude<Platform, P.NonStatic> {
   return "dynamic" in p
-    ? p.dynamic === false && p.booster.enabled === false && p.sticky.enabled === false
+    ? p.dynamic === false && p.booster.enabled === false && p.sticky.enabled === false && p.spin.enabled === false
     : true
 }
 
