@@ -34,7 +34,7 @@
       }
     }
     for (let decoration of groups.decorations) {
-      if (decoration.colors.includes(oldColor)) {
+      if (decoration.colors && decoration.colors.includes(oldColor)) {
         decoration.colors = decoration.colors.map((c) =>
           c === oldColor ? newColor : c
         );
