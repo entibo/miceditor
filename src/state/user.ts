@@ -57,10 +57,22 @@ export const brushDefaults: () => Brush = () =>
 export const brushPalette = persistentWritable("brushPalette", [brushDefaults()])
 
 
-
 export const imagePalette = persistentWritable("imagePalette", [Editor.Image.readUrl("x_transformice/x_inventaire/17.jpg")])
 
 
-export const currentVersion = "2.0.34"
+export const colorPalette = persistentWritable("colorPalette", [
+  {color: "6A7495"},
+  {color: "324650"},
+  {color: "9BAABC"},
+  {color: "89A7F5"},
+  {color: "D84801"},
+  {color: "6D4E94"},
+  {color: "2E190C"},
+  {color: "6A839C"},
+  {color: "757F96"},
+])
+
+
+export const currentVersion = "2.1.0"
 export const previousVersion = localStorage.getItem("version")
 localStorage.setItem("version", currentVersion)

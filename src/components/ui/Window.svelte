@@ -22,7 +22,7 @@ $: titleName = $_(layout.tabToTranslationId[window.tab])
 
 
 <div class="window absolute top-0 left-0 flex flex-col shadow-md" 
-     style="transform: translate({window.x}px, {window.y}px); 
+     style="transform: translate({Math.round(window.x)}px, {Math.round(window.y)}px); 
             width: {window.width}px; 
             height: {window.height}px;
             z-index: {z};"

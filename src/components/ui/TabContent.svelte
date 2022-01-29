@@ -13,6 +13,7 @@ import ShamanObjectVariantsMenu from "components/ui/menus/ShamanObjectVariantsMe
 import LinesMenu from "components/ui/menus/LinesMenu.svelte"
 import MechanicsMenu from "components/ui/menus/MechanicsMenu.svelte"
 import ImagesMenu from "components/ui/menus/ImagesMenu.svelte"
+import ColorPaletteMenu from "./menus/ColorPaletteMenu.svelte";
 
 const tabToComponent = {
   "mapSettings": MapSettingsMenu,
@@ -27,6 +28,7 @@ const tabToComponent = {
   "images": ImagesMenu,
   "layers": LayersMenu,
   "tree": TreeMenu,
+  "colorPalette": ColorPaletteMenu,
 }
 
 export let tab

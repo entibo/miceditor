@@ -26,7 +26,7 @@ export default <Layout> {
           activeTab: "platforms",
         },
         {
-          tabs: ["lines", "mechanics"],
+          tabs: ["colorPalette", "lines", "mechanics"],
           activeTab: "lines",
         },
       ],
