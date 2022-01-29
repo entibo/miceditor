@@ -30,8 +30,11 @@ export default <Layout> {
           activeTab: "shamanObjects",
         },
         {
-          tabs: ["colorPalette", "lines", "mechanics", "images"],
+          tabs: ["lines", "mechanics", "images"],
           activeTab: "images",
+        },
+        {
+          tabs: ["colorPalette"],
         },
       ],
     },

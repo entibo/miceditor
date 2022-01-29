@@ -81,6 +81,27 @@ const defaultLayout =
 
 export const layoutConfig = persistentWritable("layoutConfig", clone(defaultLayout))
 
+// Hacky way to add new tabs to an existing layout
+{
+  let missingTabs = new Set(tabs)
+  missingTabs.delete("shamanObjectVariants")
+  let config = storeGet(layoutConfig)
+  for(let panel of Object.values(config.panels)) {
+    for(let group of panel.groups) {
+      for(let tab of group.tabs) {
+        missingTabs.delete(tab)
+      }
+    }
+  }
+  for(let tab of missingTabs) {
+    config.panels.left.groups.push({
+      tabs: [tab],
+    })
+  }
+  layoutConfig.set(config)
+}
+
+
 export const setSmallLayout = () => layoutConfig.set(clone(smallLayout))
 export const setLargeLayout = () => layoutConfig.set(clone(largeLayout))
 
