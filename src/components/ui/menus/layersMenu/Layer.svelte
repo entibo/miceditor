@@ -62,7 +62,6 @@
   }
 
   function onDrop(srcIndex, tgtIndex) {
-    console.log(srcIndex, tgtIndex)
     let srcJoint = sceneObjects.groups.joints[srcIndex]
     srcJoint.layerId = layer.id
     if(tgtIndex) {

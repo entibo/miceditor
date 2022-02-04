@@ -158,6 +158,9 @@
       }
     }
 
+    x = Math.round(x)
+    y = Math.round(y)
+
     tooltipElement.style.transform = `translate(${x}px,${y}px)`
   }
 

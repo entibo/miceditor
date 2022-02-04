@@ -5,8 +5,10 @@
   import { showInvisibleGrounds, highQuality } from "state/user"
   import { platformResizeKnobMouseDown,
            platformBoosterVectorMouseDown,
-           platformBoosterVectorMinLength, 
+           platformBoosterVectorMinLength,
+           circleSlopeAngleMouseDown, 
          } from "state/interaction"
+  import { slopeConfig, getLineSegments } from "state/slope"
 
   import SvgImage from "components/common/SvgImage.svelte"
 
@@ -53,6 +55,36 @@
   }
   else boosterVector = null
 
+  let circleSlopePreview
+  $: if($slopeConfig.enabled && typeName === "circle") {
+    let segments = getLineSegments(
+      0, 
+      0, 
+      $obj.radius, 
+      $slopeConfig.startAngle, 
+      $slopeConfig.endAngle,
+      1,
+      $slopeConfig.segments
+    )
+    circleSlopePreview = {
+      segments,
+      origin: {
+        x: $obj.x,
+        y: $obj.y,
+      },
+      points: [
+        { name: "min", 
+          x: $obj.radius*Math.cos($slopeConfig.startAngle*Math.PI/180), 
+          y: $obj.radius*Math.sin($slopeConfig.startAngle*Math.PI/180) },
+        { name: "max", 
+          x: $obj.radius*Math.cos($slopeConfig.endAngle*Math.PI/180), 
+          y: $obj.radius*Math.sin($slopeConfig.endAngle*Math.PI/180) },
+      ],
+      angle: $obj.rotation,
+    }
+  }
+  else circleSlopePreview = null
+
 </script>
 
 <g transform="translate({x}, {y}) 
@@ -82,8 +114,20 @@
           <circle
             r={$obj.radius}
             fill="#{$obj.color}"
-            class="object-outline-stroke"
+            class="{circleSlopePreview ? "" : "object-outline-stroke"}"
           />
+          {#if circleSlopePreview}
+            {#each circleSlopePreview.segments as {x1,y1,x2,y2}}
+              <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="aqua" stroke-width=2 />
+            {/each}
+            {#each circleSlopePreview.points as {x,y,name}}
+              <g transform="translate({x},{y})" class="cursor-pointer"
+                on:mousedown|stopPropagation|preventDefault={e => circleSlopeAngleMouseDown(e, name, circleSlopePreview.origin, circleSlopePreview.angle)}>
+                <circle r=6 fill="black" />
+                <text class="limit-index">{name === "min" ? "1" : "2"}</text>
+              </g>
+            {/each}
+          {/if}
         {:else if typeName === "rectangle"}
           <rect
             x={-width/2} y={-height/2}
@@ -213,6 +257,19 @@
     }
   }
 
+
+  text {
+    stroke-width: 1px;
+    text-anchor: middle;
+    alignment-baseline: middle;
+    dominant-baseline: middle;
+    stroke-dasharray: none;
+  }
+  text.limit-index {
+    fill: #6a7495;
+    stroke: #6a7495;
+    font: 8px monospace;
+  }
 
 
 

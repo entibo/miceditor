@@ -35,7 +35,6 @@
   }
 
   function updateMiceSpawn() {
-    console.log(data._miceSpawn.type, data._miceSpawn)
     if(data._miceSpawn.type === "multiple") {
       data._miceSpawn.positions = 
         $decorations.filter(({name}) => name === "DS")

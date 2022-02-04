@@ -24,7 +24,7 @@
   import * as selection from "state/selection"
 
   export let props
-  
+
 </script>
 
 

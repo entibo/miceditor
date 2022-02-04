@@ -76,7 +76,6 @@ export function setIndex(obj: SceneObject, target: number) {
   obj.index = target
   obj.invalidate()
   group.invalidate()
-  console.log("setIndex [end]", group === groups.platforms ? "groups.platforms was invalidated": "")
 }
 
 function removeFromGroup(group: Store<SceneObject[]>, obj: SceneObject) {

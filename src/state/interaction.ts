@@ -19,6 +19,8 @@ import { SceneObject } from "state/sceneObjects"
 import { zoom, brushPalette, Brush } from "state/user"
 import clipboard from "state/clipboard"
 
+import {slopeConfig} from "state/slope"
+
 import { undo, redo } from "state/history"
 
 
@@ -469,6 +471,32 @@ class PlatformBoosterVectorResizeAction extends MouseMovement {
   }
 }
 
+class CircleSlopeAngleAction extends MouseMovement {
+  constructor(
+    e: MouseEvent,
+    public which: "min" | "max",
+    public origin: Point,
+    public angle: number)
+  {
+    super(e)
+  }
+  update(e: MouseEvent) {
+    super.update(e)
+    let gamePosition = sceneToGameCoordinates(this.current)
+
+    let dx = gamePosition.x - this.origin.x
+    let dy = gamePosition.y - this.origin.y
+    let value = deg(Math.atan2(dy, dx)) - this.angle
+    if(value < 0) value += 360
+    if(value > 360) value -= 360
+
+    slopeConfig.update($slopeConfig => {
+      $slopeConfig[this.which === "min" ? "startAngle" : "endAngle"] = value
+      return $slopeConfig
+    })
+  }
+}
+
 
 import * as layout from "state/layout"
 
@@ -605,6 +633,13 @@ export function platformBoosterVectorMouseDown(e: MouseEvent, obj: Store<Editor.
   e.preventDefault()
 
   currentMouseMovement = new PlatformBoosterVectorResizeAction(e, obj as any)
+}
+
+export function circleSlopeAngleMouseDown(e: MouseEvent, which: "min" | "max", origin: Point, angle: number) {
+  if(isKeyDown.space) return
+  e.preventDefault()
+
+  currentMouseMovement = new CircleSlopeAngleAction(e, which, origin, angle)
 }
 
 export function windowTitleMouseDown(e: MouseEvent, window: layout.Window) {

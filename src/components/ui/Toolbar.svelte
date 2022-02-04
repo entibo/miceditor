@@ -27,6 +27,7 @@
   import Button from "components/common/Button.svelte"
   import TextInput from "components/common/TextInput.svelte"
   import Tooltip from "components/common/Tooltip.svelte"
+  import SlopeMenu from "components/ui/menus/SlopeMenu.svelte"
 
 
   import { _ } from "state/locale"
@@ -35,8 +36,8 @@
   import * as Selection from "state/selection"
   import { selection } from "state/selection"
   import clipboard from "state/clipboard"
-import Actions from "./menus/layersMenu/Actions.svelte"
-import XmlEditor from "./XmlEditor.svelte"
+  import { isCircle } from "data/editor/Platform"
+  import { slopeConfig } from "state/slope"
 
 
   let rotation = null
@@ -209,12 +210,19 @@ import XmlEditor from "./XmlEditor.svelte"
       </div>
     </label>
 
-    {#if false && $selection.find(Editor.isJoint)}
+    {#if $selection.length === 1 && isCircle($selection[0])}
       <div class="divider"></div>
 
-      <Tooltip left inDelay={500} title={$_("lines-to-grounds")}  
-        class="toolbar-action" on:click={Selection.turnLinesIntoPlatforms}>
-        <img class="w-4 h-4 rounded-sm " src="dist/grounds/ice.png" alt="ice" />
+      <Tooltip noStyle hoverable left active={$slopeConfig.enabled} title="foo">
+        <Tooltip left inDelay={500} title={$_("slope-generator")}  
+          class="toolbar-action" on:click={() =>  $slopeConfig.enabled = !$slopeConfig.enabled}>
+          <img class="w-4 h-4 rounded-sm " src="dist/grounds/ice.png" alt="ice" />
+        </Tooltip>
+        <div slot="tooltip"
+          class="shadow-lg opacity-95 hover:opacity-100 border-4 border-gray-800 tabContent" 
+        >
+          <SlopeMenu/>
+        </div>
       </Tooltip>
     {/if}
 

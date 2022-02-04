@@ -78,7 +78,6 @@ export function setterProxy <T extends object> (obj: T) {
           if(v === undefined) continue
           obj[k] = v
         }
-        console.log("setterProxy.set", k, obj[k])
       }
       return true
     }
