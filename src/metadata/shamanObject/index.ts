@@ -127,14 +127,14 @@ setData(0, {
   sprite: "arrow.png",
   width: 27, height: 31,
 })
-setData([1, ...range(101,139)], type => {
+setData([1, ...range(101,150)], type => {
   let variant = type === 1 ? 0 : type - 100
   return {
-    variants: range(101,139),
+    variants: range(101,150),
     isVariant: type !== 1,
     spritesheet: "small-boxes.png",
-    width: 68, height: 68,
-    offset: { x: 68*variant, y: 0 },
+    width: 70, height: 70,
+    offset: { x: 70*variant, y: 0 },
     boundingWidth: 30,
     boundingHeight: 30,
     placeholderData: { 
@@ -143,14 +143,14 @@ setData([1, ...range(101,139)], type => {
     },
   }
 })
-setData([2, ...range(201, 242)], type => {
+setData([2, ...range(201, 250)], type => {
   let variant = type === 2 ? 0 : type - 200
   return {
-    variants: range(201,242),
+    variants: range(201,250),
     isVariant: type !== 2,
     spritesheet: "big-boxes.png",
-    width: 118, height: 118,
-    offset: { x: 118*variant, y: 0 },
+    width: 140, height: 140,
+    offset: { x: 140*variant, y: 0 },
     boundingWidth: 62,
     boundingHeight: 62,
     placeholderData: { 
@@ -159,14 +159,14 @@ setData([2, ...range(201, 242)], type => {
     },
   }
 })
-setData([3, ...range(301, 338)], type => {
+setData([3, ...range(301, 350)], type => {
   let variant = type === 3 ? 0 : type - 300
   return {
-    variants: range(301,338),
+    variants: range(301,350),
     isVariant: type !== 3,
     spritesheet: "small-planks.png",
-    width: 180, height: 60,
-    offset: { x: 0, y: 60*variant },
+    width: 220, height: 70,
+    offset: { x: 220*variant, y: 0 },
     boundingWidth: 100,
     boundingHeight: 10,
     placeholderData: { 
@@ -175,14 +175,14 @@ setData([3, ...range(301, 338)], type => {
     },
   }
 })
-setData([4, ...range(401, 441)], type => {
+setData([4, ...range(401, 450)], type => {
   let variant = type === 4 ? 0 : type - 400
   return {
-    variants: range(401,441),
+    variants: range(401,450),
     isVariant: type !== 4,
     spritesheet: "big-planks.png",
-    width: 240, height: 60,
-    offset: { x: 0, y: 60*variant },
+    width: 320, height: 80,
+    offset: { x: 320*variant, y: 0 },
     boundingWidth: 200,
     boundingHeight: 10,
     placeholderData: { 
@@ -191,14 +191,14 @@ setData([4, ...range(401, 441)], type => {
     },
   }
 })
-setData([6, ...range(601, 633)], type => {
+setData([6, ...range(601, 645)], type => {
   let variant = type === 6 ? 0 : type - 600
   return {
-    variants: range(601,633),
+    variants: range(601,645),
     isVariant: type !== 6,
     spritesheet: "balls.png",
-    width: 90, height: 90,
-    offset: { x: 90*variant, y: 0 },
+    width: 80, height: 80,
+    offset: { x: 80*variant, y: 0 },
     boundingWidth: 30,
     boundingHeight: 30,
     circle: true,
@@ -208,14 +208,14 @@ setData([6, ...range(601, 633)], type => {
     },
   }
 })
-setData([7, ...range(701, 709)], type => {
+setData([7, ...range(701, 716)], type => {
   let variant = type === 7 ? 0 : type - 700
   return {
-    variants: range(701,709),
+    variants: range(701,716),
     isVariant: type !== 7,
     spritesheet: "trampolines.png",
-    width: 140, height: 70,
-    offset: { x: 140*variant, y: 0 },
+    width: 150, height: 100,
+    offset: { x: 150*variant, y: 0 },
     boundingWidth: 100,
     boundingHeight: 20,
     placeholderData: { 
@@ -224,14 +224,14 @@ setData([7, ...range(701, 709)], type => {
     },
   }
 })
-setData([10, ...range(1002, 1019)], type => {
+setData([10, ...range(1002, 1030)], type => {
   let variant = type === 10 ? 0 : type - 1000 - 1
   return {
-    variants: range(1002,1019),
+    variants: range(1002,1030),
     isVariant: type !== 10,
     spritesheet: "anvils.png",
-    width: 60, height: 60,
-    offset: { x: 60*variant, y: 0 },
+    width: 80, height: 80,
+    offset: { x: 80*variant, y: 0 },
     boundingWidth: 30,
     boundingHeight: 30,
     placeholderData: { 
@@ -240,10 +240,10 @@ setData([10, ...range(1002, 1019)], type => {
     },
   }
 })
-setData([17, ...range(1701, 1733)], type => {
+setData([17, ...range(1701, 1740)], type => {
   let variant = type === 17 ? 0 : type - 1700
   return {
-    variants: range(1701,1733),
+    variants: range(1701,1740),
     isVariant: type !== 17,
     spritesheet: "cannonballs.png",
     width: 90, height: 90,
@@ -257,13 +257,13 @@ setData([17, ...range(1701, 1733)], type => {
     },
   }
 })
-setData([...range(28,31), ...range(2801, 2840)], type => {
+setData([...range(28,31), ...range(2801, 2850)], type => {
   let variant = type >= 28 && type <= 31 ? type - 28 : type - 2801 + 4
   return {
-    variants: [...range(29,31), ...range(2801, 2840)],
+    variants: [...range(29,31), ...range(2801, 2850)],
     isVariant: type !== 28,
     spritesheet: "balloons.png",
-    width: 72, height: 100,
+    width: 72, height: 120,
     offset: { x: 72*variant, y: 0 },
     boundingWidth: 30,
     boundingHeight: 30,
