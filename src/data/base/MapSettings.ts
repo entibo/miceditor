@@ -202,8 +202,8 @@ export function decode(xmlNode: XML.Node): MapSettings {
   data.unknownAttributes = Common.getUnknownAttributes(attributes, node.attributes)
   const setProp = util.makeSetter(data)
 
-  setProp ("width")  (getAttr ("L") (util.readInt, w => Math.max(w, 800)))
-  setProp ("height") (getAttr ("H") (util.readInt, h => Math.max(h, 400)))
+  setProp ("width")  (getAttr ("L") (util.readInt))
+  setProp ("height") (getAttr ("H") (util.readInt))
 
   setProp ("backgroundImageId") (getAttr ("F") (util.readInt, util.writeInt))
 

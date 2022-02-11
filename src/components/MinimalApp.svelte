@@ -3,12 +3,13 @@
 
   import {xml} from "state/xml"
   import {importXML} from "state/map"
-  import {showGameGUI, showMapBorder, showMechanics, showInvisibleGrounds, zoom} from "state/user"
+  import {showGameGUI, showMapBorder, showDeathBorder, showMechanics, showInvisibleGrounds, zoom} from "state/user"
   import {tick} from "svelte"
   window.xml = xml
   window.importXML = importXML
   window.showGameGUI = showGameGUI
   window.showMapBorder = showMapBorder
+  window.showDeathBorder = showDeathBorder
   window.showMechanics = showMechanics
   window.showInvisibleGrounds = showInvisibleGrounds
   window.zoom = zoom

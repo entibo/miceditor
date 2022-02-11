@@ -15,7 +15,7 @@
 
 
   import { _ } from "state/locale"
-  import { showGameGUI, showMapBorder, showInvisibleGrounds, showMechanics, highQuality, grid } from "state/user"
+  import { showGameGUI, showMapBorder, showDeathBorder, showInvisibleGrounds, showMechanics, highQuality, grid } from "state/user"
   import { setSmallLayout, setLargeLayout } from "state/layout"
 
   function onSetWidth(v) {
@@ -46,6 +46,11 @@
   <label>
     <span>{$_("show-map-border")}</span>
     <Checkbox bind:checked={$showMapBorder}  />
+  </label>
+
+  <label>
+    <span>{$_("show-map-border")} ({$_("death")})</span>
+    <Checkbox bind:checked={$showDeathBorder}  />
   </label>
 
   <label>

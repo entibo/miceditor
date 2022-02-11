@@ -8,6 +8,7 @@ import * as Editor from "data/editor"
 
 export const showGameGUI = persistentWritable("showGameGUI", true)
 export const showMapBorder = persistentWritable("showMapBorder", true)
+export const showDeathBorder = persistentWritable("showDeathBorder", true)
 export const showInvisibleGrounds = persistentWritable("showInvisibleGrounds", true)
 export const showMechanics = persistentWritable("showMechanics", true)
 export const highQuality = persistentWritable("highQuality", true)
@@ -73,6 +74,6 @@ export const colorPalette = persistentWritable("colorPalette", [
 ])
 
 
-export const currentVersion = "2.2.2"
+export const currentVersion = "2.2.3"
 export const previousVersion = localStorage.getItem("version")
 localStorage.setItem("version", currentVersion)

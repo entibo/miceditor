@@ -25,6 +25,7 @@
     grid,
     showGameGUI,
     showMapBorder,
+    showDeathBorder,
     showInvisibleGrounds,
     zoom,
   } from "state/user"
@@ -187,6 +188,12 @@
       </g>
       {/if}
       
+      {#if $showDeathBorder}
+      <rect x="-400" y="-600" 
+            width={$mapSettings.width+800} height={$mapSettings.height+610}
+            class="deathBorder"
+      />
+      {/if}
       {#if $showMapBorder}
       <rect x="0" y="0" 
             width={$mapSettings.width} height={$mapSettings.height}
@@ -235,6 +242,11 @@
 
 <style lang="text/postcss">
 
+  .deathBorder {
+    fill: none;
+    stroke: #ff1818ab;
+    stroke-width: 1px;
+  }
   .mapBorder {
     fill: none;
     stroke: #00c4ffab;

@@ -40,12 +40,12 @@
   <div class="flex justify-center">
     <label>
       <span class="incompressible w-6">L</span>
-      <TextInput int min={800} sliderMax={maxWidth} sub="max: {maxWidth}" bind:value={$mapSettings.width} />
+      <TextInput int sliderMin={800} sliderMax={maxWidth} sub="max: {maxWidth}" bind:value={$mapSettings.width} />
     </label>
   <div class="w-2"></div>
     <label>
       <span class="incompressible w-6">H</span>
-      <TextInput int min={400} sliderMax={maxHeight} sub="max: {maxHeight}" bind:value={$mapSettings.height} />
+      <TextInput int sliderMin={400} sliderMax={maxHeight} sub="max: {maxHeight}" bind:value={$mapSettings.height} />
     </label>
   </div>
 
