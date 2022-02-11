@@ -143,7 +143,7 @@ export const defaults = <T extends Type> (type: T) =>
         :
         type === "JP" ?
           { type,
-            axis: { x: -1, y: 0 },
+            axis: { x: 0, y: 0 },
             min: -Infinity,
             max: +Infinity,
             power: 0,
