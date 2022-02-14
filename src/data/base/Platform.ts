@@ -27,10 +27,10 @@ export enum Type {
   Lava =       3,      Circle =     13,
   Chocolate =  4,      Invisible =  14,
   Earth =      5,      Cobweb =     15,
-  Grass =      6,      Grass2 =     17,
-  Sand =       7,      Grass3 =     18,
-  Cloud =      8,      Acid =       19,
-  Water =      9,
+  Grass =      6,      Wood2 =      16,
+  Sand =       7,      Grass2 =     17,
+  Cloud =      8,      Grass3 =     18,
+  Water =      9,      Acid =       19,
 }
 
 export const typeNames = [
@@ -41,7 +41,7 @@ export const typeNames = [
     "stone", "snow", 
     "rectangle", "circle",
     "invisible", "cobweb",
-    "wood", "grass2", "grass3",
+    "wood2", "grass2", "grass3",
     "acid",
   ]
 
@@ -83,7 +83,7 @@ export interface Rotatable {
 
 export type Platform
 
-  = { type: Type.Wood | Type.Ice | Type.Trampoline | Type.Lava |
+  = { type: Type.Wood | Type.Wood2 | Type.Ice | Type.Trampoline | Type.Lava |
             Type.Chocolate | Type.Earth | Type.Grass | Type.Grass2 | Type.Grass3 | Type.Acid | Type.Sand |
             Type.Cloud | Type.Stone | Type.Snow | Type.Invisible }
     & Base & Rectangle & Rotatable & NonStatic
@@ -320,7 +320,7 @@ export function encode(data: Platform): Node {
 export function readType(str: string): M.Maybe<Type> {
   return M.andThen(
     util.readInt(str),
-    x => x >= 0 && x <= 19 && x != 16 ? x : M.None
+    x => x >= 0 && x <= 19 ? x : M.None
   )
 }
 

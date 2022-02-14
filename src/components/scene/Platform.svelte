@@ -135,7 +135,7 @@
             fill="#{$obj.color}"
             class="object-outline"
           />
-        {:else if ["wood", "ice", "trampoline", "chocolate", "cloud"].includes(typeName)}
+        {:else if ["wood", "wood2", "ice", "trampoline", "chocolate", "cloud"].includes(typeName)}
           {#if $highQuality}
             <image
               x={-width/2} y={-height/2}
