@@ -5,7 +5,7 @@ import { persistentWritable } from "state/util"
 import { storeGet } from "common"
 
 // const botUrl = "ws://localhost:9000"
-const botUrl = "ws://map-loader-bot.herokuapp.com"
+const botUrl = "wss://map-loader-bot.herokuapp.com"
 let ws: WebSocket | null = null
 
 export const botStatus = store({
