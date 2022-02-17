@@ -6,6 +6,8 @@ import { persistentWritable } from "state/util"
 
 import * as Editor from "data/editor"
 
+import "state/bot"
+
 export const showGameGUI = persistentWritable("showGameGUI", true)
 export const showMapBorder = persistentWritable("showMapBorder", true)
 export const showDeathBorder = persistentWritable("showDeathBorder", true)
@@ -74,6 +76,6 @@ export const colorPalette = persistentWritable("colorPalette", [
 ])
 
 
-export const currentVersion = "2.2.4"
+export const currentVersion = "2.3.0"
 export const previousVersion = localStorage.getItem("version")
 localStorage.setItem("version", currentVersion)

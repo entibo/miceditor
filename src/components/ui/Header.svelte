@@ -15,6 +15,7 @@
   import { faQuestion } from "@fortawesome/free-solid-svg-icons/faQuestion"
   import { faTrashAlt } from "@fortawesome/free-solid-svg-icons/faTrashAlt"
   import { faCamera } from "@fortawesome/free-solid-svg-icons/faCamera"
+  import { faRobot } from "@fortawesome/free-solid-svg-icons/faRobot"
 
   import { debounce } from "common"
 
@@ -22,6 +23,7 @@
   import Button from "components/common/Button.svelte"
   import Slider from "components/common/Slider.svelte"
   import Tooltip from "components/common/Tooltip.svelte"
+  import BotButton from "components/ui/BotButton.svelte"
   import UserSettingsMenu from "components/ui/menus/UserSettingsMenu.svelte"
   import XmlEditor from "components/ui/XmlEditor.svelte"
   import HelpMenu from "components/ui/menus/HelpMenu.svelte"
@@ -68,8 +70,6 @@
       selectMenu("help")
     }
   }
-
-  
 
 </script>
 
@@ -186,6 +186,10 @@
         </div>
       </Button>
     </Tooltip>
+
+    <div class="mr-4"></div>
+
+    <BotButton/>
   </div>
 
 

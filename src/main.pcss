@@ -1,4 +1,4 @@
-@custom-selector :--links a:link,a:visited,a:hover,a:focus,a:active;
+@custom-selector :--links a:link, a:visited, a:hover, a:focus, a:active;
 @custom-selector :--headings h1, h2, h3, h4, h5, h6;
 
 @tailwind base;
@@ -23,41 +23,40 @@
   opacity: 0.95;
 }
 
-
-
-*,*:before,*:after {
-    box-sizing: border-box;
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
 }
 
-html, body {
-    min-height: 100%;
-    height: 100%;
-    margin: 0;
-    user-select: none;
+html,
+body {
+  min-height: 100%;
+  height: 100%;
+  margin: 0;
+  user-select: none;
 }
 
 body {
-    @apply font-sans;
-    font-size: 1em;
-    line-height: 1.5;
-    overflow: hidden;
+  @apply font-sans;
+  font-size: 1em;
+  line-height: 1.5;
+  overflow: hidden;
 }
 
 :--links {
-
 }
 
 :--headings {
-    margin: .75rem 0;
+  margin: 0.75rem 0;
 }
 
-
-img, image {
-    user-select: none;
-    -webkit-user-drag: none;
-    user-drag: none;
+img,
+image {
+  user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
 }
-
 
 ::-webkit-scrollbar {
   @apply w-2 h-2;
@@ -67,10 +66,10 @@ img, image {
 }
 ::-webkit-scrollbar-thumb {
   @apply rounded-md;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.6);
+  background: rgba(255, 255, 255, 0.6);
 }
 ::-webkit-scrollbar-button {
   @apply hidden;
@@ -80,58 +79,57 @@ img, image {
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 *:hover {
-  scrollbar-color: rgba(255,255,255,0.6) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.6) transparent;
 }
-
 
 .material-input {
-    position: relative;
-    @apply bg-gray-900;
+  position: relative;
+  @apply bg-gray-900;
 }
 .material-input:hover {
-    @apply bg-gray-900;
+  @apply bg-gray-900;
 }
 .material-input.disabled {
-    opacity: 0.66;
-    /* pointer-events: none; */
+  opacity: 0.66;
+  /* pointer-events: none; */
 }
 .material-input:focus-within:before {
-    width: 100%;
+  width: 100%;
 }
 .material-input:before {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    width: 0%;
-    height: 2px;
-    left: 50%;
-    transform: translateX(-50%);
-    transition: width 300ms cubic-bezier(.25,.8,.5,1), all 150ms;
-    @apply bg-blue-400;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: width 300ms cubic-bezier(0.25, 0.8, 0.5, 1), all 150ms;
+  @apply bg-blue-400;
 }
 .material-input.invalid:before {
-    @apply bg-red-400;
+  @apply bg-red-400;
 }
-.material-input select, .material-input input {
-    outline: none;
-    @apply w-full h-full px-2;
-    min-height: 1.5rem;
-    @apply text-sm;
-    @apply bg-gray-900 text-gray-100;
+.material-input select,
+.material-input input {
+  outline: none;
+  @apply w-full h-full px-2;
+  min-height: 1.5rem;
+  @apply text-sm;
+  @apply bg-gray-900 text-gray-100;
 }
-.material-input:hover select, .material-input:hover input {
-    @apply bg-gray-900 text-white;
+.material-input:hover select,
+.material-input:hover input {
+  @apply bg-gray-900 text-white;
 }
 .material-input select {
-
 }
 .material-input input {
   @apply appearance-none;
 }
-
 
 .rtl-input {
   direction: rtl;
@@ -139,7 +137,6 @@ img, image {
 .rtl-input:focus-within {
   direction: initial;
 }
-
 
 .target {
   outline: dashed 2px white;
@@ -193,7 +190,7 @@ img, image {
   overflow: hidden;
 }
 .panel .tab {
-  border: 1px solid rgba(0,0,0,0.15);
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 .tab.active {
   @apply text-gray-100 font-medium;
@@ -205,7 +202,6 @@ img, image {
   @apply bg-gray-700b rounded-sm shadow-md text-gray-200;
   @apply p-2 flex-grow overflow-auto;
 }
-
 
 .dim-40 {
   width: 40px;
@@ -223,11 +219,11 @@ img, image {
   outline-width: 2px;
   outline-offset: -1px;
   outline-style: dashed;
-  outline-color: rgba(255,255,255,1);
+  outline-color: rgba(255, 255, 255, 1);
   z-index: 10;
 }
 .tile:hover {
-  filter: brightness(1.15) drop-shadow(0 3px 5px rgba(0,0,0,.2));
+  filter: brightness(1.15) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2));
   /* transform: translateY(-2px) scale(1.5); */
 }
 .tile.disabled {
@@ -238,14 +234,12 @@ img, image {
   outline-offset: -1px;
 }
 
-
-
 .form label {
   @apply flex items-center justify-between;
   @apply cursor-pointer;
   min-height: 1.5rem;
   background: rgba(0, 7, 20, 0.26);
-  border: 1px solid rgba(0, 10, 26, 0.20);
+  border: 1px solid rgba(0, 10, 26, 0.2);
   @apply rounded-sm;
   margin-top: -1px;
   margin-bottom: -1px;
@@ -267,7 +261,8 @@ img, image {
 .form label:hover > span {
   @apply text-gray-100;
 }
-.form label:hover > span, .form label > span.incompressible {
+.form label:hover > span,
+.form label > span.incompressible {
   white-space: normal;
   text-overflow: initial;
   overflow: initial;
@@ -283,18 +278,22 @@ img, image {
   margin-left: 1px;
 }
 
-.form span, .form .icon-btn, .form .checkbox {
+.form span,
+.form .icon-btn,
+.form .checkbox {
   @apply px-2;
 }
-.form.dense span, .form.dense .icon-btn, .form.dense .checkbox {
+.form.dense span,
+.form.dense .icon-btn,
+.form.dense .checkbox {
   @apply px-1;
 }
 
-.form div.disabled, .form label.disabled {
+.form div.disabled,
+.form label.disabled {
   opacity: 0.42;
   pointer-events: none;
 }
-
 
 .icon-btn {
   @apply text-xs text-gray-400 cursor-pointer;
@@ -307,7 +306,6 @@ img, image {
   opacity: 0.4;
 }
 
-
 .dashed-line {
   fill: none;
   stroke: white;
@@ -318,7 +316,8 @@ img, image {
 .dashed-line:hover {
   opacity: 0.9;
 }
-.active .dashed-line, .active.dashed-line {
+.active .dashed-line,
+.active.dashed-line {
   opacity: 0.95;
   animation: dash-animation 2s linear infinite;
 }
@@ -331,36 +330,35 @@ img, image {
   }
 }
 
-
 .object-outline {
   transition: outline-color 50ms;
   outline-width: 2px;
   outline-offset: -1px;
   outline-style: dashed;
-  outline-color: rgba(255,255,255,0.0);
+  outline-color: rgba(255, 255, 255, 0);
 }
 .selectable:hover .object-outline {
-  outline-color: rgba(255,255,255,0.5);
+  outline-color: rgba(255, 255, 255, 0.5);
 }
 .selectable.selected .object-outline {
-  outline-color: rgba(255,255,255,0.95);
+  outline-color: rgba(255, 255, 255, 0.95);
 }
 
 .object-outline-stroke {
   transition: stroke 50ms;
   stroke-width: 2;
   stroke-dasharray: 5;
-  stroke: rgba(255,255,255,0.0);
+  stroke: rgba(255, 255, 255, 0);
 }
 .selectable:hover .object-outline-stroke {
-  stroke: rgba(255,255,255,0.5);
+  stroke: rgba(255, 255, 255, 0.5);
 }
 .selectable.selected .object-outline-stroke {
-  stroke: rgba(255,255,255,0.95);
+  stroke: rgba(255, 255, 255, 0.95);
 }
 
-
-rect, circle {
+rect,
+circle {
   transition: fill 50ms, stroke 50ms;
 }
 
@@ -370,20 +368,29 @@ text {
   text-anchor: middle;
 }
 
-
-
 .cursor-crosshair {
   cursor: crosshair;
 }
-
-
-
-
 
 .tooltip-inner {
   @apply border shadow-md rounded-sm;
   @apply py-1 px-2;
   @apply text-gray-100 text-xs;
-  background: rgba(0,0,0,0.8);
-  border-color: rgba(0,0,0,1.0);
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(0, 0, 0, 1);
+}
+
+.spinner {
+  animation-name: spin;
+  animation-duration: 3000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
