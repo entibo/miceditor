@@ -159,7 +159,7 @@
   <g class="pointer-events-none"
     stroke="white" stroke-width="2" stroke-dasharray="6"
   >
-    {#if $mapSettings.miceSpawn.axis === "x"}
+    {#if $mapSettings.miceSpawn.axis === "y"}
       <line 
         x1={0} y1={y}
         x2={$mapSettings.width} y2={y}

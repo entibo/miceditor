@@ -393,8 +393,8 @@ function decodeMouseSpawns(miceSpawn: Editor.MapSettings.MapSettings["miceSpawn"
   }
   else if(miceSpawn.type === "random") {
     let [x,y] = miceSpawn.axis === "x"
-      ? [-30, miceSpawn.position]
-      : [miceSpawn.position, -30]
+    ? [miceSpawn.position, -30]
+    : [-30, miceSpawn.position]
     let mouseSpawn = Editor.Decoration.make(Editor.Decoration.defaults("DS"))
     mouseSpawn.x = x
     mouseSpawn.y = y
@@ -424,7 +424,7 @@ function encodeMouseSpawns(miceSpawn: Editor.MapSettings.MapSettings["miceSpawn"
   let {x,y} = spawn ? spawn : { x: 400, y: 200 }
 
   miceSpawn.position = 
-    miceSpawn.axis === "x" ? y : x
+    miceSpawn.axis === "x" ? x : y
 
   return rest
 }
