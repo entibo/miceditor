@@ -83,11 +83,13 @@
     </Tooltip>
   </div>
   {#if panelOpen}
-    <div class="lower-panel p-2 xl:p-4 max-w-sm" transition:slide={{ duration: 100 }}>
+    <div
+      class="lower-panel p-2 xl:p-4 max-w-sm"
+      transition:slide={{ duration: 100 }}
+    >
       <div class="form tabContent">
         <div class="explanation text-xs text-gray-400 select-text">
-          {$_("bot-explanation")} <br />
-          {$_("bot-explanation-2")}
+          {$_("bot-explanation")}
         </div>
 
         <div class="mb-2" />
@@ -161,9 +163,9 @@
                 <TextInput bind:value={$botConfig.room} />
               </label>
             </div>
-            
+
             <div class="mb-2" />
-            
+
             <div class="flex">
               <div class="flex items-center">
                 <div
@@ -181,6 +183,11 @@
               </Button>
             </div>
           {:else if $botConfig.tab === "tribehouse"}
+            <div class="explanation text-xs text-gray-400 select-text">
+              {$_("bot-explanation-2")}
+              <img src="https://i.imgur.com/CNlOrqv.png" alt="" />
+            </div>
+            <div class="mb-2" />
             <div class="validation-wrapper">
               <div class="validation-icon">
                 {#if validName}
@@ -201,9 +208,7 @@
                 />
               </label>
             </div>
-
             <div class="mb-2" />
-
             <div class="validation-wrapper">
               <div class="validation-icon">
                 {#if $botStatus.isModuleLoaded}
@@ -237,9 +242,7 @@
                 </div>
               </div>
             </div>
-
             <div class="mb-2" />
-
             <div class="validation-wrapper">
               <div class="validation-icon">
                 {#if $botStatus.hasTribehouseAccess}
