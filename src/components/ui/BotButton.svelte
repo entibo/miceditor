@@ -16,10 +16,12 @@
   import {
     botConfig,
     botInviteCommand,
+    botRoomCommand,
     botLuaModule,
     botStatus,
     connectToBot,
     isValidName,
+    isWarning,
     sendMap,
     testBot,
   } from "state/bot"
@@ -53,9 +55,7 @@
             class="icon text-lg {$botStatus.connectionError
               ? 'text-red-500'
               : $botStatus.connected
-              ? $botStatus.isModuleLoaded &&
-                $botStatus.hasTribehouseAccess &&
-                $botStatus.isBotOnline
+              ? $isWarning
                 ? 'text-green-500'
                 : 'text-yellow-500'
               : ''}"
@@ -66,25 +66,24 @@
         </div>
       </Button>
     </Tooltip>
-    {#if $botStatus.connected || true}
-      <Tooltip inline bottom title={$_("load-map-bot")}>
-        <Button
-          class="text-sm"
-          on:click={sendButton}
-          disabled={!$botStatus.connected}
-        >
-          <div class="flex justify-center items-center">
-            <span class="icon text-sm" class:active={sendIconActive}>
-              <Icon icon={faPaperPlane} />
-            </span>
-            <span class="ml-2 hidden xl:inline">{$_("button-load")}</span>
-          </div>
-        </Button>
-      </Tooltip>
-    {/if}
+
+    <Tooltip inline bottom title={$_("load-map-bot")}>
+      <Button
+        class="text-sm"
+        on:click={sendButton}
+        disabled={!$botStatus.connected}
+      >
+        <div class="flex justify-center items-center">
+          <span class="icon text-sm" class:active={sendIconActive}>
+            <Icon icon={faPaperPlane} />
+          </span>
+          <span class="ml-2 hidden xl:inline">{$_("button-load")}</span>
+        </div>
+      </Button>
+    </Tooltip>
   </div>
   {#if panelOpen}
-    <div class="lower-panel p-2 xl:p-4" transition:slide={{ duration: 100 }}>
+    <div class="lower-panel p-2 xl:p-4 max-w-sm" transition:slide={{ duration: 100 }}>
       <div class="form tabContent">
         <div class="explanation text-xs text-gray-400 select-text">
           {$_("bot-explanation")} <br />
@@ -117,11 +116,9 @@
             <Checkbox bind:checked={$botConfig.autoConnect} />
           </label>
         </div>
-
         {#if $botStatus.connected}
           <div transition:fly={{ duration: 80, y: -50 }}>
-            <div class="mb-4" />
-            <div class="validation-wrapper">
+            <div class="validation-wrapper items-center ml-2">
               <div class="validation-icon">
                 {#if $botStatus.isBotOnline}
                   <Icon icon={faCheck} class="text-green-500 text-sm" />
@@ -132,13 +129,58 @@
                   />
                 {/if}
               </div>
-              <label class="w-full">
+              <div class="w-full text-xs text-gray-400 mt-1">
                 <span>{$_("bot-online")}</span>
+              </div>
+            </div>
+          </div>
+        {/if}
+      </div>
+      <div class="group flex flex-col mt-2">
+        <div class="tabList">
+          <div
+            class="tab cursor-pointer"
+            class:active={$botConfig.tab === "room"}
+            on:click={() => ($botConfig.tab = "room")}
+          >
+            {$_("module-room")}
+          </div>
+          <div
+            class="tab cursor-pointer"
+            class:active={$botConfig.tab === "tribehouse"}
+            on:click={() => ($botConfig.tab = "tribehouse")}
+          >
+            {$_("tribehouse")}
+          </div>
+        </div>
+        <div class="form tabContent">
+          {#if $botConfig.tab === "room"}
+            <div class="validation-wrapper">
+              <label class="w-full">
+                <span>{$_("room-name")}</span>
+                <TextInput bind:value={$botConfig.room} />
               </label>
             </div>
-
+            
             <div class="mb-2" />
-
+            
+            <div class="flex">
+              <div class="flex items-center">
+                <div
+                  class="material-input text-xs p-1 h-6 overflow-hidden select-all w-64"
+                >
+                  <pre><code>{$botRoomCommand}</code></pre>
+                </div>
+              </div>
+              <Button on:click={() => clipboardCopy($botRoomCommand)}>
+                <div class="flex justify-center items-center">
+                  <span class="icon">
+                    <Icon icon={faCopy} />
+                  </span>
+                </div>
+              </Button>
+            </div>
+          {:else if $botConfig.tab === "tribehouse"}
             <div class="validation-wrapper">
               <div class="validation-icon">
                 {#if validName}
@@ -153,7 +195,6 @@
               <label class="w-full">
                 <span>{$_("username")}</span>
                 <TextInput
-                  invalid={true}
                   placeholder="Souris#1234"
                   value={$botConfig.name}
                   set={(value) => ($botConfig.name = value)}
@@ -181,7 +222,7 @@
                 <div class="flex">
                   <div class="flex items-center">
                     <div
-                      class="material-input text-xs p-1 h-6 overflow-hidden select-all w-56"
+                      class="material-input text-xs p-1 h-6 overflow-hidden select-all w-64"
                     >
                       <pre><code>{botLuaModule}</code></pre>
                     </div>
@@ -217,7 +258,7 @@
                 <div class="flex">
                   <div class="flex items-center">
                     <div
-                      class="material-input text-xs p-1 h-6 overflow-hidden select-all w-56"
+                      class="material-input text-xs p-1 h-6 overflow-hidden select-all w-64"
                     >
                       <pre><code>{botInviteCommand}</code></pre>
                     </div>
@@ -236,8 +277,8 @@
             <Button class="text-sm" on:click={testBot}
               >{$_("button-check")}</Button
             >
-          </div>
-        {/if}
+          {/if}
+        </div>
       </div>
     </div>
   {/if}
@@ -245,7 +286,7 @@
 
 <style lang="text/postcss">
   .explanation {
-    @apply text-sm max-w-xs whitespace-normal;
+    @apply text-sm whitespace-normal;
   }
   .validation-wrapper {
     @apply flex;
