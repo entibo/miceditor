@@ -208,6 +208,8 @@ function eventNewPlayer(name)
         initPlayerData(name)
         bindMouseAndKeyboard(name)
         tfm.exec.respawnPlayer(name)
+        tfm.exec.chatMessage("<VP>Type <B>!help</B> to see commands and powers!", name)
+        tfm.exec.chatMessage("<T>Feedback: <B>https://atelier801.com/topic?f=6&t=884238</B>", name)
     end
 end
 
@@ -219,6 +221,8 @@ function eventNewGame()
 end
 
 function eventPlayerDied(name) tfm.exec.respawnPlayer(name) end
+
+function eventPlayerWon(name) tfm.exec.respawnPlayer(name) end
 
 function eventPlayerRespawn(name)
     local data = playerData[name]
@@ -239,6 +243,24 @@ end
 function eventChatCommand(name, cmd)
     if cmd == "restart" then
         if lastXML then tfm.exec.newGame(lastXML) end
+    elseif cmd == "help" then
+        tfm.exec.chatMessage( --
+        "<VP>Powers:\n" .. --
+        "<CEP>" .. --
+        "\t<B>M</B> - mort\n" .. --
+        "\t<B>SHIFT</B> - speed\n" .. --
+        "\t<B>SPACE</B> - fly\n" .. --
+        "\t<B>CLICK</B> - teleport\n" .. --
+            "\t<B>DOUBLE CLICK</B> - set spawnpoint", name)
+        tfm.exec.chatMessage( --
+        "<VP>Commands:\n" .. --
+        "<CEP>" .. --
+        "\t!shaman <yes/no>\n" .. --
+        "\t!flip <yes/no>\n" .. --
+        "\t!skills <yes/no>\n" .. --
+        "\t!powers <yes/no>\n" .. --
+        "\t!np <@code>\n" .. --
+        "\t!restart", name)
     elseif cmd:sub(1, 6) == "shaman" then
         local arg = cmd:sub(8):lower()
         if arg == "" then
@@ -336,6 +358,7 @@ system.disableChatCommandDisplay("shaman")
 system.disableChatCommandDisplay("flip")
 system.disableChatCommandDisplay("skills")
 system.disableChatCommandDisplay("powers")
+system.disableChatCommandDisplay("help")
 system.disableChatCommandDisplay("You")
 
 for name, _ in pairs(tfm.get.room.playerList) do eventNewPlayer(name) end
@@ -348,6 +371,7 @@ tfm.exec.disableAutoShaman(true)
 tfm.exec.newGame(
     [[<C><P DS="y;385"/><Z><S><S T="12" X="400" Y="497" L="800" H="200" P="0,0,0.3,0.2,0,0,0,0" o="324650" m=""/></S><D/><O/><L/></Z></C>]])
 tfm.exec.disableAutoShaman(false)
+
 
 -- Feel free to customize this module
 -- This is the minimum code required to make the bot work
