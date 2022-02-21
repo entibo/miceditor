@@ -7,6 +7,7 @@
   import Slider from "./Slider.svelte"
   import ShamanObjectsMenu from "components/ui/menus/ShamanObjectsMenu.svelte"
   import ShamanObjectVariantsMenu from "components/ui/menus/ShamanObjectVariantsMenu.svelte"
+  import ShamanToolsMenu from "components/ui/menus/ShamanToolsMenu.svelte"
 
   import * as M from "maybe/Maybe"
   import * as util from "data/base/util"
@@ -44,6 +45,7 @@
 
   export let platform = false
   export let shamanObject = false
+  export let shamanTools = false
 
 
   export let preview = true
@@ -143,7 +145,7 @@
               : int ? Math.round(internalValue) 
               : internalValue
 
-  $: hasTooltip = color || int || float
+  $: hasTooltip = color || int || float || shamanTools
 
 </script>
 
@@ -202,6 +204,10 @@
         {:else}
           <ShamanObjectsMenu typeProp={internalValue} onSelect={type => setNewValue(type)}/>
         {/if}
+      </div>
+    {:else if shamanTools}
+      <div class="p-2 ">
+        <ShamanToolsMenu value={internalValue} onChange={value => setNewValue(value)}/>
       </div>
     {:else if (sliderMin !== null && sliderMax !== null)}
       <div class="p-2">

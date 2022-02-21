@@ -30,7 +30,7 @@
     </div>
   {/if}
 
-  {#each shamanObjectMetadata.entries().filter(([_,data]) => !data.isVariant) as [type, data]}
+  {#each shamanObjectMetadata.mapEntries().filter(([_,data]) => !data.isVariant) as [type, data]}
     <div class="tile" class:active={currentType !== null && currentType == type}
       on:click={() => onSelect(type)}
     >

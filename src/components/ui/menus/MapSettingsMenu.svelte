@@ -198,6 +198,16 @@
       <Checkbox checked={$mapSettings.shamanObjectsMass !== -1} set={v => $mapSettings.shamanObjectsMass = v ? 0 : -1} />
     </div>
   </label>
+  <label>
+    <span>{$_("shaman_objects")} (<code>shaman_tools</code>)</span>
+    <label class="icon-btn text-xs mr-1" on:click={() => $mapSettings.shamanTools = ""} >
+      <Icon icon={faUndo} />
+    </label>
+    <div class="flex">
+      <TextInput shamanTools bind:value={$mapSettings.shamanTools} class="w-16" />
+    </div>
+  </label>
+
 
   <div class="mb-4"></div>
 

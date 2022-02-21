@@ -72,7 +72,7 @@ export interface MapSettings extends Common.UnknownAttributes {
   dodue: boolean
   aie: boolean
 
-  shamanTools: number[]
+  shamanTools: string
 
   currentLayerId: number
   layers: Layer[]
@@ -167,7 +167,7 @@ export const defaults: () => MapSettings = () => ({
   dodue: false,
   aie: false,
 
-  shamanTools: [],
+  shamanTools: "",
 
   currentLayerId: 0,
   layers: [],
@@ -234,7 +234,7 @@ export function decode(xmlNode: XML.Node): MapSettings {
   setProp ("dodue")              (getAttr ("dodue") (() => true)) 
   setProp ("aie")                (getAttr ("aie")   (() => true))
   
-  setProp ("shamanTools") (getAttr ("shaman_tools") (readShamanTools))
+  setProp ("shamanTools") (getAttr ("shaman_tools") ())
 
   setProp ("MEDATA") (getAttr ("MEDATA") (readMedata))
 
@@ -287,7 +287,7 @@ export function encode(data: MapSettings): Node {
   setAttr ("dodue") (getProp ("dodue")              (util.omitOn(false), () => ""))
   setAttr ("aie")   (getProp ("aie")                (util.omitOn(false), () => ""))
 
-  setAttr ("shaman_tools") (getProp ("shamanTools") (writeShamanTools, util.omitOn("")))
+  setAttr ("shaman_tools") (getProp ("shamanTools") (util.omitOn("")))
 
   setAttr ("MEDATA") (getProp ("MEDATA") (writeMedata))
 
@@ -443,10 +443,10 @@ function writeDefilante(defilante: MapSettings["defilante"]): M.Maybe<string> {
   ].join(",")
 }
 
-function readShamanTools(str: string): number[] {
+export function readShamanTools(str: string): number[] {
   return str.split(",").map(util.readInt).filter(M.is)
 }
-function writeShamanTools(shamanTools: number[]): string {
+export function writeShamanTools(shamanTools: number[]): string {
   return shamanTools.join(",")
 }
 
