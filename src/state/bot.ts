@@ -161,7 +161,7 @@ export function testBot() {
 
 export const botName = "Entibot#5692"
 export const botInviteCommand = `/inv ${botName}`
-export const botLuaModule = `local botName = "${botName}"
+export const botLuaModule = String.raw`local botName = "${botName}"
 
 ------------- State -------------
 
