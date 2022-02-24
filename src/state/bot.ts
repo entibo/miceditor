@@ -162,34 +162,58 @@ export function testBot() {
 export const botName = "Entibot#5692"
 export const botInviteCommand = `/inv ${botName}`
 export const botLuaModule = String.raw`local botName = "${botName}"
+local isTribeHouse = string.byte(tfm.get.room.name, 2) == 3
+
+if isTribeHouse then
+    tfm.exec.chatMessage = function(msg, player)
+        if player then
+            print(string.format("<J>Sent to <BL>%s</BL>:</J>\n%s", player, msg))
+        else
+            print(string.format("<J>Sent to room:</J>\n%s", msg))
+        end
+    end
+end
 
 ------------- State -------------
 
-local lastXML = nil
-local loadMapWhenBotLeaves = false
 local playerData = {}
-local powersEnabled = true
-
-function initPlayerData(name)
-    playerData[name] = {
+local isFirstPlayer = true
+function initPlayerData(player)
+    playerData[player] = {
         spawnPoint = nil,
         lastClick = nil,
         cooldowns = {speed = 0},
-        facing = 0
+        facing = 0,
+        admin = false
     }
+    if isFirstPlayer or isTribeHouse then
+        playerData[player].admin = true
+        isFirstPlayer = false
+    end
+end
+
+local powersEnabled = true
+
+local lastXML = nil
+local loadMapWhenBotLeaves = false
+local lastNewGameValue = nil
+function newGame(value)
+    lastNewGameValue = value
+    tfm.exec.newGame(value)
 end
 
 ------------- Util -------------
 
 function playerCount()
     local count = 0
-    for _ in pairs(tfm.get.room.playerList) do count = count + 1 end
+    for _ in pairs(tfm.get.room.playerList) do
+        count = count + 1
+    end
     return count
 end
 
-function isShaman(name)
-    return tfm.get.room.playerList[name] and
-               tfm.get.room.playerList[name].isShaman
+function isShaman(player)
+    return tfm.get.room.playerList[player] and tfm.get.room.playerList[player].isShaman
 end
 
 function truthy(str)
@@ -199,178 +223,401 @@ function falsy(str)
     return str == "false" or str == "no" or str == "0" or str == "off"
 end
 
+------------- Text alignment -------------
+
+local letterWidth = {}
+local _letterWidth = {
+    {3, "il'"},
+    {4, " fj.,"},
+    {5, "rt!()-[]|/:;"},
+    {6, "c"},
+    {7, "ksvxyz?"},
+    {8, "0123456789abdeghnopqu$*_{}"},
+    {9, "+=&<>"},
+    {10, "#^"},
+    {11, "mw"},
+    {12, "@"},
+    {13, "%"}
+}
+for _, t in pairs(_letterWidth) do
+    n, s = t[1], t[2]
+    for i = 1, #s do
+        letterWidth[s:sub(i, i)] = n
+    end
+end
+function getWidth(str)
+    str = str:gsub("<[^>]*>", "") -- remove html tags
+    local w = 0
+    for i = 1, #str do
+        w = w + (letterWidth[str:sub(i, i)] or 7)
+    end
+    return w
+end
+function fillWidth(width, char)
+    char = char or " "
+    return string.rep(char, math.max(0, math.floor(width / letterWidth[char])))
+end
+function leftAligned(line, offset, str, char)
+    local width = offset - getWidth(line)
+    return line .. fillWidth(width, char) .. str
+end
+function rightAligned(line, str, offset, char)
+    offset = offset or 0
+    local width = 370 - offset - getWidth(line) - getWidth(str)
+    return line .. fillWidth(width, char) .. str
+end
+
+------------- Commands -------------
+
+local commands = {
+    {
+        alias = {"s", "shaman"},
+        descriptions = {
+            {args = "on/off", desc = "disableAutoShaman"},
+            {args = "player(s)", desc = "toggle shaman for this round"}
+        },
+        handler = function(player, arg)
+            if truthy(arg) then
+                tfm.exec.disableAutoShaman(false)
+                tfm.exec.chatMessage("<BL>Shaman will be enabled starting next map.", player)
+            elseif falsy(arg) then
+                tfm.exec.disableAutoShaman(true)
+                tfm.exec.chatMessage("<BL>Shaman will be disabled starting next map.", player)
+            else
+                if arg == "" then
+                    arg = player
+                end
+                for word in arg:gmatch("%S+") do
+                    tfm.exec.setShaman(word, not isShaman(word))
+                end
+            end
+        end
+    },
+    {
+        alias = {"skills"},
+        descriptions = {
+            {args = "on/off", desc = "disableAllShamanSkills"}
+        },
+        handler = function(player, arg)
+            if truthy(arg) then
+                tfm.exec.disableAllShamanSkills(false)
+                tfm.exec.chatMessage("<BL>Shaman skills will be enabled starting next map.", player)
+            elseif falsy(arg) then
+                tfm.exec.disableAllShamanSkills(true)
+                tfm.exec.chatMessage(
+                    "<BL>Shaman skills will be disabled starting next map.",
+                    player
+                )
+            else
+                return false
+            end
+        end
+    },
+    {
+        alias = {"flip", "mirror"},
+        descriptions = {
+            {args = "on/off", desc = "setAutoMapFlipMode"}
+        },
+        handler = function(player, arg)
+            if truthy(arg) then
+                tfm.exec.setAutoMapFlipMode(true)
+                tfm.exec.chatMessage("<BL>Map mirroring will be enabled starting next map.", player)
+            elseif falsy(arg) then
+                tfm.exec.setAutoMapFlipMode(false)
+                tfm.exec.chatMessage(
+                    "<BL>Map mirroring will be disabled starting next map.",
+                    player
+                )
+            else
+                return false
+            end
+        end
+    },
+    {
+        alias = {"p", "powers"},
+        descriptions = {
+            {args = "on/off", desc = "fly, teleport, etc"}
+        },
+        handler = function(player, arg)
+            if truthy(arg) then
+                powersEnabled = true
+                tfm.exec.chatMessage("<BL>Powers enabled.", player)
+            elseif falsy(arg) then
+                powersEnabled = false
+                tfm.exec.chatMessage("<BL>Powers disabled.", player)
+            else
+                return false
+            end
+        end
+    },
+    {
+        alias = {"np", "map"},
+        descriptions = {
+            {args = "@123", desc = "load a map"}
+        },
+        handler = function(player, arg)
+            newGame(arg)
+            tfm.exec.chatMessage("<BL>Loaded map: <J>" .. arg, player)
+        end
+    },
+    {
+        alias = {"a", "admin"},
+        descriptions = {
+            {args = "player(s)", desc = "allow player(s) to use commands"}
+        },
+        handler = function(player, arg)
+            if arg == "" then
+                return false
+            end
+            for word in arg:gmatch("%S+") do
+                local data = playerData[word]
+                if data then
+                    if data.admin then
+                        tfm.exec.chatMessage("<BL>" .. arg .. " is already admin.", player)
+                    else
+                        data.admin = true
+                        tfm.exec.chatMessage("<BL>" .. arg .. " is now admin.", player)
+                    end
+                end
+            end
+        end
+    },
+    {
+        alias = {"r", "restart", "reload"},
+        descriptions = {
+            {args = "", desc = "reload the current map"}
+        },
+        handler = function()
+            newGame(lastNewGameValue)
+        end
+    },
+    {
+        alias = {"h", "help"},
+        admin = false,
+        descriptions = {{args = "", desc = "show this menu"}},
+        handler = function(player)
+            printHelp(player)
+        end
+    }
+}
+
+for _, command in ipairs(commands) do
+    for _, alias in ipairs(command.alias) do
+        system.disableChatCommandDisplay(alias)
+    end
+end
+
+function eventChatCommand(player, str)
+    local playersIsAdmin = playerData[player].admin
+    local cmd, arg = str:match("^(%S+)%s*(.*)")
+    for _, command in pairs(commands) do
+        for _, alias in pairs(command.alias) do
+            if cmd == alias then
+                if not playersIsAdmin and command.admin ~= false then
+                    tfm.exec.chatMessage("<ROSE>You need to be admin to use this command.", player)
+                    return
+                end
+                if command.handler(player, arg) == false then
+                    tfm.exec.chatMessage("<ROSE>Invalid arguments.", player)
+                end
+                return
+            end
+        end
+    end
+    tfm.exec.chatMessage("<ROSE>Unknown command.", player)
+end
+
+------------- Powers -------------
+
+local powers = {
+    {key = "[m]", desc = "mort"},
+    {key = "[shift]", desc = "speed"},
+    {key = "[space]", desc = "fly"},
+    {key = "[click]", desc = "teleport"},
+    {key = "[double click]", desc = "set spawnpoint"}
+}
+
+function bindMouseAndKeyboard(player)
+    system.bindMouse(player, true)
+    tfm.exec.bindKeyboard(player, 16, true, true)
+    tfm.exec.bindKeyboard(player, 32, true, true)
+    tfm.exec.bindKeyboard(player, 77, true, true)
+    tfm.exec.bindKeyboard(player, 67, true, true)
+    tfm.exec.bindKeyboard(player, 0, true, true)
+    tfm.exec.bindKeyboard(player, 2, true, true)
+end
+
+function eventMouse(player, x, y)
+    if isShaman(player) or not powersEnabled then
+        return
+    end
+    local data = playerData[player]
+    local time = os.time()
+    if not data.lastClick then
+        data.lastClick = {time = 0}
+    end
+    if time - data.lastClick.time < 500 then
+        data.lastClick = {time = 0}
+        data.spawnPoint = {x = data.lastClick.x or x, y = data.lastClick.y or y}
+        tfm.exec.killPlayer(player)
+        return
+    end
+    data.lastClick = {time = time, x = x, y = y}
+    tfm.exec.movePlayer(player, x, y)
+end
+
+function eventKeyboard(player, keyCode)
+    local data = playerData[player]
+    local time = os.time()
+    if keyCode == 0 or keyCode == 2 then -- Left/right
+        data.facing = keyCode == 2
+    elseif keyCode == 16 then -- Shift
+        if isShaman(player) or not powersEnabled then
+            return
+        end
+        if time - data.cooldowns.speed < 1000 then
+            return
+        end
+        data.cooldowns.speed = time
+        tfm.exec.movePlayer(player, 0, 0, true, data.facing and 60 or -60, 0, true)
+    elseif keyCode == 32 then -- Spacebar
+        if isShaman(player) or not powersEnabled then
+            return
+        end
+        tfm.exec.movePlayer(player, 0, 0, true, 0, -50, false)
+    elseif keyCode == 77 then -- M
+        tfm.exec.killPlayer(player)
+    end
+end
+
+------------ Help Menu ------------
+
+function printHelp(player)
+    printPowers(player)
+    printCommands(player)
+end
+
+function printPowers(player)
+    local lines = {}
+    for _, o in ipairs(powers) do
+        local key, desc = o.key, o.desc
+        local line = "<CH>" .. key .. " <G>"
+        line = rightAligned(line, "</G> <BL>" .. desc, 0, ".")
+        table.insert(lines, line)
+    end
+    local message = "<VP>• Powers:\n" .. table.concat(lines, "\n")
+    tfm.exec.chatMessage(message, player)
+end
+
+function printCommands(player)
+    local lines = {}
+    for _, command in ipairs(commands) do
+        local alias = {}
+        for _, a in ipairs(command.alias) do
+            table.insert(alias, "!" .. a)
+        end
+        local start = "<CH>" .. table.concat(alias, "<G>,</G> ")
+        for i, o in ipairs(command.descriptions) do
+            local args, desc = o.args, o.desc
+            local line
+            if i == 1 then
+                line = start
+            else
+                line = fillWidth(getWidth(start))
+            end
+            if args ~= "" then
+                line = leftAligned(line, 80, "<BV> " .. args)
+            end
+            if desc ~= "" then
+                line = line .. " <G>"
+                line = rightAligned(line, "</G> <BL>" .. desc, 0, ".")
+            end
+            table.insert(lines, line)
+        end
+    end
+    local message = "<VP>• Commands:\n" .. table.concat(lines, "\n")
+    tfm.exec.chatMessage(message, player)
+end
+
 ------------- Events -------------
 
-function eventNewPlayer(name)
-    if name == botName then
+function eventNewPlayer(player)
+    if player == botName then
         ui.addPopup(5692, 2, "xml", botName)
+        initPlayerData(player)
     else
-        initPlayerData(name)
-        bindMouseAndKeyboard(name)
-        tfm.exec.respawnPlayer(name)
-        tfm.exec.chatMessage("<VP>Type <B>!help</B> to see commands and powers!", name)
-        tfm.exec.chatMessage("<T>Feedback: <B>https://atelier801.com/topic?f=6&t=884238</B>", name)
+        initPlayerData(player)
+        bindMouseAndKeyboard(player)
+        tfm.exec.respawnPlayer(player)
+        tfm.exec.chatMessage("<VP>• Type <B>!help</B> to see commands and powers!", player)
+        tfm.exec.chatMessage(
+            "<T>Feedback: <B>https://atelier801.com/topic?f=6&t=884238</B>",
+            player
+        )
     end
 end
 
 function eventNewGame()
-    for name, data in pairs(playerData) do
+    for _, data in pairs(playerData) do
         data.spawnPoint = nil
         data.lastClick = nil
     end
 end
 
-function eventPlayerDied(name) tfm.exec.respawnPlayer(name) end
+function eventPlayerDied(player)
+    tfm.exec.respawnPlayer(player)
+end
 
-function eventPlayerWon(name) tfm.exec.respawnPlayer(name) end
+function eventPlayerWon(player)
+    tfm.exec.respawnPlayer(player)
+end
 
-function eventPlayerRespawn(name)
-    local data = playerData[name]
-    if data.spawnPoint then
-        tfm.exec.movePlayer(name, data.spawnPoint.x, data.spawnPoint.y)
+function eventPlayerRespawn(player)
+    local data = playerData[player]
+    if data.spawnPoint and powersEnabled then
+        tfm.exec.movePlayer(player, data.spawnPoint.x, data.spawnPoint.y)
         return
     end
 end
 
-function eventPlayerLeft(name)
-    if loadMapWhenBotLeaves and name == botName then
+function eventPlayerLeft(player)
+    if loadMapWhenBotLeaves and player == botName then
         loadMapWhenBotLeaves = false
-        tfm.exec.newGame(lastXML)
+        newGame(lastXML)
     end
-    playerData[name] = nil
+    playerData[player] = nil
 end
 
-function eventChatCommand(name, cmd)
-    if cmd == "restart" then
-        if lastXML then tfm.exec.newGame(lastXML) end
-    elseif cmd == "help" then
-        tfm.exec.chatMessage( --
-        "<VP>Powers:\n" .. --
-        "<CEP>" .. --
-        "\t<B>M</B> - mort\n" .. --
-        "\t<B>SHIFT</B> - speed\n" .. --
-        "\t<B>SPACE</B> - fly\n" .. --
-        "\t<B>CLICK</B> - teleport\n" .. --
-            "\t<B>DOUBLE CLICK</B> - set spawnpoint", name)
-        tfm.exec.chatMessage( --
-        "<VP>Commands:\n" .. --
-        "<CEP>" .. --
-        "\t!shaman <yes/no>\n" .. --
-        "\t!flip <yes/no>\n" .. --
-        "\t!skills <yes/no>\n" .. --
-        "\t!powers <yes/no>\n" .. --
-        "\t!np <@code>\n" .. --
-        "\t!restart", name)
-    elseif cmd:sub(1, 6) == "shaman" then
-        local arg = cmd:sub(8):lower()
-        if arg == "" then
-            tfm.exec.setShaman(name)
-        elseif truthy(arg) then
-            tfm.exec.disableAutoShaman(false)
-        elseif falsy(arg) then
-            tfm.exec.disableAutoShaman(true)
-        else
-            tfm.exec.setShaman(arg)
-        end
-    elseif cmd:sub(1, 4) == "flip" then
-        local arg = cmd:sub(6):lower()
-        if truthy(arg) then
-            tfm.exec.setAutoMapFlipMode(true)
-        else
-            tfm.exec.setAutoMapFlipMode(nil)
-        end
-    elseif cmd:sub(1, 6) == "skills" then
-        local arg = cmd:sub(8):lower()
-        if truthy(arg) then
-            tfm.exec.disableAllShamanSkills(false)
-        else
-            tfm.exec.disableAllShamanSkills(true)
-        end
-    elseif cmd:sub(1, 6) == "powers" then
-        local arg = cmd:sub(8):lower()
-        powersEnabled = truthy(arg)
-    elseif cmd:sub(1, 2) == "np" then
-        local arg = cmd:sub(4)
-        tfm.exec.newGame(arg)
-    end
-end
-
-function bindMouseAndKeyboard(name)
-    system.bindMouse(name, true)
-    tfm.exec.bindKeyboard(name, 16, true, true)
-    tfm.exec.bindKeyboard(name, 32, true, true)
-    tfm.exec.bindKeyboard(name, 77, true, true)
-    tfm.exec.bindKeyboard(name, 67, true, true)
-    tfm.exec.bindKeyboard(name, 0, true, true)
-    tfm.exec.bindKeyboard(name, 2, true, true)
-end
-
-function eventMouse(name, x, y)
-    if isShaman(name) or not powersEnabled then return end
-    local data = playerData[name]
-    local time = os.time()
-    if not data.lastClick then data.lastClick = {time = 0} end
-    if time - data.lastClick.time < 500 then
-        data.lastClick = {time = 0}
-        data.spawnPoint = {x = data.lastClick.x or x, y = data.lastClick.y or y}
-        tfm.exec.killPlayer(name)
-        return
-    end
-    data.lastClick = {time = time, x = x, y = y}
-    tfm.exec.movePlayer(name, x, y)
-end
-
-function eventKeyboard(name, keyCode, down, x, y)
-    local data = playerData[name]
-    local time = os.time()
-    if keyCode == 0 or keyCode == 2 then -- Left/right
-        data.facing = keyCode == 2
-    elseif keyCode == 16 then -- Shift
-        if isShaman(name) or not powersEnabled then return end
-        if time - data.cooldowns.speed < 1000 then return end
-        data.cooldowns.speed = time
-        tfm.exec
-            .movePlayer(name, 0, 0, true, data.facing and 60 or -60, 0, true)
-    elseif keyCode == 32 then -- Spacebar
-        if isShaman(name) or not powersEnabled then return end
-        tfm.exec.movePlayer(name, 0, 0, true, 0, -50, false)
-    elseif keyCode == 77 then -- M
-        tfm.exec.killPlayer(name)
-    end
-end
-
-function eventPopupAnswer(id, name, str)
-    if id == 5692 and name == botName then
+-- This is how the bot loads xml into the module
+function eventPopupAnswer(id, player, str)
+    if id == 5692 and player == botName then
         lastXML = str
         if playerCount() == 2 then
             loadMapWhenBotLeaves = true
         else
-            tfm.exec.newGame(str)
+            newGame(str)
         end
     end
 end
 
 ------------- Main -------------
 
-system.disableChatCommandDisplay("np")
-system.disableChatCommandDisplay("restart")
-system.disableChatCommandDisplay("shaman")
-system.disableChatCommandDisplay("flip")
-system.disableChatCommandDisplay("skills")
-system.disableChatCommandDisplay("powers")
-system.disableChatCommandDisplay("help")
 system.disableChatCommandDisplay("You")
 
-for name, _ in pairs(tfm.get.room.playerList) do eventNewPlayer(name) end
+for player, _ in pairs(tfm.get.room.playerList) do
+    eventNewPlayer(player)
+end
 
 tfm.exec.disableAutoNewGame(true)
 tfm.exec.disableAutoTimeLeft(true)
 tfm.exec.disableAfkDeath(true)
 
 tfm.exec.disableAutoShaman(true)
-tfm.exec.newGame(
-    [[<C><P DS="y;385"/><Z><S><S T="12" X="400" Y="497" L="800" H="200" P="0,0,0.3,0.2,0,0,0,0" o="324650" m=""/></S><D/><O/><L/></Z></C>]])
+newGame(
+    [[<C><P DS="y;385"/><Z><S><S T="12" X="400" Y="497" L="800" H="200" P="0,0,0.3,0.2,0,0,0,0" o="324650" m=""/></S><D/><O/><L/></Z></C>]]
+)
 tfm.exec.disableAutoShaman(false)
+
 
 
 -- Feel free to customize this module
