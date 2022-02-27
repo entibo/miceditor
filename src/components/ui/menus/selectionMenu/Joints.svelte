@@ -18,6 +18,7 @@
   import Tooltip from "components/common/Tooltip.svelte"
   import Button from "components/common/Button.svelte"
   import Checkbox from "components/common/Checkbox.svelte"
+  import CustomProperties from "components/ui/menus/CustomProperties.svelte"
 
 
   import { _ } from "state/locale"
@@ -269,8 +270,9 @@
     </label>
   
   {/if}
+  
+  <div class="mb-4"></div>
 
-
-
+  <CustomProperties bind:props={props.unknownAttributes.value} />
 
 </div>

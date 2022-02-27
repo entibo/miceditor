@@ -34,6 +34,7 @@ type Descriptor<T> = {
 
 const data = store<Data>({
   PLATFORM: {
+    unknownAttributes: {},
     type: {
       autoSet: false,
       set: (type: number) => {
@@ -173,6 +174,7 @@ const data = store<Data>({
     },
   },
   DECORATION: {
+    unknownAttributes: {},
     index: {
       autoSet: false,
       set: (v: number) => {
@@ -247,6 +249,7 @@ const data = store<Data>({
     rh: {},
   },
   SHAMANOBJECT: {
+    unknownAttributes: {},
     type: {
       autoSet: false,
       set: (type: number) => {
@@ -290,6 +293,7 @@ const data = store<Data>({
     stop: {},
   },
   JOINT: {
+    unknownAttributes: {},
     index: {
       autoSet: false,
       set: (v: number) => {

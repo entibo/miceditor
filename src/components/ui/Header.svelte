@@ -65,17 +65,7 @@
     else currentMenu = which
   }
 
-  function onKeydown({key}) {
-    if(key.toLowerCase() === "h") {
-      selectMenu("help")
-    }
-  }
-
 </script>
-
-<svelte:window
-  on:keydown={onKeydown}
-/>
 
 <header class="relative flex justify-between items-center px-4 py-2 bg-gray-800 shadow-lg text-white z-50">
 
