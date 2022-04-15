@@ -18,8 +18,8 @@
       <stop offset="1.0" stop-color="#747474"/>
     </linearGradient>
     <g id="decoration89-shape1" transform="matrix(1.0, 0.0, 0.0, 1.0, 245.15, 140.15)">
-      <path d="M239.95 135.0 L239.95 -135.0 -240.05 -135.0 -240.05 135.0 239.95 135.0 M245.0 140.0 L-245.0 140.0 -245.0 -140.0 245.0 -140.0 245.0 140.0" fill="#2a1811" fill-rule="evenodd" stroke="none"/>
-      <path d="M245.0 140.0 L-245.0 140.0 -245.0 -140.0 245.0 -140.0 245.0 140.0 Z" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.30000000000000004"/>
+      <path d="M239.95 -135.0 L-240.05 -135.0 -240.05 135.0 239.95 135.0 239.95 -135.0 M245.0 -140.0 L245.0 140.0 -245.0 140.0 -245.0 -140.0 245.0 -140.0" fill="#2a1811" fill-rule="evenodd" stroke="none"/>
+      <path d="M245.0 -140.0 L245.0 140.0 -245.0 140.0 -245.0 -140.0 245.0 -140.0 Z" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.30000000000000004"/>
     </g>
   </defs>
 </svg>

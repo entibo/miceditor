@@ -83,7 +83,7 @@
       <stop offset="0.011764705882352941" stop-color="#8c4219"/>
       <stop offset="1.0" stop-color="#431613"/>
     </linearGradient>
-    <radialGradient cx="0" cy="0" fx="-1542.4" fy="0" gradientTransform="matrix(0.0572, 0.0153, -0.0247, 0.0923, -27.35, -73.45)" gradientUnits="userSpaceOnUse" id="decoration49-gradient13" r="819.2" spreadMethod="pad">
+    <radialGradient cx="0" cy="0" fx="-1548.8000000000002" fy="0" gradientTransform="matrix(0.0572, 0.0153, -0.0247, 0.0923, -27.35, -73.45)" gradientUnits="userSpaceOnUse" id="decoration49-gradient13" r="819.2" spreadMethod="pad">
       <stop offset="0.011764705882352941" stop-color="#9e591f"/>
       <stop offset="0.9568627450980393" stop-color="#431613"/>
     </radialGradient>

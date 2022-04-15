@@ -10,7 +10,7 @@
       <use height="4.6" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="35.4" xlink:href="#decoration127-shape0"/>
     </g>
     <g id="decoration127-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
-      <path d="M0.0 4.6 L0.0 0.0 35.4 0.0 35.4 4.6 0.0 4.6" fill="#738a7e" fill-opacity="0.0" fill-rule="evenodd" stroke="none"/>
+      <path d="M35.4 0.0 L35.4 4.6 0.0 4.6 0.0 0.0 35.4 0.0" fill="#738a7e" fill-opacity="0.0" fill-rule="evenodd" stroke="none"/>
     </g>
     <g id="decoration127-sprite1" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.15, 0.15)">
       <use height="36.4" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.15, -0.15)" width="28.4" xlink:href="#decoration127-shape1"/>
