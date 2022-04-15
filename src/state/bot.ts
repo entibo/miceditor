@@ -42,10 +42,10 @@ botConfig.subscribe(($botConfig) => {
   }
 })
 
-export const botRoomCommand = derived(
-  botConfig,
-  ($botConfig) => `/room *#bolodefchoco miceditor ${$botConfig.room}`
-)
+export const botRoomCommand = derived(botConfig, ($botConfig) => {
+  if ($botConfig.room.startsWith("@")) return `/room ${$botConfig.room}`
+  return `/room *#bolodefchoco miceditor ${$botConfig.room}`
+})
 
 export const isWarning = derived(
   [botConfig, botStatus],
