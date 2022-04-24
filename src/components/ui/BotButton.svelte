@@ -71,7 +71,6 @@
       <Button
         class="text-sm"
         on:click={sendButton}
-        disabled={!$botStatus.connected}
       >
         <div class="flex justify-center items-center">
           <span class="icon text-sm" class:active={sendIconActive}>

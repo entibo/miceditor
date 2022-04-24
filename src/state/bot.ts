@@ -34,7 +34,7 @@ botConfig.update(($botConfig) => {
   return $botConfig
 })
 botConfig.subscribe(($botConfig) => {
-  if ($botConfig.autoConnect) connectToBot()
+//   if ($botConfig.autoConnect) connectToBot()
   if ($botConfig.tab === "room") {
     sendRoom($botConfig.room)
   } else {
@@ -90,6 +90,11 @@ export function connectToBot() {
 
   let heartbeatInterval: any
 
+  let resolve: Function
+  const promise = new Promise((res) => {
+    resolve = res
+  })
+
   ws.addEventListener("open", (e) => {
     botStatus.update((o) => {
       o.connecting = false
@@ -107,6 +112,8 @@ export function connectToBot() {
         ws.send("")
       }
     }, 15000)
+
+    resolve()
   })
   ws.addEventListener("error", (e) => {
     console.log(e)
@@ -129,7 +136,7 @@ export function connectToBot() {
   })
   ws.addEventListener("message", (e) => {
     const str = e.data.toString()
-    // console.log("WebSocket message", e.data, str)
+    console.log("WebSocket message", e.data, str)
     if (str === "ok") {
       return
     } else if (str === "") {
@@ -141,6 +148,8 @@ export function connectToBot() {
       return o
     })
   })
+
+  return promise
 }
 
 export function sendName(name: string) {
@@ -151,7 +160,8 @@ export function sendRoom(room: string) {
   if (!botStatus.connected || !ws) return
   ws.send(JSON.stringify({ room }))
 }
-export function sendMap(xml: string) {
+export async function sendMap(xml: string) {
+  await connectToBot()
   if (!botStatus.connected || !ws) return
   ws.send(JSON.stringify({ xml }))
 }
