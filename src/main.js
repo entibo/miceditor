@@ -1,4 +1,6 @@
 import "./main.pcss"
+import "core-js/stable"
+import "regenerator-runtime/runtime"
 import App from "components/App.svelte"
 import MinimalApp from "components/MinimalApp.svelte"
 
