@@ -68,5 +68,8 @@
     "regenerator-runtime": "^0.13.9",
     "svelte-i18n": "^1.1.2-beta",
     "xml-beautifier": "^0.4.2"
+  },
+  "volta": {
+    "node": "16.15.1"
   }
 }
