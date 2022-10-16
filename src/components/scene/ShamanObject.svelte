@@ -5,7 +5,7 @@
   import * as Editor from "data/editor/index"
   import shamanObjectMetadata from "metadata/shamanObject/index"
 
-  import { parkourMode } from "state/mapExtra"
+  import { parkourMode, snatchMode } from "state/mapExtra"
   import { mapSettings } from "state/map"
   import { shamanObjects } from "state/sceneObjects"
 
@@ -30,6 +30,12 @@
   $: parkourMouseSpawn = $parkourMode && 
       readable(Editor.Decoration.make(Editor.Decoration.defaults("DS")))
 
+  $: snatchCheese = $snatchMode && 
+      readable(Editor.Decoration.make(Editor.Decoration.defaults("F")))
+
+  $: snatchHole = $snatchMode && 
+      readable(Editor.Decoration.make(Editor.Decoration.defaults("T")))
+
 </script>
 
 
@@ -40,6 +46,18 @@
   {#if $parkourMode && $obj.type == 22}
     <g class="pointer-events-none" transform="rotate({-rotation})">
       <Decoration obj={parkourMouseSpawn} {parkourCheckpointIndex}/>
+    </g>
+  {/if}
+
+  {#if $snatchMode && $obj.type == 22}
+    <g class="pointer-events-none" transform="rotate({-rotation})">
+      <Decoration obj={snatchCheese}/>
+    </g>
+  {/if}
+
+  {#if $snatchMode && ($obj.type == 14 || $obj.type == 12)}
+    <g class="pointer-events-none" transform="rotate({-rotation})">
+      <Decoration obj={snatchHole}/>
     </g>
   {/if}
 

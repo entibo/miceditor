@@ -28,6 +28,7 @@ export const gridSettings = persistentWritable("gridSettings", {
 })
 
 export const parkour = persistentWritable("parkour", false)
+export const snatch = persistentWritable("snatch", false)
 
 export const zoom = (() => {
   let {subscribe, set, update} = writable(1)

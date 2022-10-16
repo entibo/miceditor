@@ -7,7 +7,7 @@
   import ColorTextInput from "/components/common/ColorTextInput.svelte"
 
   import { 
-    highQuality, parkour, showGameGUI, showMapBorder, showInvisibleGrounds, gridSettings, _
+    highQuality, parkour, snatch, showGameGUI, showMapBorder, showInvisibleGrounds, gridSettings, _
   } from "/stores/stores.js"
 
 </script>
@@ -86,6 +86,7 @@
     <section>
       <label class="flex items-center">
         <input type="checkbox" bind:checked={$parkour}/>
+        <input type="checkbox" bind:checked={$snatch}/>
         <span class="text-sm gray-200 ml-2">{$_("show-parkour-checkpoints")}</span>
       </label>
     </section>
