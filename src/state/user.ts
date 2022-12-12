@@ -76,6 +76,6 @@ export const colorPalette = persistentWritable("colorPalette", [
 ])
 
 
-export const currentVersion = "2.4.0"
+export const currentVersion = "2.4.1"
 export const previousVersion = localStorage.getItem("version")
 localStorage.setItem("version", currentVersion)
