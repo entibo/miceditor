@@ -117,18 +117,6 @@
       </Button>
     </Tooltip>
 
-    <div class="mr-1"></div>
-
-    <Tooltip inline bottom title="Screenshot" >
-      <Button class="text-sm" on:click={selectMenu.bind(null, "screenshot")}>
-        <div class="flex justify-center items-center">
-          <span class="icon" class:active={currentMenu === "screenshot"}>
-            <Icon icon={faCamera}/> 
-          </span>
-        </div>
-      </Button>
-    </Tooltip>
-
   </div>
 
 
@@ -176,10 +164,6 @@
         </div>
       </Button>
     </Tooltip>
-
-    <div class="mr-4"></div>
-
-    <BotButton/>
   </div>
 
 
