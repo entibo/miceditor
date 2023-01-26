@@ -8,7 +8,7 @@ import * as Image from "./Image"
 const attributes = [
   "T",
   "X", "Y", "L", "H",
-  "P", "o", "c",
+  "P", "o", "c", "col",
   "N", "v", "m", "lua", "nosync", "i",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
@@ -66,6 +66,7 @@ export interface NonStatic {
   vanish: number
   miceCollision: boolean
   objectCollision: boolean
+  touchCollision: boolean
 }
 export interface Colored {
   color: string
@@ -129,6 +130,7 @@ const nonStaticDefaults: () => NonStatic = () => ({
   vanish: 0,
   miceCollision: true,
   objectCollision: true,
+  touchCollision: false,
 })
 const coloredDefaults: () => Colored = () => ({
   color: "324650"
@@ -260,6 +262,8 @@ export function decode(xmlNode: XML.Node): Platform {
     setProp ("objectCollision") (c.objectCollision)
   })
 
+  setProp ("touchCollision") (getAttr ("col") (() => true))
+
   setProp ("nosync")      (getAttr ("nosync") (() => true))
   setProp ("foreground")  (getAttr ("N") (() => true))
   setProp ("invisible")   (getAttr ("m") (() => true))
@@ -305,6 +309,8 @@ export function encode(data: Platform): Node {
     getProp ("miceCollision") (),
     getProp ("objectCollision") (),
   ))
+
+  setAttr ("col") (getProp ("touchCollision") (util.omitOn(false), () => ""))
 
   setAttr ("o")   (getProp ("color")      (util.omitOn("")))
   setAttr ("N")   (getProp ("foreground") (util.omitOn(false), () => ""))

@@ -346,6 +346,8 @@
     </div>
   {/if}
 
+  <div class="mb-4" />
+
   <div class:disabled={props.miceCollision.value === undefined}>
     <label>
       <span>{$_("mice-collision")}</span>
@@ -359,6 +361,13 @@
       <Checkbox
         checked={props.objectCollision.value}
         set={props.objectCollision.set}
+      />
+    </label>
+    <label>
+      <span>{$_("collision-when-touching")}</span>
+      <Checkbox
+        checked={props.touchCollision.value}
+        set={props.touchCollision.set}
       />
     </label>
   </div>

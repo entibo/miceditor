@@ -93,6 +93,7 @@ const data = store<Data>({
     vanish: {},
     miceCollision: {},
     objectCollision: {},
+    touchCollision: {},
     color: {},
     width: {},
     height: {},
