@@ -343,6 +343,25 @@
           />
         </div>
       </label>
+      <label>
+        <span>{$_("gravity-scale")}</span>
+        <div class="flex">
+          <TextInput
+            class="w-16"
+            float
+            sliderMin={-10}
+            sliderMax={+10}
+            value={props.gravityScale.value}
+            set={props.gravityScale.set}
+          />
+          <Checkbox
+            checked={props.gravityScale.value === null
+              ? null
+              : props.gravityScale.value !== 0}
+            set={(v) => props.gravityScale.set(v ? 1 : 0)}
+          />
+        </div>
+      </label>
     </div>
   {/if}
 

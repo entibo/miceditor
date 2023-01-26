@@ -8,7 +8,7 @@ import * as Image from "./Image"
 const attributes = [
   "T",
   "X", "Y", "L", "H",
-  "P", "o", "c", "col",
+  "P", "o", "c", "col", "grav",
   "N", "v", "m", "lua", "nosync", "i",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
@@ -61,6 +61,7 @@ export interface NonStatic {
   fixedRotation: boolean
   linearDamping: number
   angularDamping: number
+  gravityScale: number
 
   foreground: boolean
   vanish: number
@@ -125,6 +126,7 @@ const nonStaticDefaults: () => NonStatic = () => ({
   friction: 0.3,
   restitution: 0.2,
   fixedRotation: false,
+  gravityScale: 1,
 
   foreground: false,
   vanish: 0,
@@ -251,6 +253,8 @@ export function decode(xmlNode: XML.Node): Platform {
     setProp ("angularDamping")  (dynamicValues[7])
   })
 
+  setProp ("gravityScale") (getAttr ("grav") (s => M.withDefault (0) (util.readFloat(s))))
+
   setProp ("color")  (M.withDefault ("") (getAttr ("o") (readColor)))
   setProp ("vanish") (getAttr ("v") (util.readInt))
   setProp ("lua")    (getAttr ("lua") ())
@@ -303,6 +307,8 @@ export function encode(data: Platform): Node {
     getProp ("linearDamping")  (),         
     getProp ("angularDamping") (),           
   ]))
+
+  setAttr ("grav") (getProp ("gravityScale") (util.omitOn (1), util.writeFloat))
 
   setAttr ("c") (M.map(
     (m,o) => util.omitOn ("1") (writeCollision(m,o)),

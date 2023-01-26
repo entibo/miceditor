@@ -87,6 +87,9 @@ const data = store<Data>({
       defaultValue: obj => (Editor.Platform.defaults(obj.type) as any).restitution
     },
     fixedRotation: {},
+    gravityScale: {
+      defaultValue: () => 0,
+    },
     foreground: {
       sideEffect: () => sceneObjects.groups.platforms.invalidate()
     },
