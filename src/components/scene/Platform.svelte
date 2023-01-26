@@ -142,7 +142,6 @@
               width={width} height={height} 
               preserveAspectRatio="none" 
               href="dist/grounds/{ typeName }.svg"
-              on:mousedown|preventDefault
               class="object-outline"
             />
           {:else}
@@ -151,7 +150,6 @@
               width={width} height={height} 
               preserveAspectRatio="none" 
               href="dist/grounds/{ typeName }.png"
-              on:mousedown|preventDefault
               class="object-outline"
             />
           {/if}
@@ -163,17 +161,18 @@
             class="object-outline"
           />
         {:else}
-          <foreignObject
-            x={-width/2} y={-height/2}
-            width={width} height={height} 
-            class="object-outline"
-          >
-            <div
-              class="w-full h-full {typeName !== 'invisible' ? typeName : ''}"
-              class:sides={width%40===0}
+          <g class="object-outline">
+            <foreignObject
+              x={-width/2} y={-height/2}
+              width={width} height={height}
             >
-            </div>
-          </foreignObject>
+              <div
+                class="w-full h-full {typeName !== 'invisible' ? typeName : ''}"
+                class:sides={width%40===0}
+              >
+              </div>
+            </foreignObject>
+          </g>
         {/if}
 
       </g>

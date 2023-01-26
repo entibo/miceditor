@@ -69,9 +69,9 @@ export function windowKeyDown(e: KeyboardEvent) {
   let key = e.key.toLowerCase()
   let code = e.code.toLowerCase()
 
-  if(e.shiftKey)    isKeyDown.update(o => ({...o, shift: true}))
-  if(e.ctrlKey)     isKeyDown.update(o => ({...o, ctrl: true}))
-  if(e.altKey)      isKeyDown.update(o => ({...o, alt: true}))
+  if(e.shiftKey || key === "shift") isKeyDown.update(o => ({...o, shift: true}))
+  if(e.ctrlKey  || key === "ctrl")  isKeyDown.update(o => ({...o, ctrl: true}))
+  if(e.altKey   || key === "alt")   isKeyDown.update(o => ({...o, alt: true}))
   if(key === " ")   isKeyDown.update(o => ({...o, space: true}))
 
 
