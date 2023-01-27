@@ -19,7 +19,7 @@
 
   import { _ } from "state/locale"
   import { mapSettings, updateMiceSpawn } from "state/map"
-  import { parkourMode, setParkourMode } from "state/mapExtra"
+  import { parkourMode, setParkourMode, snatchMode, setSnatchMode } from "state/mapExtra"
 
   import * as sceneObjects from "state/sceneObjects"
 
@@ -280,6 +280,7 @@
 
   <div class="flex flex-wrap justify-around">
     <Button disabled={$parkourMode} on:click={setParkourMode}>#parkour</Button>
+    <Button disabled={$snatchMode} on:click={setSnatchMode}>#snatch</Button>
   </div>
 </div>
 
