@@ -8,6 +8,7 @@
   import { parkourMode, snatchMode } from "state/mapExtra"
   import { mapSettings } from "state/map"
   import { shamanObjects } from "state/sceneObjects"
+  import { Anchor } from "data/base/ShamanObject"
 
   import Decoration from "./Decoration.svelte"
 
@@ -25,7 +26,7 @@
 
 
   $: parkourCheckpointIndex = $parkourMode && 
-        $shamanObjects.all.filter(o => o.type === 22).indexOf($obj) + 2
+        $shamanObjects.all.filter(o => o.type === Anchor.Yellow).indexOf($obj) + 2
 
   $: parkourMouseSpawn = $parkourMode && 
       readable(Editor.Decoration.make(Editor.Decoration.defaults("DS")))
@@ -43,19 +44,19 @@
               rotate({rotation})"
 >
 
-  {#if $parkourMode && $obj.type == 22}
+  {#if $parkourMode && $obj.type == Anchor.Yellow}
     <g class="pointer-events-none" transform="rotate({-rotation})">
       <Decoration obj={parkourMouseSpawn} {parkourCheckpointIndex}/>
     </g>
   {/if}
 
-  {#if $snatchMode && $obj.type == 22}
+  {#if $snatchMode && $obj.type == Anchor.Yellow}
     <g class="pointer-events-none" transform="rotate({-rotation})">
       <Decoration obj={snatchCheese}/>
     </g>
   {/if}
 
-  {#if $snatchMode && ($obj.type == 14 || $obj.type == 12)}
+  {#if $snatchMode && ($obj.type == Anchor.RedClockwise || $obj.type == Anchor.Green)}
     <g class="pointer-events-none" transform="rotate({-rotation})">
       <Decoration obj={snatchHole}/>
     </g>
