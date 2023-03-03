@@ -16,7 +16,7 @@ import { clone } from "data/base/util"
 import * as history from "state/history"
 
 import { xml } from "state/xml"
-import shamanObject from "@/metadata/shamanObject"
+import shamanObject from "metadata/shamanObject"
 import { objectMouseDown } from "./interaction"
 import { Layer } from "data/base/MapSettings"
 

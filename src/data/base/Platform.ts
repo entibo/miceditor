@@ -10,6 +10,10 @@ const attributes = [
   "X", "Y", "L", "H",
   "P", "o", "c", "col", "grav",
   "N", "v", "m", "lua", "nosync", "i",
+  "tint", 
+  "archAcc", "archCheeseMax", "archMax",
+  "linDampAcc", "linDampMax",
+  "angDampAcc", "angDampMax",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
@@ -49,6 +53,7 @@ interface Base extends Common.UnknownAttributes {
   x: number
   y: number
   invisible: boolean
+  tint: string
   lua: string
   nosync: boolean
   image: { enabled: boolean } & Image.Image
@@ -82,6 +87,15 @@ export interface Circle {
 export interface Rotatable {
   rotation: number
 }
+export interface WaterPhysics {
+  archAcc: number
+  archCheeseMax: number
+  archMax: number
+  linDampAcc: number
+  linDampMax: number
+  angDampAcc: number
+  angDampMax: number
+}
 
 export type Platform
 
@@ -100,10 +114,10 @@ export type Platform
     & Base & Rectangle & Rotatable
 
   | { type: Type.Water }
-    & Base & Rectangle
+    & Base & Rectangle & WaterPhysics
 
 export type PlatformProps 
-  = { type: Type } & Base & Rectangle & Circle & Rotatable & NonStatic & Colored
+  = { type: Type } & Base & Rectangle & Circle & Rotatable & NonStatic & Colored & WaterPhysics
 
 
 const baseDefaults: () => Base = () => ({
@@ -111,6 +125,7 @@ const baseDefaults: () => Base = () => ({
   x: 0,
   y: 0,
   invisible: false,
+  tint: "",
   lua: "",
   nosync: false,
   image: {
@@ -146,6 +161,15 @@ const circleDefaults: () => Circle = () => ({
 })
 const rotatableDefaults: () => Rotatable = () => ({
   rotation: 0,
+})
+export const waterPhysicsDefaults: () => WaterPhysics = () => ({
+  archAcc: 0.1,
+  archCheeseMax: 0.25,
+  archMax: 0.5,
+  linDampAcc: 0,
+  linDampMax: 0,
+  angDampAcc: 0,
+  angDampMax: 0,
 })
 const typeSpecificDefaults = (type: Type) => {
   switch(type) {
@@ -188,6 +212,7 @@ export const defaults: (t: Type) => Platform = type =>
     { type,
       ...baseDefaults(),
       ...rectangleDefaults(),
+      ...waterPhysicsDefaults(),
     }
   :
   type === Type.Cobweb ?
@@ -242,6 +267,8 @@ export function decode(xmlNode: XML.Node): Platform {
   setProp ("height") (getAttr ("H") (readDimension))
   setProp ("radius") (getAttr ("L") (readDimension))
 
+  setProp ("tint") (getAttr ("tint") (readTint))
+
   getAttr ("P") (readDynamicValues, dynamicValues => {
     setProp ("dynamic")         (dynamicValues[0])
     setProp ("mass")            (dynamicValues[1])
@@ -254,6 +281,14 @@ export function decode(xmlNode: XML.Node): Platform {
   })
 
   setProp ("gravityScale") (getAttr ("grav") (s => M.withDefault (0) (util.readFloat(s))))
+
+  setProp ("archAcc")       (getAttr ("archAcc") (util.readFloat))
+  setProp ("archCheeseMax") (getAttr ("archCheeseMax") (util.readFloat))
+  setProp ("archMax")       (getAttr ("archMax") (util.readFloat))
+  setProp ("linDampAcc")    (getAttr ("linDampAcc") (util.readFloat))
+  setProp ("linDampMax")    (getAttr ("linDampMax") (util.readFloat))
+  setProp ("angDampAcc")    (getAttr ("angDampAcc") (util.readFloat))
+  setProp ("angDampMax")    (getAttr ("angDampMax") (util.readFloat))
 
   setProp ("color")  (M.withDefault ("") (getAttr ("o") (readColor)))
   setProp ("vanish") (getAttr ("v") (util.readInt))
@@ -297,6 +332,8 @@ export function encode(data: Platform): Node {
   setAttr ("H") (getProp ("height") (util.writeInt))
   setAttr ("L") (getProp ("radius") (util.writeInt))
 
+  setAttr ("tint") (getProp ("tint") (util.omitOn("")))
+
   setAttr ("P") (writeDynamicValues([
     getProp ("dynamic")        (),   
     getProp ("mass")           (), 
@@ -309,6 +346,14 @@ export function encode(data: Platform): Node {
   ]))
 
   setAttr ("grav") (getProp ("gravityScale") (util.omitOn (1), util.writeFloat))
+
+  setAttr ("archAcc")       (getProp ("archAcc")       (util.omitOn(waterPhysicsDefaults().archAcc), util.writeFloat))
+  setAttr ("archCheeseMax") (getProp ("archCheeseMax") (util.omitOn(waterPhysicsDefaults().archCheeseMax), util.writeFloat))
+  setAttr ("archMax")       (getProp ("archMax")       (util.omitOn(waterPhysicsDefaults().archMax), util.writeFloat))
+  setAttr ("linDampAcc")    (getProp ("linDampAcc") (util.omitOn(0), util.writeFloat))
+  setAttr ("linDampMax")    (getProp ("linDampMax") (util.omitOn(0), util.writeFloat))
+  setAttr ("angDampAcc")    (getProp ("angDampAcc") (util.omitOn(0), util.writeFloat))
+  setAttr ("angDampMax")    (getProp ("angDampMax") (util.omitOn(0), util.writeFloat))
 
   setAttr ("c") (M.map(
     (m,o) => util.omitOn ("1") (writeCollision(m,o)),
@@ -430,4 +475,8 @@ export function readColor(str: string): M.Maybe<string> {
     return str
   }
   return util.readColor(str)
+}
+
+export function readTint(str: string): string {
+  return M.withDefault ("000000") (util.readColor(str))
 }

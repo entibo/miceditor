@@ -11,6 +11,7 @@ import { SceneObject } from "state/sceneObjects"
 import { store, Store } from "state/util"
 
 import * as selection from "state/selection"
+import { waterPhysicsDefaults } from "data/base/Platform"
 
 
 type Data = {
@@ -68,6 +69,7 @@ const data = store<Data>({
     x: {},
     y: {},
     invisible: {},
+    tint: {},
     lua: {},
     nosync: {},
     dynamic: {},
@@ -90,6 +92,30 @@ const data = store<Data>({
     gravityScale: {
       defaultValue: () => 0,
     },
+
+
+    archAcc: {
+      defaultValue: () => waterPhysicsDefaults().archAcc
+    },
+    archCheeseMax: {
+      defaultValue: () => waterPhysicsDefaults().archCheeseMax
+    },
+    archMax: {
+      defaultValue: () => waterPhysicsDefaults().archMax
+    },
+    linDampAcc: {
+      defaultValue: () => waterPhysicsDefaults().linDampAcc
+    },
+    linDampMax: {
+      defaultValue: () => waterPhysicsDefaults().linDampMax
+    },
+    angDampAcc: {
+      defaultValue: () => waterPhysicsDefaults().angDampAcc
+    },
+    angDampMax: {
+      defaultValue: () => waterPhysicsDefaults().angDampMax
+    },
+
     foreground: {
       sideEffect: () => sceneObjects.groups.platforms.invalidate()
     },

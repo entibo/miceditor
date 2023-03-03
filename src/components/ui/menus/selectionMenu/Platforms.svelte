@@ -136,6 +136,24 @@
     <Checkbox checked={props.invisible.value} set={props.invisible.set} />
   </label>
 
+  <label>
+    <span>{$_("ground-color")}</span>
+    <div class="flex">
+      <TextInput
+        color
+        value={props.tint.value}
+        set={props.tint.set}
+        class="w-16"
+      />
+      <Checkbox
+        checked={props.tint.value === null
+          ? null
+          : props.tint.value !== ""}
+        set={(v) => props.tint.set(v ? "ffffff" : "")}
+      />
+    </div>
+  </label>
+
   {#if props.color.value !== undefined}
     <div>
       <label>
@@ -156,6 +174,137 @@
         </div>
       </label>
     </div>
+  {/if}
+
+  {#if props.archAcc.value !== undefined}
+    <div class="mb-4" />
+
+    <label>
+      <span>{$_("defilante-acceleration")}</span>
+      <div class="flex">
+        <label class="icon-btn text-xs mr-1" on:click={props.archAcc.reset}>
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput
+          float
+          sliderMin={-5}
+          sliderMax={+5}
+          value={props.archAcc.value}
+          set={props.archAcc.set}
+          class="w-16"
+        />
+      </div>
+    </label>
+    <label>
+      <span>{$_("defilante-maximum-speed")}</span>
+      <div class="flex">
+        <label class="icon-btn text-xs mr-1" on:click={props.archMax.reset}>
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput
+          float
+          sliderMin={0}
+          sliderMax={5}
+          value={props.archMax.value}
+          set={props.archMax.set}
+          class="w-16"
+        />
+      </div>
+    </label>
+    <label>
+      <span>({$_("cheese")}) {$_("defilante-maximum-speed")}</span>
+      <div class="flex">
+        <label class="icon-btn text-xs mr-1" on:click={props.archCheeseMax.reset}>
+          <Icon icon={faUndo} />
+        </label>
+        <TextInput
+          float
+          sliderMin={0}
+          sliderMax={5}
+          value={props.archCheeseMax.value}
+          set={props.archCheeseMax.set}
+          class="w-16"
+        />
+      </div>
+    </label>
+
+    <label>
+      <span>{$_("linear-damping")}: {$_("defilante-acceleration")}</span>
+      <div class="flex">
+        <TextInput
+          class="w-16"
+          float
+          sliderMin={0}
+          sliderMax={10}
+          value={props.linDampAcc.value}
+          set={props.linDampAcc.set}
+        />
+        <Checkbox
+          checked={props.linDampAcc.value === null
+            ? null
+            : props.linDampAcc.value !== 0}
+          set={(v) => props.linDampAcc.set(v ? Infinity : 0)}
+        />
+      </div>
+    </label>
+    <label>
+      <span>{$_("linear-damping")}: {$_("defilante-maximum-speed")}</span>
+      <div class="flex">
+        <TextInput
+          class="w-16"
+          float
+          sliderMin={0}
+          sliderMax={10}
+          value={props.linDampMax.value}
+          set={props.linDampMax.set}
+        />
+        <Checkbox
+          checked={props.linDampMax.value === null
+            ? null
+            : props.linDampMax.value !== 0}
+          set={(v) => props.linDampMax.set(v ? Infinity : 0)}
+        />
+      </div>
+    </label>
+
+        <label>
+      <span>{$_("angular-damping")}: {$_("defilante-acceleration")}</span>
+      <div class="flex">
+        <TextInput
+          class="w-16"
+          float
+          sliderMin={0}
+          sliderMax={10}
+          value={props.angDampAcc.value}
+          set={props.angDampAcc.set}
+        />
+        <Checkbox
+          checked={props.angDampAcc.value === null
+            ? null
+            : props.angDampAcc.value !== 0}
+          set={(v) => props.angDampAcc.set(v ? Infinity : 0)}
+        />
+      </div>
+    </label>
+    <label>
+      <span>{$_("angular-damping")}: {$_("defilante-maximum-speed")}</span>
+      <div class="flex">
+        <TextInput
+          class="w-16"
+          float
+          sliderMin={0}
+          sliderMax={10}
+          value={props.angDampMax.value}
+          set={props.angDampMax.set}
+        />
+        <Checkbox
+          checked={props.angDampMax.value === null
+            ? null
+            : props.angDampMax.value !== 0}
+          set={(v) => props.angDampMax.set(v ? Infinity : 0)}
+        />
+      </div>
+    </label>
   {/if}
 
   <div class="mb-4" />

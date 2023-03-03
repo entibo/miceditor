@@ -5,7 +5,7 @@ import * as Editor from "data/editor"
 import * as sceneObjects from "state/sceneObjects"
 import { SceneObject } from "state/sceneObjects"
 import { store, Store } from "state/util"
-import { Joint } from "@/data/base"
+import { Joint } from "data/base"
 
 const blank = store({})
 let selectionMap = new Map<SceneObject, ()=>void>()
