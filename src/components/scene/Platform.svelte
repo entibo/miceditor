@@ -1,6 +1,8 @@
 
 <script>
 
+  import cc from "color-convert"
+  import { getUniqueId } from "common"
   import * as Platform from "data/editor/Platform"
   import { showInvisibleGrounds, highQuality } from "state/user"
   import { platformResizeKnobMouseDown,
@@ -85,13 +87,28 @@
   }
   else circleSlopePreview = null
 
+  function getColorMatrix(hex) {
+    let [r,g,b] = cc.hex.rgb(hex).map(x => x/255)
+    return `
+      1 0 0 0 ${r-0.5}
+      0 1 0 0 ${g-0.5}
+      0 0 1 0 ${b-0.5}
+      0 0 0 1 0`.trim()
+  }
+
+  $: tintFilter = $obj.tint === "" ?  { name: "foobar", matrix: "matrix" } :
+    { 
+      name: "tintFilter-" + getUniqueId(),
+      matrix: getColorMatrix($obj.tint),
+    }
+
 </script>
 
 <g transform="translate({x}, {y}) 
               rotate({rotation})"
 >
 
-  <g class="cursor-pointer">
+  <g class="cursor-pointer" filter="url(#{tintFilter.name})">
 
     {#if $obj.image.enabled}
 
@@ -221,11 +238,28 @@
     </g>
   {/if}
 
+  {#if $obj.tint !== ""}
+    <rect
+      x={-width/2} y={-height/2}
+      width={width} height={height}
+      fill="#{$obj.tint}"
+      class="tint-overlay"
+    />
+    <filter id="{tintFilter.name}" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values={tintFilter.matrix}/>
+    </filter>
+  {/if}
+
 </g>
 
 
 
 <style lang="text/postcss">
+  .tint-overlay {
+    mix-blend-mode: hard-light;
+    pointer-events: none;
+    display: none;
+  }
 
   .booster-vector {
     opacity: 0.9;
