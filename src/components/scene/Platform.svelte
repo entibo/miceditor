@@ -96,7 +96,7 @@
       0 0 0 1 0`.trim()
   }
 
-  $: tintFilter = $obj.tint === "" ?  { name: "foobar", matrix: "matrix" } :
+  $: tintFilter = $obj.tint === "" ?  null :
     { 
       name: "tintFilter-" + getUniqueId(),
       matrix: getColorMatrix($obj.tint),
@@ -108,7 +108,7 @@
               rotate({rotation})"
 >
 
-  <g class="cursor-pointer" filter="url(#{tintFilter.name})">
+  <g class="cursor-pointer" filter={tintFilter ? `url(#${tintFilter.name})` : null}>
 
     {#if $obj.image.enabled}
 
