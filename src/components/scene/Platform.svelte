@@ -113,8 +113,8 @@
     {#if $obj.image.enabled}
 
       <SvgImage class="pointer-events-none"
-        x={-width/2  + $obj.image.x} 
-        y={-height/2 + $obj.image.y}
+        x={(isCircle ? 0 : -width/2)  + $obj.image.x} 
+        y={(isCircle ? 0 : -height/2) + $obj.image.y}
         href={$obj.image.imageUrl.url}
       />
       <rect
