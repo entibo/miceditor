@@ -35,6 +35,7 @@ export enum Type {
   Sand =       7,      Grass2 =     17,
   Cloud =      8,      Grass3 =     18,
   Water =      9,      Acid =       19,
+  Honey =     20,
 }
 
 export const typeNames = [
@@ -46,7 +47,7 @@ export const typeNames = [
     "rectangle", "circle",
     "invisible", "cobweb",
     "wood2", "grass2", "grass3",
-    "acid",
+    "acid", "honey"
   ]
 
 interface Base extends Common.UnknownAttributes {
@@ -100,7 +101,8 @@ export interface WaterPhysics {
 export type Platform
 
   = { type: Type.Wood | Type.Wood2 | Type.Ice | Type.Trampoline | Type.Lava |
-            Type.Chocolate | Type.Earth | Type.Grass | Type.Grass2 | Type.Grass3 | Type.Acid | Type.Sand |
+            Type.Chocolate | Type.Earth | Type.Grass | Type.Grass2 | Type.Grass3 | 
+            Type.Acid | Type.Sand | Type.Honey |
             Type.Cloud | Type.Stone | Type.Snow | Type.Invisible }
     & Base & Rectangle & Rotatable & NonStatic
     
@@ -198,6 +200,9 @@ const typeSpecificDefaults = (type: Type) => {
       restitution: 0,
     }
     case Type.Acid: return {
+      restitution: 0,
+    }
+    case Type.Honey: return {
       restitution: 0,
     }
     case Type.Cloud: return {
@@ -377,7 +382,7 @@ export function encode(data: Platform): Node {
 export function readType(str: string): M.Maybe<Type> {
   return M.andThen(
     util.readInt(str),
-    x => x >= 0 && x <= 19 ? x : M.None
+    x => x >= 0 && x <= 20 ? x : M.None
   )
 }
 

@@ -332,6 +332,21 @@
       url(grounds/acid-body.png);
   }
 
+  .honey {
+    background: 
+      url(grounds/honey-top.png) repeat-x, 
+      url(grounds/honey-body.png);
+  }
+  .honey.sides {
+    background: 
+      url(grounds/honey-side.png) repeat-y,
+      url(grounds/honey-side-flipped.png) repeat-y right top,
+      url(grounds/honey-corner.png) no-repeat,
+      url(grounds/honey-corner-flipped.png) no-repeat right top,
+      url(grounds/honey-top.png) repeat-x, 
+      url(grounds/honey-body.png);
+  }
+
 
   .grass2 {
     background: 
