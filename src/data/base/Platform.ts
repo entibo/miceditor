@@ -1,4 +1,3 @@
-
 import * as M from "maybe/Maybe"
 import * as XML from "./XML"
 import * as util from "./util"
@@ -7,48 +6,86 @@ import * as Image from "./Image"
 
 const attributes = [
   "T",
-  "X", "Y", "L", "H",
-  "P", "o", "c", "col", "grav",
-  "N", "v", "m", "lua", "nosync", "i",
-  "tint", 
-  "archAcc", "archCheeseMax", "archMax",
-  "linDampAcc", "linDampMax",
-  "angDampAcc", "angDampMax",
+  "X",
+  "Y",
+  "L",
+  "H",
+  "P",
+  "o",
+  "c",
+  "col",
+  "grav",
+  "N",
+  "v",
+  "m",
+  "lua",
+  "nosync",
+  "i",
+  "tint",
+  "archAcc",
+  "archCheeseMax",
+  "archMax",
+  "linDampAcc",
+  "linDampMax",
+  "angDampAcc",
+  "angDampMax",
+  "friction",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
-
 export interface Node extends XML.Node {
-  name: "S",
-  children: [],
-  attributes: Partial<Record<typeof attributes[number], string>>
+  name: "S"
+  children: []
+  attributes: Partial<Record<(typeof attributes)[number], string>>
 }
 
 export enum Type {
-  Wood =       0,      Stone =      10,
-  Ice =        1,      Snow =       11,
-  Trampoline = 2,      Rectangle =  12,
-  Lava =       3,      Circle =     13,
-  Chocolate =  4,      Invisible =  14,
-  Earth =      5,      Cobweb =     15,
-  Grass =      6,      Wood2 =      16,
-  Sand =       7,      Grass2 =     17,
-  Cloud =      8,      Grass3 =     18,
-  Water =      9,      Acid =       19,
-  Honey =     20,
+  Wood = 0,
+  Stone = 10,
+  Ice = 1,
+  Snow = 11,
+  Trampoline = 2,
+  Rectangle = 12,
+  Lava = 3,
+  Circle = 13,
+  Chocolate = 4,
+  Invisible = 14,
+  Earth = 5,
+  Cobweb = 15,
+  Grass = 6,
+  Wood2 = 16,
+  Sand = 7,
+  Grass2 = 17,
+  Cloud = 8,
+  Grass3 = 18,
+  Water = 9,
+  Acid = 19,
+  Honey = 20,
 }
 
 export const typeNames = [
-    "wood", "ice", "trampoline", 
-    "lava", "chocolate", 
-    "earth", "grass",
-    "sand", "cloud", "water",
-    "stone", "snow", 
-    "rectangle", "circle",
-    "invisible", "cobweb",
-    "wood2", "grass2", "grass3",
-    "acid", "honey"
-  ]
+  "wood",
+  "ice",
+  "trampoline",
+  "lava",
+  "chocolate",
+  "earth",
+  "grass",
+  "sand",
+  "cloud",
+  "water",
+  "stone",
+  "snow",
+  "rectangle",
+  "circle",
+  "invisible",
+  "cobweb",
+  "wood2",
+  "grass2",
+  "grass3",
+  "acid",
+  "honey",
+]
 
 interface Base extends Common.UnknownAttributes {
   x: number
@@ -97,30 +134,60 @@ export interface WaterPhysics {
   angDampAcc: number
   angDampMax: number
 }
+export interface HoneyPhysics {
+  honeyType: "none" | "sticky" | "slippery" | "glitched"
+  honeyDuration: number
+  honeyValue: number
+}
 
-export type Platform
+export type Platform =
+  | ({
+      type:
+        | Type.Wood
+        | Type.Wood2
+        | Type.Ice
+        | Type.Trampoline
+        | Type.Lava
+        | Type.Chocolate
+        | Type.Earth
+        | Type.Grass
+        | Type.Grass2
+        | Type.Grass3
+        | Type.Acid
+        | Type.Sand
+        | Type.Honey
+        | Type.Cloud
+        | Type.Stone
+        | Type.Snow
+        | Type.Invisible
+    } & Base &
+      Rectangle &
+      Rotatable &
+      NonStatic &
+      HoneyPhysics)
+  | ({ type: Type.Rectangle } & Base &
+      Rectangle &
+      Rotatable &
+      NonStatic &
+      Colored &
+      HoneyPhysics)
+  | ({ type: Type.Circle } & Base &
+      Circle &
+      Rotatable &
+      NonStatic &
+      Colored &
+      HoneyPhysics)
+  | ({ type: Type.Cobweb } & Base & Rectangle & Rotatable)
+  | ({ type: Type.Water } & Base & Rectangle & WaterPhysics)
 
-  = { type: Type.Wood | Type.Wood2 | Type.Ice | Type.Trampoline | Type.Lava |
-            Type.Chocolate | Type.Earth | Type.Grass | Type.Grass2 | Type.Grass3 | 
-            Type.Acid | Type.Sand | Type.Honey |
-            Type.Cloud | Type.Stone | Type.Snow | Type.Invisible }
-    & Base & Rectangle & Rotatable & NonStatic
-    
-  | { type: Type.Rectangle }
-    & Base & Rectangle & Rotatable & NonStatic & Colored
-
-  | { type: Type.Circle }
-    & Base & Circle    & Rotatable & NonStatic & Colored
-
-  | { type: Type.Cobweb }
-    & Base & Rectangle & Rotatable
-
-  | { type: Type.Water }
-    & Base & Rectangle & WaterPhysics
-
-export type PlatformProps 
-  = { type: Type } & Base & Rectangle & Circle & Rotatable & NonStatic & Colored & WaterPhysics
-
+export type PlatformProps = { type: Type } & Base &
+  Rectangle &
+  Circle &
+  Rotatable &
+  NonStatic &
+  Colored &
+  WaterPhysics &
+  HoneyPhysics
 
 const baseDefaults: () => Base = () => ({
   unknownAttributes: {},
@@ -133,7 +200,7 @@ const baseDefaults: () => Base = () => ({
   image: {
     enabled: false,
     ...Image.defaults(),
-  }
+  },
 })
 const nonStaticDefaults: () => NonStatic = () => ({
   dynamic: false,
@@ -152,7 +219,7 @@ const nonStaticDefaults: () => NonStatic = () => ({
   touchCollision: false,
 })
 const coloredDefaults: () => Colored = () => ({
-  color: "324650"
+  color: "324650",
 })
 const rectangleDefaults: () => Rectangle = () => ({
   width: 10,
@@ -173,148 +240,180 @@ export const waterPhysicsDefaults: () => WaterPhysics = () => ({
   angDampAcc: 0,
   angDampMax: 0,
 })
+export const honeyPhysicsDefaults: () => HoneyPhysics = () => ({
+  honeyType: "none",
+  honeyValue: 100,
+  honeyDuration: 5,
+})
 const typeSpecificDefaults = (type: Type) => {
-  switch(type) {
-    case Type.Ice: return {
-      friction: 0,
-    }
-    case Type.Chocolate: return {
-      friction: 20,
-    }
-    case Type.Sand: return {
-      friction: 0.1,
-    }
-    case Type.Snow: return {
-      friction: 0.05,
-      restitution: 0.1,
-    }
-    case Type.Trampoline: return {
-      friction: 0,
-      restitution: 1.2,
-    }
-    case Type.Lava: return {
-      friction: 0,
-      restitution: 20,
-    }
-    case Type.Stone: return {
-      restitution: 0,
-    }
-    case Type.Acid: return {
-      restitution: 0,
-    }
-    case Type.Honey: return {
-      restitution: 0,
-    }
-    case Type.Cloud: return {
-      miceCollision: false,
-    }
-    default: return {}
+  switch (type) {
+    case Type.Ice:
+      return {
+        friction: 0,
+      }
+    case Type.Chocolate:
+      return {
+        friction: 20,
+      }
+    case Type.Sand:
+      return {
+        friction: 0.1,
+      }
+    case Type.Snow:
+      return {
+        friction: 0.05,
+        restitution: 0.1,
+      }
+    case Type.Trampoline:
+      return {
+        friction: 0,
+        restitution: 1.2,
+      }
+    case Type.Lava:
+      return {
+        friction: 0,
+        restitution: 20,
+      }
+    case Type.Stone:
+      return {
+        restitution: 0,
+      }
+    case Type.Acid:
+      return {
+        restitution: 0,
+      }
+    case Type.Honey:
+      return {
+        restitution: 0,
+        honeyType: "sticky" as HoneyPhysics["honeyType"],
+        honeyValue: 100,
+        honeyDuration: 5,
+      }
+    case Type.Cloud:
+      return {
+        miceCollision: false,
+      }
+    default:
+      return {}
   }
 }
 
-export const defaults: (t: Type) => Platform = type =>
-  type === Type.Water ?
-    { type,
-      ...baseDefaults(),
-      ...rectangleDefaults(),
-      ...waterPhysicsDefaults(),
-    }
-  :
-  type === Type.Cobweb ?
-    { type,
-      ...rotatableDefaults(),
-      ...baseDefaults(),
-      ...rectangleDefaults(),
-    }
-  :
-  type === Type.Circle ?
-    { type,
-      ...rotatableDefaults(),
-      ...baseDefaults(),
-      ...circleDefaults(),
-      ...coloredDefaults(),
-      ...nonStaticDefaults(),
-      ...typeSpecificDefaults(type),
-    }
-  :
-  type === Type.Rectangle ?
-    { type,
-      ...rotatableDefaults(),
-      ...baseDefaults(),
-      ...rectangleDefaults(),
-      ...coloredDefaults(),
-      ...nonStaticDefaults(),
-      ...typeSpecificDefaults(type),
-    }
-  :
-  { type,
-    ...rotatableDefaults(),
-    ...baseDefaults(),
-    ...rectangleDefaults(),
-    ...nonStaticDefaults(),
-    ...typeSpecificDefaults(type),
-  }
-
+export const defaults: (t: Type) => Platform = (type) =>
+  type === Type.Water
+    ? {
+        type,
+        ...baseDefaults(),
+        ...rectangleDefaults(),
+        ...waterPhysicsDefaults(),
+      }
+    : type === Type.Cobweb
+    ? {
+        type,
+        ...rotatableDefaults(),
+        ...baseDefaults(),
+        ...rectangleDefaults(),
+      }
+    : type === Type.Circle
+    ? {
+        type,
+        ...rotatableDefaults(),
+        ...baseDefaults(),
+        ...circleDefaults(),
+        ...coloredDefaults(),
+        ...nonStaticDefaults(),
+        ...honeyPhysicsDefaults(),
+        ...typeSpecificDefaults(type),
+      }
+    : type === Type.Rectangle
+    ? {
+        type,
+        ...rotatableDefaults(),
+        ...baseDefaults(),
+        ...rectangleDefaults(),
+        ...coloredDefaults(),
+        ...nonStaticDefaults(),
+        ...honeyPhysicsDefaults(),
+        ...typeSpecificDefaults(type),
+      }
+    : {
+        type,
+        ...rotatableDefaults(),
+        ...baseDefaults(),
+        ...rectangleDefaults(),
+        ...nonStaticDefaults(),
+        ...honeyPhysicsDefaults(),
+        ...typeSpecificDefaults(type),
+      }
 
 export function decode(xmlNode: XML.Node): Platform {
   let node = xmlNode as Node
   const getAttr = util.makeGetter(node.attributes)
-  
-  let type = M.withDefault (Type.Wood) (getAttr ("T") (readType))
+
+  let type = M.withDefault(Type.Wood)(getAttr("T")(readType))
   let data = defaults(type)
-  data.unknownAttributes = Common.getUnknownAttributes(attributes, node.attributes)
+  data.unknownAttributes = Common.getUnknownAttributes(
+    attributes,
+    node.attributes
+  )
   const setProp = util.makeSetter(data as PlatformProps)
   const getProp = util.makeGetter<PlatformProps>(data)
 
-  setProp ("x") (getAttr ("X") (util.readInt))
-  setProp ("y") (getAttr ("Y") (util.readInt))
-  setProp ("width")  (getAttr ("L") (readDimension))
-  setProp ("height") (getAttr ("H") (readDimension))
-  setProp ("radius") (getAttr ("L") (readDimension))
+  setProp("x")(getAttr("X")(util.readInt))
+  setProp("y")(getAttr("Y")(util.readInt))
+  setProp("width")(getAttr("L")(readDimension))
+  setProp("height")(getAttr("H")(readDimension))
+  setProp("radius")(getAttr("L")(readDimension))
 
-  setProp ("tint") (getAttr ("tint") (readTint))
+  setProp("tint")(getAttr("tint")(readTint))
 
-  getAttr ("P") (readDynamicValues, dynamicValues => {
-    setProp ("dynamic")         (dynamicValues[0])
-    setProp ("mass")            (dynamicValues[1])
-    setProp ("friction")        (dynamicValues[2])
-    setProp ("restitution")     (dynamicValues[3])
-    setProp ("rotation")        (dynamicValues[4])
-    setProp ("fixedRotation")   (dynamicValues[5])
-    setProp ("linearDamping")   (dynamicValues[6])
-    setProp ("angularDamping")  (dynamicValues[7])
+  getAttr("P")(readDynamicValues, (dynamicValues) => {
+    setProp("dynamic")(dynamicValues[0])
+    setProp("mass")(dynamicValues[1])
+    setProp("friction")(dynamicValues[2])
+    setProp("restitution")(dynamicValues[3])
+    setProp("rotation")(dynamicValues[4])
+    setProp("fixedRotation")(dynamicValues[5])
+    setProp("linearDamping")(dynamicValues[6])
+    setProp("angularDamping")(dynamicValues[7])
   })
 
-  setProp ("gravityScale") (getAttr ("grav") (s => M.withDefault (0) (util.readFloat(s))))
+  setProp("gravityScale")(
+    getAttr("grav")((s) => M.withDefault(0)(util.readFloat(s)))
+  )
 
-  setProp ("archAcc")       (getAttr ("archAcc") (util.readFloat))
-  setProp ("archCheeseMax") (getAttr ("archCheeseMax") (util.readFloat))
-  setProp ("archMax")       (getAttr ("archMax") (util.readFloat))
-  setProp ("linDampAcc")    (getAttr ("linDampAcc") (util.readFloat))
-  setProp ("linDampMax")    (getAttr ("linDampMax") (util.readFloat))
-  setProp ("angDampAcc")    (getAttr ("angDampAcc") (util.readFloat))
-  setProp ("angDampMax")    (getAttr ("angDampMax") (util.readFloat))
+  setProp("archAcc")(getAttr("archAcc")(util.readFloat))
+  setProp("archCheeseMax")(getAttr("archCheeseMax")(util.readFloat))
+  setProp("archMax")(getAttr("archMax")(util.readFloat))
+  setProp("linDampAcc")(getAttr("linDampAcc")(util.readFloat))
+  setProp("linDampMax")(getAttr("linDampMax")(util.readFloat))
+  setProp("angDampAcc")(getAttr("angDampAcc")(util.readFloat))
+  setProp("angDampMax")(getAttr("angDampMax")(util.readFloat))
 
-  setProp ("color")  (M.withDefault ("") (getAttr ("o") (readColor)))
-  setProp ("vanish") (getAttr ("v") (util.readInt))
-  setProp ("lua")    (getAttr ("lua") ())
+  setProp("color")(M.withDefault("")(getAttr("o")(readColor)))
+  setProp("vanish")(getAttr("v")(util.readInt))
+  setProp("lua")(getAttr("lua")())
 
-  setProp ("image") (getAttr ("i") (readImage))
+  setProp("image")(getAttr("i")(readImage))
 
-  getAttr ("c") (readCollision, c => {
-    setProp ("miceCollision")   (c.miceCollision)
-    setProp ("objectCollision") (c.objectCollision)
+  getAttr("c")(readCollision, (c) => {
+    setProp("miceCollision")(c.miceCollision)
+    setProp("objectCollision")(c.objectCollision)
   })
 
-  setProp ("touchCollision") (getAttr ("col") (() => true))
+  getAttr("friction")(readHoney, (o) => {
+    setProp("honeyType")(o.honeyType)
+    setProp("honeyValue")(o.honeyValue)
+    setProp("honeyDuration")(o.honeyDuration)
+  })
 
-  setProp ("nosync")      (getAttr ("nosync") (() => true))
-  setProp ("foreground")  (getAttr ("N") (() => true))
-  setProp ("invisible")   (getAttr ("m") (() => true))
+  setProp("touchCollision")(getAttr("col")(() => true))
+
+  setProp("nosync")(getAttr("nosync")(() => true))
+  setProp("foreground")(getAttr("N")(() => true))
+  setProp("invisible")(getAttr("m")(() => true))
 
   return data
 }
-
 
 export function encode(data: Platform): Node {
   let node: Node = {
@@ -323,74 +422,102 @@ export function encode(data: Platform): Node {
     attributes: {
       ...undefinedAttributes,
       ...data.unknownAttributes,
-    }
+    },
   }
 
   const getProp = util.makeGetter<PlatformProps>(data)
   const setAttr = util.makeSetter(node.attributes)
 
-  setAttr ("T") (getProp ("type") (util.writeInt))
+  setAttr("T")(getProp("type")(util.writeInt))
 
-  setAttr ("X") (getProp ("x") (util.writeInt))
-  setAttr ("Y") (getProp ("y") (util.writeInt))
-  setAttr ("L") (getProp ("width") (util.writeInt))
-  setAttr ("H") (getProp ("height") (util.writeInt))
-  setAttr ("L") (getProp ("radius") (util.writeInt))
+  setAttr("X")(getProp("x")(util.writeInt))
+  setAttr("Y")(getProp("y")(util.writeInt))
+  setAttr("L")(getProp("width")(util.writeInt))
+  setAttr("H")(getProp("height")(util.writeInt))
+  setAttr("L")(getProp("radius")(util.writeInt))
 
-  setAttr ("tint") (getProp ("tint") (util.omitOn("")))
+  setAttr("tint")(getProp("tint")(util.omitOn("")))
 
-  setAttr ("P") (writeDynamicValues([
-    getProp ("dynamic")        (),   
-    getProp ("mass")           (), 
-    getProp ("friction")       (),     
-    getProp ("restitution")    (),       
-    getProp ("rotation")       (),     
-    getProp ("fixedRotation")  (),         
-    getProp ("linearDamping")  (),         
-    getProp ("angularDamping") (),           
-  ]))
+  setAttr("P")(
+    writeDynamicValues([
+      getProp("dynamic")(),
+      getProp("mass")(),
+      getProp("friction")(),
+      getProp("restitution")(),
+      getProp("rotation")(),
+      getProp("fixedRotation")(),
+      getProp("linearDamping")(),
+      getProp("angularDamping")(),
+    ])
+  )
 
-  setAttr ("grav") (getProp ("gravityScale") (util.omitOn (1), util.writeFloat))
+  setAttr("grav")(getProp("gravityScale")(util.omitOn(1), util.writeFloat))
 
-  setAttr ("archAcc")       (getProp ("archAcc")       (util.omitOn(waterPhysicsDefaults().archAcc), util.writeFloat))
-  setAttr ("archCheeseMax") (getProp ("archCheeseMax") (util.omitOn(waterPhysicsDefaults().archCheeseMax), util.writeFloat))
-  setAttr ("archMax")       (getProp ("archMax")       (util.omitOn(waterPhysicsDefaults().archMax), util.writeFloat))
-  setAttr ("linDampAcc")    (getProp ("linDampAcc") (util.omitOn(0), util.writeFloat))
-  setAttr ("linDampMax")    (getProp ("linDampMax") (util.omitOn(0), util.writeFloat))
-  setAttr ("angDampAcc")    (getProp ("angDampAcc") (util.omitOn(0), util.writeFloat))
-  setAttr ("angDampMax")    (getProp ("angDampMax") (util.omitOn(0), util.writeFloat))
+  setAttr("archAcc")(
+    getProp("archAcc")(
+      util.omitOn(waterPhysicsDefaults().archAcc),
+      util.writeFloat
+    )
+  )
+  setAttr("archCheeseMax")(
+    getProp("archCheeseMax")(
+      util.omitOn(waterPhysicsDefaults().archCheeseMax),
+      util.writeFloat
+    )
+  )
+  setAttr("archMax")(
+    getProp("archMax")(
+      util.omitOn(waterPhysicsDefaults().archMax),
+      util.writeFloat
+    )
+  )
+  setAttr("linDampAcc")(getProp("linDampAcc")(util.omitOn(0), util.writeFloat))
+  setAttr("linDampMax")(getProp("linDampMax")(util.omitOn(0), util.writeFloat))
+  setAttr("angDampAcc")(getProp("angDampAcc")(util.omitOn(0), util.writeFloat))
+  setAttr("angDampMax")(getProp("angDampMax")(util.omitOn(0), util.writeFloat))
 
-  setAttr ("c") (M.map(
-    (m,o) => util.omitOn ("1") (writeCollision(m,o)),
-    getProp ("miceCollision") (),
-    getProp ("objectCollision") (),
-  ))
+  setAttr("c")(
+    M.map(
+      (m, o) => util.omitOn("1")(writeCollision(m, o)),
+      getProp("miceCollision")(),
+      getProp("objectCollision")()
+    )
+  )
 
-  setAttr ("col") (getProp ("touchCollision") (util.omitOn(false), () => ""))
+  setAttr("friction")(
+    M.map(
+      (honeyType, honeyValue, honeyDuration, platformType) => {
+        const friction = writeHoney({ honeyType, honeyValue, honeyDuration })
+        return platformType === Type.Honey
+          ? util.omitOn("")(util.omitOn("20,4")(friction))
+          : util.omitOn("")(friction)
+      },
+      getProp("honeyType")(),
+      getProp("honeyValue")(),
+      getProp("honeyDuration")(),
+      getProp("type")()
+    )
+  )
 
-  setAttr ("o")   (getProp ("color")      (util.omitOn("")))
-  setAttr ("N")   (getProp ("foreground") (util.omitOn(false), () => ""))
-  setAttr ("m")   (getProp ("invisible")  (util.omitOn(false), () => ""))
-  setAttr ("nosync") (getProp ("nosync")  (util.omitOn(false), () => ""))
-  setAttr ("v")   (getProp ("vanish")     (util.omitOn(0), util.writeInt))
-  setAttr ("lua") (getProp ("lua")        (util.omitOn("")))
-  setAttr ("i")   (getProp ("image")      (writeImage))
+  setAttr("col")(getProp("touchCollision")(util.omitOn(false), () => ""))
+
+  setAttr("o")(getProp("color")(util.omitOn("")))
+  setAttr("N")(getProp("foreground")(util.omitOn(false), () => ""))
+  setAttr("m")(getProp("invisible")(util.omitOn(false), () => ""))
+  setAttr("nosync")(getProp("nosync")(util.omitOn(false), () => ""))
+  setAttr("v")(getProp("vanish")(util.omitOn(0), util.writeInt))
+  setAttr("lua")(getProp("lua")(util.omitOn("")))
+  setAttr("i")(getProp("image")(writeImage))
 
   return node
 }
 
 export function readType(str: string): M.Maybe<Type> {
-  return M.andThen(
-    util.readInt(str),
-    x => x >= 0 && x <= 20 ? x : M.None
-  )
+  return M.andThen(util.readInt(str), (x) => (x >= 0 && x <= 20 ? x : M.None))
 }
 
 export function readDimension(str: string): M.Maybe<number> {
-  return M.map( 
-    x => util.clamp(x, 10, 10000),
-    util.readInt(str),
-  )
+  return M.map((x) => util.clamp(x, 10, 10000), util.readInt(str))
 }
 
 type DynamicValues = [
@@ -401,7 +528,7 @@ type DynamicValues = [
   M.Maybe<number>, // rotation
   M.Maybe<boolean>, // fixedRotation
   M.Maybe<number>, // linearDamping
-  M.Maybe<number>, // angularDamping
+  M.Maybe<number> // angularDamping
 ]
 export function readDynamicValues(str: string): DynamicValues {
   let parts = str.split(",")
@@ -427,8 +554,8 @@ export function writeDynamicValues(dynamicValues: DynamicValues): string {
     M.andThen(dynamicValues[6], util.writeFloat),
     M.andThen(dynamicValues[7], util.writeFloat),
   ]
-  .map(M.withDefault("0"))
-  .join(",")
+    .map(M.withDefault("0"))
+    .join(",")
 }
 
 // Format: "x,y,url"
@@ -436,13 +563,13 @@ export function readImage(str: string): Base["image"] {
   let image = Image.defaults()
   let set = util.makeSetter(image)
   let parts = str.split(",")
-  set ("x") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
-  set ("y") (M.andThen(parts.shift(), M.iffDefined, util.readInt))
-  set ("imageUrl") (M.andThen(parts.shift(), M.iffDefined, Image.readUrl))
+  set("x")(M.andThen(parts.shift(), M.iffDefined, util.readInt))
+  set("y")(M.andThen(parts.shift(), M.iffDefined, util.readInt))
+  set("imageUrl")(M.andThen(parts.shift(), M.iffDefined, Image.readUrl))
   return { enabled: true, ...image }
 }
 export function writeImage(image: Base["image"]): M.Maybe<string> {
-  if(!image.enabled) return M.None
+  if (!image.enabled) return M.None
   return [
     util.writeInt(image.x),
     util.writeInt(image.y),
@@ -450,38 +577,76 @@ export function writeImage(image: Base["image"]): M.Maybe<string> {
   ].join(",")
 }
 
-export function readCollision(str: string): M.Maybe<{ miceCollision: boolean, objectCollision: boolean }> {
-  return M.andThen(str, util.readInt, x => {
-    if(x == 1 || x == 0) return {
-      miceCollision: true,
-      objectCollision: true,
-    }
-    if(x == 2) return {
-      miceCollision: false,
-      objectCollision: true,
-    }
-    if(x == 3) return {
-      miceCollision: true,
-      objectCollision: false,
-    }
+export function readCollision(
+  str: string
+): M.Maybe<{ miceCollision: boolean; objectCollision: boolean }> {
+  return M.andThen(str, util.readInt, (x) => {
+    if (x == 1 || x == 0)
+      return {
+        miceCollision: true,
+        objectCollision: true,
+      }
+    if (x == 2)
+      return {
+        miceCollision: false,
+        objectCollision: true,
+      }
+    if (x == 3)
+      return {
+        miceCollision: true,
+        objectCollision: false,
+      }
     return {
       miceCollision: false,
       objectCollision: false,
     }
   })
 }
-export function writeCollision(miceCollision: boolean, objectCollision: boolean): string {
-  let n = 4 - (miceCollision?1:0) - (objectCollision?2:0)
+export function writeCollision(
+  miceCollision: boolean,
+  objectCollision: boolean
+): string {
+  let n = 4 - (miceCollision ? 1 : 0) - (objectCollision ? 2 : 0)
   return n.toString()
 }
 
+export function readHoney(str: string): M.Maybe<HoneyPhysics> {
+  let parts = str.split(",")
+  const left = M.andThen(parts.shift(), M.iffDefined, util.readFloat)
+  const right = M.andThen(parts.shift(), M.iffDefined, util.readFloat)
+  if (M.is(left) && M.is(right)) {
+    const honeyType = left >= 0 ? "sticky" : "slippery"
+    const honeyValue = honeyType === "sticky" ? left * 5 : left * -1
+    return {
+      honeyType,
+      honeyValue,
+      honeyDuration: left / right,
+    }
+  } else {
+    return {
+      ...honeyPhysicsDefaults(),
+      honeyType: "glitched",
+    }
+  }
+}
+export function writeHoney({
+  honeyType,
+  honeyValue,
+  honeyDuration,
+}: HoneyPhysics): string {
+  if (honeyType === "none") return ""
+  if (honeyType === "glitched") return "#"
+  const left = (honeyType === "sticky" ? 1 / 5 : -1) * honeyValue
+  return [left, left / honeyDuration].join(",")
+}
+
 export function readColor(str: string): M.Maybe<string> {
-  if(str === "" || str.match(/^f{8,}$/i)) {
+  if (str === "" || str.match(/^f{8,}$/i)) {
     return str
   }
   return util.readColor(str)
 }
 
 export function readTint(str: string): string {
-  return M.withDefault ("000000") (util.readColor(str))
+  return M.withDefault("000000")(util.readColor(str))
 }

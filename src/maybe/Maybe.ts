@@ -48,6 +48,10 @@ export function map <R,T0,T1>
                 (f: (x0:T0, x1:T1) => R, x0: Maybe<T0>, x1: Maybe<T1>): Maybe<R>
 export function map <R,T0,T1,T2> 
                 (f: (x0:T0, x1:T1, x2:T2) => R, x0: Maybe<T0>, x1: Maybe<T1>, x2: Maybe<T2>): Maybe<R>
+export function map <R,T0,T1,T2,T3> 
+                (f: (x0:T0, x1:T1, x2:T2, x3: T3) => R, x0: Maybe<T0>, x1: Maybe<T1>, x2: Maybe<T2>, x3: Maybe<T3>): Maybe<R>
+export function map <R,T0,T1,T2,T3,T4> 
+                (f: (x0:T0, x1:T1, x2:T2, x3: T3, x4: T4) => R, x0: Maybe<T0>, x1: Maybe<T1>, x2: Maybe<T2>, x3: Maybe<T3>, x4: Maybe<T4>): Maybe<R>
 export function map <R> (f: (...args: any[]) => R, ...args: any[]): Maybe<R> {
   for(let x of args)
     if(x === None)

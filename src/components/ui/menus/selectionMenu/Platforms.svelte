@@ -343,7 +343,7 @@
   </div>
 
   <label class:disabled={props.dynamic.value === undefined}>
-    <span>Mode</span>
+    <span>Mode...</span>
     <div class="material-input w-24">
       <select
         value={props.physics.value}
@@ -538,13 +538,54 @@
         set={props.touchCollision.set}
       />
     </label>
+    <label>
+      <span>{$_("honey-effect")}...</span>
+      <div class="material-input w-24">
+        <select
+          value={props.honeyType.value}
+          on:change={(e) => props.honeyType.set(e.target.value)}
+        >
+          <option value="none">{$_("none")}</option>
+          <option value="sticky">🍯 {$_("honey-sticky")}</option>
+          <option value="slippery">❄️ {$_("honey-slippery")}</option>
+          <option value="glitched">{$_("honey-glitched")}</option>
+        </select>
+      </div>
+    </label>
+    {#if props.honeyType.value === "sticky" || props.honeyType.value === "slippery"}
+      <div class="submenu" transition:fly={{ duration: 80, x: 50 }}>
+        <label>
+          <span>{$_("friction")} 
+            <span class="text-xs opacity-75 font-mono">{props.honeyType.value === "sticky" ? "*=" : "-="}</span>
+          </span>
+          <TextInput
+            float
+            min={0}
+            value={props.honeyValue.value}
+            set={props.honeyValue.set}
+            class="w-16"
+          />
+        </label>
+        <label>
+          <span>{$_("honey-duration")}<span class="text-xs opacity-75">(s)</span></span>
+          <TextInput
+            float
+            min={0}
+            value={props.honeyDuration.value}
+            set={props.honeyDuration.set}
+            class="w-16"
+          />
+        </label>
+      </div>
+    {/if}
   </div>
+
 
   <div class="mb-4" />
 
   <div class:disabled={props.vanish.value === undefined}>
     <label>
-      <span>{$_("vanish")}</span>
+      <span>{$_("vanish")}<span class="text-xs opacity-75">(ms)</span></span>
       <div class="flex">
         <TextInput
           int

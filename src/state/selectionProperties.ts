@@ -116,6 +116,10 @@ const data = store<Data>({
       defaultValue: () => waterPhysicsDefaults().angDampMax
     },
 
+    honeyType: {},
+    honeyDuration: {},
+    honeyValue: {},
+
     foreground: {
       sideEffect: () => sceneObjects.groups.platforms.invalidate()
     },
