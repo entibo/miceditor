@@ -95,7 +95,7 @@ export function readInt(str: string): M.Maybe<number> {
   return M.andThen(str, readFloat, M.unless(isFinite))
 }
 export function writeInt(x: number): string {
-  return Math.round(x).toString()
+  return normalizeSerializedNumber(Math.round(x).toString())
 }
 
 export function readFloat(str: string): M.Maybe<number> {
@@ -106,7 +106,7 @@ export function writeFloat(x: number, decimals?: number): string {
     let f = (10**decimals)
     x = Math.round(x*f)/f
   }
-  return x.toString()
+  return normalizeSerializedNumber(x.toString())
 }
 
 export function readBool(str: string): M.Maybe<boolean> {
@@ -123,6 +123,9 @@ export function readColor(str: string): M.Maybe<string> {
     : M.None
 }
 
-
+// Remove the "+" in large numbers: 1e+30 -> 1e30
+export function normalizeSerializedNumber(x: string): string {
+  return x.replace(/\+/, '')
+}
 
 
