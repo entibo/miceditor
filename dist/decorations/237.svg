@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns:xlink="http://www.w3.org/1999/xlink" height="41.05px" width="125.0px" xmlns="http://www.w3.org/2000/svg">
   <g transform="matrix(1.0, 0.0, 0.0, 1.0, 61.65, 26.9)">
-    <use height="41.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -61.65, -26.9)" width="125.0" xlink:href="#decoration237-shape0"/>
+    <use data-characterId="929" height="41.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -61.65, -26.9)" width="125.0" xlink:href="#decoration237-shape0"/>
   </g>
   <defs>
     <g id="decoration237-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 61.65, 26.9)">
       <path d="M-59.9 -26.45 Q0.3 27.2 63.1 -26.75" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.30000000000000004"/>
       <path d="M-47.8 -14.5 L-59.0 -23.7 -58.75 -25.9 -45.85 -15.3 -47.8 -14.5 M-59.2 -22.8 L-48.6 -14.05 -61.5 -8.6 -59.2 -22.8" fill="#d4717d" fill-rule="evenodd" stroke="none"/>
       <path d="M-59.0 -23.7 L-47.8 -14.5 -48.6 -14.05 -59.2 -22.8 -59.0 -23.7" fill="#a8535d" fill-rule="evenodd" stroke="none"/>
-      <path d="M-47.8 -14.5 L-45.85 -15.3 -58.75 -25.9 -59.0 -23.7 -59.2 -22.8 M-48.6 -14.05 L-47.8 -14.5 M-48.6 -14.05 L-61.5 -8.6 -59.2 -22.8" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.30000000000000004"/>
+      <path d="M-47.8 -14.5 L-45.85 -15.3 -58.75 -25.9 -59.0 -23.7 -59.2 -22.8 -61.5 -8.6 -48.6 -14.05 -47.8 -14.5 Z" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.30000000000000004"/>
       <path d="M-19.15 -0.45 L-19.9 -2.5 -3.45 0.55 -4.75 2.2 -19.15 -0.45 M-5.35 2.95 L-14.1 14.0 -18.75 0.5 -5.35 2.95" fill="#a971d4" fill-rule="evenodd" stroke="none"/>
       <path d="M-4.75 2.2 L-5.35 2.95 -18.75 0.5 -19.15 -0.45 -4.75 2.2" fill="#915dba" fill-rule="evenodd" stroke="none"/>
       <path d="M-19.15 -0.45 L-19.9 -2.5 -3.45 0.55 -4.75 2.2 -5.35 2.95 -14.1 14.0 -18.75 0.5 -19.15 -0.45 Z" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.30000000000000004"/>
