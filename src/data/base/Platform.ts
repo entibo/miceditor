@@ -177,7 +177,7 @@ export type Platform =
       NonStatic &
       Colored &
       HoneyPhysics)
-  | ({ type: Type.Cobweb } & Base & Rectangle & Rotatable)
+  | ({ type: Type.Cobweb } & Base & Rectangle & Rotatable & WaterPhysics)
   | ({ type: Type.Water } & Base & Rectangle & WaterPhysics)
 
 export type PlatformProps = { type: Type } & Base &
@@ -312,6 +312,7 @@ export const defaults: (t: Type) => Platform = (type) =>
         ...rotatableDefaults(),
         ...baseDefaults(),
         ...rectangleDefaults(),
+        ...waterPhysicsDefaults(),
       }
     : type === Type.Circle
     ? {
