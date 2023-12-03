@@ -146,9 +146,7 @@
         class="w-16"
       />
       <Checkbox
-        checked={props.tint.value === null
-          ? null
-          : props.tint.value !== ""}
+        checked={props.tint.value === null ? null : props.tint.value !== ""}
         set={(v) => props.tint.set(v ? "ffffff" : "")}
       />
     </div>
@@ -180,7 +178,17 @@
     <div class="mb-4" />
 
     <label>
-      <span>{$_("defilante-acceleration")}</span>
+      <span
+        >{$_("defilante-acceleration")}
+        <Tooltip class="inline text-white text-sm p-1" inDelay={150} top>
+          <img
+            slot="tooltip"
+            src="dist/misc/water_acceleration.webp"
+            style="max-width: none; max-height: none;"
+          />
+          ?
+        </Tooltip>
+      </span>
       <div class="flex">
         <label class="icon-btn text-xs mr-1" on:click={props.archAcc.reset}>
           <Icon icon={faUndo} />
@@ -214,7 +222,10 @@
     <label>
       <span>({$_("cheese")}) {$_("defilante-maximum-speed")}</span>
       <div class="flex">
-        <label class="icon-btn text-xs mr-1" on:click={props.archCheeseMax.reset}>
+        <label
+          class="icon-btn text-xs mr-1"
+          on:click={props.archCheeseMax.reset}
+        >
           <Icon icon={faUndo} />
         </label>
         <TextInput
@@ -267,7 +278,7 @@
       </div>
     </label>
 
-        <label>
+    <label>
       <span>{$_("angular-damping")}: {$_("defilante-acceleration")}</span>
       <div class="flex">
         <TextInput
@@ -555,8 +566,11 @@
     {#if props.honeyType.value === "sticky" || props.honeyType.value === "slippery"}
       <div class="submenu" transition:fly={{ duration: 80, x: 50 }}>
         <label>
-          <span>{$_("friction")} 
-            <span class="text-xs opacity-75 font-mono">{props.honeyType.value === "sticky" ? "*=" : "-="}</span>
+          <span
+            >{$_("friction")}
+            <span class="text-xs opacity-75 font-mono"
+              >{props.honeyType.value === "sticky" ? "*=" : "-="}</span
+            >
           </span>
           <TextInput
             float
@@ -567,7 +581,10 @@
           />
         </label>
         <label>
-          <span>{$_("honey-duration")}<span class="text-xs opacity-75">(s)</span></span>
+          <span
+            >{$_("honey-duration")}<span class="text-xs opacity-75">(s)</span
+            ></span
+          >
           <TextInput
             float
             min={0}
@@ -579,7 +596,6 @@
       </div>
     {/if}
   </div>
-
 
   <div class="mb-4" />
 
