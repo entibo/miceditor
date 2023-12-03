@@ -25,7 +25,7 @@
 
   $: kilobytes = $xml.length / 1000
 
-  $: shamanObjectsMaxCount = $mapSettings.defilante.enabled ? 200 : 30
+  $: shamanObjectsMaxCount = $mapSettings.defilante.enabled ? 200 : 40
 
   const resetHighlight = () => 
     $highlight.size > 0 && ($highlight = new Set())
@@ -68,10 +68,10 @@
         <div class="title flex-grow ml-1">
           <span class="category-text">{$_("category-grounds")}</span>
           <div class="flex items-center count">
-            {#if $platforms.all.length > 50}
+            {#if $platforms.all.length > 60}
             <Icon class="text-yellow-500 text-sm" icon={faExclamationTriangle}/>
             {/if}
-            <span>{$platforms.all.length}<div class="count-max">/50</div></span>
+            <span>{$platforms.all.length}<div class="count-max">/60</div></span>
           </div>
         </div>
         <Actions list={$platforms.all} />
@@ -115,10 +115,10 @@
         <div class="title flex-grow ml-1">
           <span class="category-text">{$_("category-decorations")}</span>
           <div class="flex items-center count">
-            {#if $decorations.all.length > 40}
+            {#if $decorations.all.length > 50}
             <Icon class="text-yellow-500 text-sm" icon={faExclamationTriangle}/>
             {/if}
-            <span>{$decorations.all.length}<div class="count-max">/40</div></span>
+            <span>{$decorations.all.length}<div class="count-max">/50</div></span>
           </div>
         </div>
         <Actions list={$decorations.all} />
