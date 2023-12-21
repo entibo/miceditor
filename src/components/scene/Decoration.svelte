@@ -13,6 +13,7 @@
   export let obj
 
   export let parkourCheckpointIndex = 1
+  export let parkourSize = 1
 
 
   $: selected = $obj.selected
@@ -109,6 +110,9 @@
           {#if type == "DS" && $parkourMode}
             <g class="pointer-events-none">
               <text y="-32">{parkourCheckpointIndex}</text>
+              {#if parkourSize != 1}
+                <text y="24" x="16">x{parkourSize}</text>
+              {/if}
             </g>
           {/if}
         </g>
