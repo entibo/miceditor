@@ -100,23 +100,35 @@
   </label>
 
   
-  {#if props.stop.value !== undefined && $parkourMode}
+  {#if $parkourMode}
     <div class="mb-4"></div>
 
-    <label>
-      <span>stop</span>
-      <Checkbox checked={props.stop.value} set={props.stop.set} />
-    </label>
-  {/if}
+    {#if props.stop.value !== undefined}
+      <label>
+        <span>stop</span>
+        <Checkbox checked={props.stop.value} set={props.stop.set} />
+      </label>
+    {/if}
 
-  
-  {#if props.size.value !== undefined && $parkourMode}
-    <div class="mb-4"></div>
-
-    <label>
-      <span>size</span>
-      <TextInput float value={props.size.value} set={props.size.set} />
-    </label>
+    {#if props.size.value !== undefined}
+      <label>
+        <span>size</span>
+        <div class="flex">
+          <label class="icon-btn text-xs mr-1" on:click={() => props.size.set(1)}>
+            <Icon icon={faUndo} />
+          </label>
+          <TextInput
+            float
+            sliderMin={0.1}
+            sliderMax={5}
+            step={0.05}
+            value={props.size.value}
+            set={props.size.set}
+            class="w-16"
+          />
+        </div>
+      </label>
+    {/if}
   {/if}
 
   <div class="mb-4"></div>

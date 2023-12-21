@@ -107,11 +107,16 @@
             fill="transparent"
             class="object-outline-stroke cursor-pointer"
           />
+          <circle
+            r={(parkourSize*16)-1}
+            fill="transparent"
+            class="object-outline-stroke cursor-pointer"
+          />
           {#if type == "DS" && $parkourMode}
             <g class="pointer-events-none">
               <text y="-32">{parkourCheckpointIndex}</text>
               {#if parkourSize != 1}
-                <text y="24" x="16">x{parkourSize}</text>
+                <text class="font-serif text-sm" style="text-anchor: start;" x="10" y="14">×{parkourSize}</text>
               {/if}
             </g>
           {/if}
