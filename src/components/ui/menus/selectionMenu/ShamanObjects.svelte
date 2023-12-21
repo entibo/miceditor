@@ -109,6 +109,16 @@
     </label>
   {/if}
 
+  
+  {#if props.size.value !== undefined && $parkourMode}
+    <div class="mb-4"></div>
+
+    <label>
+      <span>size</span>
+      <TextInput float value={props.size.value} set={props.size.set} />
+    </label>
+  {/if}
+
   <div class="mb-4"></div>
 
   <CustomProperties bind:props={props.unknownAttributes.value} />

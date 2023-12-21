@@ -28,6 +28,9 @@
   $: parkourCheckpointIndex = $parkourMode && 
         $shamanObjects.all.filter(o => o.type === Anchor.Yellow).indexOf($obj) + 2
 
+  $: parkourSize = $parkourMode && 
+        $obj.size
+
   $: parkourMouseSpawn = $parkourMode && 
       readable(Editor.Decoration.make(Editor.Decoration.defaults("DS")))
 
@@ -46,7 +49,7 @@
 
   {#if $parkourMode && $obj.type == Anchor.Yellow}
     <g class="pointer-events-none" transform="rotate({-rotation})">
-      <Decoration obj={parkourMouseSpawn} {parkourCheckpointIndex}/>
+      <Decoration obj={parkourMouseSpawn} {parkourCheckpointIndex} {parkourSize}/>
     </g>
   {/if}
 

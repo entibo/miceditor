@@ -325,6 +325,7 @@ const data = store<Data>({
     speed: {},
     nosync: {},
     stop: {},
+    size: {},
   },
   JOINT: {
     unknownAttributes: {},
