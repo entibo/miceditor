@@ -114,7 +114,7 @@
       <label>
         <span>size</span>
         <div class="flex">
-          <label class="icon-btn text-xs mr-1" on:click={() => props.size.set(1)}>
+          <label class="icon-btn text-xs mr-1" on:click={() => props.size.set(null)}>
             <Icon icon={faUndo} />
           </label>
           <TextInput

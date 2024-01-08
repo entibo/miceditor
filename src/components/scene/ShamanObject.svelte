@@ -29,7 +29,10 @@
         $shamanObjects.all.filter(o => o.type === Anchor.Yellow).indexOf($obj) + 2
 
   $: parkourSize = $parkourMode && 
-        $obj.size
+        ($obj.size ||
+         $shamanObjects.all.filter(o => o.type === Anchor.Yellow)
+                       .reduce((r, o, i) => i < (parkourCheckpointIndex - 2) ? (o.size || r) : r, null) ||
+         1)
 
   $: parkourMouseSpawn = $parkourMode && 
       readable(Editor.Decoration.make(Editor.Decoration.defaults("DS")))
