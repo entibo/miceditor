@@ -44,7 +44,7 @@ export type ShamanObject
 
   | { type: Anchor.Yellow
       stop: boolean
-      size: number }
+      size: number | null }
     & Base
 
   | { type: Exclude<Anchor, Anchor.Yellow>
@@ -79,7 +79,7 @@ export const defaults: (t: Type) => ShamanObject = type =>
       type === Anchor.Yellow ?
         { type: Anchor.Yellow,
           stop: false,
-          size: 1 }
+          size: null }
       :
       anchorTypes.includes(type) ?
         { type: type as Exclude<Anchor, Anchor.Yellow>,
@@ -151,7 +151,7 @@ export function encode(data: ShamanObject): Node {
   )))
   
   setAttr ("stop") (getProp ("stop") (util.omitOn(false), () => ""))
-  setAttr ("size") (getProp ("size") (util.writeFloat, util.omitOn("1")))
+  setAttr ("size") (getProp ("size") (util.writeFloat))
 
   return node
 }
