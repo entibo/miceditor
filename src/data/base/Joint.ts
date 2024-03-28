@@ -338,9 +338,8 @@ function writeRenderValues(values: RenderValues): string {
     values[0],
     M.andThen(values[1], util.writeFloat),
     M.andThen(values[2], util.writeFloat),
-    M.andThen(values[3], util.writeBool),
-  ]
-  .join(",")
+    M.andThen(values[3], util.writeBool, x => x === "0" ? "" : x),
+  ].join(",")
 }
 
 // Format: "p,s"
