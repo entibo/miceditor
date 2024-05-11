@@ -479,7 +479,11 @@ export function encode(data: Platform): Node {
 
   setAttr("c")(
     M.map(
-      (m, o) => util.omitOn("1")(writeCollision(m, o)),
+      (m, o) => {
+        const encodedValue = writeCollision(m, o)
+        if(getProp("type")() === Type.Cloud) return util.omitOn("2")(encodedValue)
+        return util.omitOn("1")(encodedValue)
+      },
       getProp("miceCollision")(),
       getProp("objectCollision")()
     )
