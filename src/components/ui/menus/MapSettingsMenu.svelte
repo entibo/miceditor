@@ -19,13 +19,18 @@
 
   import { _ } from "state/locale"
   import { mapSettings, updateMiceSpawn } from "state/map"
-  import { parkourMode, setParkourMode, snatchMode, setSnatchMode } from "state/mapExtra"
+  import {
+    parkourMode,
+    setParkourMode,
+    snatchMode,
+    setSnatchMode,
+  } from "state/mapExtra"
 
   import * as sceneObjects from "state/sceneObjects"
 
   function updateDecorations() {
     for (let cheese of sceneObjects.groups.decorations.filter(
-      (obj) => obj.type === "F"
+      (obj) => obj.type === "F",
     ))
       cheese.invalidate()
   }
@@ -120,6 +125,8 @@
         <option value="6">{$_("background6")}</option>
         <option value="7">{$_("background7")}</option>
         <option value="8">{$_("background8")}</option>
+        <option value="9">{$_("background9")}</option>
+        <option value="10">{$_("background10")}</option>
       </select>
     </div>
   </label>
