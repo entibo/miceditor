@@ -1,6 +1,7 @@
 
 /*
   Step 1: download file "http://transformice.com/images/x_bibliotheques/x_pictos_editeur.swf"
+    curl -O http://transformice.com/images/x_bibliotheques/x_pictos_editeur.swf
   Step 2: open with software "JPEXS Free Flash Decompiler (@11.2.0)"
   Step 3: select all sprites
   Step 4: "Export selection"
