@@ -29,6 +29,8 @@ export const make: (obj: Base.ShamanObject.ShamanObject) => ShamanObject = obj =
 export const isForeground = (obj: ShamanObject) =>
   false
 
+export const isDefilanteObject = (obj: ShamanObject) =>
+  [6, 32, 15, 16].includes(obj.type)
 
 export function getBoundingBox(obj: ShamanObject): Box {
   let metadata = shamanObjectMetadata.get(obj.type)

@@ -5,6 +5,7 @@ import shamanObjectMetadata from "metadata/shamanObject"
 import * as Base from "data/base"
 import * as Editor from "data/editor"
 import { eq } from "../base/util"
+import { isDefilanteObject } from "./ShamanObject"
 
 
 type Joint = Editor.Joint.Joint
@@ -61,6 +62,14 @@ export function serialize(map: Map): string {
     map.mapSettings            = encodeImages(map.mapSettings, map.images)
     map.decorations            = encodeMouseSpawns(map.mapSettings.miceSpawn, map.decorations)
     map.shamanObjects          = encodeShamanObjects(map.shamanObjects)
+    if(map.mapSettings.defilante.enabled) {
+      // Defilante doesn't work if all booster items are above index 40.
+      // So put them first, since their z-index has no incidence anyway.
+      map.shamanObjects =   [
+        ...map.shamanObjects.filter(obj => isDefilanteObject(obj)),
+        ...map.shamanObjects.filter(obj => !isDefilanteObject(obj)),
+       ]
+    }
   ;[map.platforms, map.joints] = encodeBoosterPlatforms(map.platforms, map.joints)
   ;[map.platforms, map.joints] = encodeSpinPlatforms(map.platforms, map.joints)
   ;[map.platforms, map.joints] = encodeStickyPlatforms(map.platforms, map.joints)
