@@ -143,6 +143,43 @@
     </label>
   </section>
 
+  <label>
+    <span>{$_("night-mode")}...</span>
+    <Checkbox bind:checked={$mapSettings.night.enabled} />
+  </label>
+  {#if $mapSettings.night.enabled}
+    <div class="submenu" transition:fly={{ duration: 80, y: -50 }}>
+      <label>
+        <span>{$_("diameter")}</span>
+        <div class="flex">
+          <label 
+            class="icon-btn text-xs mr-1" 
+            on:click={() => $mapSettings.night.diameter = 150}
+          >
+            <Icon icon={faUndo} />
+          </label>
+          <TextInput
+            int
+            min={0}
+            max={800}
+            bind:value={$mapSettings.night.diameter}
+            class="w-16"
+          />
+        </div>
+      </label>
+      <label>
+        <span>{$_("type")}</span>
+        <div class="material-input">
+          <select bind:value={$mapSettings.night.type}>
+            <option value="0">{$_("night-mode-affects-both-shaman-and-mice")}</option>
+            <option value="1">{$_("night-mode-affects-only-shaman")}</option>
+            <option value="2">{$_("night-mode-affects-only-mice")}</option>
+          </select>
+        </div>
+      </label>
+    </div>
+  {/if}
+
   <div class="mb-4" />
 
   <label>
@@ -216,10 +253,6 @@
     <label>
       <span>{$_("soulmate-mode")}</span>
       <Checkbox bind:checked={$mapSettings.soulmate} />
-    </label>
-    <label>
-      <span>{$_("night-mode")}</span>
-      <Checkbox bind:checked={$mapSettings.night} />
     </label>
     <label>
       <span>{$_("hide-offscreen")}</span>

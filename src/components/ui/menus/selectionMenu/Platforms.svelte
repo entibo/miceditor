@@ -79,7 +79,7 @@
 
     <div class:disabled={props.radius.value === undefined}>
       <label>
-        <span>Radius</span>
+        <span>{$_("radius")}</span>
         <TextInput
           int
           min={10}

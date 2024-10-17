@@ -60,12 +60,16 @@ export interface MapSettings extends Common.UnknownAttributes {
       maxSpeed: number
       freeScroll: boolean }
 
+  night:
+    { enabled: boolean
+      diameter: number
+      type: number }
+
   theme: string
 
   portals: boolean
   collisions: boolean
   soulmate: boolean
-  night: boolean
   hideOffscreen: boolean
   hideNails: boolean
   upwardsCannonballs: boolean
@@ -160,7 +164,7 @@ export const defaults: () => MapSettings = () => ({
   portals: false,
   collisions: false,
   soulmate: false,
-  night: false,
+  night: { enabled: false, diameter: 150, type: 0},
   hideOffscreen: false,
   hideNails: false,
   upwardsCannonballs: false,
@@ -222,12 +226,13 @@ export function decode(xmlNode: XML.Node): MapSettings {
 
   setProp ("defilante") (getAttr ("defilante") (readDefilante))
 
+  setProp ("night")     (getAttr ("N") (readNight))
+
   setProp ("theme") (getAttr ("theme") ())
 
   setProp ("portals")            (getAttr ("P")     (() => true))   
   setProp ("collisions")         (getAttr ("C")     (() => true))       
   setProp ("soulmate")           (getAttr ("A")     (() => true))     
-  setProp ("night")              (getAttr ("N")     (() => true)) 
   setProp ("hideOffscreen")      (getAttr ("Ca")    (() => true))         
   setProp ("hideNails")          (getAttr ("mc")    (() => true))     
   setProp ("upwardsCannonballs") (getAttr ("bh")    (() => true))               
@@ -275,12 +280,13 @@ export function encode(data: MapSettings): Node {
 
   setAttr ("defilante") (getProp ("defilante") (writeDefilante))
 
+  setAttr ("N")     (getProp ("night") (writeNight))
+
   setAttr ("theme") (getProp ("theme") (util.omitOn("")))
 
   setAttr ("P")     (getProp ("portals")            (util.omitOn(false), () => ""))
   setAttr ("C")     (getProp ("collisions")         (util.omitOn(false), () => ""))
   setAttr ("A")     (getProp ("soulmate")           (util.omitOn(false), () => ""))
-  setAttr ("N")     (getProp ("night")              (util.omitOn(false), () => ""))
   setAttr ("Ca")    (getProp ("hideOffscreen")      (util.omitOn(false), () => ""))
   setAttr ("mc")    (getProp ("hideNails")          (util.omitOn(false), () => ""))
   setAttr ("bh")    (getProp ("upwardsCannonballs") (util.omitOn(false), () => ""))
@@ -441,6 +447,24 @@ function writeDefilante(defilante: MapSettings["defilante"]): M.Maybe<string> {
     util.writeFloat(defilante.maxSpeed),
     util.writeBool(defilante.freeScroll),
   ].join(",")
+}
+
+function readNight(str: string): MapSettings["night"] {
+  let parts = str.split(",")
+  return {
+    enabled: true,
+    diameter: M.withDefault (150) (M.andThen(parts.shift(), M.iffDefined, util.readFloat)),
+    type: M.withDefault (0) (M.andThen(parts.shift(), M.iffDefined, util.readInt)),
+  }
+}
+function writeNight(night: MapSettings["night"]): M.Maybe<string> {
+  if(!night.enabled) return M.None
+  const value = [
+    util.writeFloat(night.diameter),
+    util.writeInt(night.type),
+  ].join(",")
+  if(value === "150,0") return ""
+  return value
 }
 
 export function readShamanTools(str: string): number[] {
