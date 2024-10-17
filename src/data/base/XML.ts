@@ -102,7 +102,7 @@ export function generate<T extends Node>(node: T): string {
   return `<${node.name}${attributes}>${children}</${node.name}>`
 }
 
-const identifierRegex = /[_a-z0-9]/i
+const identifierRegex = /[_a-z0-9-]/i
 
 function tokenize(str: string): Token[] {
   let tokens = [] as Token[]
@@ -158,7 +158,8 @@ function tokenize(str: string): Token[] {
       tokens.push({ type: "IDENTIFIER", value })
       continue
     }
-    error("Unexpected character: "+c)
+    error("Unexpected character: "+c+" (context) "
+      +str.slice(Math.max(0,k-10),k+10))
   }
 
   return tokens
