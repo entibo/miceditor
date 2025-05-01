@@ -347,6 +347,18 @@
       url(grounds/honey-body.png);
   }
 
+  .galaxy {
+    background: 
+      url(grounds/galaxy-top.png) repeat-x;
+  }
+  .galaxy:before {
+    content: "";
+    /* z-index: -1; */
+    @apply absolute w-full h-full top-0 right-0 bottom-0 left-0;
+    top: 20px;
+    background: url(grounds/galaxy.png) 0 0;
+  }  
+
 
   .grass2 {
     background: 

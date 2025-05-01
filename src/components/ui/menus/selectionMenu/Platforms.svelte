@@ -597,6 +597,43 @@
     {/if}
   </div>
 
+  {#if props.inputSpeedBonus.value !== undefined}
+    <div class="mb-4" />
+
+    <label>
+      <span>name</span>
+      <TextInput value={props.name.value} set={props.name.set} class="w-16" />
+    </label>
+    <label>
+      <span>target</span>
+      <TextInput value={props.target.value} set={props.target.set} class="w-16" />
+    </label>
+    <label>
+      <span>
+        → {$_("speed")}
+      </span>
+      <TextInput
+        class="w-16"
+        int
+        min={0}
+        value={props.inputSpeedBonus.value}
+        set={props.inputSpeedBonus.set}
+      />
+    </label>
+    <label>
+      <span>
+        {$_("speed")} →
+      </span>
+      <TextInput
+        class="w-16"
+        int
+        min={0}
+        value={props.outputSpeedBonus.value}
+        set={props.outputSpeedBonus.set}
+      />
+    </label>
+  {/if}
+
   <div class="mb-4" />
 
   <div class:disabled={props.vanish.value === undefined}>

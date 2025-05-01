@@ -9,6 +9,7 @@
   Step 6: pick "dist/decorations"
   Step 7: repeat steps 4,5,6 but this time export as PNG
   Step 8: run "node ./prepareSvgAssets.js"
+    npm run assets
 */
 
 const fs = require("fs")

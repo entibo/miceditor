@@ -120,6 +120,11 @@ const data = store<Data>({
     honeyDuration: {},
     honeyValue: {},
 
+    name: {},
+    target: {},
+    inputSpeedBonus: {},
+    outputSpeedBonus: {},
+
     foreground: {
       sideEffect: () => sceneObjects.groups.platforms.invalidate()
     },

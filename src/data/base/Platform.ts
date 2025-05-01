@@ -30,6 +30,10 @@ const attributes = [
   "angDampAcc",
   "angDampMax",
   "friction",
+  "name",
+  "target",
+  "inputSpeedBonus",
+  "outputSpeedBonus",
 ] as const
 const undefinedAttributes = Common.makeUndefinedAttributes(attributes)
 
@@ -61,6 +65,7 @@ export enum Type {
   Water = 9,
   Acid = 19,
   Honey = 20,
+  Galaxy = 21,
 }
 
 export const typeNames = [
@@ -85,6 +90,7 @@ export const typeNames = [
   "grass3",
   "acid",
   "honey",
+  "galaxy",
 ]
 
 interface Base extends Common.UnknownAttributes {
@@ -139,6 +145,12 @@ export interface HoneyPhysics {
   honeyDuration: number
   honeyValue: number
 }
+export interface Galaxy {
+  name: string
+  target: string
+  inputSpeedBonus: number
+  outputSpeedBonus: number
+}
 
 export type Platform =
   | ({
@@ -179,6 +191,11 @@ export type Platform =
       HoneyPhysics)
   | ({ type: Type.Cobweb } & Base & Rectangle & Rotatable & WaterPhysics)
   | ({ type: Type.Water } & Base & Rectangle & WaterPhysics)
+  | ({ type: Type.Galaxy } & Base &
+      Rectangle &
+      Rotatable &
+      NonStatic &
+      HoneyPhysics)
 
 export type PlatformProps = { type: Type } & Base &
   Rectangle &
@@ -187,7 +204,8 @@ export type PlatformProps = { type: Type } & Base &
   NonStatic &
   Colored &
   WaterPhysics &
-  HoneyPhysics
+  HoneyPhysics &
+  Galaxy
 
 const baseDefaults: () => Base = () => ({
   unknownAttributes: {},
@@ -245,6 +263,12 @@ export const honeyPhysicsDefaults: () => HoneyPhysics = () => ({
   honeyValue: 100,
   honeyDuration: 5,
 })
+export const galaxyDefaults: () => Galaxy = () => ({
+  name: "",
+  target: "",
+  inputSpeedBonus: 0,
+  outputSpeedBonus: 0,
+})
 const typeSpecificDefaults = (type: Type) => {
   switch (type) {
     case Type.Ice:
@@ -289,6 +313,11 @@ const typeSpecificDefaults = (type: Type) => {
         honeyValue: 100,
         honeyDuration: 5,
       }
+    case Type.Galaxy:
+      return {
+        friction: 0,
+        restitution: 0,
+      }
     case Type.Cloud:
       return {
         miceCollision: false,
@@ -313,6 +342,17 @@ export const defaults: (t: Type) => Platform = (type) =>
         ...baseDefaults(),
         ...rectangleDefaults(),
         ...waterPhysicsDefaults(),
+      }
+    : type === Type.Galaxy
+    ? {
+        type,
+        ...rotatableDefaults(),
+        ...baseDefaults(),
+        ...rectangleDefaults(),
+        ...nonStaticDefaults(),
+        ...galaxyDefaults(),
+        ...honeyPhysicsDefaults(),
+        ...typeSpecificDefaults(type),
       }
     : type === Type.Circle
     ? {
@@ -407,6 +447,11 @@ export function decode(xmlNode: XML.Node): Platform {
     setProp("honeyDuration")(o.honeyDuration)
   })
 
+  setProp("name")(getAttr("name")())
+  setProp("target")(getAttr("target")())
+  setProp("inputSpeedBonus")(getAttr("inputSpeedBonus")(util.readFloat))
+  setProp("outputSpeedBonus")(getAttr("outputSpeedBonus")(util.readFloat))
+
   setProp("touchCollision")(getAttr("col")(() => true))
 
   setProp("nosync")(getAttr("nosync")(() => true))
@@ -481,7 +526,8 @@ export function encode(data: Platform): Node {
     M.map(
       (m, o) => {
         const encodedValue = writeCollision(m, o)
-        if(getProp("type")() === Type.Cloud) return util.omitOn("2")(encodedValue)
+        if (getProp("type")() === Type.Cloud)
+          return util.omitOn("2")(encodedValue)
         return util.omitOn("1")(encodedValue)
       },
       getProp("miceCollision")(),
@@ -504,6 +550,15 @@ export function encode(data: Platform): Node {
     )
   )
 
+  setAttr("name")(getProp("name")(util.omitOn("")))
+  setAttr("target")(getProp("target")(util.omitOn("")))
+  setAttr("inputSpeedBonus")(
+    getProp("inputSpeedBonus")(util.omitOn(0), util.writeFloat)
+  )
+  setAttr("outputSpeedBonus")(
+    getProp("outputSpeedBonus")(util.omitOn(0), util.writeFloat)
+  )
+
   setAttr("col")(getProp("touchCollision")(util.omitOn(false), () => ""))
 
   setAttr("o")(getProp("color")(util.omitOn("")))
@@ -518,7 +573,7 @@ export function encode(data: Platform): Node {
 }
 
 export function readType(str: string): M.Maybe<Type> {
-  return M.andThen(util.readInt(str), (x) => (x >= 0 && x <= 20 ? x : M.None))
+  return M.andThen(util.readInt(str), (x) => (x >= 0 && x <= 21 ? x : M.None))
 }
 
 export function readDimension(str: string): M.Maybe<number> {
