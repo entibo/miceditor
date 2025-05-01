@@ -146,10 +146,10 @@ export interface HoneyPhysics {
   honeyValue: number
 }
 export interface Galaxy {
-  name: string
-  target: string
-  inputSpeedBonus: number
-  outputSpeedBonus: number
+  galaxyName: string
+  galaxyTarget: string
+  galaxyInputSpeedBonus: number
+  galaxyOutputSpeedBonus: number
 }
 
 export type Platform =
@@ -264,10 +264,10 @@ export const honeyPhysicsDefaults: () => HoneyPhysics = () => ({
   honeyDuration: 5,
 })
 export const galaxyDefaults: () => Galaxy = () => ({
-  name: "",
-  target: "",
-  inputSpeedBonus: 0,
-  outputSpeedBonus: 0,
+  galaxyName: "",
+  galaxyTarget: "",
+  galaxyInputSpeedBonus: 0,
+  galaxyOutputSpeedBonus: 0,
 })
 const typeSpecificDefaults = (type: Type) => {
   switch (type) {
@@ -447,10 +447,10 @@ export function decode(xmlNode: XML.Node): Platform {
     setProp("honeyDuration")(o.honeyDuration)
   })
 
-  setProp("name")(getAttr("name")())
-  setProp("target")(getAttr("target")())
-  setProp("inputSpeedBonus")(getAttr("inputSpeedBonus")(util.readFloat))
-  setProp("outputSpeedBonus")(getAttr("outputSpeedBonus")(util.readFloat))
+  setProp("galaxyName")(getAttr("name")())
+  setProp("galaxyTarget")(getAttr("target")())
+  setProp("galaxyInputSpeedBonus")(getAttr("inputSpeedBonus")(util.readFloat))
+  setProp("galaxyOutputSpeedBonus")(getAttr("outputSpeedBonus")(util.readFloat))
 
   setProp("touchCollision")(getAttr("col")(() => true))
 
@@ -550,13 +550,13 @@ export function encode(data: Platform): Node {
     )
   )
 
-  setAttr("name")(getProp("name")(util.omitOn("")))
-  setAttr("target")(getProp("target")(util.omitOn("")))
+  setAttr("name")(getProp("galaxyName")(util.omitOn("")))
+  setAttr("target")(getProp("galaxyTarget")(util.omitOn("")))
   setAttr("inputSpeedBonus")(
-    getProp("inputSpeedBonus")(util.omitOn(0), util.writeFloat)
+    getProp("galaxyInputSpeedBonus")(util.omitOn(0), util.writeFloat)
   )
   setAttr("outputSpeedBonus")(
-    getProp("outputSpeedBonus")(util.omitOn(0), util.writeFloat)
+    getProp("galaxyOutputSpeedBonus")(util.omitOn(0), util.writeFloat)
   )
 
   setAttr("col")(getProp("touchCollision")(util.omitOn(false), () => ""))

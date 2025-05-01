@@ -22,6 +22,8 @@
 
   $: isCircle = typeName === "circle"
 
+  $: galaxyName = $obj.galaxyName
+
   $: x = $obj.x
   $: y = $obj.y
 
@@ -186,6 +188,7 @@
               <div
                 class="w-full h-full {typeName !== 'invisible' ? typeName : ''}"
                 class:sides={width%40===0}
+                data-name={galaxyName}
               >
               </div>
             </foreignObject>
@@ -357,8 +360,17 @@
     @apply absolute w-full h-full top-0 right-0 bottom-0 left-0;
     top: 20px;
     background: url(grounds/galaxy.png) 0 0;
-  }  
-
+  }
+  .galaxy:after {
+    content: attr(data-name);
+    font: 20px monospace;
+    color: #bea0f4;
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+  }
 
   .grass2 {
     background: 

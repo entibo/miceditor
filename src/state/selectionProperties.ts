@@ -120,10 +120,10 @@ const data = store<Data>({
     honeyDuration: {},
     honeyValue: {},
 
-    name: {},
-    target: {},
-    inputSpeedBonus: {},
-    outputSpeedBonus: {},
+    galaxyName: {},
+    galaxyTarget: {},
+    galaxyInputSpeedBonus: {},
+    galaxyOutputSpeedBonus: {},
 
     foreground: {
       sideEffect: () => sceneObjects.groups.platforms.invalidate()
