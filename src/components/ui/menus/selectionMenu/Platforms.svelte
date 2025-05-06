@@ -614,8 +614,7 @@
       </span>
       <TextInput
         class="w-16"
-        int
-        min={0}
+        float
         value={props.galaxyInputSpeedBonus.value}
         set={props.galaxyInputSpeedBonus.set}
       />
@@ -626,8 +625,7 @@
       </span>
       <TextInput
         class="w-16"
-        int
-        min={0}
+        float
         value={props.galaxyOutputSpeedBonus.value}
         set={props.galaxyOutputSpeedBonus.set}
       />
