@@ -609,9 +609,7 @@
       <TextInput value={props.galaxyTarget.value} set={props.galaxyTarget.set} class="w-16" />
     </label>
     <label>
-      <span>
-        [In] {$_("speed")}
-      </span>
+      <span>inputSpeedBonus</span>
       <TextInput
         class="w-16"
         float
@@ -620,15 +618,21 @@
       />
     </label>
     <label>
-      <span>
-        [Out] {$_("speed")}
-      </span>
+      <span>outputSpeedBonus</span>
       <TextInput
         class="w-16"
         float
         value={props.galaxyOutputSpeedBonus.value}
         set={props.galaxyOutputSpeedBonus.set}
       />
+    </label>
+    <label>
+      <span>addInputGroundSpeed</span>
+      <Checkbox checked={props.galaxyAddInputGroundSpeed.value} set={props.galaxyAddInputGroundSpeed.set} />
+    </label>
+    <label>
+      <span>invertOutputPoint</span>
+      <Checkbox checked={props.galaxyInvertOutputPoint.value} set={props.galaxyInvertOutputPoint.set} />
     </label>
   {/if}
 

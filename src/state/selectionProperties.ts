@@ -124,6 +124,8 @@ const data = store<Data>({
     galaxyTarget: {},
     galaxyInputSpeedBonus: {},
     galaxyOutputSpeedBonus: {},
+    galaxyAddInputGroundSpeed: {},
+    galaxyInvertOutputPoint: {},
 
     foreground: {
       sideEffect: () => sceneObjects.groups.platforms.invalidate()
