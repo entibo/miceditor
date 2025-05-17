@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns:ffdec="https://www.free-decompiler.com/flash" xmlns:xlink="http://www.w3.org/1999/xlink" ffdec:objectType="frame" height="161.85px" width="105.1px" xmlns="http://www.w3.org/2000/svg">
   <g transform="matrix(1.0, 0.0, 0.0, 1.0, 47.65, 162.3)">
-    <use ffdec:characterId="553" height="7.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -30.8, -7.5)" width="72.6" xlink:href="#decoration94-shape0"/>
-    <use ffdec:characterId="555" height="161.85" id="decoration94-Couleur0_623B2A" filter="url(#decoration94-filter0)" transform="matrix(-1.0, 0.0, 0.0, 1.0, 57.45, -162.3)" width="64.05" xlink:href="#decoration94-sprite0"/>
-    <use ffdec:characterId="555" height="161.85" id="decoration94-Couleur0_623B2A" filter="url(#decoration94-filter0)" transform="matrix(1.0, 0.0, 0.0, 1.0, -47.65, -162.3)" width="64.05" xlink:href="#decoration94-sprite0"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -23.05, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -18.45, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -13.85, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -9.25, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -4.6, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.25, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 4.9, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(0.001, 1.0, -1.0, 0.001, 32.8999, -110.2001)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(0.001, 1.0, -1.0, 0.001, 32.8999, -114.7501)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(0.9909, 0.1348, -0.1348, 0.9909, 12.9716, -123.8688)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="558" height="40.9" transform="matrix(1.0, 0.0, 0.0, 1.0, -23.0, -101.4)" width="55.85" xlink:href="#decoration94-shape3"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.6, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 4.0, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 8.65, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 13.5, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 18.15, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(0.001, 1.0, -1.0, 0.001, -4.9001, -45.0001)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(0.001, 1.0, -1.0, 0.001, -4.9001, -49.5501)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(0.7078, 0.7064, -0.7064, 0.7078, 29.7498, -55.8621)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="557" height="18.15" transform="matrix(0.7078, 0.7064, -0.7064, 0.7078, 23.0998, -55.9621)" width="4.85" xlink:href="#decoration94-sprite1"/>
-    <use ffdec:characterId="559" height="17.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -10.5, -57.05)" width="30.05" xlink:href="#decoration94-shape4"/>
-    <use ffdec:characterId="561" height="13.05" id="decoration94-Couleur0_623B2A" filter="url(#decoration94-filter0)" transform="matrix(1.0, 0.0, 0.0, 1.0, -10.8, -30.1)" width="30.0" xlink:href="#decoration94-sprite2"/>
-    <use ffdec:characterId="562" height="4.4" transform="matrix(1.0, 0.0, 0.0, 1.0, 22.85, -99.3)" width="4.95" xlink:href="#decoration94-shape6"/>
-    <use ffdec:characterId="509" height="6.1" id="decoration94-Couleur1_A3468E" filter="url(#decoration94-filter1)" transform="matrix(0.8304, 0.0, 0.0, 0.8304, 20.8754, -88.7246)" width="10.8" xlink:href="#decoration94-sprite3"/>
-    <use ffdec:characterId="563" height="15.65" transform="matrix(1.0, 0.0, 0.0, 1.0, 19.6, -97.95)" width="11.55" xlink:href="#decoration94-shape8"/>
-    <use ffdec:characterId="565" height="90.35" style="mix-blend-mode: overlay" transform="matrix(1.0, 0.0, 0.0, 1.0, -47.5, -162.15)" width="86.85" xlink:href="#decoration94-sprite4"/>
+    <use ffdec:characterId="625" height="7.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -30.8, -7.5)" width="72.6" xlink:href="#decoration94-shape0"/>
+    <use ffdec:characterId="627" height="161.85" id="decoration94-Couleur0_623B2A" filter="url(#decoration94-filter0)" transform="matrix(-1.0, 0.0, 0.0, 1.0, 57.45, -162.3)" width="64.05" xlink:href="#decoration94-sprite0"/>
+    <use ffdec:characterId="627" height="161.85" id="decoration94-Couleur0_623B2A" filter="url(#decoration94-filter0)" transform="matrix(1.0, 0.0, 0.0, 1.0, -47.65, -162.3)" width="64.05" xlink:href="#decoration94-sprite0"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -23.05, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -18.45, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -13.85, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -9.25, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -4.6, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.25, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 4.9, -123.5)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(0.001, 1.0, -1.0, 0.001, 32.8999, -110.2001)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(0.001, 1.0, -1.0, 0.001, 32.8999, -114.7501)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(0.9909, 0.1348, -0.1348, 0.9909, 12.9716, -123.8688)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="630" height="40.9" transform="matrix(1.0, 0.0, 0.0, 1.0, -23.0, -101.4)" width="55.85" xlink:href="#decoration94-shape3"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.6, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 4.0, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 8.65, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 13.5, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, 18.15, -78.6)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(0.001, 1.0, -1.0, 0.001, -4.9001, -45.0001)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(0.001, 1.0, -1.0, 0.001, -4.9001, -49.5501)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(0.7078, 0.7064, -0.7064, 0.7078, 29.7498, -55.8621)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="629" height="18.15" transform="matrix(0.7078, 0.7064, -0.7064, 0.7078, 23.0998, -55.9621)" width="4.85" xlink:href="#decoration94-sprite1"/>
+    <use ffdec:characterId="631" height="17.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -10.5, -57.05)" width="30.05" xlink:href="#decoration94-shape4"/>
+    <use ffdec:characterId="633" height="13.05" id="decoration94-Couleur0_623B2A" filter="url(#decoration94-filter0)" transform="matrix(1.0, 0.0, 0.0, 1.0, -10.8, -30.1)" width="30.0" xlink:href="#decoration94-sprite2"/>
+    <use ffdec:characterId="634" height="4.4" transform="matrix(1.0, 0.0, 0.0, 1.0, 22.85, -99.3)" width="4.95" xlink:href="#decoration94-shape6"/>
+    <use ffdec:characterId="581" height="6.1" id="decoration94-Couleur1_A3468E" filter="url(#decoration94-filter1)" transform="matrix(0.8304, 0.0, 0.0, 0.8304, 20.8754, -88.7246)" width="10.8" xlink:href="#decoration94-sprite3"/>
+    <use ffdec:characterId="635" height="15.65" transform="matrix(1.0, 0.0, 0.0, 1.0, 19.6, -97.95)" width="11.55" xlink:href="#decoration94-shape8"/>
+    <use ffdec:characterId="637" height="90.35" style="mix-blend-mode: overlay" transform="matrix(1.0, 0.0, 0.0, 1.0, -47.5, -162.15)" width="86.85" xlink:href="#decoration94-sprite4"/>
   </g>
   <defs>
     <g id="decoration94-shape0" transform="matrix(1.0, 0.0, 0.0, 1.0, 30.8, 7.5)">
@@ -37,7 +37,7 @@
       <path d="M41.65 -0.6 L-30.65 -0.6 -30.65 -7.35 41.65 -7.35 41.65 -0.6 Z" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.30000000000000004"/>
     </g>
     <g id="decoration94-sprite0" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.15, 0.15)">
-      <use ffdec:characterId="554" height="161.85" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.15, -0.15)" width="64.05" xlink:href="#decoration94-shape1"/>
+      <use ffdec:characterId="626" height="161.85" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.15, -0.15)" width="64.05" xlink:href="#decoration94-shape1"/>
     </g>
     <g id="decoration94-shape1" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.15, 0.15)">
       <path d="M53.35 32.3 L53.35 37.6 21.75 37.6 21.75 123.4 53.35 123.4 53.35 127.45 53.35 152.6 17.25 152.6 17.25 127.45 17.25 32.3 53.35 32.3 M17.25 127.45 L53.35 127.45 17.25 127.45" fill="#6b6b6b" fill-rule="evenodd" stroke="none"/>
@@ -255,7 +255,7 @@
       <stop offset="1.0" stop-color="#a8a5a5"/>
     </linearGradient>
     <g id="decoration94-sprite1" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.15, 0.15)">
-      <use ffdec:characterId="556" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.15, -0.15)" width="4.85" xlink:href="#decoration94-shape2"/>
+      <use ffdec:characterId="628" height="18.15" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.15, -0.15)" width="4.85" xlink:href="#decoration94-shape2"/>
     </g>
     <g id="decoration94-shape2" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.15, 0.15)">
       <path d="M3.3 0.05 L4.55 0.2 4.55 2.8 3.3 2.8 3.3 0.05 M4.55 5.4 L4.55 17.85 0.0 17.85 0.0 13.95 Q0.8 16.95 2.6 16.0 3.35 15.05 3.3 13.8 L3.3 5.4 4.55 5.4" fill="#2a2119" fill-rule="evenodd" stroke="none"/>
@@ -309,7 +309,7 @@
       <path d="M1.6 -55.15 Q0.4 -53.1 0.3 -50.55 L2.25 -50.6 3.15 -49.9 Q2.75 -52.6 1.6 -55.15 M3.65 -50.2 Q4.85 -51.9 5.95 -52.15 4.95 -53.6 2.85 -54.3 L3.65 -50.2 M8.0 -52.35 Q8.4 -51.05 13.5 -48.7 13.45 -50.15 14.0 -51.15 14.5 -52.0 15.2 -52.3 L9.95 -53.55 Q7.7 -53.3 8.0 -52.35 M6.9 -52.3 Q7.15 -53.4 8.75 -53.9 5.25 -54.85 1.75 -56.05 L6.9 -52.3 M16.1 -52.1 Q14.5 -50.65 14.45 -48.8 L14.75 -47.2 11.0 -47.45 Q7.2 -46.9 6.8 -42.65 L7.1 -41.2 7.4 -40.0 5.1 -43.3 Q3.05 -45.7 0.9 -45.45 -0.55 -45.3 -1.75 -44.05 L-2.7 -41.9 -3.6 -40.25 -3.0 -42.35 Q-2.25 -44.8 -2.35 -45.95 -2.6 -48.25 -4.55 -49.7 -6.25 -51.0 -10.5 -49.45 -7.75 -50.7 -4.15 -52.95 1.15 -56.25 1.65 -57.05 5.3 -54.75 12.25 -53.35 L19.55 -51.85 16.1 -52.1 M6.15 -43.75 Q6.8 -46.65 9.45 -47.65 10.75 -48.2 12.15 -48.15 9.9 -50.4 6.75 -51.6 4.9 -51.35 4.0 -48.8 L6.15 -43.75 M3.7 -48.35 Q2.95 -50.0 1.6 -50.25 0.25 -50.5 -0.45 -48.65 L-1.4 -45.15 Q-0.35 -46.1 1.05 -46.25 2.85 -46.4 4.7 -45.15 4.45 -46.75 3.7 -48.35 M-0.15 -51.2 L1.05 -55.7 -2.8 -53.4 -1.35 -52.5 -0.15 -51.2 M-0.8 -50.65 Q-1.3 -52.9 -4.15 -52.7 L-6.9 -50.7 Q-4.15 -50.6 -2.7 -48.55 -2.1 -47.8 -1.7 -46.3 -0.35 -48.4 -0.8 -50.65" fill="#ffffff" fill-opacity="0.34901962" fill-rule="evenodd" stroke="none"/>
     </g>
     <g id="decoration94-sprite2" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.1, 0.1)">
-      <use ffdec:characterId="560" height="13.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.1, -0.1)" width="30.0" xlink:href="#decoration94-shape5"/>
+      <use ffdec:characterId="632" height="13.05" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.1, -0.1)" width="30.0" xlink:href="#decoration94-shape5"/>
     </g>
     <g id="decoration94-shape5" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.1, 0.1)">
       <path d="M27.45 1.65 Q23.9 -0.05 21.45 1.75 19.3 3.3 21.15 5.1 22.85 7.0 21.6 8.4 L20.2 9.9 Q19.75 11.95 22.65 12.2 25.9 11.8 24.55 10.25 24.25 8.7 25.15 9.05 27.2 9.4 25.9 11.65 24.2 13.25 21.05 12.7 19.1 11.9 18.95 10.5 L17.55 10.65 Q15.15 10.5 14.95 7.8 L14.9 7.45 14.85 7.8 Q14.65 10.5 12.25 10.65 L10.85 10.5 Q10.7 11.9 8.75 12.7 5.6 13.25 3.9 11.65 2.6 9.4 4.65 9.05 5.55 8.7 5.25 10.25 3.9 11.8 7.15 12.2 10.05 11.95 9.6 9.9 8.85 9.35 8.2 8.4 6.95 7.0 8.65 5.1 10.5 3.3 8.35 1.75 5.9 -0.05 2.35 1.65 1.05 2.6 1.15 3.8 1.25 5.05 2.6 5.45 3.8 5.8 4.35 5.45 4.9 5.1 4.65 4.25 5.1 2.3 6.0 3.3 7.45 5.0 4.95 6.35 0.45 7.0 0.05 3.95 -0.25 1.35 2.15 0.45 4.35 -0.4 8.1 0.35 9.1 0.8 9.7 1.4 11.8 -0.15 13.15 1.65 11.7 1.25 10.7 3.05 10.9 4.05 10.5 5.25 9.75 6.05 9.55 7.25 9.45 9.15 12.0 9.8 13.7 9.9 13.95 8.05 14.05 6.2 13.2 6.35 12.4 7.05 12.95 8.05 11.8 7.9 11.65 6.15 12.15 4.9 14.0 5.0 14.75 5.5 14.9 6.5 15.05 5.5 15.8 5.0 17.65 4.9 18.15 6.15 18.0 7.9 16.85 8.05 17.4 7.05 16.6 6.35 15.75 6.2 15.85 8.05 16.1 9.9 17.8 9.8 20.35 9.15 20.25 7.25 20.05 6.05 19.3 5.25 18.9 4.05 19.1 3.05 18.1 1.25 16.65 1.65 18.0 -0.15 20.1 1.4 L21.7 0.35 Q25.45 -0.4 27.65 0.45 30.05 1.35 29.75 3.95 29.35 7.0 24.85 6.35 22.35 5.0 23.8 3.3 24.7 2.3 25.15 4.25 24.9 5.1 25.45 5.45 26.0 5.8 27.2 5.45 28.55 5.05 28.65 3.8 28.75 2.6 27.45 1.65 M14.9 7.45 L14.9 6.5 14.9 7.45" fill="#666666" fill-rule="evenodd" stroke="none"/>
@@ -323,7 +323,7 @@
       <path d="M27.8 -99.15 L25.05 -99.3 22.85 -99.2 24.05 -95.5 24.7 -95.0 26.0 -94.9 Q26.75 -94.9 27.1 -95.85 L27.8 -99.15 Z" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.3019608" stroke-width="0.05"/>
     </g>
     <g id="decoration94-sprite3" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.15, 0.15)">
-      <use ffdec:characterId="508" height="6.1" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.15, -0.15)" width="10.8" xlink:href="#decoration94-shape7"/>
+      <use ffdec:characterId="580" height="6.1" transform="matrix(1.0, 0.0, 0.0, 1.0, -0.15, -0.15)" width="10.8" xlink:href="#decoration94-shape7"/>
     </g>
     <g id="decoration94-shape7" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.15, 0.15)">
       <path d="M0.5 3.35 L2.15 0.0 8.35 0.0 10.2 3.5 Q10.85 4.65 10.2 5.8 L0.5 5.8 Q-0.45 4.75 0.5 3.35" fill="#808080" fill-rule="evenodd" stroke="none"/>
@@ -340,7 +340,7 @@
       <path d="M26.3 -95.9 L27.1 -96.0 M23.85 -96.0 L22.7 -96.55 M23.85 -96.0 L24.55 -95.9 26.3 -95.9" fill="none" stroke="#3b5424" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.2" stroke-width="0.5"/>
     </g>
     <g id="decoration94-sprite4" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
-      <use ffdec:characterId="564" height="90.35" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="86.85" xlink:href="#decoration94-shape9"/>
+      <use ffdec:characterId="636" height="90.35" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)" width="86.85" xlink:href="#decoration94-shape9"/>
     </g>
     <g id="decoration94-shape9" transform="matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)">
       <path d="M86.85 0.0 L81.9 38.35 24.4 38.35 24.4 81.9 26.2 81.9 26.2 90.35 14.9 90.35 14.9 44.7 14.8 44.7 12.1 44.65 Q11.25 44.6 11.3 43.8 11.35 42.9 12.55 42.8 L14.85 42.9 Q15.65 41.65 15.6 40.2 L13.95 40.15 Q13.4 40.1 13.4 39.3 13.45 38.4 14.25 38.3 L15.05 38.35 Q15.75 37.05 15.5 35.55 L14.6 35.55 11.65 35.45 Q10.75 35.35 10.75 34.1 10.85 32.65 12.1 32.5 L14.25 32.6 Q13.55 30.45 11.2 29.0 L6.45 29.0 Q8.25 28.3 8.75 27.05 L11.95 27.05 11.95 12.7 11.45 12.7 Q11.35 10.15 8.1 9.35 L8.15 9.35 Q7.6 6.0 3.1 4.1 L0.9 4.1 Q0.2 3.4 0.05 2.65 -0.2 1.4 0.9 0.0 L86.85 0.0" fill="url(#decoration94-gradient29)" fill-rule="evenodd" stroke="none"/>
