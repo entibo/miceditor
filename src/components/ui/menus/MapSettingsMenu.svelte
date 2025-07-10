@@ -127,6 +127,7 @@
         <option value="8">{$_("background8")}</option>
         <option value="9">{$_("background9")}</option>
         <option value="10">{$_("background10")}</option>
+        <option value="11">{$_("background11")}</option>
       </select>
     </div>
   </label>
